@@ -3,5 +3,9 @@
 
     <string name="hello">Hello World, Main!</string>
     <string name="app_name">LepraDroid</string>
+    <string name="login_label">Логин:</string>
+    <string name="password_label">Пароль:</string>
+    <string name="captcha_label">Шесть букв с картинки:</string>
+    <string name="yarrr_label">YARRR!</string>
 
 </resources>
