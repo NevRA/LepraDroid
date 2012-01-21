@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 public class Main extends Activity
@@ -11,10 +12,8 @@ public class Main extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-    }
-    
-    public void func()
-    {
         
+        Intent intent = new Intent(this, logon_screen.class);
+        startActivity(intent); 
     }
 }
