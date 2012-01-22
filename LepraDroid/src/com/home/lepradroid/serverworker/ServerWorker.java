@@ -28,6 +28,8 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
 import com.home.lepradroid.objects.Post;
+import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.utils.Logger;
 
 import android.graphics.drawable.Drawable;
 
@@ -79,6 +81,16 @@ public class ServerWorker
         final HttpContext localContext = new BasicHttpContext();
         localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
         
+        try
+        {
+            String cookie = SettingsWorker.Instance().loadCookie();
+            httpGet.addHeader("Cookie", cookie);
+        }
+        catch (Exception e)
+        {
+            Logger.e(e);
+        }
+        
         final HttpResponse response = client.execute(httpGet, localContext);
         
         return EntityUtils.toString(response.getEntity());
@@ -98,7 +110,7 @@ public class ServerWorker
         
         final HttpResponse response = client.execute(httpGet, localContext);
         
-        return response.getHeaders("Set-Cookie");
+        return response.getAllHeaders();
     }
     
     public Drawable getImage(String url) throws ClientProtocolException, IOException

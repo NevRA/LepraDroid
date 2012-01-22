@@ -2,6 +2,7 @@ package com.home.lepradroid;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.interfaces.LoginListener;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
@@ -21,11 +22,17 @@ public class Main extends BaseActivity implements LoginListener
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        Intent intent = new Intent(this, LogonScreen.class);
-        startActivity(intent); 
-        
         createTabs();
+        
+        if(!SettingsWorker.Instance().IsLogoned())
+        {
+            Intent intent = new Intent(this, LogonScreen.class);
+            startActivity(intent); 
+        }
+        else
+        {
+            pushNewTask(new TaskWrapper(this, new GetPostsTask(), "Загружаем посты..."));
+        }
     }
     
     private void createTabs()

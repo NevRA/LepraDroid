@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.http.Header;
 
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.R;
@@ -52,18 +53,25 @@ public class LoginTask extends BaseTask
     {
         try
         {
-            Header[] cookies = ServerWorker.Instance().login(Commons.LOGON_PAGE_URL, login, password, captcha, ServerWorker.Instance().getLoginCode());
-            for(Header cookie : cookies)
+            String cookie = "";
+            Header[] headers = ServerWorker.Instance().login(Commons.LOGON_PAGE_URL, login, password, captcha, ServerWorker.Instance().getLoginCode());
+            for(Header header : headers)
             {
-                if(cookie.getValue().contains("lepro.save=1"))
-                {
-                    SettingsWorker.Instance().saveCookies(cookies);
+                //lepro.sid=abadb37b85cd113156aea908ede94f77; lepro.uid=46808;
+                
+                String value = header.getValue();
+                if(value.contains("lepro.save=1"))
                     logoned = true;
-                }
+                else if(value.contains("lepro.sid="))
+                    cookie += value.split(";")[0] + ";";
+                else if(value.contains("lepro.uid="))
+                    cookie += value.split(";")[0] + ";";
             }
             
-            if(!logoned)
+            if(!logoned || TextUtils.isEmpty(cookie))
                 throw new Exception(Utils.getString(R.string.Login_Failed));
+            
+            SettingsWorker.Instance().saveCookies(cookie);
         }
         catch (Throwable t)
         {
