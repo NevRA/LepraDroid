@@ -61,10 +61,11 @@
 		        android:layout_below="@+id/textView2"
 		        android:password="true"
 		        android:layout_centerHorizontal="true" />		
+
 		    <ImageView
 		        android:id="@+id/captcha_image"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
+		        android:layout_width="240dip"
+		        android:layout_height="60dip"
 		        android:layout_below="@+id/password"
 		        android:layout_centerHorizontal="true"
 		        android:layout_marginTop="10dip"
