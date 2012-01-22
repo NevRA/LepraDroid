@@ -2,6 +2,7 @@ package com.home.lepradroid;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.interfaces.CaptchaUpdateListener;
+import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.tasks.GetCaptchaTask;
 import com.home.lepradroid.tasks.LoginTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -18,7 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 
-public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, TextWatcher
+public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, TextWatcher, LoginListener
 {
     private Button yarrr;
     private EditText captcha;
@@ -37,7 +38,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         login = (EditText)findViewById(R.id.login);
         password = (EditText)findViewById(R.id.password);
         
-        pushNewTask(new TaskWrapper(this, new GetCaptchaTask(), Utils.getString(R.string.Captcha_Loading_In_Progress)));
+        
         
         init();
     }
@@ -65,6 +66,13 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
                 pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), Utils.getString(R.string.Login_In_Progress)));              
             }
         });
+        
+        updateCaptcha();
+    }
+    
+    private void updateCaptcha()
+    {
+        pushNewTask(new TaskWrapper(this, new GetCaptchaTask(), Utils.getString(R.string.Captcha_Loading_In_Progress)));
     }
     
     public void afterTextChanged(Editable s)
@@ -96,5 +104,13 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         {
             Utils.showError(this, t);
         }
+    }
+
+    public void OnLogin(boolean successful)
+    {
+       if(!successful)
+           updateCaptcha();
+       else
+           finish();
     }
 }
