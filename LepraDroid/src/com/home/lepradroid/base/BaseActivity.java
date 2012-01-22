@@ -7,10 +7,10 @@ import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.tasks.TaskWrapper;
 
-import android.app.Activity;
+import android.app.ActivityGroup;
 import android.os.Bundle;
 
-public class BaseActivity extends Activity implements UpdateListener, ProgressListener
+public class BaseActivity extends ActivityGroup implements UpdateListener, ProgressListener
 {
     private ArrayList<TaskWrapper> tasks = new ArrayList<TaskWrapper>();
     

@@ -9,7 +9,6 @@ import android.util.Pair;
 
 import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.interfaces.CaptchaUpdateListener;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
