@@ -1,38 +1,41 @@
 package com.home.lepradroid;
 
 import com.home.lepradroid.base.BaseActivity;
-import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.interfaces.CaptchaUpdateListener;
+import com.home.lepradroid.tasks.GetCaptchaTask;
+import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.utils.Utils;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.widget.ImageView;
 
 
-public class LogonScreen extends BaseActivity
+public class LogonScreen extends BaseActivity implements CaptchaUpdateListener
 {
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.logon_view);
         
+        new TaskWrapper(this, new GetCaptchaTask(), Utils.getString(R.string.Captcha_Loading_In_Progress));
+    }
+
+    public void OnCaptchaUpdateListener(Drawable dw)
+    {
+        if(dw == null) return;
+        
         try
         {
-            String res = ServerWorker.Instance().getContent(Commons.LOGON_PAGE_URL);
-            int pos = res.indexOf("/captchaa/");
-            
-            String captchaUrl = Commons.CAPTCHA_URL + res.substring(pos + 10, pos + 10 + 16);
-            
             ImageView captcha = (ImageView) findViewById(R.id.imageView3);
             
-            captcha.setImageDrawable(ServerWorker.Instance().getCaptcha(captchaUrl));
+            captcha.setImageDrawable(dw);
         }
         catch (Throwable t)
         {
-            // TODO Auto-generated catch block
-            t.printStackTrace();
+            Utils.showError(this, t);
         }
     }
-
 }

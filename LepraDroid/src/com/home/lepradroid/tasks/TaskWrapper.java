@@ -1,7 +1,7 @@
 package com.home.lepradroid.tasks;
 
 import com.home.lepradroid.base.BaseActivity;
-import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.interfaces.ProgressTracker;
 import com.home.lepradroid.utils.Utils;
 
 
@@ -92,27 +92,12 @@ public class TaskWrapper implements ProgressTracker
         if(progressListener != null)
         {
             progressListener.onEndProgress(""); // TODO
-            progressListener = null;
         }
-
         
         if(t != null)
         {
-            try
-            { 
-                String message = t.getMessage();
-
-                if(progressListener != null)
-                {
-                    Utils.showError(progressListener, message);
-                }
-                
-                //Utils.makeText(SettingsWorker.getInstance().getContext(), message, Toast.LENGTH_LONG).show();
-            } 
-            catch (Exception e)
-            {
-                Logger.e(e);
-            }
+            if(progressListener != null)
+                Utils.showError(progressListener, t);
         }
     }
 }

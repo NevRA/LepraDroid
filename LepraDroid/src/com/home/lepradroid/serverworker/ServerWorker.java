@@ -57,34 +57,26 @@ public class ServerWorker
     
     public String getContent(String url) throws ClientProtocolException, IOException
     {
-        HttpGet httpGet = new HttpGet(url);
-        HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        final HttpGet httpGet = new HttpGet(url);
+        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         
-        HttpResponse response = client.execute(httpGet);
+        final HttpResponse response = client.execute(httpGet);
         
         return EntityUtils.toString(response.getEntity());
     }
     
-    public Drawable getCaptcha(String url) throws ClientProtocolException, IOException
+    public Drawable getImage(String url) throws ClientProtocolException, IOException
     {
+        final HttpGet httpGet = new HttpGet(url);
+        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         
-        HttpGet httpGet = new HttpGet(url);
-        HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
-        
-        HttpResponse response = client.execute(httpGet);
+        final HttpResponse response = client.execute(httpGet);
         
         byte[] array = EntityUtils.toByteArray(response.getEntity());
         
-        ByteArrayInputStream stream = new ByteArrayInputStream(array);
+        final ByteArrayInputStream stream = new ByteArrayInputStream(array);
 
-        Drawable d = Drawable.createFromStream(stream, "src");
+        final Drawable d = Drawable.createFromStream(stream, "src");
         return d;
-    }
-    
-    public Object fetch(String address) throws MalformedURLException,IOException 
-    {
-        URL url = new URL(address);
-        Object content = url.getContent();
-        return content;
     }
 }

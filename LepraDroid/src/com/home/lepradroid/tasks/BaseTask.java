@@ -2,6 +2,8 @@ package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
 
+import com.home.lepradroid.interfaces.ProgressTracker;
+import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.utils.Logger;
 
 import android.os.AsyncTask;

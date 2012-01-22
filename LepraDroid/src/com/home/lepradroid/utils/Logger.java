@@ -13,4 +13,12 @@ public class Logger
             Log.e(Commons.APP_TAG, t.getMessage() + " [" + Log.getStackTraceString(t) + "]");
         }
     }
+    
+    public static void d(String message)
+    {
+        if(message != null)
+        {
+            Log.d(Commons.APP_TAG, message);
+        }
+    }
 }

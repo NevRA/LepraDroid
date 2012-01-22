@@ -43,4 +43,16 @@ public class Utils
         final AlertDialog alertDialog = alt_bld.create();
         alertDialog.show();
     }
+    
+    public static void showError(Context context, Throwable t)
+    {
+        if(t != null)
+        {
+            String message = t.getMessage();
+            if(message != null)
+                showError(context, message);
+            else
+                showError(context, getString(R.string.Unknown_Error));
+        }
+    }
 }

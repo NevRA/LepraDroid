@@ -15,8 +15,8 @@
             android:name=".Main"
             android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" android:configChanges="keyboardHidden|orientation"/>
+                <category android:name="android.intent.category.LAUNCHER" android:configChanges="keyboardHidden|orientation"/>
             </intent-filter>
         </activity>
         <activity android:name=".LogonScreen"/>

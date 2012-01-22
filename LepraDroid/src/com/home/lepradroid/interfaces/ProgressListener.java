@@ -1,4 +1,4 @@
-package com.home.lepradroid.tasks;
+package com.home.lepradroid.interfaces;
 
 public interface ProgressListener
 {
