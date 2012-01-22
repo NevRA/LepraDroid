@@ -7,5 +7,6 @@
     <string name="password_label">Пароль:</string>
     <string name="captcha_label">Шесть букв с картинки:</string>
     <string name="yarrr_label">YARRR!</string>
+    <string name="Error">Ошибко</string>
 
 </resources>

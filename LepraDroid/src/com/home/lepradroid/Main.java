@@ -1,10 +1,11 @@
 package com.home.lepradroid;
 
-import android.app.Activity;
+import com.home.lepradroid.base.BaseActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 
-public class Main extends Activity
+public class Main extends BaseActivity
 {
     /** Called when the activity is first created. */
     @Override

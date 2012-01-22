@@ -1,15 +1,14 @@
 package com.home.lepradroid;
 
-import com.home.commons.Commons;
-import com.home.serverworker.ServerWorker;
+import com.home.lepradroid.base.BaseActivity;
+import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.serverworker.ServerWorker;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 
 
-public class LogonScreen extends Activity
+public class LogonScreen extends BaseActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)

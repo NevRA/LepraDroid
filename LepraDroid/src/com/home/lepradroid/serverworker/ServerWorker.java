@@ -1,4 +1,4 @@
-package com.home.serverworker;
+package com.home.lepradroid.serverworker;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
