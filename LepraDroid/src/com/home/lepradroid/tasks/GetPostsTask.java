@@ -3,6 +3,8 @@ package com.home.lepradroid.tasks;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,7 +44,7 @@ public class GetPostsTask extends BaseTask
     {
         try
         {
-            final String html = ServerWorker.Instance().getContent(Commons.SITE_URL);
+            final String html = ServerWorker.Instance().getContent(Commons.SITE_URL).replace("&#150;", "-").replace("&#151;", "-"); // TODO problem with parsing 
             final Document document = Jsoup.parse(html);
             final Element content = document.getElementById("content");
             final Elements posts = content.getElementsByClass("dt");
@@ -54,8 +56,16 @@ public class GetPostsTask extends BaseTask
                 Post post = new Post();
                 post.Text = TextUtils.isEmpty(text) ? "..." : text;
                 post.Html = element.html();
+                Matcher matcher = Pattern.compile("img src=\"(.+?)\"", Pattern.CASE_INSENSITIVE).matcher(element.html());
+                if(matcher.find())
+                {
+                    post.ImageUrl = matcher.group(1);
+                }
+                
                 ServerWorker.Instance().addNewPost(post);
             }
+            
+            new LoadImagesTask().execute();
         }
         catch (Throwable t)
         {

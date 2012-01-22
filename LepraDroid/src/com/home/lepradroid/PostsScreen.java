@@ -11,6 +11,7 @@ import com.home.lepradroid.serverworker.ServerWorker;
 public class PostsScreen extends BaseActivity implements PostsUpdateListener
 {
     private ListView list;
+    private PostsAdapter adapter;
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -28,8 +29,15 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
 
     public void OnPostsUpdate()
     {
-        final PostsAdapter adapter = new PostsAdapter(this, R.layout.post_row_view, ServerWorker.Instance().getPosts());
+        if(adapter == null)
+        {
+            adapter = new PostsAdapter(this, R.layout.post_row_view, ServerWorker.Instance().getPosts());
 
-        list.setAdapter(adapter);
+            list.setAdapter(adapter);
+        }
+        else
+        {
+            adapter.notifyDataSetChanged();
+        }
     }
 }

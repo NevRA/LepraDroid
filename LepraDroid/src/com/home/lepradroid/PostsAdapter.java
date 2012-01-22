@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import com.home.lepradroid.objects.Post;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 class PostsAdapter extends ArrayAdapter<Post>
@@ -40,13 +42,27 @@ class PostsAdapter extends ArrayAdapter<Post>
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
+        final Post post = getItem(position);
+        
         LayoutInflater aInflater=LayoutInflater.from(getContext());
 
         View view = aInflater.inflate(R.layout.post_row_view, parent, false);
         
         TextView text = (TextView)view.findViewById(R.id.text);
-        text.setText(getItem(position).Text);
+        text.setText(post.Text);
         
+        ImageView image = (ImageView)view.findViewById(R.id.image);
+        
+        if(!TextUtils.isEmpty(post.ImageUrl))
+        {
+            image.setVisibility(View.VISIBLE);
+            
+            if(post.dw != null)
+            {
+                image.setImageDrawable(post.dw);
+            }
+        }
+
         return view;
     }
 }

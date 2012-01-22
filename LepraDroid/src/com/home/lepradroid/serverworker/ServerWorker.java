@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
@@ -22,6 +23,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
@@ -67,6 +69,10 @@ public class ServerWorker
     private void init()
     {
         connectionParameters = new BasicHttpParams();
+        HttpProtocolParams.setVersion(connectionParameters, HttpVersion.HTTP_1_1);
+        HttpProtocolParams.setContentCharset(connectionParameters, "utf-8");
+        connectionParameters.setBooleanParameter("http.protocol.expect-continue", false);
+
         SchemeRegistry registry = new SchemeRegistry();
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         connectionManager = new ThreadSafeClientConnManager(connectionParameters, registry);
