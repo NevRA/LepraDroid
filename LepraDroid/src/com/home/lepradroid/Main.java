@@ -13,7 +13,7 @@ public class Main extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        Intent intent = new Intent(this, logon_screen.class);
+        Intent intent = new Intent(this, LogonScreen.class);
         startActivity(intent); 
     }
 }

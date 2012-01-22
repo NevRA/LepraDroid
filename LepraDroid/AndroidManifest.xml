@@ -5,7 +5,7 @@
     android:versionName="0.0.1" >
 
     <uses-sdk android:minSdkVersion="7" />
-
+	<uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:theme="@android:style/Theme.Light"
         android:icon="@drawable/ic_launcher"
@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".logon_screen"/>
+        <activity android:name=".LogonScreen"/>
+        
     </application>
-
 </manifest>
