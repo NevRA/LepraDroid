@@ -3,15 +3,21 @@ package com.home.lepradroid.tasks;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import android.graphics.drawable.Drawable;
 import android.util.Pair;
 
+import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CaptchaUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
 
 public class GetCaptchaTask extends BaseTask
 {   
@@ -45,12 +51,14 @@ public class GetCaptchaTask extends BaseTask
         {  
             Logger.d("Started GetCaptchaTask");
             
-            String res = ServerWorker.Instance().getContent(Commons.LOGON_PAGE_URL);
-            int pos = res.indexOf("/captchaa/");
-            
-            String captchaUrl = Commons.CAPTCHA_URL + res.substring(pos + 10, pos + 10 + 16);
-            
-            captcha = ServerWorker.Instance().getImage(captchaUrl);
+            final String html = ServerWorker.Instance().getContent(Commons.LOGON_PAGE_URL);    
+            final Document doc = Jsoup.parse(html);
+            final Elements elements = doc.getElementsByAttributeValue("name", "logincode");
+            if(elements.isEmpty())
+                throw new Exception(Utils.getString(R.string.Captcha_Not_Found));
+            final String logincode = elements.first().attr("value");
+              
+            captcha = ServerWorker.Instance().getImage(Commons.CAPTCHA_URL + logincode);
         }
         catch (Throwable e) 
         {           

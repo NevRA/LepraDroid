@@ -3,6 +3,7 @@ package com.home.lepradroid;
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.interfaces.CaptchaUpdateListener;
 import com.home.lepradroid.tasks.GetCaptchaTask;
+import com.home.lepradroid.tasks.LoginTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,6 +57,14 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         captcha.addTextChangedListener(this);
         login.addTextChangedListener(this);
         password.addTextChangedListener(this);
+        
+        yarrr.setOnClickListener( new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(), Utils.getString(R.string.Login_In_Progress)));              
+            }
+        });
     }
     
     public void afterTextChanged(Editable s)
