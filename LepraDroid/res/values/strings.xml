@@ -11,6 +11,7 @@
     <string name="Captcha_Loading_In_Progress">Загружается капча...</string>
     <string name="Captcha_Not_Found">Не могу найти капчу</string>
     <string name="Login_In_Progress">Логинимся...</string>
+    <string name="Login_Failed">Не могу залогониться, пожалуйста, проверьте введенные данные и попробуйте снова</string>
     <string name="Unknown_Error">Произошла какая-та напонятная ошибка, может быть что-то есть в логах</string>
 
 </resources>

@@ -56,9 +56,10 @@ public class GetCaptchaTask extends BaseTask
             final Elements elements = doc.getElementsByAttributeValue("name", "logincode");
             if(elements.isEmpty())
                 throw new Exception(Utils.getString(R.string.Captcha_Not_Found));
-            final String logincode = elements.first().attr("value");
+            final String loginCode = elements.first().attr("value");
+            ServerWorker.Instance().setLoginCode(loginCode);
               
-            captcha = ServerWorker.Instance().getImage(Commons.CAPTCHA_URL + logincode);
+            captcha = ServerWorker.Instance().getImage(Commons.CAPTCHA_URL + loginCode);
         }
         catch (Throwable e) 
         {           

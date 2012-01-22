@@ -62,7 +62,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         {
             public void onClick(View v)
             {
-                pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(), Utils.getString(R.string.Login_In_Progress)));              
+                pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), Utils.getString(R.string.Login_In_Progress)));              
             }
         });
     }
