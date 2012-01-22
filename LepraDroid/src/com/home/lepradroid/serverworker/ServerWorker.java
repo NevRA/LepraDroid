@@ -2,6 +2,7 @@ package com.home.lepradroid.serverworker;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -26,6 +27,8 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import com.home.lepradroid.objects.Post;
+
 import android.graphics.drawable.Drawable;
 
 public class ServerWorker
@@ -36,6 +39,7 @@ public class ServerWorker
     private HttpParams connectionParameters;
     private CookieStore cookieStore;
     private HttpClient client;
+    private ArrayList<Post> posts = new ArrayList<Post>();
     
     private ServerWorker() 
     {
@@ -119,5 +123,21 @@ public class ServerWorker
     public void setLoginCode(String loginCode)
     {
         this.loginCode = loginCode;
+    }
+    
+    public ArrayList<Post> getPosts()
+    {
+        synchronized (posts)
+        {
+            return posts;
+        } 
+    }
+    
+    public void addNewPost(Post post)
+    {
+        synchronized (posts)
+        {
+            posts.add(post);
+        }
     }
 }
