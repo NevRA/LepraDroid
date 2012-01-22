@@ -90,14 +90,12 @@ public class TaskWrapper implements ProgressTracker
             progressDialog = null;
         }
         if(progressListener != null)
-        {
-            progressListener.onEndProgress(""); // TODO
-        }
+            progressListener.onEndProgress("");
         
         if(t != null)
-        {
             if(progressListener != null)
                 Utils.showError(progressListener, t);
-        }
+        
+        progressListener = null;
     }
 }

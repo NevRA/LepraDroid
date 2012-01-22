@@ -36,7 +36,7 @@
 		        android:layout_marginTop="10dip"
 		        android:text="@string/login_label" />		
 		    <EditText
-		        android:id="@+id/editText1"
+		        android:id="@+id/login"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_below="@+id/textView1"
@@ -50,21 +50,21 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_alignLeft="@+id/editText1"
-		        android:layout_below="@+id/editText1"
+		        android:layout_below="@+id/login"
 		        android:layout_marginTop="10dp"
 		        android:text="@string/password_label" />
 		
 		    <EditText
-		        android:id="@+id/editText2"
+		        android:id="@+id/password"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_below="@+id/textView2"
 		        android:layout_centerHorizontal="true" />		
 		    <ImageView
-		        android:id="@+id/imageView3"
+		        android:id="@+id/captcha_image"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/editText2"
+		        android:layout_below="@+id/password"
 		        android:layout_centerHorizontal="true"
 		        android:layout_marginTop="10dip"
 		        android:src="@drawable/ic_captcha" />
@@ -73,23 +73,24 @@
 		        android:id="@+id/textView3"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/imageView3"
+		        android:layout_below="@+id/captcha_image"
 		        android:layout_marginTop="10dip"
 		        android:text="@string/captcha_label" />
 		
 		    <EditText
-		        android:id="@+id/editText3"
+		        android:id="@+id/captcha"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_below="@+id/textView3" />
 		    
 		    <Button
-		        android:id="@+id/button1"
+		        android:id="@+id/yarrr"
 		        android:layout_width="100dip"
 		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/editText3"
+		        android:layout_below="@+id/captcha"
 		        android:layout_centerHorizontal="true"
 		        android:layout_marginTop="10dip"
+		        android:enabled="false"
 		        android:text="@string/yarrr_label" />
 
 		</RelativeLayout>

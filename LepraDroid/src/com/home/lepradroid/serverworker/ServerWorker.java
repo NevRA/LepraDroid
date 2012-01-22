@@ -2,8 +2,6 @@ package com.home.lepradroid.serverworker;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -72,11 +70,8 @@ public class ServerWorker
         
         final HttpResponse response = client.execute(httpGet);
         
-        byte[] array = EntityUtils.toByteArray(response.getEntity());
-        
-        final ByteArrayInputStream stream = new ByteArrayInputStream(array);
-
-        final Drawable d = Drawable.createFromStream(stream, "src");
-        return d;
+        final byte[] array = EntityUtils.toByteArray(response.getEntity());
+  
+        return Drawable.createFromStream(new ByteArrayInputStream(array), "src");
     }
 }
