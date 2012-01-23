@@ -58,8 +58,18 @@ public class GetPostsTask extends BaseTask
                 post.Html = element.html();
                 Matcher matcher = Pattern.compile("img src=\"(.+?)\"", Pattern.CASE_INSENSITIVE).matcher(element.html());
                 if(matcher.find())
-                {
                     post.ImageUrl = matcher.group(1);
+                
+                Elements author = element.parent().getElementsByClass("p");
+                if(!author.isEmpty())
+                {
+                    matcher = Pattern.compile("\\s*(.+?)\\s*<a href.*\"js-user_login\">(.+?)<\\/a>\\S\\s*(.+?)\\s*<", Pattern.CASE_INSENSITIVE).matcher(author.html().replace("\n", ""));
+                    if(matcher.find())
+                    {
+                        post.Signature = matcher.group(1);
+                        post.Author = matcher.group(2);
+                        post.Time = matcher.group(3);
+                    }
                 }
                 
                 ServerWorker.Instance().addNewPost(post);

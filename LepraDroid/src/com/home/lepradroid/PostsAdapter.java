@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.home.lepradroid.objects.Post;
 
 import android.content.Context;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,9 @@ class PostsAdapter extends ArrayAdapter<Post>
         
         TextView text = (TextView)view.findViewById(R.id.text);
         text.setText(post.Text);
+        
+        TextView author = (TextView)view.findViewById(R.id.author);
+        author.setText(Html.fromHtml(post.Signature + " <b>" + post.Author + "</b> " + post.Time));
         
         ImageView image = (ImageView)view.findViewById(R.id.image);
         
