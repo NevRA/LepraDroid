@@ -2,9 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:paddingTop="5dip"
-    android:paddingLeft="5dip"
-    android:paddingRight="3dip"
+    android:padding="5dip"
     android:minHeight="70dip" >
     
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -33,34 +31,45 @@
 	        android:maxLines="4"/>
     </RelativeLayout>
     
-    <TextView
-        android:id="@+id/author"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:paddingTop="5dip"
-        android:textSize="9sp"
-        android:layout_below="@+id/main"
-        android:layout_alignParentBottom="true"
-        android:ellipsize="end"
-        android:textColor="@android:color/secondary_text_light"
-        android:maxLines="2"/>
-    
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/stat"
-        android:paddingTop="5dip"
+        android:layout_below="@+id/main"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent" 
 	    android:layout_alignParentBottom="true">
 	    <TextView
-	        android:id="@+id/rating"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
-	        android:textSize="10sp"
+	        android:id="@+id/author"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:paddingTop="5dip"
+	        android:textSize="9sp"
 	        android:ellipsize="end"
-	        android:textStyle="bold"
 	        android:textColor="@android:color/secondary_text_light"
 	        android:maxLines="2"/>
+	    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	        android:id="@+id/stat"
+	        android:layout_below="@+id/author"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent" 
+		    android:layout_alignParentBottom="true">
+		    <TextView
+		        android:id="@+id/comments"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:gravity="center_horizontal"
+		        android:textSize="8sp"
+		        android:textColor="@android:color/secondary_text_light"/>
+		    <TextView
+		        android:id="@+id/rating"
+		        android:paddingTop="2dip"
+		        android:background="@drawable/ic_badge"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentRight="true"
+		        android:gravity="center_horizontal"
+		        android:textSize="8sp"
+		        android:textStyle="bold"
+		        android:textColor="@android:color/secondary_text_light"/>
+		 </RelativeLayout>
 	</RelativeLayout>
-	
 </RelativeLayout>
