@@ -39,9 +39,9 @@
         android:paddingTop="5dip"
         android:textSize="9sp"
         android:layout_below="@+id/main"
+        android:layout_alignParentBottom="true"
         android:ellipsize="end"
         android:textColor="@android:color/secondary_text_light"
-        android:text="dsfdsfs"
         android:maxLines="2"/>
 
 </RelativeLayout>
