@@ -48,6 +48,7 @@ public class Utils
     {
         if(t != null)
         {
+            Logger.e(t);
             String message = t.getMessage();
             if(message != null)
                 showError(context, message);

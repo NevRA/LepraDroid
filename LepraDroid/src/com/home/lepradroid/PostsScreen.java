@@ -1,7 +1,10 @@
 package com.home.lepradroid;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.home.lepradroid.base.BaseActivity;
@@ -25,6 +28,17 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
     private void init()
     {
         list = (ListView) findViewById(R.id.posts_list);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+
+            public void onItemClick(AdapterView<?> arg, View arg1, int arg2,
+                    long position)
+            {
+                Intent intent = new Intent(PostsScreen.this, PostScreen.class);
+                intent.putExtra("position", position);
+                startActivity(intent); 
+            }
+        });
     }
 
     public void OnPostsUpdate()

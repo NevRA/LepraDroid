@@ -24,5 +24,6 @@
         <activity android:name=".PostsScreen" android:configChanges="keyboardHidden|orientation"/>
         <activity android:name=".BlogsScreen" android:configChanges="keyboardHidden|orientation"/>
         <activity android:name=".MyStuffScreen" android:configChanges="keyboardHidden|orientation"/>
+        <activity android:name=".PostScreen" android:configChanges="keyboardHidden|orientation"/>
     </application>
 </manifest>

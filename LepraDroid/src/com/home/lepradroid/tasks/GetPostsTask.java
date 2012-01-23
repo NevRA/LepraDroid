@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -19,6 +20,7 @@ import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
 
 public class GetPostsTask extends BaseTask
 {
@@ -65,7 +67,10 @@ public class GetPostsTask extends BaseTask
                 {
                     Elements span = author.first().getElementsByTag("span");
                     Elements a = span.first().getElementsByTag("a");
-                    post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
+                    if(a.size() == 2)
+                        post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
+                    else
+                        post.Comments = Utils.getString(R.string.No_Comments);
                     
                     Elements rating = authorParent.getElementsByTag("em");
                     post.Rating = Integer.valueOf(rating.first().text());

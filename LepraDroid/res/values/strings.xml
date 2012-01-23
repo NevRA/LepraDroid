@@ -16,5 +16,6 @@
     <string name="Blogs_Tab">Блоги</string>
     <string name="Posts_Tab">Посты</string>
     <string name="MyStuff_Tab">Мои вещи</string>
+    <string name="No_Comments">комментариев еще нет</string>
 
 </resources>
