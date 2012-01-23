@@ -3,8 +3,6 @@ package com.home.lepradroid.tasks;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -56,26 +54,26 @@ public class GetPostsTask extends BaseTask
                 Post post = new Post();
                 post.Text = TextUtils.isEmpty(text) ? "..." : text;
                 post.Html = element.html();
-                Matcher matcher = Pattern.compile("img src=\"(.+?)\"", Pattern.CASE_INSENSITIVE).matcher(element.html());
-                if(matcher.find())
-                    post.ImageUrl = matcher.group(1);
                 
-                Elements author = element.parent().getElementsByClass("p");
+                Elements images = element.getElementsByTag("img");
+                if(!images.isEmpty())
+                    post.ImageUrl = images.first().attr("src");
+                
+                Element authorParent = element.parent();
+                Elements author = authorParent.getElementsByClass("p");
                 if(!author.isEmpty())
                 {
-                    matcher = Pattern.compile("\\s*(.+?)\\s*<a href.*\"js-user_login\">(.+?)<\\/a>\\S\\s*(.+?)\\s*<", Pattern.CASE_INSENSITIVE).matcher(author.html().replace("\n", ""));
-                    if(matcher.find())
-                    {
-                        post.Signature = matcher.group(1);
-                        post.Author = matcher.group(2);
-                        post.Time = matcher.group(3);
-                        
-                        Elements rating = element.parent().getElementsByClass("rating");
-                        matcher = Pattern.compile(".*<em>(.+?)<", Pattern.CASE_INSENSITIVE).matcher(rating.html());
-                        if(matcher.find())
-                            post.Rating = Integer.valueOf(matcher.group(1));
-                    }
+                    Elements span = author.first().getElementsByTag("span");
+                    Elements a = span.first().getElementsByTag("a");
+                    post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
+                    
+                    Elements rating = authorParent.getElementsByTag("em");
+                    post.Rating = Integer.valueOf(rating.first().text());
+                    
+                    post.Author = author.first().getElementsByTag("a").first().text();
+                    post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
                 }
+                
                 
                 ServerWorker.Instance().addNewPost(post);
             }

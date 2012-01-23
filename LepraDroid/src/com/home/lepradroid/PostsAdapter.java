@@ -53,7 +53,10 @@ class PostsAdapter extends ArrayAdapter<Post>
         text.setText(post.Text);
         
         TextView author = (TextView)view.findViewById(R.id.author);
-        author.setText(Html.fromHtml(post.Signature + " <b>" + post.Author + "</b> " + post.Time));
+        author.setText(Html.fromHtml(post.Signature));
+        
+        TextView comments = (TextView)view.findViewById(R.id.comments);
+        comments.setText(Html.fromHtml(post.Comments));
         
         TextView rating = (TextView)view.findViewById(R.id.rating);
         rating.setText(post.Rating.toString());
