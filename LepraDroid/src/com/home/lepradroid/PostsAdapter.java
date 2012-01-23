@@ -55,6 +55,9 @@ class PostsAdapter extends ArrayAdapter<Post>
         TextView author = (TextView)view.findViewById(R.id.author);
         author.setText(Html.fromHtml(post.Signature + " <b>" + post.Author + "</b> " + post.Time));
         
+        TextView rating = (TextView)view.findViewById(R.id.rating);
+        rating.setText(post.Rating.toString());
+        
         ImageView image = (ImageView)view.findViewById(R.id.image);
         
         if(!TextUtils.isEmpty(post.ImageUrl))

@@ -69,6 +69,11 @@ public class GetPostsTask extends BaseTask
                         post.Signature = matcher.group(1);
                         post.Author = matcher.group(2);
                         post.Time = matcher.group(3);
+                        
+                        Elements rating = element.parent().getElementsByClass("rating");
+                        matcher = Pattern.compile(".*<em>(.+?)<", Pattern.CASE_INSENSITIVE).matcher(rating.html());
+                        if(matcher.find())
+                            post.Rating = Integer.valueOf(matcher.group(1));
                     }
                 }
                 

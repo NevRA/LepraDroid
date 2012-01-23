@@ -10,6 +10,7 @@ public class Post
     public String Author = "";
     public String Signature = "";
     public String Time = "";
+    public Integer Rating;
     public String Text = "";
     public String Html = "";
     public String ImageUrl = "";
