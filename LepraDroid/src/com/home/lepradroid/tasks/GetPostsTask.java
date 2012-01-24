@@ -59,7 +59,22 @@ public class GetPostsTask extends BaseTask
                 
                 Elements images = element.getElementsByTag("img");
                 if(!images.isEmpty())
+                {
                     post.ImageUrl = images.first().attr("src");
+                    
+                    for (Element image : images)
+                    {
+                        String width = image.attr("width");
+                        if(!TextUtils.isEmpty(width))
+                            post.Html = post.Html.replace("width=\"" + width + "\"", "");
+                        
+                        String height = image.attr("height");
+                        if(!TextUtils.isEmpty(height))
+                            post.Html = post.Html.replace("height=\"" + height + "\"", "");
+                        
+                        post.Html = post.Html.replace(image.attr("src"), "http://src.sencha.io/303/303/" + image.attr("src"));
+                    }
+                }
                 
                 Element authorParent = element.parent();
                 Elements author = authorParent.getElementsByClass("p");

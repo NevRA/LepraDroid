@@ -16,11 +16,9 @@ public class PostScreen extends BaseActivity
         
         long position = getIntent().getExtras().getLong("position", 0);
         
-        WebView view = (WebView) findViewById(R.id.webview);
-        view.getSettings().setLoadWithOverviewMode(true);
-        view.getSettings().setUseWideViewPort(true);
+        WebView webView = (WebView) findViewById(R.id.webview);
         
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-        view.loadData(header + ServerWorker.Instance().getPosts().get((int)position).Html, "text/html", "UTF-8");
+        webView.loadData(header + ServerWorker.Instance().getPosts().get((int)position).Html, "text/html", "UTF-8");
     }
 }

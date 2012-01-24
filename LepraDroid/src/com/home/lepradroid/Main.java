@@ -21,6 +21,7 @@ public class Main extends BaseActivity implements LoginListener
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.main);
         createTabs();
         
