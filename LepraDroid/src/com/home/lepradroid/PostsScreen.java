@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.home.lepradroid.base.BaseActivity;
+import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.serverworker.ServerWorker;
 
@@ -36,6 +37,7 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
             {
                 Intent intent = new Intent(PostsScreen.this, PostScreen.class);
                 intent.putExtra("position", position);
+                intent.putExtra("type", PostSourceType.MAIN.toString());
                 startActivity(intent); 
             }
         });
@@ -45,7 +47,7 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
     {
         if(adapter == null)
         {
-            adapter = new PostsAdapter(this, R.layout.post_row_view, ServerWorker.Instance().getPosts());
+            adapter = new PostsAdapter(this, R.layout.post_row_view, ServerWorker.Instance().getPosts(PostSourceType.MAIN));
 
             list.setAdapter(adapter);
         }

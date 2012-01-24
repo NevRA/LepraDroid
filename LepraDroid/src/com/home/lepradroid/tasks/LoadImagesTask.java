@@ -7,6 +7,8 @@ import java.util.List;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.home.lepradroid.commons.Commons.PostSourceType;
+import com.home.lepradroid.interfaces.MyStuffUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -16,13 +18,15 @@ import com.home.lepradroid.utils.Logger;
 
 public class LoadImagesTask extends BaseTask
 {
+    private PostSourceType type;
+    
     static final Class<?>[] argsClasses = new Class[0];
-    static Method method;
+    static Method methodOnPostsUpdate;
     static 
     {
         try
         {
-            method = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
+            methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
         }
         catch (Throwable t) 
         {           
@@ -30,15 +34,45 @@ public class LoadImagesTask extends BaseTask
         }        
     }
     
+    static Method methodOnMyStuffUpdate;
+    static 
+    {
+        try
+        {
+            methodOnMyStuffUpdate = MyStuffUpdateListener.class.getMethod("OnMyStuffUpdate", argsClasses);    
+        }
+        catch (Throwable t) 
+        {           
+            Logger.e(t);
+        }        
+    }
+    
+    public LoadImagesTask(PostSourceType type)
+    {
+        this.type = type;
+    }
+    
     @SuppressWarnings("unchecked")
-    private void notrifyViews()
+    public void notifyAboutPostsUpdate()
     {
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
         final Object args[] = new Object[0];
         
         for(PostsUpdateListener listener : listeners)
         {
-            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (method, args)));
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdate, args)));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyAboutMyStuffUpdate()
+    {
+        final List<MyStuffUpdateListener> listeners = ListenersWorker.Instance().getListeners(MyStuffUpdateListener.class);
+        final Object args[] = new Object[0];
+        
+        for(MyStuffUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnMyStuffUpdate, args)));
         }
     }
 
@@ -48,14 +82,15 @@ public class LoadImagesTask extends BaseTask
         try
         {
             int i = 0;
-            ArrayList<Post> posts = ServerWorker.Instance().getPosts();
+            ArrayList<Post> posts = ServerWorker.Instance().getPosts(type);
             for (Post post : posts)
             {
                 if(!TextUtils.isEmpty(post.ImageUrl))
                 {
                     try
                     {
-                        post.dw = ServerWorker.Instance().getImage("http://src.sencha.io/80/80/" + post.ImageUrl);
+                        if(post.dw == null)
+                            post.dw = ServerWorker.Instance().getImage("http://src.sencha.io/80/80/" + post.ImageUrl);
                     }
                     catch (Exception e)
                     {
@@ -81,4 +116,21 @@ public class LoadImagesTask extends BaseTask
         return e;
     }
 
+    private void notrifyViews()
+    {
+        switch (type)
+        {
+        case MAIN:
+            notifyAboutPostsUpdate();
+            break;
+        case BLOGS:
+            break;
+        case MYSTUFF:
+            notifyAboutMyStuffUpdate();
+            break;
+
+        default:
+            break;
+        }
+    }
 }

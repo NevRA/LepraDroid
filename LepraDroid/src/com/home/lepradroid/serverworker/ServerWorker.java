@@ -29,6 +29,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
@@ -143,11 +144,17 @@ public class ServerWorker
         this.loginCode = loginCode;
     }
     
-    public ArrayList<Post> getPosts()
+    public ArrayList<Post> getPosts(PostSourceType type)
     {
         synchronized (posts)
         {
-            return posts;
+            ArrayList<Post> result = new ArrayList<Post>();
+            for(Post post : posts)
+            {
+                if(post.Type == type)
+                    result.add(post);
+            }
+            return result;
         } 
     }
     

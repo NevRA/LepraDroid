@@ -14,6 +14,8 @@ import android.util.Pair;
 
 import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.commons.Commons.PostSourceType;
+import com.home.lepradroid.interfaces.MyStuffUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -24,27 +26,70 @@ import com.home.lepradroid.utils.Utils;
 
 public class GetPostsTask extends BaseTask
 {
+    private PostSourceType type;
+    
     static final Class<?>[] argsClasses = new Class[0];
-    static Method method;
+    static Method methodOnPostsUpdate;
     static 
     {
         try
         {
-            method = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
+            methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
         }
         catch (Throwable t) 
         {           
             Logger.e(t);
         }        
     }
-
+    
+    static Method methodOnMyStuffUpdate;
+    static 
+    {
+        try
+        {
+            methodOnMyStuffUpdate = MyStuffUpdateListener.class.getMethod("OnMyStuffUpdate", argsClasses);    
+        }
+        catch (Throwable t) 
+        {           
+            Logger.e(t);
+        }        
+    }
+    
+    public GetPostsTask(PostSourceType type)
+    {
+        this.type = type;
+    }
+    
     @SuppressWarnings("unchecked")
+    public void notifyAboutPostsUpdate()
+    {
+        final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
+        final Object args[] = new Object[0];
+        
+        for(PostsUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdate, args)));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyAboutMyStuffUpdate()
+    {
+        final List<MyStuffUpdateListener> listeners = ListenersWorker.Instance().getListeners(MyStuffUpdateListener.class);
+        final Object args[] = new Object[0];
+        
+        for(MyStuffUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnMyStuffUpdate, args)));
+        }
+    }
+
     @Override
     protected Throwable doInBackground(Void... params)
     {
         try
         {
-            final String html = ServerWorker.Instance().getContent(Commons.SITE_URL).replace("&#150;", "-").replace("&#151;", "-"); // TODO problem with parsing 
+            final String html = ServerWorker.Instance().getContent(type == PostSourceType.MAIN ? Commons.SITE_URL : Commons.MY_STUFF_URL).replace("&#150;", "-").replace("&#151;", "-"); // TODO problem with parsing 
             final Document document = Jsoup.parse(html);
             final Element content = document.getElementById("content");
             final Elements posts = content.getElementsByClass("dt");
@@ -53,7 +98,7 @@ public class GetPostsTask extends BaseTask
             {
                 Element element = (Element) iterator.next();
                 String text = element.text();
-                Post post = new Post();
+                Post post = new Post(type);
                 post.Text = TextUtils.isEmpty(text) ? "..." : text;
                 post.Html = element.html();
                 
@@ -98,7 +143,7 @@ public class GetPostsTask extends BaseTask
                 ServerWorker.Instance().addNewPost(post);
             }
             
-            new LoadImagesTask().execute();
+            new LoadImagesTask(type).execute();
         }
         catch (Throwable t)
         {
@@ -106,12 +151,19 @@ public class GetPostsTask extends BaseTask
         }
         finally
         {
-            final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
-            final Object args[] = new Object[0];
-            
-            for(PostsUpdateListener listener : listeners)
+            switch (type)
             {
-                publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (method, args)));
+            case MAIN:
+                notifyAboutPostsUpdate();
+                break;
+            case BLOGS:
+                break;
+            case MYSTUFF:
+                notifyAboutMyStuffUpdate();
+                break;
+
+            default:
+                break;
             }
         }
         

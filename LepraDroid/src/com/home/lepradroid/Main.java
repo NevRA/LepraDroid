@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import com.home.lepradroid.base.BaseActivity;
+import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetPostsTask;
@@ -32,7 +33,7 @@ public class Main extends BaseActivity implements LoginListener
         }
         else
         {
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(), "Загружаем посты..."));
+            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), "Загружаем посты..."));
         }
     }
     
@@ -66,7 +67,7 @@ public class Main extends BaseActivity implements LoginListener
     {
         if(successful)
         {
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(), "Загружаем посты..."));
+            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), "Загружаем посты..."));
         }
     }
 }
