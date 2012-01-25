@@ -1,0 +1,1 @@
+Proyecto de prueba para Ricardo Novy y IRC.NN. del clan Demuestra la capacidad de trabajar sin API.
