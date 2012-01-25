@@ -3,7 +3,6 @@ package com.home.lepradroid.utils;
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
 import com.home.lepradroid.serverworker.ServerWorker;
-import com.home.lepradroid.settings.SettingsWorker;
 
 import android.app.AlertDialog;
 import android.content.Context;

@@ -60,16 +60,16 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         
         Intent intent = new Intent(this, PostsScreen.class);
         intent.putExtra("type", PostSourceType.MAIN.toString());
-        posts.setIndicator(Utils.getString(R.string.Posts_Tab), null).setContent(
+        posts.setIndicator(Utils.getString(R.string.Posts_Tab), getResources().getDrawable(R.drawable.ic_main_tab)).setContent(
                 intent);
         
         intent = new Intent(this, BlogsScreen.class);
-        blogs.setIndicator(Utils.getString(R.string.Blogs_Tab), null).setContent(
+        blogs.setIndicator(Utils.getString(R.string.Blogs_Tab), getResources().getDrawable(R.drawable.ic_blogs_tab)).setContent(
                 intent);
         
         intent = new Intent(this, PostsScreen.class);
         intent.putExtra("type", PostSourceType.MYSTUFF.toString());
-        mystuff.setIndicator(Utils.getString(R.string.MyStuff_Tab), null).setContent(
+        mystuff.setIndicator(Utils.getString(R.string.MyStuff_Tab), getResources().getDrawable(R.drawable.ic_mystuff_tab)).setContent(
                 intent);
                 
         tabHost.addTab(posts);
