@@ -3,7 +3,6 @@ package com.home.lepradroid;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,8 +19,7 @@ import com.home.lepradroid.utils.Utils;
 
 public class PostsScreen extends BaseActivity implements PostsUpdateListener
 {
-    private static final int MENU_RELOAD = 0;
-    
+
     private ListView list;
     private PostsAdapter adapter;
     private PostSourceType type;
@@ -41,15 +39,11 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
         	pushNewTask(new TaskWrapper(this, new GetPostsTask(type), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
-    
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        menu.add(0, MENU_RELOAD, 0, "Reload").setIcon(R.drawable.ic_reload);
-        return true;
-    }
 
     public boolean onOptionsItemSelected(MenuItem item)
     {
+        super.onOptionsItemSelected(item);
+        
         switch (item.getItemId())
         {
         case MENU_RELOAD:

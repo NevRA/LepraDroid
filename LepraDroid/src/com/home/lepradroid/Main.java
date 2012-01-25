@@ -83,7 +83,7 @@ public class Main extends BaseActivity implements LoginListener
     {
         if(successful)
         {
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), "Загружаем посты..."));
+            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
 }

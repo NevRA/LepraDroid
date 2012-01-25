@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,9 +40,12 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         login = (EditText)findViewById(R.id.login);
         password = (EditText)findViewById(R.id.password);
         
-        
-        
         init();
+    }
+    
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        return true;
     }
     
     @Override
