@@ -3,6 +3,8 @@ package com.home.lepradroid;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -18,6 +20,8 @@ import com.home.lepradroid.utils.Utils;
 
 public class PostsScreen extends BaseActivity implements PostsUpdateListener
 {
+    private static final int MENU_RELOAD = 0;
+    
     private ListView list;
     private PostsAdapter adapter;
     private PostSourceType type;
@@ -37,6 +41,23 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
         	pushNewTask(new TaskWrapper(this, new GetPostsTask(type), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
+    
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        menu.add(0, MENU_RELOAD, 0, "Reload").setIcon(R.drawable.ic_reload);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+        case MENU_RELOAD:
+            pushNewTask(new TaskWrapper(this, new GetPostsTask(type), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            return true;
+        }
+        return false;
+    }
 
     private void init()
     {
@@ -55,11 +76,11 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
         });
     }
 
-    public void OnPostsUpdate(PostSourceType type)
+    public void OnPostsUpdate(PostSourceType type, boolean haveNewRecords)
     {
     	if(this.type != type) return;
     	
-        if(adapter == null)
+        if(adapter == null || haveNewRecords)
         {
             adapter = new PostsAdapter(this, R.layout.post_row_view, ServerWorker.Instance().getPostsByType(type));
 

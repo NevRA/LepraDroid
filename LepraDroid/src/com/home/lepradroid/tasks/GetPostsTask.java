@@ -28,13 +28,14 @@ public class GetPostsTask extends BaseTask
     private PostSourceType type;
     private LoadImagesTask loadImagesTask;
     
-    static final Class<?>[] argsClasses = new Class[1];
+    static final Class<?>[] argsClasses = new Class[2];
     static Method methodOnPostsUpdate;
     static 
     {
         try
         {
         	argsClasses[0] = PostSourceType.class;
+        	argsClasses[1] = boolean.class;
             methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
         }
         catch (Throwable t) 
@@ -59,8 +60,9 @@ public class GetPostsTask extends BaseTask
     public void notifyAboutPostsUpdate()
     {
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
-        final Object args[] = new Object[1];
+        final Object args[] = new Object[2];
         args[0] = type;
+        args[1] = true; // TODO add new 'load new posts'
         
         
         for(PostsUpdateListener listener : listeners)
@@ -74,6 +76,8 @@ public class GetPostsTask extends BaseTask
     {
         try
         {
+            ServerWorker.Instance().clearPostsByType(type);
+            
             final String html = ServerWorker.Instance().getContent(type == PostSourceType.MAIN ? Commons.SITE_URL : Commons.MY_STUFF_URL).replace("&#150;", "-").replace("&#151;", "-"); // TODO problem with parsing 
             final Document document = Jsoup.parse(html);
             final Element content = document.getElementById("content");

@@ -4,5 +4,5 @@ import com.home.lepradroid.commons.Commons.PostSourceType;
 
 public interface PostsUpdateListener extends UpdateListener
 {
-    void OnPostsUpdate(PostSourceType type); 
+    void OnPostsUpdate(PostSourceType type, boolean haveNewRecords); 
 }

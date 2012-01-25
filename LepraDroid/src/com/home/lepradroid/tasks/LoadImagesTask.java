@@ -19,13 +19,14 @@ public class LoadImagesTask extends BaseTask
 {
     private PostSourceType type;
     
-    static final Class<?>[] argsClasses = new Class[1];
+    static final Class<?>[] argsClasses = new Class[2];
     static Method methodOnPostsUpdate;
     static 
     {
         try
         {
         	argsClasses[0] = PostSourceType.class;
+        	argsClasses[1] = boolean.class;
             methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
         }
         catch (Throwable t) 
@@ -45,8 +46,9 @@ public class LoadImagesTask extends BaseTask
     	if(isCancelled()) return;
     	
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
-        final Object args[] = new Object[1];
+        final Object args[] = new Object[2];
         args[0] = type;
+        args[1] = false;
         
         for(PostsUpdateListener listener : listeners)
         {

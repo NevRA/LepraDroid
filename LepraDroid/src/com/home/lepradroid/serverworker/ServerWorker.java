@@ -179,6 +179,25 @@ public class ServerWorker
 
     }
     
+    public void clearPostsByType(PostSourceType type)
+    {
+        switch (type)
+        {
+        case MAIN:
+            synchronized (mainPosts)
+            {
+                mainPosts.clear();
+            }
+        case MYSTUFF:
+            synchronized (myStuffPosts)
+            {
+                myStuffPosts.clear();
+            }
+        default:
+            break;
+        }
+    }
+    
     public void clearPosts()
     {
         synchronized (mainPosts)

@@ -40,6 +40,12 @@ class PostsAdapter extends ArrayAdapter<Post>
         return position;
     }
     
+    public void updateContent(ArrayList<Post> newPosts)
+    {
+        this.posts.clear();
+        this.posts.addAll(newPosts);
+    }
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {

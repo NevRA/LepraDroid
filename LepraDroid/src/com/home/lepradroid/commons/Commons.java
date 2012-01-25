@@ -13,7 +13,6 @@ public class Commons
     public static final int EXIT_FROM_LOGON_SCREEN_RESULTCODE = 0;
     public static final int EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE = 1;
     
-    
     public enum PostSourceType
     {
         MAIN, BLOGS, MYSTUFF
