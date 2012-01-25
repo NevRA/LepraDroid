@@ -3,6 +3,7 @@ package com.home.lepradroid.utils;
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.settings.SettingsWorker;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -61,5 +62,17 @@ public class Utils
     public static void clearData()
     {
     	ServerWorker.Instance().clearPosts();
+    }
+    
+    public static void clearLogonInfo()
+    {
+        try
+        {
+            ServerWorker.Instance().clearSessionInfo();
+        }
+        catch (Exception e)
+        {
+            Logger.e(e);
+        }
     }
 }

@@ -3,18 +3,22 @@ package com.home.lepradroid.base;
 import java.util.ArrayList;
 
 import com.home.lepradroid.R;
+import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.interfaces.ProgressListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.tasks.BaseTask;
+import com.home.lepradroid.tasks.GetPostsTask;
+import com.home.lepradroid.tasks.LogoutTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
 import android.app.ActivityGroup;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
-public class BaseActivity extends ActivityGroup implements UpdateListener, ProgressListener
+public class BaseActivity extends ActivityGroup implements UpdateListener, ProgressListener, LogoutListener
 {
     protected static final int MENU_RELOAD = 0;
     protected static final int MENU_LOGOUT = 1;
@@ -43,6 +47,19 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
         return true;
     }
     
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        super.onOptionsItemSelected(item);
+        
+        switch (item.getItemId())
+        {
+        case MENU_LOGOUT:
+            new LogoutTask().execute();
+            return true;
+        }
+        return false;
+    }
+    
     private void detachAllTasks()
     {
         for(TaskWrapper task : tasks)
@@ -66,5 +83,10 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
         ListenersWorker.Instance().unregisterListener(this);
         detachAllTasks();
         super.onDestroy();
+    }
+
+    public void OnLogout()
+    {
+        finish();
     }
 }

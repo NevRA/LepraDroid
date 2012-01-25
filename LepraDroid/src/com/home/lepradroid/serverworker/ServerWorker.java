@@ -38,6 +38,7 @@ import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 
 public class ServerWorker
 {
@@ -89,6 +90,12 @@ public class ServerWorker
         client = new DefaultHttpClient(connectionManager, connectionParameters);
     }
     
+    public void clearSessionInfo() throws Exception
+    {
+        cookieStore.clear();
+        SettingsWorker.Instance().clearCookies();
+    }
+    
     public String getContent(String url) throws ClientProtocolException, IOException
     {
         final HttpGet httpGet = new HttpGet(url);
@@ -99,7 +106,8 @@ public class ServerWorker
         try
         {
             String cookie = SettingsWorker.Instance().loadCookie();
-            httpGet.addHeader("Cookie", cookie);
+            if(!TextUtils.isEmpty(cookie))
+                httpGet.addHeader("Cookie", cookie);
         }
         catch (Exception e)
         {

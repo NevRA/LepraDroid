@@ -4,6 +4,7 @@ import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.LoginListener;
+import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -14,7 +15,7 @@ import android.os.Bundle;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
-public class Main extends BaseActivity implements LoginListener
+public class Main extends BaseActivity implements LoginListener, LogoutListener
 {
     private TabHost tabHost;
     
@@ -35,10 +36,7 @@ public class Main extends BaseActivity implements LoginListener
         createTabs();
         
         if(!SettingsWorker.Instance().IsLogoned())
-        {
-            Intent intent = new Intent(this, LogonScreen.class);
-            startActivityForResult(intent, 0);
-        }
+            showLogonScreen();
     }
     
     @Override
@@ -85,5 +83,19 @@ public class Main extends BaseActivity implements LoginListener
         {
             pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
+    }
+    
+    public void OnLogout()
+    {
+        Utils.clearData();
+        Utils.clearLogonInfo();
+        showLogonScreen();
+        tabHost.setCurrentTab(0);
+    }
+    
+    private void showLogonScreen()
+    {
+        Intent intent = new Intent(this, LogonScreen.class);
+        startActivityForResult(intent, 0);
     }
 }

@@ -43,6 +43,11 @@ public class SettingsWorker
         return instance;
     }
     
+    public void clearCookies() throws Exception
+    {
+        saveCookies("");
+    }
+    
     public void saveCookies(String cookie) throws Exception
     {
         this.cookie = cookie;
