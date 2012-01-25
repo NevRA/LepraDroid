@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import com.home.lepradroid.base.BaseActivity;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CaptchaUpdateListener;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.tasks.GetCaptchaTask;
@@ -41,6 +42,14 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         
         
         init();
+    }
+    
+    @Override
+    public void onBackPressed() 
+    {
+    	setResult(Commons.EXIT_FROM_LOGON_SCREEN_RESULTCODE);
+    	
+    	super.onBackPressed();
     }
     
     private void updateControls()
@@ -111,6 +120,9 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
        if(!successful)
            updateCaptcha();
        else
+       {
+    	   setResult(Commons.EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE);
            finish();
+       }
     }
 }

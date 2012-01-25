@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import com.home.lepradroid.base.BaseActivity;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.settings.SettingsWorker;
@@ -36,7 +37,17 @@ public class Main extends BaseActivity implements LoginListener
         if(!SettingsWorker.Instance().IsLogoned())
         {
             Intent intent = new Intent(this, LogonScreen.class);
-            startActivity(intent); 
+            startActivityForResult(intent, 0);
+        }
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) 
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Commons.EXIT_FROM_LOGON_SCREEN_RESULTCODE) 
+        {
+            this.finish();
         }
     }
     
