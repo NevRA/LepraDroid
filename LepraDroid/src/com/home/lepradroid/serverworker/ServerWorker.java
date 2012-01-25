@@ -47,7 +47,8 @@ public class ServerWorker
     private HttpParams connectionParameters;
     private CookieStore cookieStore;
     private HttpClient client;
-    private ArrayList<Post> posts = new ArrayList<Post>();
+    private ArrayList<Post> mainPosts = new ArrayList<Post>();
+    private ArrayList<Post> myStuffPosts = new ArrayList<Post>();
     
     private ServerWorker() 
     {
@@ -153,31 +154,41 @@ public class ServerWorker
     
     public ArrayList<Post> getPostsByType(PostSourceType type)
     {
-        synchronized (posts)
+        switch (type)
         {
-            final ArrayList<Post> result = new ArrayList<Post>();
-            for(Post post : posts)
-            {
-                if(post.Type == type)
-                    result.add(post);
-            }
-            return result;
-        } 
+        case MAIN:
+            return mainPosts;
+        case MYSTUFF:
+            return myStuffPosts;
+        default:
+            break;
+        }
+        
+        return new ArrayList<Post>(0);
     }
+    
     
     public void addNewPost(Post post)
     {
+        final ArrayList<Post> posts = getPostsByType(post.Type);
+
         synchronized (posts)
         {
             posts.add(post);
         }
+
     }
     
     public void clearPosts()
     {
-        synchronized (posts)
+        synchronized (mainPosts)
         {
-        	posts.clear();
+            mainPosts.clear();
+        }
+        
+        synchronized (myStuffPosts)
+        {
+            myStuffPosts.clear();
         }
     }
 }

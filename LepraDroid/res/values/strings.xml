@@ -9,6 +9,7 @@
     <string name="yarrr_label">YARRR!</string>
     <string name="Error">Упс, ошибко!</string>
     <string name="Captcha_Loading_In_Progress">Загружается капча...</string>
+    <string name="Posts_Loading_In_Progress">Загружаем посты...</string>
     <string name="Captcha_Not_Found">Не могу найти капчу</string>
     <string name="Login_In_Progress">Логинимся...</string>
     <string name="Login_Failed">Не могу залогониться, пожалуйста, проверьте введенные данные и попробуйте снова</string>
@@ -16,6 +17,6 @@
     <string name="Blogs_Tab">Блоги</string>
     <string name="Posts_Tab">Посты</string>
     <string name="MyStuff_Tab">Мои вещи</string>
-    <string name="No_Comments">комментариев еще нет</string>
+    <string name="No_Comments">новых комментариев нет</string>
 
 </resources>

@@ -14,6 +14,7 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.utils.Utils;
 
 public class PostsScreen extends BaseActivity implements PostsUpdateListener
 {
@@ -33,7 +34,7 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
         
         if(SettingsWorker.Instance().IsLogoned())
         {
-        	pushNewTask(new TaskWrapper(this, new GetPostsTask(type), "Загружаем посты..."));
+        	pushNewTask(new TaskWrapper(this, new GetPostsTask(type), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
 
