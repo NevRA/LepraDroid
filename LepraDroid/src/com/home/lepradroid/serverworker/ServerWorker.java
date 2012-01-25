@@ -14,6 +14,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerPNames;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -22,6 +24,7 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.BasicHttpContext;
@@ -70,9 +73,13 @@ public class ServerWorker
     private void init()
     {
         connectionParameters = new BasicHttpParams();
+        connectionParameters.setBooleanParameter("http.protocol.expect-continue", false);
+        connectionParameters.setParameter(ConnManagerPNames.MAX_CONNECTIONS_PER_ROUTE, new ConnPerRouteBean(20));
+        connectionParameters.setParameter(HttpProtocolParams.USE_EXPECT_CONTINUE, false);
+        connectionParameters.setBooleanParameter(HttpConnectionParams.STALE_CONNECTION_CHECK,
+                false);
         HttpProtocolParams.setVersion(connectionParameters, HttpVersion.HTTP_1_1);
         HttpProtocolParams.setContentCharset(connectionParameters, "utf-8");
-        connectionParameters.setBooleanParameter("http.protocol.expect-continue", false);
 
         SchemeRegistry registry = new SchemeRegistry();
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
@@ -144,11 +151,11 @@ public class ServerWorker
         this.loginCode = loginCode;
     }
     
-    public ArrayList<Post> getPosts(PostSourceType type)
+    public ArrayList<Post> getPostsByType(PostSourceType type)
     {
         synchronized (posts)
         {
-            ArrayList<Post> result = new ArrayList<Post>();
+            final ArrayList<Post> result = new ArrayList<Post>();
             for(Post post : posts)
             {
                 if(post.Type == type)
@@ -163,6 +170,14 @@ public class ServerWorker
         synchronized (posts)
         {
             posts.add(post);
+        }
+    }
+    
+    public void clearPosts()
+    {
+        synchronized (posts)
+        {
+        	posts.clear();
         }
     }
 }

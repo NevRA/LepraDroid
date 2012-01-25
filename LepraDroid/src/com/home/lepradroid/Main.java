@@ -17,23 +17,26 @@ public class Main extends BaseActivity implements LoginListener
 {
     private TabHost tabHost;
     
+	@Override
+	protected void onDestroy() 
+	{
+		Utils.clearData();
+		super.onDestroy();
+	}
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        
         setContentView(R.layout.main);
+        
         createTabs();
         
         if(!SettingsWorker.Instance().IsLogoned())
         {
             Intent intent = new Intent(this, LogonScreen.class);
             startActivity(intent); 
-        }
-        else
-        {
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), "Загружаем посты..."));
         }
     }
     
@@ -47,6 +50,7 @@ public class Main extends BaseActivity implements LoginListener
         TabSpec mystuff = tabHost.newTabSpec("mystuff");
         
         Intent intent = new Intent(this, PostsScreen.class);
+        intent.putExtra("type", PostSourceType.MAIN.toString());
         posts.setIndicator(Utils.getString(R.string.Posts_Tab), null).setContent(
                 intent);
         
@@ -54,7 +58,8 @@ public class Main extends BaseActivity implements LoginListener
         blogs.setIndicator(Utils.getString(R.string.Blogs_Tab), null).setContent(
                 intent);
         
-        intent = new Intent(this, MyStuffScreen.class);
+        intent = new Intent(this, PostsScreen.class);
+        intent.putExtra("type", PostSourceType.MYSTUFF.toString());
         mystuff.setIndicator(Utils.getString(R.string.MyStuff_Tab), null).setContent(
                 intent);
                 

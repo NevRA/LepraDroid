@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.home.lepradroid.interfaces.ProgressListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
+import com.home.lepradroid.tasks.BaseTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 
 import android.app.ActivityGroup;
@@ -33,7 +34,11 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
     {
         for(TaskWrapper task : tasks)
         {
-            task.retainTask();
+            Object rawTask = task.retainTask();
+            if(rawTask instanceof BaseTask)
+            {
+            	((BaseTask)rawTask).finish();
+            }
         }
     }
     

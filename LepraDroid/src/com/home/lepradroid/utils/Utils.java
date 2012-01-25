@@ -2,6 +2,7 @@ package com.home.lepradroid.utils;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
+import com.home.lepradroid.serverworker.ServerWorker;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -55,5 +56,10 @@ public class Utils
             else
                 showError(context, getString(R.string.Unknown_Error));
         }
+    }
+    
+    public static void clearData()
+    {
+    	ServerWorker.Instance().clearPosts();
     }
 }

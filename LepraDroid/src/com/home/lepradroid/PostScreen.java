@@ -21,6 +21,6 @@ public class PostScreen extends BaseActivity
         WebView webView = (WebView) findViewById(R.id.webview);
         
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-        webView.loadData(header + ServerWorker.Instance().getPosts(type).get((int)position).Html, "text/html", "UTF-8");
+        webView.loadData(header + ServerWorker.Instance().getPostsByType(type).get((int)position).Html, "text/html", "UTF-8");
     }
 }

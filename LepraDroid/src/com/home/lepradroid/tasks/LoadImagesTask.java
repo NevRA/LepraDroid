@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons.PostSourceType;
-import com.home.lepradroid.interfaces.MyStuffUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -20,26 +19,14 @@ public class LoadImagesTask extends BaseTask
 {
     private PostSourceType type;
     
-    static final Class<?>[] argsClasses = new Class[0];
+    static final Class<?>[] argsClasses = new Class[1];
     static Method methodOnPostsUpdate;
     static 
     {
         try
         {
+        	argsClasses[0] = PostSourceType.class;
             methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
-        }
-        catch (Throwable t) 
-        {           
-            Logger.e(t);
-        }        
-    }
-    
-    static Method methodOnMyStuffUpdate;
-    static 
-    {
-        try
-        {
-            methodOnMyStuffUpdate = MyStuffUpdateListener.class.getMethod("OnMyStuffUpdate", argsClasses);    
         }
         catch (Throwable t) 
         {           
@@ -55,24 +42,15 @@ public class LoadImagesTask extends BaseTask
     @SuppressWarnings("unchecked")
     public void notifyAboutPostsUpdate()
     {
+    	if(isCancelled()) return;
+    	
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
-        final Object args[] = new Object[0];
+        final Object args[] = new Object[1];
+        args[0] = type;
         
         for(PostsUpdateListener listener : listeners)
         {
             publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdate, args)));
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-    public void notifyAboutMyStuffUpdate()
-    {
-        final List<MyStuffUpdateListener> listeners = ListenersWorker.Instance().getListeners(MyStuffUpdateListener.class);
-        final Object args[] = new Object[0];
-        
-        for(MyStuffUpdateListener listener : listeners)
-        {
-            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnMyStuffUpdate, args)));
         }
     }
 
@@ -82,9 +60,11 @@ public class LoadImagesTask extends BaseTask
         try
         {
             int i = 0;
-            ArrayList<Post> posts = ServerWorker.Instance().getPosts(type);
+            ArrayList<Post> posts = ServerWorker.Instance().getPostsByType(type);
             for (Post post : posts)
             {
+            	if(isCancelled()) break;
+            	
                 if(!TextUtils.isEmpty(post.ImageUrl))
                 {
                     try
@@ -100,13 +80,13 @@ public class LoadImagesTask extends BaseTask
                 
                 if(i%5 == 0)
                 {
-                    notrifyViews();
+                	notifyAboutPostsUpdate();
                 }
                 
                 i++;
             } 
             
-            notrifyViews();
+            notifyAboutPostsUpdate();
         }
         catch (Throwable t)
         {
@@ -114,23 +94,5 @@ public class LoadImagesTask extends BaseTask
         }
 
         return e;
-    }
-
-    private void notrifyViews()
-    {
-        switch (type)
-        {
-        case MAIN:
-            notifyAboutPostsUpdate();
-            break;
-        case BLOGS:
-            break;
-        case MYSTUFF:
-            notifyAboutMyStuffUpdate();
-            break;
-
-        default:
-            break;
-        }
     }
 }

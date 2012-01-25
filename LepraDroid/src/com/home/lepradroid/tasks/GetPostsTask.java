@@ -15,7 +15,6 @@ import android.util.Pair;
 import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.PostSourceType;
-import com.home.lepradroid.interfaces.MyStuffUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -27,13 +26,15 @@ import com.home.lepradroid.utils.Utils;
 public class GetPostsTask extends BaseTask
 {
     private PostSourceType type;
+    private LoadImagesTask loadImagesTask;
     
-    static final Class<?>[] argsClasses = new Class[0];
+    static final Class<?>[] argsClasses = new Class[1];
     static Method methodOnPostsUpdate;
     static 
     {
         try
         {
+        	argsClasses[0] = PostSourceType.class;
             methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
         }
         catch (Throwable t) 
@@ -42,17 +43,11 @@ public class GetPostsTask extends BaseTask
         }        
     }
     
-    static Method methodOnMyStuffUpdate;
-    static 
+    @Override
+	public void finish()
     {
-        try
-        {
-            methodOnMyStuffUpdate = MyStuffUpdateListener.class.getMethod("OnMyStuffUpdate", argsClasses);    
-        }
-        catch (Throwable t) 
-        {           
-            Logger.e(t);
-        }        
+    	if(loadImagesTask != null) loadImagesTask.finish();
+    	super.finish();
     }
     
     public GetPostsTask(PostSourceType type)
@@ -64,23 +59,13 @@ public class GetPostsTask extends BaseTask
     public void notifyAboutPostsUpdate()
     {
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
-        final Object args[] = new Object[0];
+        final Object args[] = new Object[1];
+        args[0] = type;
+        
         
         for(PostsUpdateListener listener : listeners)
         {
             publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdate, args)));
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-    public void notifyAboutMyStuffUpdate()
-    {
-        final List<MyStuffUpdateListener> listeners = ListenersWorker.Instance().getListeners(MyStuffUpdateListener.class);
-        final Object args[] = new Object[0];
-        
-        for(MyStuffUpdateListener listener : listeners)
-        {
-            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnMyStuffUpdate, args)));
         }
     }
 
@@ -122,28 +107,31 @@ public class GetPostsTask extends BaseTask
                 }
                 
                 Element authorParent = element.parent();
-                Elements author = authorParent.getElementsByClass("p");
-                if(!author.isEmpty())
+                if(authorParent != null)
                 {
-                    Elements span = author.first().getElementsByTag("span");
-                    Elements a = span.first().getElementsByTag("a");
-                    if(a.size() == 2)
-                        post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
-                    else
-                        post.Comments = Utils.getString(R.string.No_Comments);
-                    
-                    Elements rating = authorParent.getElementsByTag("em");
+                	Elements rating = authorParent.getElementsByTag("em");
                     post.Rating = Integer.valueOf(rating.first().text());
                     
-                    post.Author = author.first().getElementsByTag("a").first().text();
-                    post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
+                    Elements author = authorParent.getElementsByClass("p");
+                    if(!author.isEmpty())
+                    {
+                        Elements span = author.first().getElementsByTag("span");
+                        Elements a = span.first().getElementsByTag("a");
+                        if(a.size() == 2)
+                            post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
+                        else
+                            post.Comments = Utils.getString(R.string.No_Comments);
+                        
+                        post.Author = author.first().getElementsByTag("a").first().text();
+                        post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
+                    }
                 }
-                
                 
                 ServerWorker.Instance().addNewPost(post);
             }
             
-            new LoadImagesTask(type).execute();
+            loadImagesTask = new LoadImagesTask(type);
+            loadImagesTask.execute();
         }
         catch (Throwable t)
         {
@@ -151,20 +139,7 @@ public class GetPostsTask extends BaseTask
         }
         finally
         {
-            switch (type)
-            {
-            case MAIN:
-                notifyAboutPostsUpdate();
-                break;
-            case BLOGS:
-                break;
-            case MYSTUFF:
-                notifyAboutMyStuffUpdate();
-                break;
-
-            default:
-                break;
-            }
+            notifyAboutPostsUpdate();
         }
         
         return e;
