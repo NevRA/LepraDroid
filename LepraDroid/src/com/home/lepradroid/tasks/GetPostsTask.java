@@ -76,7 +76,7 @@ public class GetPostsTask extends BaseTask
     {
         try
         {
-            ServerWorker.Instance().clearPostsByType(type);
+            ServerWorker.Instance().clearPostsByType(type); // TODO only for beta version without page loading
             
             final String html = ServerWorker.Instance().getContent(type == PostSourceType.MAIN ? Commons.SITE_URL : Commons.MY_STUFF_URL).replace("&#150;", "-").replace("&#151;", "-"); // TODO problem with parsing 
             final Document document = Jsoup.parse(html);

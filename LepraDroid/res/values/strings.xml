@@ -10,6 +10,7 @@
     <string name="Error">Упс, ошибко!</string>
     <string name="Captcha_Loading_In_Progress">Загружается капча...</string>
     <string name="Posts_Loading_In_Progress">Загружаем посты...</string>
+    <string name="Blogs_Loading_In_Progress">Загружаем блоги...</string>
     <string name="Captcha_Not_Found">Не могу найти капчу</string>
     <string name="Login_In_Progress">Логинимся...</string>
     <string name="Login_Failed">Не могу залогониться, пожалуйста, проверьте введенные данные и попробуйте снова</string>
