@@ -8,6 +8,7 @@ import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.tasks.BaseTask;
 import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.utils.Utils;
 
 import android.app.ActivityGroup;
 import android.os.Bundle;
@@ -37,8 +38,8 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
     
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        menu.add(0, MENU_RELOAD, 0, "Reload").setIcon(R.drawable.ic_reload);
-        menu.add(0, MENU_LOGOUT, 1, "Logout").setIcon(R.drawable.ic_logout);
+        menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
+        menu.add(0, MENU_LOGOUT, 1, Utils.getString(R.string.Logout_Menu)).setIcon(R.drawable.ic_logout);
         return true;
     }
     

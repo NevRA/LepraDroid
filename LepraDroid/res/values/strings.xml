@@ -18,5 +18,7 @@
     <string name="Posts_Tab">Посты</string>
     <string name="MyStuff_Tab">Мои вещи</string>
     <string name="No_Comments">новых комментариев нет</string>
+    <string name="Reload_Menu">Обновить</string>
+    <string name="Logout_Menu">Завершить сессию</string>
 
 </resources>
