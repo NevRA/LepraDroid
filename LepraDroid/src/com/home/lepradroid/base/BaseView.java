@@ -1,16 +1,17 @@
 package com.home.lepradroid.base;
 
-import com.home.lepradroid.interfaces.UpdateListener;
-
 import android.content.Context;
-import android.view.View;
+import android.util.AttributeSet;
+import android.widget.LinearLayout;
 
-public abstract class BaseView extends View implements UpdateListener
+import com.home.lepradroid.interfaces.UpdateListener;
+import com.home.lepradroid.listenersworker.ListenersWorker;
+
+public class BaseView extends LinearLayout implements UpdateListener
 {
-    public BaseView(Context context)
+    public BaseView(Context context, AttributeSet attrs)
     {
-        super(context);
+        super(context, attrs);
+        ListenersWorker.Instance().registerListener(this);
     }
-    
-    public abstract void attachView();
 }

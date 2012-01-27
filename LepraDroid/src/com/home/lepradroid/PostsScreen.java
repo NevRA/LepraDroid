@@ -1,71 +1,47 @@
 package com.home.lepradroid;
 
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.home.lepradroid.base.BaseActivity;
+import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.serverworker.ServerWorker;
-import com.home.lepradroid.settings.SettingsWorker;
-import com.home.lepradroid.tasks.GetPostsTask;
-import com.home.lepradroid.tasks.TaskWrapper;
-import com.home.lepradroid.utils.Utils;
 
-public class PostsScreen extends BaseActivity implements PostsUpdateListener
+public class PostsScreen extends BaseView implements PostsUpdateListener
 {
-
     private ListView list;
-    private PostsAdapter adapter;
+    public PostsAdapter adapter;
     private PostSourceType type;
+    private Context context;
     
-    @Override
-    public void onCreate(Bundle savedInstanceState)
+    public PostsScreen(Context context, AttributeSet attrs)
     {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.posts_view);
-        
-        type = PostSourceType.valueOf(getIntent().getExtras().getString("type"));
-        
-        init();
-        
-        if(SettingsWorker.Instance().IsLogoned())
-        {
-        	pushNewTask(new TaskWrapper(this, new GetPostsTask(type), Utils.getString(R.string.Posts_Loading_In_Progress)));
-        }
+        super(context, attrs);
     }
 
-    public boolean onOptionsItemSelected(MenuItem item)
+    public void init(final PostSourceType type, final Context context)
     {
-        super.onOptionsItemSelected(item);
+        this.type = type;
+        this.context = context;
         
-        switch (item.getItemId())
-        {
-        case MENU_RELOAD:
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(type), Utils.getString(R.string.Posts_Loading_In_Progress)));
-            return true;
-        }
-        return false;
-    }
-
-    private void init()
-    {
-        list = (ListView) findViewById(R.id.posts_list);
+        list = (ListView) findViewById(R.id.list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
 
             public void onItemClick(AdapterView<?> arg, View arg1, int arg2,
                     long position)
             {
-                Intent intent = new Intent(PostsScreen.this, PostScreen.class);
+                Intent intent = new Intent(LepraDroidApplication.getInstance(), PostScreen.class);
                 intent.putExtra("position", position);
                 intent.putExtra("type", type.toString());
-                startActivity(intent); 
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                LepraDroidApplication.getInstance().startActivity(intent); 
             }
         });
     }
@@ -76,7 +52,7 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
     	
         if(adapter == null || haveNewRecords)
         {
-            adapter = new PostsAdapter(this, R.layout.post_row_view, ServerWorker.Instance().getPostsByType(type));
+            adapter = new PostsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsByType(type));
 
             list.setAdapter(adapter);
         }
@@ -84,5 +60,11 @@ public class PostsScreen extends BaseActivity implements PostsUpdateListener
         {
             adapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4)
+    {
+        
     }
 }
