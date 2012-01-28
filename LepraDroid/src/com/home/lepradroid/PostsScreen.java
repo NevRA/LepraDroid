@@ -3,10 +3,11 @@ package com.home.lepradroid;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons.PostSourceType;
@@ -16,21 +17,32 @@ import com.home.lepradroid.serverworker.ServerWorker;
 public class PostsScreen extends BaseView implements PostsUpdateListener
 {
     private ListView list;
+    private ProgressBar progress;
     public PostsAdapter adapter;
     private PostSourceType type;
     private Context context;
     
-    public PostsScreen(Context context, AttributeSet attrs)
+    public PostsScreen(final Context context, final PostSourceType type)
     {
-        super(context, attrs);
+        super(context);
+        
+        this.context = context;
+        this.type = type;
+        
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (inflater != null)
+        {
+            contentView = inflater.inflate(R.layout.posts_view, null);
+        }
+        
+        init();
     }
 
-    public void init(final PostSourceType type, final Context context)
-    {
-        this.type = type;
-        this.context = context;
-        
-        list = (ListView) findViewById(R.id.list);
+    public void init()
+    {      
+        list = (ListView) contentView.findViewById(R.id.list);
+        progress = (ProgressBar) contentView.findViewById(R.id.progress);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
 
@@ -52,6 +64,10 @@ public class PostsScreen extends BaseView implements PostsUpdateListener
     	
         if(adapter == null || haveNewRecords)
         {
+            progress.setVisibility(View.GONE);
+            progress.setIndeterminate(false);
+            list.setVisibility(View.VISIBLE);
+            
             adapter = new PostsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsByType(type));
 
             list.setAdapter(adapter);
@@ -65,6 +81,13 @@ public class PostsScreen extends BaseView implements PostsUpdateListener
     @Override
     protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4)
     {
+        
+    }
+
+    @Override
+    public void OnPostsUpdateBegin()
+    {
+        // TODO Auto-generated method stub
         
     }
 }

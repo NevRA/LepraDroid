@@ -1,17 +1,26 @@
 package com.home.lepradroid.base;
 
 import android.content.Context;
-import android.util.AttributeSet;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 
-public class BaseView extends LinearLayout implements UpdateListener
+public class BaseView extends ViewGroup implements UpdateListener
 {
-    public BaseView(Context context, AttributeSet attrs)
+    public View contentView;
+    
+    public BaseView(Context context)
     {
-        super(context, attrs);
+        super(context);
         ListenersWorker.Instance().registerListener(this);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b)
+    {
+        // TODO Auto-generated method stub
+        
     }
 }

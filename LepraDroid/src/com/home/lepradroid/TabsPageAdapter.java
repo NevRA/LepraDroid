@@ -7,7 +7,6 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.ListView;
 
 import com.home.lepradroid.base.BaseView;
 import com.viewpagerindicator.TitleProvider;
@@ -24,20 +23,10 @@ public class TabsPageAdapter extends PagerAdapter implements TitleProvider
     @Override
     public Object instantiateItem(View pCollection, int pPosition)
     {
-        View res = null;
-        for(int pos = 0; pos < pages.size(); ++pos)
-        {
-            
-            ListView view = (ListView)pages.get(pos).findViewById(R.id.list);
-            
-            if(pos == pPosition)
-                res = view;
-            
-            ((ViewPager) pCollection).removeView(view);
-            ((ViewPager) pCollection).addView(view, 0);
-        }
+        View view = pages.get(pPosition).contentView;
+        ((ViewPager) pCollection).addView(view, 0);
         
-        return res;
+        return view;
     }
 
     @Override

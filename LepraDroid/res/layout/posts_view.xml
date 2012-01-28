@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<view xmlns:android="http://schemas.android.com/apk/res/android"
-    class="com.home.lepradroid.PostsScreen" 
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:orientation="vertical" >
+    
+    <ProgressBar
+        android:id="@+id/progress"
+        android:visibility="visible"
+    	android:layout_width="wrap_content" 
+    	android:layout_height="wrap_content" 
+    	android:indeterminate="true" 
+    	android:layout_centerInParent="true"/>	
 
     <ListView
         android:id="@+id/list"
+        android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fastScrollEnabled="true" >
     </ListView>
-
-</view>
+    
+</RelativeLayout>

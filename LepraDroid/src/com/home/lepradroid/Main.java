@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.TabHost;
 
@@ -16,6 +15,7 @@ import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.GetAllMainPagesTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
@@ -29,6 +29,12 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private PostsScreen myStuffPosts;
     private TabPageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
+    private ViewPager pager;
+    
+    public static final int MAIN_TAB_NUM = 0;
+    public static final int BLOGS_TAB_NUM = 1;
+    public static final int MYSTUFF_TAB_NUM = 2;
+    
     private ArrayList<BaseView> pages = new ArrayList<BaseView>();
     
 	@Override
@@ -51,7 +57,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             showLogonScreen();
         else
         {
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            pushNewTask(new TaskWrapper(null, new GetAllMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
     
@@ -72,7 +78,18 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         switch (item.getItemId())
         {
         case MENU_RELOAD:
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            switch(pager.getCurrentItem())
+            {
+            case MAIN_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                break;
+            case BLOGS_TAB_NUM:
+                break;
+            case MYSTUFF_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MYSTUFF), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                break;
+            }
+            
             return true;
         }
         return false;
@@ -80,18 +97,13 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     
     private void createTabs()
     {
-        LayoutInflater inflater = LayoutInflater.from(this);
-
-        mainPosts = (PostsScreen)inflater.inflate(R.layout.posts_view, null);
-        mainPosts.init(PostSourceType.MAIN, this.getBaseContext());
+        mainPosts = new PostsScreen(this, PostSourceType.MAIN);
         mainPosts.setTag(Utils.getString(R.string.Posts_Tab));
         
-        blogsPosts = (PostsScreen)inflater.inflate(R.layout.posts_view, null);
-        blogsPosts.init(PostSourceType.BLOGS, this);
+        blogsPosts = new PostsScreen(this, PostSourceType.BLOGS);
         blogsPosts.setTag(Utils.getString(R.string.Blogs_Tab));
         
-        myStuffPosts = (PostsScreen)inflater.inflate(R.layout.posts_view, null);
-        myStuffPosts.init(PostSourceType.MYSTUFF, this);
+        myStuffPosts = new PostsScreen(this, PostSourceType.MYSTUFF);
         myStuffPosts.setTag(Utils.getString(R.string.MyStuff_Tab));
         
         pages.add(mainPosts);
@@ -99,12 +111,12 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         pages.add(myStuffPosts);
         
         tabsAdapter = new TabsPageAdapter(this, pages);
-        ViewPager mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setAdapter(tabsAdapter);
-        mPager.setCurrentItem(0);
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(tabsAdapter);
+        pager.setCurrentItem(0);
 
         titleIndicator = (TabPageIndicator) findViewById(R.id.indicator);
-        titleIndicator.setViewPager(mPager);
+        titleIndicator.setViewPager(pager);
         titleIndicator.setCurrentItem(0);
     }
 
@@ -112,7 +124,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     {
         if(successful)
         {
-            pushNewTask(new TaskWrapper(this, new GetPostsTask(PostSourceType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            pushNewTask(new TaskWrapper(null, new GetAllMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
     
