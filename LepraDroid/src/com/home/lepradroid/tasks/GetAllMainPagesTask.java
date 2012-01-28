@@ -21,13 +21,14 @@ public class GetAllMainPagesTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
-        tasks.add((BaseTask) new GetPostsTask(PostSourceType.MAIN, true).execute());
-        tasks.add((BaseTask) new GetPostsTask(PostSourceType.MYSTUFF, true).execute());
+        tasks.add((BaseTask) new GetPostsTask(PostSourceType.MAIN, true));
+        tasks.add((BaseTask) new GetPostsTask(PostSourceType.MYSTUFF, true));
         for (BaseTask asyncTask : tasks)
         {
             try
             {
-                Throwable t = asyncTask.get();
+                asyncTask.execute();
+                final Throwable t = asyncTask.get();
                 if(t != null)
                     setException(t);
             }

@@ -196,11 +196,13 @@ public class ServerWorker
             {
                 mainPosts.clear();
             }
+            break;
         case MYSTUFF:
             synchronized (myStuffPosts)
             {
                 myStuffPosts.clear();
             }
+            break;
         default:
             break;
         }
