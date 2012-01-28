@@ -32,13 +32,14 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+
 import com.home.lepradroid.commons.Commons.PostSourceType;
+import com.home.lepradroid.objects.Blog;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
-
-import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 
 public class ServerWorker
 {
@@ -50,6 +51,7 @@ public class ServerWorker
     private HttpClient client;
     private ArrayList<Post> mainPosts = new ArrayList<Post>();
     private ArrayList<Post> myStuffPosts = new ArrayList<Post>();
+    private ArrayList<Blog> blogs = new ArrayList<Blog>();
     
     private ServerWorker() 
     {
@@ -81,7 +83,6 @@ public class ServerWorker
         connectionParameters.setBooleanParameter(HttpConnectionParams.STALE_CONNECTION_CHECK,
                 false);
         HttpProtocolParams.setVersion(connectionParameters, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(connectionParameters, "utf-8");
 
         SchemeRegistry registry = new SchemeRegistry();
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
@@ -115,8 +116,7 @@ public class ServerWorker
         }
         
         final HttpResponse response = client.execute(httpGet, localContext);
-        
-        return EntityUtils.toString(response.getEntity());
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
     
     public Header[] login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
@@ -184,7 +184,30 @@ public class ServerWorker
         {
             posts.add(post);
         }
-
+    }
+    
+    public ArrayList<Blog> getBlogs()
+    {
+        synchronized (blogs)
+        {
+            return blogs;
+        }
+    }
+    
+    public void addNewBlog(Blog blog)
+    {
+        synchronized (blogs)
+        {
+            blogs.add(blog);
+        }
+    }
+    
+    public void clearBlogs()
+    {
+        synchronized (blogs)
+        {
+            blogs.clear();
+        }
     }
     
     public void clearPostsByType(PostSourceType type)

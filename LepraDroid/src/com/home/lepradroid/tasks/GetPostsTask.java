@@ -153,11 +153,6 @@ public class GetPostsTask extends BaseTask
                     }
                 }
                 
-                // TODO fix me
-                post.Html = Utils.wrapSomeHtmlSymbols(post.Html);
-                post.Text = Utils.wrapSomeHtmlSymbols(post.Text);
-                post.Signature = Utils.wrapSomeHtmlSymbols(post.Signature);
-                
                 ServerWorker.Instance().addNewPost(post);
             }
             
@@ -175,7 +170,7 @@ public class GetPostsTask extends BaseTask
         {
             notifyAboutPostsUpdate();
             
-            Logger.d("Task time:" + Long.toString(System.nanoTime() - startTime));
+            Logger.d("GetPostsTask time:" + Long.toString(System.nanoTime() - startTime));
         }
         
         return e;

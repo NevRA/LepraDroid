@@ -22,6 +22,7 @@ public class GetAllMainPagesTask extends BaseTask
     protected Throwable doInBackground(Void... arg0)
     {
         tasks.add((BaseTask) new GetPostsTask(PostSourceType.MAIN, true));
+        tasks.add((BaseTask) new GetBlogsTask(true));
         tasks.add((BaseTask) new GetPostsTask(PostSourceType.MYSTUFF, true));
         for (BaseTask asyncTask : tasks)
         {

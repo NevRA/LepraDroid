@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip"
+    android:minHeight="60dip" >
+    
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" >
+	    <ImageView
+	        android:id="@+id/image"
+	        android:layout_width="60dip"
+	        android:layout_height="60dip"
+	        android:adjustViewBounds="true"
+	        android:paddingRight="5dip"
+	        android:visibility="gone"
+	        android:layout_centerVertical="true"
+	        android:src="@drawable/ic_launcher" />
+	    
+	    <TextView
+	        android:id="@+id/text"
+	        android:textSize="12sp"
+	        android:layout_toRightOf="@+id/image"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:textStyle="bold"
+	        android:layout_centerVertical="true"
+	        android:ellipsize="end"
+	        android:maxLines="4"/>
+    </RelativeLayout>
+    
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_below="@+id/main"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" 
+	    android:layout_alignParentBottom="true">
+	    <TextView
+	        android:id="@+id/author"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:paddingTop="5dip"
+	        android:textSize="9sp"
+	        android:ellipsize="end"
+	        android:textColor="@android:color/secondary_text_light"
+	        android:maxLines="2"/>
+	    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	        android:layout_below="@+id/author"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent" 
+		    android:layout_alignParentBottom="true">
+		    <TextView
+		        android:id="@+id/stat"
+		        android:paddingTop="2dip"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:gravity="center_horizontal|center_vertical"
+		        android:textSize="8sp"
+		        android:textColor="@android:color/secondary_text_light"/>
+		 </RelativeLayout>
+	</RelativeLayout>
+</RelativeLayout>

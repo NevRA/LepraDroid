@@ -25,7 +25,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
 {
     private TabHost tabHost;
     private PostsScreen mainPosts;
-    private PostsScreen blogsPosts;
+    private BlogsScreen blogsPosts;
     private PostsScreen myStuffPosts;
     private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
@@ -100,7 +100,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         mainPosts = new PostsScreen(this, PostSourceType.MAIN);
         mainPosts.setTag(Utils.getString(R.string.Posts_Tab));
         
-        blogsPosts = new PostsScreen(this, PostSourceType.BLOGS);
+        blogsPosts = new BlogsScreen(this);
         blogsPosts.setTag(Utils.getString(R.string.Blogs_Tab));
         
         myStuffPosts = new PostsScreen(this, PostSourceType.MYSTUFF);
