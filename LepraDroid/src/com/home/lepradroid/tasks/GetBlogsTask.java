@@ -98,9 +98,19 @@ public class GetBlogsTask extends BaseTask
                 Element element = (Element) iterator.next();
                 Blog blog = new Blog();
                 
-                Elements images = element.getElementsByTag("img");
-                if(!images.isEmpty())
-                    blog.ImageUrl = images.first().attr("src");
+                Elements logos = element.getElementsByClass("jj_logo");
+                if(!logos.isEmpty())
+                {
+                    Element logo = logos.first();
+                    
+                    Elements url = logo.getElementsByTag("a");
+                    if(!url.isEmpty())
+                        blog.Url = url.attr("href");
+                    
+                    Elements images = logo.getElementsByTag("img");
+                    if(!images.isEmpty())
+                        blog.ImageUrl = images.first().attr("src");
+                }
 
                 Elements title = element.getElementsByTag("h5");
                 if(!title.isEmpty())

@@ -6,7 +6,8 @@ import android.graphics.drawable.Drawable;
 
 public class BaseItem
 {
-    public UUID id = UUID.randomUUID();
+    public UUID Id = UUID.randomUUID();
+    public String Url = "";
     public String Text = "";
     public String ImageUrl = "";
     public Drawable dw;

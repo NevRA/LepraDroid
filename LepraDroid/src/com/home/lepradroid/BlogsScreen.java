@@ -3,6 +3,7 @@ package com.home.lepradroid;
 import java.util.UUID;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,6 +14,8 @@ import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.BlogsUpdateListener;
 import com.home.lepradroid.interfaces.ImagesUpdateListener;
+import com.home.lepradroid.listenersworker.ListenersWorker;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 
 public class BlogsScreen extends BaseView implements BlogsUpdateListener, ImagesUpdateListener
@@ -44,11 +47,19 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
-
             public void onItemClick(AdapterView<?> arg, View arg1, int arg2,
                     long position)
             {
-                
+                Object obj = list.getItemAtPosition((int)position);
+                if(obj != null && obj instanceof BaseItem)
+                {
+                    BaseItem item = (BaseItem)obj;
+                    Intent intent = new Intent(LepraDroidApplication.getInstance(), BlogScreen.class);
+                    intent.putExtra("groupId", Commons.BLOGS_POSTS_ID.toString());
+                    intent.putExtra("id", item.Id.toString());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    LepraDroidApplication.getInstance().startActivity(intent); 
+                }
             }
         });
     }
@@ -94,5 +105,11 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
         if(Commons.BLOGS_POSTS_ID != groupId) return;
         if(adapter != null)
             adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void OnExit()
+    {
+        ListenersWorker.Instance().unregisterListener(this);
     } 
 }

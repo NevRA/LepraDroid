@@ -166,7 +166,7 @@ public class ServerWorker
             ArrayList<BaseItem> items = posts.get(groupId);
             for(BaseItem item : items)
             {
-                if(item.id.equals(id))
+                if(item.Id.equals(id))
                     return item;
             }
         }
