@@ -11,7 +11,6 @@ import android.widget.TabHost;
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.settings.SettingsWorker;
@@ -81,12 +80,12 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             switch(pager.getCurrentItem())
             {
             case MAIN_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MAIN, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case BLOGS_TAB_NUM:
                 break;
             case MYSTUFF_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MYSTUFF, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             }
             
@@ -97,13 +96,13 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     
     private void createTabs()
     {
-        mainPosts = new PostsScreen(this, PostSourceType.MAIN);
+        mainPosts = new PostsScreen(this, Commons.MAIN_POSTS_ID);
         mainPosts.setTag(Utils.getString(R.string.Posts_Tab));
         
         blogsPosts = new BlogsScreen(this);
         blogsPosts.setTag(Utils.getString(R.string.Blogs_Tab));
         
-        myStuffPosts = new PostsScreen(this, PostSourceType.MYSTUFF);
+        myStuffPosts = new PostsScreen(this, Commons.MYSTUFF_POSTS_ID);
         myStuffPosts.setTag(Utils.getString(R.string.MyStuff_Tab));
         
         pages.add(mainPosts);

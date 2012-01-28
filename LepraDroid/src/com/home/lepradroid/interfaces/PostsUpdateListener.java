@@ -1,9 +1,9 @@
 package com.home.lepradroid.interfaces;
 
-import com.home.lepradroid.commons.Commons.PostSourceType;
+import java.util.UUID;
 
 public interface PostsUpdateListener extends UpdateListener
 {
-    void OnPostsUpdateBegin(PostSourceType type); 
-    void OnPostsUpdate(PostSourceType type, boolean haveNewRecords); 
+    void OnPostsUpdateBegin(UUID id); 
+    void OnPostsUpdate(UUID id, boolean haveNewRecords); 
 }

@@ -1,6 +1,8 @@
 package com.home.lepradroid;
 
 
+import java.util.UUID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -10,24 +12,25 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.home.lepradroid.base.BaseView;
-import com.home.lepradroid.commons.Commons.PostSourceType;
+import com.home.lepradroid.interfaces.ImagesUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 
-public class PostsScreen extends BaseView implements PostsUpdateListener
+public class PostsScreen extends BaseView implements PostsUpdateListener, ImagesUpdateListener
 {
     private ListView list;
     private ProgressBar progress;
     public PostsAdapter adapter;
-    private PostSourceType type;
+    private UUID groupId;
     private Context context;
     
-    public PostsScreen(final Context context, final PostSourceType type)
+    public PostsScreen(final Context context, final UUID groupId)
     {
         super(context);
         
         this.context = context;
-        this.type = type;
+        this.groupId = groupId;
         
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -49,18 +52,23 @@ public class PostsScreen extends BaseView implements PostsUpdateListener
             public void onItemClick(AdapterView<?> arg, View arg1, int arg2,
                     long position)
             {
-                Intent intent = new Intent(LepraDroidApplication.getInstance(), PostScreen.class);
-                intent.putExtra("position", position);
-                intent.putExtra("type", type.toString());
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                LepraDroidApplication.getInstance().startActivity(intent); 
+                Object obj = list.getItemAtPosition((int)position);
+                if(obj != null && obj instanceof BaseItem)
+                {
+                    BaseItem item = (BaseItem)obj;
+                    Intent intent = new Intent(LepraDroidApplication.getInstance(), PostScreen.class);
+                    intent.putExtra("groupId", groupId.toString());
+                    intent.putExtra("id", item.id.toString());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    LepraDroidApplication.getInstance().startActivity(intent); 
+                }
             }
         });
     }
 
-    public void OnPostsUpdate(PostSourceType type, boolean haveNewRecords)
+    public void OnPostsUpdate(UUID groupId, boolean haveNewRecords)
     {
-    	if(this.type != type) return;
+    	if(this.groupId != groupId) return;
     	
         if(adapter == null || haveNewRecords)
         {
@@ -68,7 +76,7 @@ public class PostsScreen extends BaseView implements PostsUpdateListener
             progress.setIndeterminate(false);
             list.setVisibility(View.VISIBLE);
             
-            adapter = new PostsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsByType(type));
+            adapter = new PostsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsById(groupId));
 
             list.setAdapter(adapter);
         }
@@ -79,20 +87,28 @@ public class PostsScreen extends BaseView implements PostsUpdateListener
     }
     
     @Override
-    public void OnPostsUpdateBegin(PostSourceType type)
+    public void OnPostsUpdateBegin(UUID groupId)
     {
-        if(this.type != type) return;
+        if(this.groupId != groupId) return;
         
         progress.setVisibility(View.VISIBLE);
         progress.setIndeterminate(true);
         list.setVisibility(View.GONE);
         
-        ServerWorker.Instance().clearPostsByType(type);
+        ServerWorker.Instance().clearPostsById(groupId);
     }
 
     @Override
     protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4)
     {
         
+    }
+
+    @Override
+    public void OnImagesUpdate(UUID groupId)
+    {
+        if(this.groupId != groupId) return;
+        if(adapter != null)
+            adapter.notifyDataSetChanged();
     }    
 }

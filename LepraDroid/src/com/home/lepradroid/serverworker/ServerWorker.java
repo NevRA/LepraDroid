@@ -3,6 +3,9 @@ package com.home.lepradroid.serverworker;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -35,9 +38,7 @@ import org.apache.http.util.EntityUtils;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 
-import com.home.lepradroid.commons.Commons.PostSourceType;
-import com.home.lepradroid.objects.Blog;
-import com.home.lepradroid.objects.Post;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 
@@ -49,9 +50,7 @@ public class ServerWorker
     private HttpParams connectionParameters;
     private CookieStore cookieStore;
     private HttpClient client;
-    private ArrayList<Post> mainPosts = new ArrayList<Post>();
-    private ArrayList<Post> myStuffPosts = new ArrayList<Post>();
-    private ArrayList<Blog> blogs = new ArrayList<Blog>();
+    private Map<UUID, ArrayList<BaseItem>> posts = new HashMap<UUID, ArrayList<BaseItem>>();
     
     private ServerWorker() 
     {
@@ -160,87 +159,58 @@ public class ServerWorker
         this.loginCode = loginCode;
     }
     
-    public ArrayList<Post> getPostsByType(PostSourceType type)
+    public BaseItem getPostById(UUID groupId, UUID id)
     {
-        switch (type)
-        {
-        case MAIN:
-            return mainPosts;
-        case MYSTUFF:
-            return myStuffPosts;
-        default:
-            break;
-        }
-        
-        return new ArrayList<Post>(0);
-    }
-    
-    
-    public void addNewPost(Post post)
-    {
-        final ArrayList<Post> posts = getPostsByType(post.Type);
-
         synchronized (posts)
         {
-            posts.add(post);
-        }
-    }
-    
-    public ArrayList<Blog> getBlogs()
-    {
-        synchronized (blogs)
-        {
-            return blogs;
-        }
-    }
-    
-    public void addNewBlog(Blog blog)
-    {
-        synchronized (blogs)
-        {
-            blogs.add(blog);
-        }
-    }
-    
-    public void clearBlogs()
-    {
-        synchronized (blogs)
-        {
-            blogs.clear();
-        }
-    }
-    
-    public void clearPostsByType(PostSourceType type)
-    {
-        switch (type)
-        {
-        case MAIN:
-            synchronized (mainPosts)
+            ArrayList<BaseItem> items = posts.get(groupId);
+            for(BaseItem item : items)
             {
-                mainPosts.clear();
+                if(item.id.equals(id))
+                    return item;
             }
-            break;
-        case MYSTUFF:
-            synchronized (myStuffPosts)
+        }
+        
+        return null;
+    }
+    
+    public ArrayList<BaseItem> getPostsById(UUID groupId)
+    {
+        synchronized (posts)
+        {
+            ArrayList<BaseItem> items = posts.get(groupId);
+            if(items == null)
             {
-                myStuffPosts.clear();
+                items = new ArrayList<BaseItem>(0);
+                posts.put(groupId, items);
             }
-            break;
-        default:
-            break;
+            
+            return items;
+        }
+    }
+    
+    
+    public void addNewPost(UUID groupId, BaseItem post)
+    {
+        synchronized (posts)
+        {
+            getPostsById(groupId).add(post);
+        }
+    }
+    
+    public void clearPostsById(UUID groupId)
+    {
+        synchronized (posts)
+        {
+            getPostsById(groupId).clear();
         }
     }
     
     public void clearPosts()
     {
-        synchronized (mainPosts)
+        synchronized (posts)
         {
-            mainPosts.clear();
-        }
-        
-        synchronized (myStuffPosts)
-        {
-            myStuffPosts.clear();
+            posts.clear();
         }
     }
 }

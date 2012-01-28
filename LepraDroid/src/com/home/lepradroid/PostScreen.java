@@ -1,10 +1,13 @@
 package com.home.lepradroid;
 
+import java.util.UUID;
+
 import android.os.Bundle;
 import android.webkit.WebView;
 
 import com.home.lepradroid.base.BaseActivity;
-import com.home.lepradroid.commons.Commons.PostSourceType;
+import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 
 public class PostScreen extends BaseActivity
@@ -15,12 +18,16 @@ public class PostScreen extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_view);
         
-        long position = getIntent().getExtras().getLong("position", 0);
-        PostSourceType type = PostSourceType.valueOf(getIntent().getExtras().getString("type"));
+        UUID groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
+        UUID id = UUID.fromString(getIntent().getExtras().getString("id"));
+        
+        BaseItem item = ServerWorker.Instance().getPostById(groupId, id);
+        if(item == null)
+            finish();
         
         WebView webView = (WebView) findViewById(R.id.webview);
         
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-        webView.loadData(header + ServerWorker.Instance().getPostsByType(type).get((int)position).Html, "text/html", "UTF-8");
+        webView.loadData(header + ((Post)item).Html, "text/html", "UTF-8");
     }
 }

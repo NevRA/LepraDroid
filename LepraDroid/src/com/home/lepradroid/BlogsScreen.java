@@ -1,7 +1,8 @@
 package com.home.lepradroid;
 
+import java.util.UUID;
+
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,11 +10,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.home.lepradroid.base.BaseView;
-import com.home.lepradroid.commons.Commons.PostSourceType;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.BlogsUpdateListener;
+import com.home.lepradroid.interfaces.ImagesUpdateListener;
 import com.home.lepradroid.serverworker.ServerWorker;
 
-public class BlogsScreen extends BaseView implements BlogsUpdateListener
+public class BlogsScreen extends BaseView implements BlogsUpdateListener, ImagesUpdateListener
 {
     private ListView list;
     private ProgressBar progress;
@@ -46,12 +48,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener
             public void onItemClick(AdapterView<?> arg, View arg1, int arg2,
                     long position)
             {
-                Intent intent = new Intent(LepraDroidApplication.getInstance(),
-                        PostScreen.class);
-                intent.putExtra("position", position);
-                intent.putExtra("type", PostSourceType.BLOGS);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                LepraDroidApplication.getInstance().startActivity(intent);
+                
             }
         });
     }
@@ -69,7 +66,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener
         progress.setIndeterminate(true);
         list.setVisibility(View.GONE);
         
-        ServerWorker.Instance().clearBlogs();
+        ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
     }
     
     @Override
@@ -81,7 +78,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener
             progress.setIndeterminate(false);
             list.setVisibility(View.VISIBLE);
             
-            adapter = new BlogsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getBlogs());
+            adapter = new BlogsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsById(Commons.BLOGS_POSTS_ID));
     
             list.setAdapter(adapter);
         }
@@ -90,4 +87,12 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener
             adapter.notifyDataSetChanged();
         }
     }
+    
+    @Override
+    public void OnImagesUpdate(UUID groupId)
+    {
+        if(Commons.BLOGS_POSTS_ID != groupId) return;
+        if(adapter != null)
+            adapter.notifyDataSetChanged();
+    } 
 }

@@ -3,6 +3,7 @@ package com.home.lepradroid.tasks;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,8 +14,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.R;
-import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.commons.Commons.PostSourceType;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -25,7 +24,8 @@ import com.home.lepradroid.utils.Utils;
 
 public class GetPostsTask extends BaseTask
 {
-    private PostSourceType type;
+    private UUID groupId;
+    private String url;
     private LoadImagesTask loadImagesTask;
     private boolean includeImages;
     
@@ -37,11 +37,11 @@ public class GetPostsTask extends BaseTask
     {
         try
         {
-        	argsClassesOnPostsUpdate[0] = PostSourceType.class;
+        	argsClassesOnPostsUpdate[0] = UUID.class;
         	argsClassesOnPostsUpdate[1] = boolean.class;
             methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClassesOnPostsUpdate); 
             
-            argsClassesOnPostsUpdateBegin[0] = PostSourceType.class;
+            argsClassesOnPostsUpdateBegin[0] = UUID.class;
             methodOnPostsUpdateBegin = PostsUpdateListener.class.getMethod("OnPostsUpdateBegin", argsClassesOnPostsUpdateBegin); 
         }
         catch (Throwable t) 
@@ -57,9 +57,10 @@ public class GetPostsTask extends BaseTask
     	super.finish();
     }
     
-    public GetPostsTask(PostSourceType type, boolean includeImages)
+    public GetPostsTask(UUID groupId, String url, boolean includeImages)
     {       
-        this.type = type;
+        this.groupId = groupId;
+        this.url = url;
         this.includeImages = includeImages;
     }
     
@@ -68,7 +69,7 @@ public class GetPostsTask extends BaseTask
     {
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
         final Object args[] = new Object[1];
-        args[0] = type;
+        args[0] = groupId;
         
         for(PostsUpdateListener listener : listeners)
         {
@@ -81,7 +82,7 @@ public class GetPostsTask extends BaseTask
     {
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
         final Object args[] = new Object[2];
-        args[0] = type;
+        args[0] = groupId;
         args[1] = true; // TODO add new 'load new posts'
         
         
@@ -100,7 +101,7 @@ public class GetPostsTask extends BaseTask
         {
             notifyAboutPostsUpdateBegin();
             
-            final String html = ServerWorker.Instance().getContent(type == PostSourceType.MAIN ? Commons.SITE_URL : Commons.MY_STUFF_URL); 
+            final String html = ServerWorker.Instance().getContent(url); 
             final Document document = Jsoup.parse(html);
             final Element content = document.getElementById("content");
             final Elements posts = content.getElementsByClass("dt");
@@ -109,7 +110,7 @@ public class GetPostsTask extends BaseTask
             {
                 Element element = (Element) iterator.next();
                 String text = element.text();
-                Post post = new Post(type);
+                Post post = new Post();
                 post.Text = TextUtils.isEmpty(text) ? "..." : text;
                 post.Html = element.html();
                 
@@ -153,12 +154,12 @@ public class GetPostsTask extends BaseTask
                     }
                 }
                 
-                ServerWorker.Instance().addNewPost(post);
+                ServerWorker.Instance().addNewPost(groupId, post);
             }
             
             if(includeImages)
             {
-                loadImagesTask = new LoadImagesTask(type);
+                loadImagesTask = new LoadImagesTask(groupId);
                 loadImagesTask.execute();
             }
         }

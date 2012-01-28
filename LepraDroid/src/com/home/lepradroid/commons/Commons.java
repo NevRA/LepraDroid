@@ -1,5 +1,7 @@
 package com.home.lepradroid.commons;
 
+import java.util.UUID;
+
 public class Commons
 {
     public static final String SITE_URL = "http://leprosorium.ru/";
@@ -14,8 +16,7 @@ public class Commons
     public static final int EXIT_FROM_LOGON_SCREEN_RESULTCODE = 0;
     public static final int EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE = 1;
     
-    public enum PostSourceType
-    {
-        MAIN, BLOGS, MYSTUFF
-    }
+    public static final UUID MAIN_POSTS_ID = UUID.randomUUID();
+    public static final UUID MYSTUFF_POSTS_ID = UUID.randomUUID();
+    public static final UUID BLOGS_POSTS_ID = UUID.randomUUID();
 }

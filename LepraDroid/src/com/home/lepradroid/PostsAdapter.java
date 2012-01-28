@@ -2,6 +2,7 @@ package com.home.lepradroid;
 
 import java.util.ArrayList;
 
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 
 import android.content.Context;
@@ -14,12 +15,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-class PostsAdapter extends ArrayAdapter<Post>
+class PostsAdapter extends ArrayAdapter<BaseItem>
 {
-    private ArrayList<Post> posts = new ArrayList<Post>();
+    private ArrayList<BaseItem> posts = new ArrayList<BaseItem>();
             
     public PostsAdapter(Context context, int textViewResourceId,
-            ArrayList<Post> posts)
+            ArrayList<BaseItem> posts)
     {
         super(context, textViewResourceId, posts);
         this.posts = posts;
@@ -30,7 +31,7 @@ class PostsAdapter extends ArrayAdapter<Post>
         return posts.size();
     }
     
-    public Post getItem(int position) 
+    public BaseItem getItem(int position) 
     {
         return posts.get(position);
     }
@@ -49,7 +50,7 @@ class PostsAdapter extends ArrayAdapter<Post>
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
-        final Post post = getItem(position);
+        final Post post = (Post)getItem(position);
         
         LayoutInflater aInflater=LayoutInflater.from(getContext());
 

@@ -3,31 +3,30 @@ package com.home.lepradroid.tasks;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.home.lepradroid.commons.Commons.PostSourceType;
-import com.home.lepradroid.interfaces.PostsUpdateListener;
+import com.home.lepradroid.interfaces.ImagesUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
-import com.home.lepradroid.objects.Post;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
 
 public class LoadImagesTask extends BaseTask
 {
-    private PostSourceType type;
+    private UUID groupId;
     
-    static final Class<?>[] argsClasses = new Class[2];
-    static Method methodOnPostsUpdate;
+    static final Class<?>[] argsClasses = new Class[1];
+    static Method methodOnImagesUpdate;
     static 
     {
         try
         {
-        	argsClasses[0] = PostSourceType.class;
-        	argsClasses[1] = boolean.class;
-            methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
+        	argsClasses[0] = UUID.class;
+            methodOnImagesUpdate = ImagesUpdateListener.class.getMethod("OnImagesUpdate", argsClasses);    
         }
         catch (Throwable t) 
         {           
@@ -35,24 +34,23 @@ public class LoadImagesTask extends BaseTask
         }        
     }
     
-    public LoadImagesTask(PostSourceType type)
+    public LoadImagesTask(UUID groupId)
     {
-        this.type = type;
+        this.groupId = groupId;
     }
     
     @SuppressWarnings("unchecked")
-    public void notifyAboutPostsUpdate()
+    public void notifyAboutImagesUpdate()
     {
     	if(isCancelled()) return;
     	
-        final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
-        final Object args[] = new Object[2];
-        args[0] = type;
-        args[1] = false;
+        final List<ImagesUpdateListener> listeners = ListenersWorker.Instance().getListeners(ImagesUpdateListener.class);
+        final Object args[] = new Object[1];
+        args[0] = groupId;
         
-        for(PostsUpdateListener listener : listeners)
+        for(ImagesUpdateListener listener : listeners)
         {
-            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdate, args)));
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnImagesUpdate, args)));
         }
     }
 
@@ -62,8 +60,8 @@ public class LoadImagesTask extends BaseTask
         try
         {
             int i = 0;
-            ArrayList<Post> posts = ServerWorker.Instance().getPostsByType(type);
-            for (Post post : posts)
+            ArrayList<BaseItem> posts = ServerWorker.Instance().getPostsById(groupId);
+            for (BaseItem post : posts)
             {
             	if(isCancelled()) break;
             	
@@ -82,13 +80,13 @@ public class LoadImagesTask extends BaseTask
                 
                 if(i%5 == 0)
                 {
-                	notifyAboutPostsUpdate();
+                	notifyAboutImagesUpdate();
                 }
                 
                 i++;
             } 
             
-            notifyAboutPostsUpdate();
+            notifyAboutImagesUpdate();
         }
         catch (Throwable t)
         {

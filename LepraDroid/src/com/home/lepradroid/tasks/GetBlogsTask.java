@@ -18,7 +18,6 @@ import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.Blog;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
-import com.home.lepradroid.utils.Utils;
 
 public class GetBlogsTask extends BaseTask
 {
@@ -42,6 +41,13 @@ public class GetBlogsTask extends BaseTask
         {           
             Logger.e(t);
         }        
+    }
+    
+    @Override
+    public void finish()
+    {
+        if(loadImagesTask != null) loadImagesTask.finish();
+        super.finish();
     }
     
     public GetBlogsTask(boolean includeImages)
@@ -107,12 +113,13 @@ public class GetBlogsTask extends BaseTask
                     blog.Signature = author.first().text();
                 }
                 
-                ServerWorker.Instance().addNewBlog(blog);
+                ServerWorker.Instance().addNewPost(Commons.BLOGS_POSTS_ID, blog);
             }
             
             if(includeImages)
             {
-                
+                loadImagesTask = new LoadImagesTask(Commons.BLOGS_POSTS_ID);
+                loadImagesTask.execute();
             }
         }
         catch (Throwable t)
