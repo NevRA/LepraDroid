@@ -19,7 +19,7 @@ import com.home.lepradroid.tasks.GetAllMainPagesTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
-import com.viewpagerindicator.TabPageIndicator;
+import com.viewpagerindicator.TitlePageIndicator;
 
 public class Main extends BaseActivity implements LoginListener, LogoutListener
 {
@@ -27,7 +27,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private PostsScreen mainPosts;
     private PostsScreen blogsPosts;
     private PostsScreen myStuffPosts;
-    private TabPageIndicator titleIndicator;
+    private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
     private ViewPager pager;
     
@@ -115,7 +115,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         pager.setAdapter(tabsAdapter);
         pager.setCurrentItem(0);
 
-        titleIndicator = (TabPageIndicator) findViewById(R.id.indicator);
+        titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
         titleIndicator.setViewPager(pager);
         titleIndicator.setCurrentItem(0);
     }
