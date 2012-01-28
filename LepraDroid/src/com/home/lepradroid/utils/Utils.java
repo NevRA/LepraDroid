@@ -28,6 +28,11 @@ public class Utils
         }
     }
     
+    public static String wrapSomeHtmlSymbols(String html)
+    {
+        return html.replace("&#150;", "-").replace("&#151;", "-");
+    }
+    
     public static void showError(Context context, String error)
     {
         final AlertDialog.Builder alt_bld = new AlertDialog.Builder(context);

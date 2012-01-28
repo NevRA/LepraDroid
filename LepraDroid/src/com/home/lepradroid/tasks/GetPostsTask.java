@@ -58,7 +58,7 @@ public class GetPostsTask extends BaseTask
     }
     
     public GetPostsTask(PostSourceType type, boolean includeImages)
-    {
+    {       
         this.type = type;
         this.includeImages = includeImages;
     }
@@ -94,11 +94,13 @@ public class GetPostsTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... params)
     {
+        final long startTime = System.nanoTime();
+        
         try
         {
             notifyAboutPostsUpdateBegin();
             
-            final String html = ServerWorker.Instance().getContent(type == PostSourceType.MAIN ? Commons.SITE_URL : Commons.MY_STUFF_URL).replace("&#150;", "-").replace("&#151;", "-"); // TODO problem with parsing 
+            final String html = ServerWorker.Instance().getContent(type == PostSourceType.MAIN ? Commons.SITE_URL : Commons.MY_STUFF_URL); 
             final Document document = Jsoup.parse(html);
             final Element content = document.getElementById("content");
             final Elements posts = content.getElementsByClass("dt");
@@ -151,6 +153,11 @@ public class GetPostsTask extends BaseTask
                     }
                 }
                 
+                // TODO fix me
+                post.Html = Utils.wrapSomeHtmlSymbols(post.Html);
+                post.Text = Utils.wrapSomeHtmlSymbols(post.Text);
+                post.Signature = Utils.wrapSomeHtmlSymbols(post.Signature);
+                
                 ServerWorker.Instance().addNewPost(post);
             }
             
@@ -167,6 +174,8 @@ public class GetPostsTask extends BaseTask
         finally
         {
             notifyAboutPostsUpdate();
+            
+            Logger.d("Task time:" + Long.toString(System.nanoTime() - startTime));
         }
         
         return e;
