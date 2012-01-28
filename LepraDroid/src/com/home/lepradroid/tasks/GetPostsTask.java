@@ -27,16 +27,22 @@ public class GetPostsTask extends BaseTask
 {
     private PostSourceType type;
     private LoadImagesTask loadImagesTask;
+    private boolean includeImages;
     
-    static final Class<?>[] argsClasses = new Class[2];
+    static final Class<?>[] argsClassesOnPostsUpdate = new Class[2];
+    static final Class<?>[] argsClassesOnPostsUpdateBegin = new Class[1];
     static Method methodOnPostsUpdate;
+    static Method methodOnPostsUpdateBegin;
     static 
     {
         try
         {
-        	argsClasses[0] = PostSourceType.class;
-        	argsClasses[1] = boolean.class;
-            methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClasses);    
+        	argsClassesOnPostsUpdate[0] = PostSourceType.class;
+        	argsClassesOnPostsUpdate[1] = boolean.class;
+            methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClassesOnPostsUpdate); 
+            
+            argsClassesOnPostsUpdateBegin[0] = PostSourceType.class;
+            methodOnPostsUpdateBegin = PostsUpdateListener.class.getMethod("OnPostsUpdateBegin", argsClassesOnPostsUpdateBegin); 
         }
         catch (Throwable t) 
         {           
@@ -51,9 +57,23 @@ public class GetPostsTask extends BaseTask
     	super.finish();
     }
     
-    public GetPostsTask(PostSourceType type)
+    public GetPostsTask(PostSourceType type, boolean includeImages)
     {
         this.type = type;
+        this.includeImages = includeImages;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyAboutPostsUpdateBegin()
+    {
+        final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
+        final Object args[] = new Object[1];
+        args[0] = type;
+        
+        for(PostsUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdateBegin, args)));
+        }
     }
     
     @SuppressWarnings("unchecked")
@@ -76,7 +96,7 @@ public class GetPostsTask extends BaseTask
     {
         try
         {
-            ServerWorker.Instance().clearPostsByType(type); // TODO only for beta version without page loading
+            notifyAboutPostsUpdateBegin();
             
             final String html = ServerWorker.Instance().getContent(type == PostSourceType.MAIN ? Commons.SITE_URL : Commons.MY_STUFF_URL).replace("&#150;", "-").replace("&#151;", "-"); // TODO problem with parsing 
             final Document document = Jsoup.parse(html);
@@ -134,8 +154,11 @@ public class GetPostsTask extends BaseTask
                 ServerWorker.Instance().addNewPost(post);
             }
             
-            loadImagesTask = new LoadImagesTask(type);
-            loadImagesTask.execute();
+            if(includeImages)
+            {
+                loadImagesTask = new LoadImagesTask(type);
+                loadImagesTask.execute();
+            }
         }
         catch (Throwable t)
         {

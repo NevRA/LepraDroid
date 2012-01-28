@@ -77,17 +77,22 @@ public class PostsScreen extends BaseView implements PostsUpdateListener
             adapter.notifyDataSetChanged();
         }
     }
+    
+    @Override
+    public void OnPostsUpdateBegin(PostSourceType type)
+    {
+        if(this.type != type) return;
+        
+        progress.setVisibility(View.VISIBLE);
+        progress.setIndeterminate(true);
+        list.setVisibility(View.GONE);
+        
+        ServerWorker.Instance().clearPostsByType(type);
+    }
 
     @Override
     protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4)
     {
         
-    }
-
-    @Override
-    public void OnPostsUpdateBegin()
-    {
-        // TODO Auto-generated method stub
-        
-    }
+    }    
 }

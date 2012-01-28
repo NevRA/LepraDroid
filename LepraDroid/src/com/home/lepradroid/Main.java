@@ -81,12 +81,12 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             switch(pager.getCurrentItem())
             {
             case MAIN_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MAIN, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case BLOGS_TAB_NUM:
                 break;
             case MYSTUFF_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MYSTUFF), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(PostSourceType.MYSTUFF, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             }
             
@@ -130,6 +130,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     
     public void OnLogout()
     {
+        detachAllTasks();
         Utils.clearData();
         Utils.clearLogonInfo();
         showLogonScreen();

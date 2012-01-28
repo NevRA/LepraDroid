@@ -59,7 +59,7 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
         return false;
     }
     
-    private void detachAllTasks()
+    protected void detachAllTasks()
     {
         for(TaskWrapper task : tasks)
         {
