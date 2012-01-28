@@ -25,6 +25,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private TabHost tabHost;
     private PostsScreen mainPosts;
     private BlogsScreen blogsPosts;
+    private PostsScreen favoritePosts;
     private PostsScreen myStuffPosts;
     private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
@@ -32,7 +33,8 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     
     public static final int MAIN_TAB_NUM = 0;
     public static final int BLOGS_TAB_NUM = 1;
-    public static final int MYSTUFF_TAB_NUM = 2;
+    public static final int FAVORITE_TAB_NUM = 2;
+    public static final int MYSTUFF_TAB_NUM = 3;
     
     private ArrayList<BaseView> pages = new ArrayList<BaseView>();
     
@@ -84,6 +86,9 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                 break;
             case BLOGS_TAB_NUM:
                 break;
+            case FAVORITE_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                break;
             case MYSTUFF_TAB_NUM:
                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
@@ -102,11 +107,15 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         blogsPosts = new BlogsScreen(this);
         blogsPosts.setTag(Utils.getString(R.string.Blogs_Tab));
         
+        favoritePosts = new PostsScreen(this, Commons.FAVORITE_POSTS_ID);
+        favoritePosts.setTag(Utils.getString(R.string.Favorites_Tab));
+        
         myStuffPosts = new PostsScreen(this, Commons.MYSTUFF_POSTS_ID);
         myStuffPosts.setTag(Utils.getString(R.string.MyStuff_Tab));
         
         pages.add(mainPosts);
         pages.add(blogsPosts);
+        pages.add(favoritePosts);
         pages.add(myStuffPosts);
         
         tabsAdapter = new TabsPageAdapter(this, pages);

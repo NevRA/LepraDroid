@@ -23,6 +23,7 @@ public class GetAllMainPagesTask extends BaseTask
     {
         tasks.add((BaseTask) new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL, true));
         tasks.add((BaseTask) new GetBlogsTask(true));
+        tasks.add((BaseTask) new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true));
         tasks.add((BaseTask) new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true));
         for (BaseTask asyncTask : tasks)
         {

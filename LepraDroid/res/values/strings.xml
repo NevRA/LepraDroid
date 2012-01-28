@@ -17,6 +17,7 @@
     <string name="Unknown_Error">Произошла какая-та напонятная ошибка, может быть что-то есть в логах</string>
     <string name="Blogs_Tab">Подлепры</string>
     <string name="Posts_Tab">Главная</string>
+    <string name="Favorites_Tab">Избранное</string>
     <string name="MyStuff_Tab">Мои вещи</string>
     <string name="No_Comments">новых комментариев нет</string>
     <string name="Reload_Menu">Обновить</string>
