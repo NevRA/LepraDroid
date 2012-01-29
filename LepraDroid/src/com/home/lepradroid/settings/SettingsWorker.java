@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Pair;
 
 public class SettingsWorker
 {
@@ -45,12 +46,12 @@ public class SettingsWorker
     
     public void clearCookies() throws Exception
     {
-        saveCookies("");
+        saveCookies(new Pair<String, String>("", ""));
     }
     
-    public void saveCookies(String cookie) throws Exception
+    public void saveCookies(Pair<String, String> auth) throws Exception
     {
-        this.cookie = cookie;
+        this.cookie = auth.first + ";" + auth.second;
         
         save(COOKIES, cookie);
     }
@@ -60,11 +61,14 @@ public class SettingsWorker
         return (!TextUtils.isEmpty(cookie));
     }
     
-    public String loadCookie() throws Exception
+    public Pair<String, String> loadCookie() throws Exception
     {
         cookie = load(COOKIES);
+        if(TextUtils.isEmpty(cookie))
+            return new Pair<String, String>("", "");
         
-        return cookie;
+        final String[] cookies = cookie.split(";");
+        return new Pair<String, String>(cookies[0], cookies[1]);
     }
     
     private void save(String name, String value)

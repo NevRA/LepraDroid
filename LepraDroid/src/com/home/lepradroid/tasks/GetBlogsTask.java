@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -94,9 +92,8 @@ public class GetBlogsTask extends BaseTask
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
-            final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL); 
-            final Document document = Jsoup.parse(html);
-            final Elements blogs = document.getElementsByClass("jj_general");
+            final Element root = ServerWorker.Instance().getContent(Commons.BLOGS_URL); 
+            final Elements blogs = root.getElementsByClass("jj_general");
             for (@SuppressWarnings("rawtypes")
             Iterator iterator = blogs.iterator(); iterator.hasNext();)
             {

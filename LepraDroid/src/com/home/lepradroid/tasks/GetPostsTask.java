@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -106,9 +104,8 @@ public class GetPostsTask extends BaseTask
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
-            final String html = ServerWorker.Instance().getContent(url); 
-            final Document document = Jsoup. parse(html);
-            final Element content = document.getElementById("content");
+            final Element root = ServerWorker.Instance().getContent(url); 
+            final Element content = root.getElementById("content");
             final Elements posts = content.getElementsByClass("dt");
             for (@SuppressWarnings("rawtypes")
             Iterator iterator = posts.iterator(); iterator.hasNext();)

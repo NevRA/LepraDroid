@@ -13,11 +13,9 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerPNames;
 import org.apache.http.conn.params.ConnPerRouteBean;
@@ -25,24 +23,23 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
+import android.util.Pair;
 
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.settings.SettingsWorker;
-import com.home.lepradroid.utils.Logger;
 
 public class ServerWorker
 {
@@ -50,8 +47,6 @@ public class ServerWorker
     private static volatile ServerWorker instance;
     private ClientConnectionManager connectionManager;
     private HttpParams connectionParameters;
-    private CookieStore cookieStore;
-    private HttpClient client;
     private Map<UUID, ArrayList<BaseItem>> posts = new HashMap<UUID, ArrayList<BaseItem>>();
     private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
     private final Lock read  = readWriteLock.readLock();
@@ -91,36 +86,22 @@ public class ServerWorker
         SchemeRegistry registry = new SchemeRegistry();
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         connectionManager = new ThreadSafeClientConnManager(connectionParameters, registry);
-        cookieStore = new BasicCookieStore();
-        client = new DefaultHttpClient(connectionManager, connectionParameters);
     }
     
     public void clearSessionInfo() throws Exception
     {
-        cookieStore.clear();
         SettingsWorker.Instance().clearCookies();
     }
     
-    public String getContent(String url) throws ClientProtocolException, IOException
+    public Element getContent(String url) throws Exception
     {
-        final HttpGet httpGet = new HttpGet(url);
-
-        final HttpContext localContext = new BasicHttpContext();
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+        final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
         
-        try
-        {
-            String cookie = SettingsWorker.Instance().loadCookie();
-            if(!TextUtils.isEmpty(cookie))
-                httpGet.addHeader("Cookie", cookie);
-        }
-        catch (Exception e)
-        {
-            Logger.e(e);
-        }
-        
-        final HttpResponse response = client.execute(httpGet, localContext);
-        return EntityUtils.toString(response.getEntity(), "UTF-8");
+        return Jsoup.connect(url)
+                .cookie(Commons.COOKIE_SID, cookies.first)
+                .cookie(Commons.COOKIE_UID, cookies.second)
+                .timeout(3000)
+                .get().body(); 
     }
     
     public Header[] login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
@@ -132,10 +113,8 @@ public class ServerWorker
         httpGet.setHeader("Content-Type","application/x-www-form-urlencoded");
         httpGet.setEntity(se);
         
-        final HttpContext localContext = new BasicHttpContext();
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-        
-        final HttpResponse response = client.execute(httpGet, localContext);
+        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        final HttpResponse response = client.execute(httpGet);
         
         return response.getAllHeaders();
     }
@@ -143,11 +122,9 @@ public class ServerWorker
     public Drawable getImage(String url) throws ClientProtocolException, IOException
     {
         final HttpGet httpGet = new HttpGet(url);
-
-        final HttpContext localContext = new BasicHttpContext();
-        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
         
-        final HttpResponse response = client.execute(httpGet, localContext);
+        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        final HttpResponse response = client.execute(httpGet);
         
         final byte[] array = EntityUtils.toByteArray(response.getEntity());
   

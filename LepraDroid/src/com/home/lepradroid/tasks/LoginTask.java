@@ -53,7 +53,7 @@ public class LoginTask extends BaseTask
     {
         try
         {
-            String cookie = "";
+            String sid = null, uid = null;
             Header[] headers = ServerWorker.Instance().login(Commons.LOGON_PAGE_URL, login, password, captcha, ServerWorker.Instance().getLoginCode());
             for(Header header : headers)
             {
@@ -62,16 +62,16 @@ public class LoginTask extends BaseTask
                 String value = header.getValue();
                 if(value.contains("lepro.save=1"))
                     logoned = true;
-                else if(value.contains("lepro.sid="))
-                    cookie += value.split(";")[0] + ";";
-                else if(value.contains("lepro.uid="))
-                    cookie += value.split(";")[0] + ";";
+                else if(value.contains(Commons.COOKIE_SID + "="))
+                    sid = value.split(";")[0].split("=")[1];
+                else if(value.contains(Commons.COOKIE_UID + "="))
+                    uid = value.split(";")[0].split("=")[1];
             }
             
-            if(!logoned || TextUtils.isEmpty(cookie))
+            if(!logoned || TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
                 throw new Exception(Utils.getString(R.string.Login_Failed));
             
-            SettingsWorker.Instance().saveCookies(cookie);
+            SettingsWorker.Instance().saveCookies(new Pair<String, String>(sid, uid));
         }
         catch (Throwable t)
         {
