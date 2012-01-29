@@ -93,7 +93,7 @@ public class GetBlogsTask extends BaseTask
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
             final Element root = ServerWorker.Instance().getContent(Commons.BLOGS_URL); 
-            final Elements blogs = root.getElementsByClass("jj_general");
+            final Elements blogs = root.getElementsByClass("jj_row");
             for (@SuppressWarnings("rawtypes")
             Iterator iterator = blogs.iterator(); iterator.hasNext();)
             {
@@ -125,6 +125,17 @@ public class GetBlogsTask extends BaseTask
                 {
                     blog.Author = author.first().getElementsByTag("a").first().text();
                     blog.Signature = author.first().text();
+                }
+                
+                Elements stat = element.getElementsByClass("jj_stat_table");
+                if(!stat.isEmpty())
+                {
+                    Elements div = stat.first().getElementsByTag("div");
+                    if(div.size() >= 3)
+                    {
+                        // TODO text from resources 
+                        blog.Stat = "<b>" + div.get(0).text() + "</b>" + " постов / " + "<b>" + div.get(1).text() + "</b>"  + " комментариев / " + "<b>" + div.get(2).text() + "</b>"  + " подписчиков";
+                    }
                 }
                 
                 items.add(blog);
