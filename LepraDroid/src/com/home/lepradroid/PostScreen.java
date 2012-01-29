@@ -9,6 +9,7 @@ import android.view.MenuItem;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetCommentsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
@@ -31,6 +32,19 @@ public class PostScreen extends BaseActivity
     public static final int POST_TAB_NUM = 0;
     public static final int COMMENTS_TAB_NUM = 1;
     public static final int PROFILE_TAB_NUM = 2;
+    
+    @Override
+    protected void onDestroy()
+    {
+        ServerWorker.Instance().clearCommentsById(id);
+        if(postView != null)
+            postView.OnExit();
+        if(commentsView != null)
+            commentsView.OnExit();
+        if(authorView != null)
+            authorView.OnExit();
+        super.onDestroy();
+    }
     
     @Override
     public void onCreate(Bundle savedInstanceState)

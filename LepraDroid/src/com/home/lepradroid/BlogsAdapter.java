@@ -42,6 +42,11 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
         return position;
     }
     
+    public void updateData(ArrayList<BaseItem> posts)
+    {
+        this.posts = posts;
+    }
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {

@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.content.Context;
@@ -45,6 +46,8 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
     {      
         list = (ListView) contentView.findViewById(R.id.list);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
+        adapter = new PostsAdapter(context, R.layout.post_row_view, new ArrayList<BaseItem>());
+        list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> arg, View arg1, int arg2,
@@ -75,13 +78,7 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
             list.setVisibility(View.VISIBLE);
         }
     	
-        if(adapter == null)
-        {
-            adapter = new PostsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsById(groupId));
-            list.setAdapter(adapter);
-        }
-        else
-            adapter.notifyDataSetChanged();
+        updateAdapter();
     }
     
     @Override
@@ -93,9 +90,7 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
         progress.setIndeterminate(true);
         list.setVisibility(View.GONE);
         
-        ServerWorker.Instance().clearPostsById(groupId);
-        if(adapter != null)
-            adapter.notifyDataSetChanged();
+        updateAdapter();
     }
 
     @Override
@@ -103,13 +98,21 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
     {
         
     }
+    
+    private void updateAdapter()
+    {
+        synchronized (this)
+        {
+            adapter.updateData(ServerWorker.Instance().getPostsById(groupId, true));
+            adapter.notifyDataSetChanged();
+        }
+    }
 
     @Override
     public void OnImagesUpdate(UUID groupId)
     {
         if(this.groupId != groupId) return;
-        if(adapter != null)
-            adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     @Override

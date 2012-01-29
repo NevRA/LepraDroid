@@ -37,7 +37,6 @@ import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
-import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
 
 public class ServerWorker
@@ -50,7 +49,7 @@ public class ServerWorker
     private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
     private final Lock read  = readWriteLock.readLock();
     private final Lock write = readWriteLock.writeLock();
-    private Map<UUID, ArrayList<Comment>> comments = new HashMap<UUID, ArrayList<Comment>>();
+    private Map<UUID, ArrayList<BaseItem>> comments = new HashMap<UUID, ArrayList<BaseItem>>();
     
     private ServerWorker() 
     {
@@ -161,7 +160,7 @@ public class ServerWorker
         return null;
     }
     
-    public ArrayList<BaseItem> getPostsById(UUID groupId)
+    public ArrayList<BaseItem> getPostsById(UUID groupId, boolean clone)
     {
         read.lock();
         try
@@ -180,8 +179,10 @@ public class ServerWorker
                     write.unlock();
                 }
             }
-            
-            return items;
+            if(clone)
+                return cloneList(items);
+            else
+                return items;
         }
         finally
         {
@@ -189,7 +190,17 @@ public class ServerWorker
         }
     }
     
-    public ArrayList<Comment> getComments(UUID groupId, UUID id)
+    public static ArrayList<BaseItem> cloneList(ArrayList<BaseItem> list)
+    {
+        ArrayList<BaseItem> clonedList = new ArrayList<BaseItem>(list.size());
+        for (BaseItem item : list)
+        {
+            clonedList.add(item);
+        }
+        return clonedList;
+    }
+    
+    public ArrayList<BaseItem> getComments(UUID groupId, UUID id)
     {
         read.lock();
         try
@@ -199,7 +210,7 @@ public class ServerWorker
             {
                 if(comments.containsKey(id))
                 {
-                    return comments.get(id);
+                    return cloneList(comments.get(id));
                 }
             }
         }
@@ -208,10 +219,10 @@ public class ServerWorker
             read.unlock();
         }
         
-        return new ArrayList<Comment>();
+        return new ArrayList<BaseItem>();
     }
     
-    public void addNewComments(UUID groupId, UUID id, ArrayList<Comment> items)
+    public void addNewComments(UUID groupId, UUID id, ArrayList<BaseItem> items)
     {
         write.lock();
         try
@@ -221,7 +232,7 @@ public class ServerWorker
             {
                 if(!comments.containsKey(id))
                 {
-                    ArrayList<Comment> targetList = new ArrayList<Comment>();
+                    ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
                     comments.put(id, targetList);
                 }
                 
@@ -241,7 +252,7 @@ public class ServerWorker
         write.lock();
         try
         {
-            getPostsById(groupId).addAll(posts);
+            getPostsById(groupId, false).addAll(posts);
         }
         finally
         {
@@ -254,7 +265,7 @@ public class ServerWorker
         write.lock();
         try
         {
-            getPostsById(groupId).add(post);
+            getPostsById(groupId, false).add(post);
         }
         finally
         {
@@ -281,7 +292,7 @@ public class ServerWorker
         write.lock();
         try
         {
-            getPostsById(groupId).clear();
+            getPostsById(groupId, false).clear();
         }
         finally
         {

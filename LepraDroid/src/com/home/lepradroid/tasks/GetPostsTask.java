@@ -101,6 +101,9 @@ public class GetPostsTask extends BaseTask
         try
         {
             int num = -1;
+            
+            ServerWorker.Instance().clearPostsById(groupId);
+            
             notifyAboutPostsUpdateBegin();
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();

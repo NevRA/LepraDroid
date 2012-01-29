@@ -60,7 +60,7 @@ public class LoadImagesTask extends BaseTask
         try
         {
             int i = 0;
-            ArrayList<BaseItem> posts = ServerWorker.Instance().getPostsById(groupId);
+            ArrayList<BaseItem> posts = ServerWorker.Instance().getPostsById(groupId, false);
             for (BaseItem post : posts)
             {
             	if(isCancelled()) break;

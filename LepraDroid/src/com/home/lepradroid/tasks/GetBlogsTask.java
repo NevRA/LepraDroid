@@ -88,6 +88,8 @@ public class GetBlogsTask extends BaseTask
         try
         {
             int num = -1;
+            
+            ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
             notifyAboutBlogsUpdateBegin();
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();

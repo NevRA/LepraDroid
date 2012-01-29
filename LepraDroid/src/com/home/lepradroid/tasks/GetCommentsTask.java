@@ -86,12 +86,13 @@ public class GetCommentsTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
-        ArrayList<Comment> items = new ArrayList<Comment>();
+        ArrayList<BaseItem> items = new ArrayList<BaseItem>();
         
         final long startTime = System.nanoTime();
         
         try
         {
+            ServerWorker.Instance().clearCommentsById(id);
             notifyAboutCommentsUpdateBegin();
 
             BaseItem post = ServerWorker.Instance().getPostById(groupId, id);

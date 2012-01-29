@@ -12,14 +12,15 @@ import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 
-class CommentsAdapter extends ArrayAdapter<Comment>
+class CommentsAdapter extends ArrayAdapter<BaseItem>
 {
-    private ArrayList<Comment> comments = new ArrayList<Comment>();
+    private ArrayList<BaseItem> comments = new ArrayList<BaseItem>();
             
     public CommentsAdapter(Context context, int textViewResourceId,
-            ArrayList<Comment> comments)
+            ArrayList<BaseItem> comments)
     {
         super(context, textViewResourceId, comments);
         this.comments = comments;
@@ -30,7 +31,7 @@ class CommentsAdapter extends ArrayAdapter<Comment>
         return comments.size();
     }
     
-    public Comment getItem(int position) 
+    public BaseItem getItem(int position) 
     {
         return comments.get(position);
     }
@@ -40,10 +41,15 @@ class CommentsAdapter extends ArrayAdapter<Comment>
         return position;
     }
     
+    public void updateData(ArrayList<BaseItem> comments)
+    {
+        this.comments = comments;
+    }
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
-        final Comment comment = getItem(position);
+        final Comment comment = (Comment)getItem(position);
         
         LayoutInflater aInflater=LayoutInflater.from(getContext());
 

@@ -1,5 +1,6 @@
 package com.home.lepradroid;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.content.Context;
@@ -45,6 +46,8 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
     {
         list = (ListView) contentView.findViewById(R.id.list);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
+        adapter = new BlogsAdapter(context, R.layout.post_row_view, new ArrayList<BaseItem>());
+        list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> arg, View arg1, int arg2,
@@ -77,9 +80,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
         progress.setIndeterminate(true);
         list.setVisibility(View.GONE);
         
-        ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
-        if(adapter != null)
-            adapter.notifyDataSetChanged();
+        updateAdapter();
     }
     
     @Override
@@ -92,26 +93,26 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
             list.setVisibility(View.VISIBLE);
         }
         
-        if(adapter == null)
-        {
-            adapter = new BlogsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsById(Commons.BLOGS_POSTS_ID));
-            list.setAdapter(adapter);
-        }
-        else
-            adapter.notifyDataSetChanged();
+        updateAdapter();
     }
     
+    private void updateAdapter()
+    {
+        adapter.updateData(ServerWorker.Instance().getPostsById(Commons.BLOGS_POSTS_ID, true));
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public void OnImagesUpdate(UUID groupId)
     {
         if(Commons.BLOGS_POSTS_ID != groupId) return;
-        if(adapter != null)
-            adapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
     public void OnExit()
     {
+        adapter.clear();
         ListenersWorker.Instance().unregisterListener(this);
     } 
 }

@@ -1,5 +1,6 @@
 package com.home.lepradroid;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.widget.ProgressBar;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 
 public class CommentsView extends BaseView implements CommentsUpdateListener
@@ -44,11 +46,15 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
     {
         list = (ListView) contentView.findViewById(R.id.list);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
+        
+        adapter = new CommentsAdapter(context, R.layout.comments_row_view, new ArrayList<BaseItem>());
+        list.setAdapter(adapter);
     }
 
     @Override
     public void OnExit()
     {
+        adapter.clear();
         ListenersWorker.Instance().unregisterListener(this);
     }
 
@@ -61,9 +67,16 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
         progress.setIndeterminate(true);
         list.setVisibility(View.GONE);
         
-        ServerWorker.Instance().clearCommentsById(id);
-        if(adapter != null)
+        updateAdapter();
+    }
+
+    private void updateAdapter()
+    {
+        synchronized (this)
+        {
+            adapter.updateData(ServerWorker.Instance().getComments(groupId, id));
             adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -78,13 +91,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
             list.setVisibility(View.VISIBLE);
         }
         
-        if(adapter == null)
-        {
-            adapter = new CommentsAdapter(context, R.layout.comments_row_view, ServerWorker.Instance().getComments(groupId, id));
-            list.setAdapter(adapter);
-        }
-        else
-            adapter.notifyDataSetChanged();
-        
+        updateAdapter();
     }
 }
