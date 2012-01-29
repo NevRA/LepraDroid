@@ -84,6 +84,8 @@ public class LoadImagesTask extends BaseTask
                 }
                 
                 i++;
+                
+                Thread.sleep(100);
             } 
             
             notifyAboutImagesUpdate();

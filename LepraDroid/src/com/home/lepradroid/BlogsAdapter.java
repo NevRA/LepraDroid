@@ -41,12 +41,6 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
         return position;
     }
     
-    public void updateContent(ArrayList<Blog> newPosts)
-    {
-        this.posts.clear();
-        this.posts.addAll(newPosts);
-    }
-    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {

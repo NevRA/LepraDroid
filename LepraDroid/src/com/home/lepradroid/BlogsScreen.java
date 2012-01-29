@@ -83,20 +83,20 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
     @Override
     public void OnBlogsUpdate(boolean haveNewRecords)
     { 
-        if(adapter == null || haveNewRecords)
+        if(progress.getVisibility() == View.VISIBLE)
         {
             progress.setVisibility(View.GONE);
             progress.setIndeterminate(false);
             list.setVisibility(View.VISIBLE);
-            
+        }
+        
+        if(adapter == null)
+        {
             adapter = new BlogsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsById(Commons.BLOGS_POSTS_ID));
-    
             list.setAdapter(adapter);
         }
         else
-        {
             adapter.notifyDataSetChanged();
-        }
     }
     
     @Override

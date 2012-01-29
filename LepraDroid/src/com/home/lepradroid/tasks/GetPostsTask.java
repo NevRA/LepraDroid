@@ -1,6 +1,7 @@
 package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import com.home.lepradroid.R;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
@@ -102,8 +104,10 @@ public class GetPostsTask extends BaseTask
             int num = -1;
             notifyAboutPostsUpdateBegin();
             
+            ArrayList<BaseItem> items = new ArrayList<BaseItem>();
+            
             final String html = ServerWorker.Instance().getContent(url); 
-            final Document document = Jsoup.parse(html);
+            final Document document = Jsoup. parse(html);
             final Element content = document.getElementById("content");
             final Elements posts = content.getElementsByClass("dt");
             for (@SuppressWarnings("rawtypes")
@@ -155,10 +159,14 @@ public class GetPostsTask extends BaseTask
                         post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
                     }
                 }
-                
-                ServerWorker.Instance().addNewPost(groupId, post);
+                items.add(post);
                 if(num%5 == 0)
+                {
+                    ServerWorker.Instance().addNewPosts(groupId, items);
                     notifyAboutPostsUpdate();
+                    
+                    items = new ArrayList<BaseItem>(0);
+                }
             }
             
             if(includeImages)

@@ -212,6 +212,19 @@ public class ServerWorker
         }
     }
     
+    public void addNewPosts(UUID groupId, ArrayList<BaseItem> posts)
+    {
+        write.lock();
+        try
+        {
+            getPostsById(groupId).addAll(posts);
+        }
+        finally
+        {
+            write.unlock();
+        }
+    }
+    
     public void addNewPost(UUID groupId, BaseItem post)
     {
         write.lock();

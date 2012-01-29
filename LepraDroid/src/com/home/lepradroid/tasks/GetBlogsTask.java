@@ -1,6 +1,7 @@
 package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.BlogsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Blog;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
@@ -90,6 +92,8 @@ public class GetBlogsTask extends BaseTask
             int num = -1;
             notifyAboutBlogsUpdateBegin();
             
+            ArrayList<BaseItem> items = new ArrayList<BaseItem>();
+            
             final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL); 
             final Document document = Jsoup.parse(html);
             final Elements blogs = document.getElementsByClass("jj_general");
@@ -97,6 +101,7 @@ public class GetBlogsTask extends BaseTask
             Iterator iterator = blogs.iterator(); iterator.hasNext();)
             {
                 num++;
+                
                 Element element = (Element) iterator.next();
                 Blog blog = new Blog();
                 
@@ -125,9 +130,14 @@ public class GetBlogsTask extends BaseTask
                     blog.Signature = author.first().text();
                 }
                 
-                ServerWorker.Instance().addNewPost(Commons.BLOGS_POSTS_ID, blog);
+                items.add(blog);
                 if(num%5 == 0)
+                {
+                    ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
                     notifyAboutBlogsUpdate();
+                    
+                    items = new ArrayList<BaseItem>(0);
+                }
             }
             
             if(includeImages)
