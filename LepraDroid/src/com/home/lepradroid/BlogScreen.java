@@ -3,6 +3,7 @@ package com.home.lepradroid;
 import java.util.UUID;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.RelativeLayout;
 
 import com.home.lepradroid.base.BaseActivity;
@@ -17,6 +18,7 @@ public class BlogScreen extends BaseActivity
     private UUID groupId;
     private UUID id;
     private PostsScreen postsScreen;
+    private BaseItem post;
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -34,14 +36,29 @@ public class BlogScreen extends BaseActivity
             postsScreen = new PostsScreen(this, id);
             layout.addView(postsScreen.contentView);
             
-            BaseItem item = ServerWorker.Instance().getPostById(groupId, id);
-            if(item != null)
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(id, item.Url, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            post = ServerWorker.Instance().getPostById(groupId, id);
+            if(post != null)
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            else
+                finish(); // TODO message
         }
         catch (Exception e)
         {
             Utils.showError(this, e);
         }
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        super.onOptionsItemSelected(item);
+        
+        switch (item.getItemId())
+        {
+        case MENU_RELOAD:
+            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            return true;
+        }
+        return false;
     }
     
     @Override
