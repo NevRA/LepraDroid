@@ -14,7 +14,7 @@ import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.settings.SettingsWorker;
-import com.home.lepradroid.tasks.GetAllMainPagesTask;
+import com.home.lepradroid.tasks.GetMainPagesTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
@@ -30,6 +30,8 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
     private ViewPager pager;
+    private boolean favoriteInit = false;
+    private boolean myStuffInit = false;
     
     public static final int MAIN_TAB_NUM = 0;
     public static final int BLOGS_TAB_NUM = 1;
@@ -58,7 +60,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             showLogonScreen();
         else
         {
-            pushNewTask(new TaskWrapper(null, new GetAllMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
     
@@ -126,13 +128,50 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
         titleIndicator.setViewPager(pager);
         titleIndicator.setCurrentItem(0);
+        
+        titleIndicator
+                .setOnPageChangeListener(new ViewPager.OnPageChangeListener()
+                {
+                    @Override
+                    public void onPageSelected(int position)
+                    {
+                        switch(position)
+                        {
+                        case BLOGS_TAB_NUM:
+                            if(!favoriteInit)
+                            {
+                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                favoriteInit = true;
+                            }
+                            break;
+                        case FAVORITE_TAB_NUM:
+                            if(!myStuffInit)
+                            {
+                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                myStuffInit = true;
+                            }
+                            break;
+                        }
+                    }
+
+                    @Override
+                    public void onPageScrolled(int position,
+                            float positionOffset, int positionOffsetPixels)
+                    {
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state)
+                    {
+                    }
+                });
     }
 
     public void OnLogin(boolean successful)
     {
         if(successful)
         {
-            pushNewTask(new TaskWrapper(null, new GetAllMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
     }
     
