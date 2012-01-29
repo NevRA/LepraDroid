@@ -16,6 +16,9 @@ import android.app.ActivityGroup;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 public class BaseActivity extends ActivityGroup implements UpdateListener, ProgressListener, LogoutListener
 {
@@ -44,6 +47,23 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
         menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
         menu.add(0, MENU_LOGOUT, 1, Utils.getString(R.string.Logout_Menu)).setIcon(R.drawable.ic_logout);
         return true;
+    }
+    
+    public void unbindDrawables(View view)
+    {
+        if (view.getBackground() != null)
+        {
+            view.getBackground().setCallback(null);
+        }
+        if (view instanceof ViewGroup)
+        {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++)
+            {
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
+            }
+            if(view instanceof ListView) return;
+            ((ViewGroup) view).removeAllViews();
+        }
     }
     
     public boolean onOptionsItemSelected(MenuItem item)

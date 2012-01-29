@@ -65,7 +65,10 @@ public class BlogScreen extends BaseActivity
     protected void onDestroy()
     {
         if(postsScreen != null)
+        {
             postsScreen.OnExit();
+            unbindDrawables(postsScreen.contentView);
+        }
         super.onDestroy();
     }
 }

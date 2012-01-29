@@ -38,11 +38,23 @@ public class PostScreen extends BaseActivity
     {
         ServerWorker.Instance().clearCommentsById(id);
         if(postView != null)
+        {
             postView.OnExit();
+            unbindDrawables(postView.contentView.getRootView());
+        }
         if(commentsView != null)
+        {
             commentsView.OnExit();
+            unbindDrawables(commentsView.contentView.getRootView());
+        }
         if(authorView != null)
+        {
             authorView.OnExit();
+            unbindDrawables(authorView.contentView.getRootView());
+        }
+
+        System.gc();
+        
         super.onDestroy();
     }
     
