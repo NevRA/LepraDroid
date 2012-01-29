@@ -13,6 +13,7 @@ import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.GetBlogsTask;
 import com.home.lepradroid.tasks.GetMainPagesTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -85,6 +86,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case BLOGS_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetBlogsTask(true), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case FAVORITE_TAB_NUM:
                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
