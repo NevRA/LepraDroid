@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.MenuItem;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
@@ -27,6 +28,10 @@ public class PostScreen extends BaseActivity
     private ArrayList<BaseView> 
                             pages = new ArrayList<BaseView>();
     
+    public static final int POST_TAB_NUM = 0;
+    public static final int COMMENTS_TAB_NUM = 1;
+    public static final int PROFILE_TAB_NUM = 2;
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -37,6 +42,25 @@ public class PostScreen extends BaseActivity
         id = UUID.fromString(getIntent().getExtras().getString("id"));
 
         createTabs();
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        super.onOptionsItemSelected(item);
+        
+        switch (item.getItemId())
+        {
+        case MENU_RELOAD:
+            switch(pager.getCurrentItem())
+            {
+            case COMMENTS_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                break;
+            }
+            
+            return true;
+        }
+        return false;
     }
     
     private void createTabs()

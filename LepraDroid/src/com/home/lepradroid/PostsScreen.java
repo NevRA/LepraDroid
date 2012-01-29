@@ -94,6 +94,8 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
         list.setVisibility(View.GONE);
         
         ServerWorker.Instance().clearPostsById(groupId);
+        if(adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     @Override

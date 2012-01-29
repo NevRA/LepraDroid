@@ -148,7 +148,12 @@ public class GetPostsTask extends BaseTask
                     {
                         Elements span = author.first().getElementsByTag("span");
                         Elements a = span.first().getElementsByTag("a");
-                        post.Url = Commons.SITE_URL + a.first().attr("href");
+                        String url = a.first().attr("href");
+                        if(url.contains("http"))
+                            post.Url = url;
+                        else
+                            post.Url = Commons.SITE_URL + url;
+                        
                         if(a.size() == 2)
                             post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
                         else

@@ -62,6 +62,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
         list.setVisibility(View.GONE);
         
         ServerWorker.Instance().clearCommentsById(id);
+        if(adapter != null)
+            adapter.notifyDataSetChanged();
     }
 
     @Override

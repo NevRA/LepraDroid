@@ -9,21 +9,18 @@
         android:id="@+id/main"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent" >
-	    <TextView
+	    <WebView
 	        android:id="@+id/text"
-	        android:textSize="12sp"
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
-	        android:textStyle="bold"
-	        android:layout_centerVertical="true"
-	        android:maxLines="6"/>
+	        android:layout_centerHorizontal="true"
+	        android:layout_marginLeft="-15dip"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"/>
     </RelativeLayout>
     
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_below="@+id/main"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent" 
-	    android:paddingTop="5dip"
 	    android:layout_alignParentBottom="true">
 	    <TextView
 	        android:id="@+id/author"

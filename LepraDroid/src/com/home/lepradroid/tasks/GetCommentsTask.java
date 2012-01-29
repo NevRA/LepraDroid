@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons;
@@ -19,7 +20,6 @@ import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
-import com.home.lepradroid.utils.Utils;
 
 public class GetCommentsTask extends BaseTask
 {
@@ -86,15 +86,14 @@ public class GetCommentsTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
+        ArrayList<Comment> items = new ArrayList<Comment>();
+        
         final long startTime = System.nanoTime();
         
         try
         {
-            int num = -1;
             notifyAboutCommentsUpdateBegin();
-            
-            ArrayList<Comment> items = new ArrayList<Comment>();
-            
+
             BaseItem post = ServerWorker.Instance().getPostById(groupId, id);
             if(post == null)
                 return null; // TODO message
@@ -104,14 +103,31 @@ public class GetCommentsTask extends BaseTask
             final Elements comments = holder.getElementsByClass("dt");
             for (@SuppressWarnings("rawtypes")
             Iterator iterator = comments.iterator(); iterator.hasNext();)
-            {
-                num++;
-                
+            {   
                 Element element = (Element) iterator.next();
                 Comment comment = new Comment();
                 comment.Text = element.text();
                 comment.Html = element.html();
                 
+                Elements images = element.getElementsByTag("img");
+                if(!images.isEmpty())
+                {
+                    post.ImageUrl = images.first().attr("src");
+                    
+                    for (Element image : images)
+                    {
+                        String width = image.attr("width");
+                        if(!TextUtils.isEmpty(width))
+                            comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
+                        
+                        String height = image.attr("height");
+                        if(!TextUtils.isEmpty(height))
+                            comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
+                        
+                        comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
+                    }
+                }
+
                 Element parent = element.parent();
                 Elements author = parent.getElementsByClass("p");
                 if(!author.isEmpty())
@@ -131,13 +147,6 @@ public class GetCommentsTask extends BaseTask
                 }
                 
                 items.add(comment);
-                if(num%5 == 0)
-                {
-                    ServerWorker.Instance().addNewComments(groupId, id, items);
-                    notifyAboutCommentsUpdate();
-                    
-                    items = new ArrayList<Comment>(0);
-                }
             }
         }
         catch (Throwable t)
@@ -146,6 +155,7 @@ public class GetCommentsTask extends BaseTask
         }
         finally
         {
+            ServerWorker.Instance().addNewComments(groupId, id, items);
             notifyAboutCommentsUpdate();
             
             Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));

@@ -43,6 +43,7 @@ public class PostView extends BaseView
             return; // TODO some message
         
         WebView webView = (WebView) contentView.findViewById(R.id.webview);
+        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
         webView.loadData(header + ((Post)item).Html, "text/html", "UTF-8");

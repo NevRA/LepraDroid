@@ -78,6 +78,8 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
         list.setVisibility(View.GONE);
         
         ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
+        if(adapter != null)
+            adapter.notifyDataSetChanged();
     }
     
     @Override

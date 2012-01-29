@@ -7,6 +7,8 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -47,8 +49,12 @@ class CommentsAdapter extends ArrayAdapter<Comment>
 
         View view = aInflater.inflate(R.layout.comments_row_view, parent, false);
         
-        TextView text = (TextView)view.findViewById(R.id.text);
-        text.setText(comment.Text);
+        WebView webView = (WebView)view.findViewById(R.id.text);
+        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setDefaultFontSize(13);
+        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+        webView.loadData(header + comment.Html, "text/html", "UTF-8");
         
         TextView author = (TextView)view.findViewById(R.id.author);
         author.setText(Html.fromHtml(comment.Signature));
