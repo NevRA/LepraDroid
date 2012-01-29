@@ -46,7 +46,7 @@ public class SettingsWorker
     
     public void clearCookies() throws Exception
     {
-        saveCookies(new Pair<String, String>("", ""));
+        save(COOKIES, "");
     }
     
     public void saveCookies(Pair<String, String> auth) throws Exception
@@ -65,7 +65,7 @@ public class SettingsWorker
     {
         cookie = load(COOKIES);
         if(TextUtils.isEmpty(cookie))
-            return new Pair<String, String>("", "");
+            return null;
         
         final String[] cookies = cookie.split(";");
         return new Pair<String, String>(cookies[0], cookies[1]);

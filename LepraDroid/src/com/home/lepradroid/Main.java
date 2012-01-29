@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
-import android.widget.TabHost;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
@@ -22,7 +21,6 @@ import com.viewpagerindicator.TitlePageIndicator;
 
 public class Main extends BaseActivity implements LoginListener, LogoutListener
 {
-    private TabHost tabHost;
     private PostsScreen mainPosts;
     private BlogsScreen blogsPosts;
     private PostsScreen favoritePosts;
@@ -181,7 +179,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         Utils.clearData();
         Utils.clearLogonInfo();
         showLogonScreen();
-        tabHost.setCurrentTab(0);
+        titleIndicator.setCurrentItem(0);
     }
     
     private void showLogonScreen()

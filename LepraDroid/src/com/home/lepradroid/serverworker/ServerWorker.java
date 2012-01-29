@@ -95,7 +95,9 @@ public class ServerWorker
     
     public Element getContent(String url) throws Exception
     {
-        final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
+        Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
+        if(cookies == null)
+            cookies = new Pair<String, String>("", "");
         
         return Jsoup.connect(url)
                 .cookie(Commons.COOKIE_SID, cookies.first)
