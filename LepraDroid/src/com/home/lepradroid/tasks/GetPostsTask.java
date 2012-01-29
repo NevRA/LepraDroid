@@ -99,6 +99,7 @@ public class GetPostsTask extends BaseTask
         
         try
         {
+            int num = -1;
             notifyAboutPostsUpdateBegin();
             
             final String html = ServerWorker.Instance().getContent(url); 
@@ -108,6 +109,7 @@ public class GetPostsTask extends BaseTask
             for (@SuppressWarnings("rawtypes")
             Iterator iterator = posts.iterator(); iterator.hasNext();)
             {
+                num++;
                 Element element = (Element) iterator.next();
                 String text = element.text();
                 Post post = new Post();
@@ -155,6 +157,8 @@ public class GetPostsTask extends BaseTask
                 }
                 
                 ServerWorker.Instance().addNewPost(groupId, post);
+                if(num%5 == 0)
+                    notifyAboutPostsUpdate();
             }
             
             if(includeImages)

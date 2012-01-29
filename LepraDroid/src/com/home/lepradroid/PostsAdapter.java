@@ -1,6 +1,8 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
@@ -18,6 +20,9 @@ import android.widget.TextView;
 class PostsAdapter extends ArrayAdapter<BaseItem>
 {
     private ArrayList<BaseItem> posts = new ArrayList<BaseItem>();
+    private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
+    private final Lock read  = readWriteLock.readLock();
+    private final Lock write = readWriteLock.writeLock();
             
     public PostsAdapter(Context context, int textViewResourceId,
             ArrayList<BaseItem> posts)
@@ -28,12 +33,28 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
 
     public int getCount() 
     {
-        return posts.size();
+        read.lock();
+        try
+        {
+            return posts.size();
+        }
+        finally
+        {
+            read.unlock();
+        } 
     }
     
     public BaseItem getItem(int position) 
     {
-        return posts.get(position);
+        read.lock();
+        try
+        {
+            return posts.get(position);
+        }
+        finally
+        {
+            read.unlock();
+        }
     }
     
     public long getItemId(int position) 
@@ -41,17 +62,33 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         return position;
     }
     
-    public void updateContent(ArrayList<Post> newPosts)
+    public void updateContent(ArrayList<BaseItem> newPosts)
     {
-        this.posts.clear();
-        this.posts.addAll(newPosts);
+        write.lock();
+        try
+        {
+            this.posts = newPosts;
+        }
+        finally
+        {
+            write.unlock();
+        }
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
-        final Post post = (Post)getItem(position);
-        
+        read.lock();
+        final Post post;
+        try
+        {
+            post  = (Post)getItem(position);
+        }
+        finally
+        {
+            read.unlock();
+        }
+
         LayoutInflater aInflater=LayoutInflater.from(getContext());
 
         View view = aInflater.inflate(R.layout.post_row_view, parent, false);

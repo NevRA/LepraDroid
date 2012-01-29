@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -51,6 +53,9 @@ public class ServerWorker
     private CookieStore cookieStore;
     private HttpClient client;
     private Map<UUID, ArrayList<BaseItem>> posts = new HashMap<UUID, ArrayList<BaseItem>>();
+    private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
+    private final Lock read  = readWriteLock.readLock();
+    private final Lock write = readWriteLock.writeLock();
     
     private ServerWorker() 
     {
@@ -161,7 +166,8 @@ public class ServerWorker
     
     public BaseItem getPostById(UUID groupId, UUID id)
     {
-        synchronized (posts)
+        read.lock();
+        try
         {
             ArrayList<BaseItem> items = posts.get(groupId);
             for(BaseItem item : items)
@@ -170,47 +176,78 @@ public class ServerWorker
                     return item;
             }
         }
+        finally
+        {
+            read.unlock();
+        }
         
         return null;
     }
     
     public ArrayList<BaseItem> getPostsById(UUID groupId)
     {
-        synchronized (posts)
+        read.lock();
+        try
         {
             ArrayList<BaseItem> items = posts.get(groupId);
             if(items == null)
             {
                 items = new ArrayList<BaseItem>(0);
-                posts.put(groupId, items);
+                write.lock();
+                try
+                {
+                    posts.put(groupId, items);
+                }
+                finally
+                {
+                    write.unlock();
+                }
             }
             
             return items;
         }
+        finally
+        {
+            read.unlock();
+        }
     }
-    
     
     public void addNewPost(UUID groupId, BaseItem post)
     {
-        synchronized (posts)
+        write.lock();
+        try
         {
             getPostsById(groupId).add(post);
+        }
+        finally
+        {
+            write.unlock();
         }
     }
     
     public void clearPostsById(UUID groupId)
     {
-        synchronized (posts)
+        write.lock();
+        try
         {
             getPostsById(groupId).clear();
+        }
+        finally
+        {
+            write.unlock();
         }
     }
     
     public void clearPosts()
     {
-        synchronized (posts)
+        write.lock();
+        try
         {
             posts.clear();
+        }
+        finally
+        {
+            write.unlock();
         }
     }
 }

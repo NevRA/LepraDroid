@@ -70,13 +70,23 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
     	
         if(adapter == null || haveNewRecords)
         {
-            progress.setVisibility(View.GONE);
-            progress.setIndeterminate(false);
-            list.setVisibility(View.VISIBLE);
+            if(progress.getVisibility() == View.VISIBLE)
+            {
+                progress.setVisibility(View.GONE);
+                progress.setIndeterminate(false);
+                list.setVisibility(View.VISIBLE);
+            }
             
-            adapter = new PostsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsById(groupId));
-
-            list.setAdapter(adapter);
+            if(adapter == null)
+            {
+                adapter = new PostsAdapter(context, R.layout.post_row_view, ServerWorker.Instance().getPostsById(groupId));
+                list.setAdapter(adapter);
+            }
+            else
+            {
+                adapter.updateContent(ServerWorker.Instance().getPostsById(groupId));
+                adapter.notifyDataSetChanged();
+            }
         }
         else
         {

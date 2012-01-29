@@ -87,6 +87,7 @@ public class GetBlogsTask extends BaseTask
         
         try
         {
+            int num = -1;
             notifyAboutBlogsUpdateBegin();
             
             final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL); 
@@ -95,6 +96,7 @@ public class GetBlogsTask extends BaseTask
             for (@SuppressWarnings("rawtypes")
             Iterator iterator = blogs.iterator(); iterator.hasNext();)
             {
+                num++;
                 Element element = (Element) iterator.next();
                 Blog blog = new Blog();
                 
@@ -124,6 +126,8 @@ public class GetBlogsTask extends BaseTask
                 }
                 
                 ServerWorker.Instance().addNewPost(Commons.BLOGS_POSTS_ID, blog);
+                if(num%5 == 0)
+                    notifyAboutBlogsUpdate();
             }
             
             if(includeImages)

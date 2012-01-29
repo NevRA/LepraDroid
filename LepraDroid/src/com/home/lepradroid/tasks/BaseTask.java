@@ -2,14 +2,14 @@ package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
 
+import android.util.Pair;
+
 import com.home.lepradroid.interfaces.ProgressTracker;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.WorkerTask;
 
-import android.os.AsyncTask;
-import android.util.Pair;
-
-public abstract class BaseTask extends AsyncTask<Void, Pair<UpdateListener, Pair<Method, Object[]>>, Throwable> 
+public abstract class BaseTask extends WorkerTask<Void, Pair<UpdateListener, Pair<Method, Object[]>>, Throwable> 
 {
     protected ProgressTracker progress;
     protected Throwable e; 

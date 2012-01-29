@@ -1,12 +1,11 @@
 package com.home.lepradroid.tasks;
 
+import android.app.ProgressDialog;
+
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.interfaces.ProgressTracker;
 import com.home.lepradroid.utils.Utils;
-
-
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import com.home.lepradroid.utils.WorkerTask;
 
 public class TaskWrapper implements ProgressTracker  
 {
@@ -22,7 +21,7 @@ public class TaskWrapper implements ProgressTracker
         if(task == null)
             return;
         
-        if(progressListener != null && task.getStatus() != AsyncTask.Status.FINISHED )
+        if(progressListener != null && task.getStatus() != WorkerTask.Status.FINISHED )
         {
             progressDialog = new ProgressDialog(progressListener);
             progressDialog.setCancelable(false);
@@ -32,8 +31,8 @@ public class TaskWrapper implements ProgressTracker
         
         task.setProgressTracker(this);
         
-        if(     task.getStatus() != AsyncTask.Status.RUNNING &&
-                task.getStatus() != AsyncTask.Status.FINISHED)
+        if(     task.getStatus() != WorkerTask.Status.RUNNING &&
+                task.getStatus() != WorkerTask.Status.FINISHED)
         {   
             task.execute();
         }
