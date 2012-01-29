@@ -1,5 +1,7 @@
 package com.home.lepradroid.utils;
 
+import java.io.ByteArrayInputStream;
+
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
 import com.home.lepradroid.serverworker.ServerWorker;
@@ -7,6 +9,7 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 
 public class Utils
 {
@@ -25,6 +28,19 @@ public class Utils
         {
             Logger.e(e);
             return "";
+        }
+    }
+    
+    public static Drawable getImageFromByteArray(byte array[])
+    {
+        try
+        {
+            return Drawable.createFromStream(new ByteArrayInputStream(array), "src");
+        }
+        catch (Throwable t)
+        {
+            Logger.e(t);
+            return null;
         }
     }
     
@@ -60,6 +76,7 @@ public class Utils
     
     public static void clearData()
     {
+        ServerWorker.Instance().clearComments();
     	ServerWorker.Instance().clearPosts();
     }
     

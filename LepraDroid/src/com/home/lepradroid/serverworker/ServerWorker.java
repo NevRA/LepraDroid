@@ -1,6 +1,5 @@
 package com.home.lepradroid.serverworker;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,11 +33,11 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
-import android.graphics.drawable.Drawable;
 import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
 
 public class ServerWorker
@@ -51,6 +50,7 @@ public class ServerWorker
     private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
     private final Lock read  = readWriteLock.readLock();
     private final Lock write = readWriteLock.writeLock();
+    private Map<UUID, ArrayList<Comment>> comments = new HashMap<UUID, ArrayList<Comment>>();
     
     private ServerWorker() 
     {
@@ -121,16 +121,14 @@ public class ServerWorker
         return response.getAllHeaders();
     }
     
-    public Drawable getImage(String url) throws ClientProtocolException, IOException
+    public byte[] getImage(String url) throws ClientProtocolException, IOException
     {
         final HttpGet httpGet = new HttpGet(url);
         
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
         
-        final byte[] array = EntityUtils.toByteArray(response.getEntity());
-  
-        return Drawable.createFromStream(new ByteArrayInputStream(array), "src");
+        return EntityUtils.toByteArray(response.getEntity());
     }
 
     public String getLoginCode()
@@ -191,6 +189,53 @@ public class ServerWorker
         }
     }
     
+    public ArrayList<Comment> getComments(UUID groupId, UUID id)
+    {
+        read.lock();
+        try
+        {
+            BaseItem post = getPostById(groupId, id);
+            if(post != null)
+            {
+                if(comments.containsKey(id))
+                {
+                    return comments.get(id);
+                }
+            }
+        }
+        finally
+        {
+            read.unlock();
+        }
+        
+        return new ArrayList<Comment>();
+    }
+    
+    public void addNewComments(UUID groupId, UUID id, ArrayList<Comment> items)
+    {
+        write.lock();
+        try
+        {
+            BaseItem post = getPostById(groupId, id);
+            if(post != null)
+            {
+                if(!comments.containsKey(id))
+                {
+                    ArrayList<Comment> targetList = new ArrayList<Comment>();
+                    comments.put(id, targetList);
+                }
+                
+                comments.get(id).addAll(items);
+                
+                return;
+            }
+        }
+        finally
+        {
+            write.unlock();
+        }
+    }
+    
     public void addNewPosts(UUID groupId, ArrayList<BaseItem> posts)
     {
         write.lock();
@@ -217,12 +262,39 @@ public class ServerWorker
         }
     }
     
+    public void clearCommentsById(UUID id)
+    {
+        write.lock();
+        try
+        {
+            if(comments.containsKey(id))
+                    comments.remove(id);
+        }
+        finally
+        {
+            write.unlock();
+        }
+    }
+    
     public void clearPostsById(UUID groupId)
     {
         write.lock();
         try
         {
             getPostsById(groupId).clear();
+        }
+        finally
+        {
+            write.unlock();
+        }
+    }
+    
+    public void clearComments()
+    {
+        write.lock();
+        try
+        {
+            comments.clear();
         }
         finally
         {

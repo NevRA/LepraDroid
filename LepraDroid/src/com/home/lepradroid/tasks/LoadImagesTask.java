@@ -69,8 +69,8 @@ public class LoadImagesTask extends BaseTask
                 {
                     try
                     {
-                        if(post.dw == null)
-                            post.dw = ServerWorker.Instance().getImage("http://src.sencha.io/80/80/" + post.ImageUrl);
+                        if(post.image == null)
+                            post.image = ServerWorker.Instance().getImage("http://src.sencha.io/80/80/" + post.ImageUrl);
                     }
                     catch (Exception e)
                     {

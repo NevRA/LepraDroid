@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip"
+    android:minHeight="60dip" >
+    
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/main"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" >
+	    <TextView
+	        android:id="@+id/text"
+	        android:textSize="12sp"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:textStyle="bold"
+	        android:layout_centerVertical="true"
+	        android:maxLines="6"/>
+    </RelativeLayout>
+    
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_below="@+id/main"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" 
+	    android:paddingTop="5dip"
+	    android:layout_alignParentBottom="true">
+	    <TextView
+	        android:id="@+id/author"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent"
+	        android:layout_toLeftOf="@+id/rating"
+	        android:textSize="9sp"
+	        android:ellipsize="end"
+	        android:textColor="@android:color/secondary_text_light"
+	        android:maxLines="2"/>
+	    <TextView
+	        android:id="@+id/rating"
+	        android:paddingTop="2dip"
+	        android:background="@drawable/ic_badge"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_alignParentBottom="true"
+	        android:gravity="center_horizontal"
+	        android:textSize="8sp"
+	        android:textStyle="bold"
+	        android:textColor="@android:color/secondary_text_light"/>
+	</RelativeLayout>
+</RelativeLayout>

@@ -57,7 +57,7 @@ public class GetCaptchaTask extends BaseTask
             final String loginCode = elements.first().attr("value");
             ServerWorker.Instance().setLoginCode(loginCode);
               
-            captcha = ServerWorker.Instance().getImage(Commons.CAPTCHA_URL + loginCode);
+            captcha = Utils.getImageFromByteArray(ServerWorker.Instance().getImage(Commons.CAPTCHA_URL + loginCode));
         }
         catch (Throwable e) 
         {           

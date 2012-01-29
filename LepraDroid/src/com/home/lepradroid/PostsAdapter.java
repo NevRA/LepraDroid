@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
+import com.home.lepradroid.utils.Utils;
 
 class PostsAdapter extends ArrayAdapter<BaseItem>
 {
@@ -68,9 +69,9 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         {
             image.setVisibility(View.VISIBLE);
             
-            if(post.dw != null)
+            if(post.image != null)
             {
-                image.setImageDrawable(post.dw);
+                image.setImageDrawable(Utils.getImageFromByteArray(post.image));
             }
         }
 

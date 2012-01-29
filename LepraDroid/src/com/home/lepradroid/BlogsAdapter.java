@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Blog;
+import com.home.lepradroid.utils.Utils;
 
 class BlogsAdapter extends ArrayAdapter<BaseItem>
 {
@@ -65,9 +66,9 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
         {
             image.setVisibility(View.VISIBLE);
             
-            if(blog.dw != null)
+            if(blog.image != null)
             {
-                image.setImageDrawable(blog.dw);
+                image.setImageDrawable(Utils.getImageFromByteArray(blog.image));
             }
         }
 

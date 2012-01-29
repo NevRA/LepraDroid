@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.R;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -147,6 +148,7 @@ public class GetPostsTask extends BaseTask
                     {
                         Elements span = author.first().getElementsByTag("span");
                         Elements a = span.first().getElementsByTag("a");
+                        post.Url = Commons.SITE_URL + a.first().attr("href");
                         if(a.size() == 2)
                             post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
                         else

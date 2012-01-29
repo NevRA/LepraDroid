@@ -8,6 +8,8 @@ import android.support.v4.view.ViewPager;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.tasks.GetCommentsTask;
+import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -42,7 +44,7 @@ public class PostScreen extends BaseActivity
         postView = new PostView(this, groupId, id);
         postView.setTag(Utils.getString(R.string.Post_Tab));
         
-        commentsView = new CommentsView(this);
+        commentsView = new CommentsView(this, groupId, id);
         commentsView.setTag(Utils.getString(R.string.Comments_Tab));
         
         authorView = new AuthorView(this);
@@ -80,5 +82,7 @@ public class PostScreen extends BaseActivity
                     {
                     }
                 });
+        
+        pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
     }
 }
