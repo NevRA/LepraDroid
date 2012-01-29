@@ -1,33 +1,84 @@
 package com.home.lepradroid;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.os.Bundle;
-import android.webkit.WebView;
+import android.support.v4.view.ViewPager;
 
 import com.home.lepradroid.base.BaseActivity;
-import com.home.lepradroid.objects.BaseItem;
-import com.home.lepradroid.objects.Post;
-import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.utils.Utils;
+import com.viewpagerindicator.TitlePageIndicator;
 
 public class PostScreen extends BaseActivity
 {
+    private UUID            groupId;
+    private UUID            id;
+    private PostView        postView;
+    private CommentsView    commentsView;
+    private AuthorView      authorView;
+    private TitlePageIndicator 
+                            titleIndicator;
+    private TabsPageAdapter tabsAdapter;
+    private ViewPager       pager;
+    private ArrayList<BaseView> 
+                            pages = new ArrayList<BaseView>();
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.post_view);
+        setContentView(R.layout.post_base_view);
         
-        UUID groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
-        UUID id = UUID.fromString(getIntent().getExtras().getString("id"));
+        groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
+        id = UUID.fromString(getIntent().getExtras().getString("id"));
+
+        createTabs();
+    }
+    
+    private void createTabs()
+    {
+        postView = new PostView(this, groupId, id);
+        postView.setTag(Utils.getString(R.string.Post_Tab));
         
-        BaseItem item = ServerWorker.Instance().getPostById(groupId, id);
-        if(item == null)
-            finish();
+        commentsView = new CommentsView(this);
+        commentsView.setTag(Utils.getString(R.string.Comments_Tab));
         
-        WebView webView = (WebView) findViewById(R.id.webview);
+        authorView = new AuthorView(this);
+        authorView.setTag(Utils.getString(R.string.Author_Tab));
         
-        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-        webView.loadData(header + ((Post)item).Html, "text/html", "UTF-8");
+        pages.add(postView);
+        pages.add(commentsView);
+        pages.add(authorView);
+        
+        tabsAdapter = new TabsPageAdapter(this, pages);
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(tabsAdapter);
+        pager.setCurrentItem(0);
+
+        titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
+        titleIndicator.setViewPager(pager);
+        titleIndicator.setCurrentItem(0);
+        
+        titleIndicator
+                .setOnPageChangeListener(new ViewPager.OnPageChangeListener()
+                {
+                    @Override
+                    public void onPageSelected(int position)
+                    {
+                    }
+
+                    @Override
+                    public void onPageScrolled(int position,
+                            float positionOffset, int positionOffsetPixels)
+                    {
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state)
+                    {
+                    }
+                });
     }
 }

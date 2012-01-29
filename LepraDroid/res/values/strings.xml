@@ -22,5 +22,8 @@
     <string name="No_Comments">новых комментариев нет</string>
     <string name="Reload_Menu">Обновить</string>
     <string name="Logout_Menu">Завершить сессию</string>
+    <string name="Post_Tab">Пост</string>
+    <string name="Comments_Tab">Комментарии</string>
+    <string name="Author_Tab">Автор</string>
 
 </resources>
