@@ -14,17 +14,19 @@ import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Blog;
-import com.home.lepradroid.utils.Utils;
+import com.home.lepradroid.utils.ImageLoader;
 
 class BlogsAdapter extends ArrayAdapter<BaseItem>
 {
     private ArrayList<BaseItem> posts = new ArrayList<BaseItem>();
+    public ImageLoader          imageLoader;
             
     public BlogsAdapter(Context context, int textViewResourceId,
             ArrayList<BaseItem> posts)
     {
         super(context, textViewResourceId, posts);
         this.posts = posts;
+        imageLoader=new ImageLoader(LepraDroidApplication.getInstance());
     }
 
     public int getCount() 
@@ -71,10 +73,7 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
         {
             image.setVisibility(View.VISIBLE);
             
-            if(blog.image != null)
-            {
-                image.setImageDrawable(Utils.getImageFromByteArray(blog.image));
-            }
+            imageLoader.DisplayImage(blog.ImageUrl, image);
         }
 
         return view;

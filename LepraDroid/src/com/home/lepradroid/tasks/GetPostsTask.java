@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -27,8 +28,6 @@ public class GetPostsTask extends BaseTask
 {
     private UUID groupId;
     private String url;
-    private LoadImagesTask loadImagesTask;
-    private boolean includeImages;
     
     static final Class<?>[] argsClassesOnPostsUpdate = new Class[2];
     static final Class<?>[] argsClassesOnPostsUpdateBegin = new Class[1];
@@ -51,18 +50,10 @@ public class GetPostsTask extends BaseTask
         }        
     }
     
-    @Override
-	public void finish()
-    {
-    	if(loadImagesTask != null) loadImagesTask.finish();
-    	super.finish();
-    }
-    
-    public GetPostsTask(UUID groupId, String url, boolean includeImages)
+    public GetPostsTask(UUID groupId, String url)
     {       
         this.groupId = groupId;
         this.url = url;
-        this.includeImages = includeImages;
     }
     
     @SuppressWarnings("unchecked")
@@ -97,7 +88,7 @@ public class GetPostsTask extends BaseTask
     protected Throwable doInBackground(Void... params)
     {
         final long startTime = System.nanoTime();
-        
+               
         try
         {
             int num = -1;
@@ -108,7 +99,8 @@ public class GetPostsTask extends BaseTask
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
-            final Element root = ServerWorker.Instance().getContent(url); 
+            final Document document = ServerWorker.Instance().getContent(url);
+            final Element root = document.body(); 
             final Element content = root.getElementById("content");
             final Elements posts = content.getElementsByClass("dt");
             for (@SuppressWarnings("rawtypes")
@@ -124,7 +116,7 @@ public class GetPostsTask extends BaseTask
                 Elements images = element.getElementsByTag("img");
                 if(!images.isEmpty())
                 {
-                    post.ImageUrl = images.first().attr("src");
+                    post.ImageUrl = "http://src.sencha.io/80/80/" + images.first().attr("src");
                     
                     for (Element image : images)
                     {
@@ -174,13 +166,7 @@ public class GetPostsTask extends BaseTask
                     
                     items = new ArrayList<BaseItem>(0);
                 }
-            }
-            
-            if(includeImages)
-            {
-                loadImagesTask = new LoadImagesTask(groupId);
-                loadImagesTask.execute();
-            }
+            }        
         }
         catch (Throwable t)
         {

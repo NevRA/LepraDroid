@@ -83,16 +83,16 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             switch(pager.getCurrentItem())
             {
             case MAIN_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case BLOGS_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetBlogsTask(true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetBlogsTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case FAVORITE_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case MYSTUFF_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             }
             
@@ -140,14 +140,14 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                         case BLOGS_TAB_NUM:
                             if(!favoriteInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                                 favoriteInit = true;
                             }
                             break;
                         case FAVORITE_TAB_NUM:
                             if(!myStuffInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                                 myStuffInit = true;
                             }
                             break;

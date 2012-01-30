@@ -52,8 +52,6 @@ public class PostScreen extends BaseActivity
             authorView.OnExit();
             unbindDrawables(authorView.contentView.getRootView());
         }
-
-        System.gc();
         
         super.onDestroy();
     }

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -86,9 +87,9 @@ public class GetCommentsTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
-        ArrayList<BaseItem> items = new ArrayList<BaseItem>();
         
         final long startTime = System.nanoTime();
+        ArrayList<BaseItem> items = new ArrayList<BaseItem>();
         
         try
         {
@@ -99,7 +100,8 @@ public class GetCommentsTask extends BaseTask
             if(post == null)
                 return null; // TODO message
             
-            final Element root = ServerWorker.Instance().getContent(post.Url); 
+            final Document document = ServerWorker.Instance().getContent(post.Url);
+            final Element root = document.body(); 
             final Element holder = root.getElementById("js-commentsHolder");
             final Elements comments = holder.getElementsByClass("dt");
             for (@SuppressWarnings("rawtypes")

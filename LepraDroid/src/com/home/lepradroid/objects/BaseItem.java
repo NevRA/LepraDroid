@@ -8,7 +8,6 @@ public class BaseItem
     public String Url = "";
     public String Text = "";
     public String ImageUrl = "";
-    public byte image[];
     public String Author = "";
     public String Signature = "";
 }

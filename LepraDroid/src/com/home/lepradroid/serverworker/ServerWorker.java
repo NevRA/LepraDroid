@@ -31,7 +31,7 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Document;
 
 import android.util.Pair;
 
@@ -92,7 +92,7 @@ public class ServerWorker
         SettingsWorker.Instance().clearCookies();
     }
     
-    public Element getContent(String url) throws Exception
+    public Document getContent(String url) throws Exception
     {
         Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
         if(cookies == null)
@@ -102,7 +102,7 @@ public class ServerWorker
                 .cookie(Commons.COOKIE_SID, cookies.first)
                 .cookie(Commons.COOKIE_UID, cookies.second)
                 .timeout(3000)
-                .get().body(); 
+                .get(); 
     }
     
     public Header[] login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException

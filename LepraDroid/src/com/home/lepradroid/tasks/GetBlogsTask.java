@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -20,10 +21,7 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
 
 public class GetBlogsTask extends BaseTask
-{
-    private LoadImagesTask loadImagesTask;
-    private boolean includeImages;
-    
+{    
     static final Class<?>[] argsClassesOnBlogsUpdate = new Class[1];
     static final Class<?>[] argsClassesOnBlogsUpdateBegin = new Class[0];
     static Method methodOnBlogsUpdate;
@@ -41,18 +39,6 @@ public class GetBlogsTask extends BaseTask
         {           
             Logger.e(t);
         }        
-    }
-    
-    @Override
-    public void finish()
-    {
-        if(loadImagesTask != null) loadImagesTask.finish();
-        super.finish();
-    }
-    
-    public GetBlogsTask(boolean includeImages)
-    {
-        this.includeImages = includeImages;
     }
     
     @SuppressWarnings("unchecked")
@@ -94,7 +80,8 @@ public class GetBlogsTask extends BaseTask
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
-            final Element root = ServerWorker.Instance().getContent(Commons.BLOGS_URL); 
+            final Document document = ServerWorker.Instance().getContent(Commons.BLOGS_URL);
+            final Element root = document.body(); 
             final Elements blogs = root.getElementsByClass("jj_row");
             for (@SuppressWarnings("rawtypes")
             Iterator iterator = blogs.iterator(); iterator.hasNext();)
@@ -115,7 +102,7 @@ public class GetBlogsTask extends BaseTask
                     
                     Elements images = logo.getElementsByTag("img");
                     if(!images.isEmpty())
-                        blog.ImageUrl = images.first().attr("src");
+                        blog.ImageUrl = "http://src.sencha.io/80/80/" + images.first().attr("src");
                 }
 
                 Elements title = element.getElementsByTag("h5");
@@ -148,12 +135,6 @@ public class GetBlogsTask extends BaseTask
                     
                     items = new ArrayList<BaseItem>(0);
                 }
-            }
-            
-            if(includeImages)
-            {
-                loadImagesTask = new LoadImagesTask(Commons.BLOGS_POSTS_ID);
-                loadImagesTask.execute();
             }
         }
         catch (Throwable t)

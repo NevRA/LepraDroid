@@ -38,7 +38,7 @@ public class BlogScreen extends BaseActivity
             
             post = ServerWorker.Instance().getPostById(groupId, id);
             if(post != null)
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url), Utils.getString(R.string.Posts_Loading_In_Progress)));
             else
                 finish(); // TODO message
         }
@@ -55,7 +55,7 @@ public class BlogScreen extends BaseActivity
         switch (item.getItemId())
         {
         case MENU_RELOAD:
-            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url, true), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url), Utils.getString(R.string.Posts_Loading_In_Progress)));
             return true;
         }
         return false;

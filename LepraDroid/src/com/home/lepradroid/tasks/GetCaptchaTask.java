@@ -3,6 +3,7 @@ package com.home.lepradroid.tasks;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -50,7 +51,8 @@ public class GetCaptchaTask extends BaseTask
         {  
             Logger.d("Started GetCaptchaTask");
   
-            final Element root = ServerWorker.Instance().getContent(Commons.LOGON_PAGE_URL);
+            final Document document = ServerWorker.Instance().getContent(Commons.LOGON_PAGE_URL);
+            final Element root = document.body(); 
             final Elements elements = root.getElementsByAttributeValue("name", "logincode");
             if(elements.isEmpty())
                 throw new Exception(Utils.getString(R.string.Captcha_Not_Found));
