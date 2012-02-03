@@ -2,18 +2,16 @@ package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import org.jsoup.nodes.Document;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -22,7 +20,6 @@ import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
-import com.home.lepradroid.utils.Utils;
 
 public class GetPostsTask extends BaseTask
 {
@@ -99,15 +96,30 @@ public class GetPostsTask extends BaseTask
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
-            final Document document = ServerWorker.Instance().getContent(url);
-            final Element root = document.body(); 
-            final Element content = root.getElementById("content");
-            final Elements posts = content.getElementsByClass("dt");
-            for (@SuppressWarnings("rawtypes")
-            Iterator iterator = posts.iterator(); iterator.hasNext();)
+            final String html = ServerWorker.Instance().getContent(url);
+            final String postOrd = "<div class=\"post ord ";
+            int currentPos = 0;
+
+            boolean lastElement = false;
+            
+            do
             {
                 num++;
-                Element element = (Element) iterator.next();
+                
+                int start = html.indexOf(postOrd, currentPos);
+                int end = html.indexOf(postOrd, start + 100);
+                
+                if(end == -1)
+                {
+                    end = html.length();
+                    lastElement = true;
+                }
+                
+                currentPos = end;
+                
+                final Element content = Jsoup.parse(html.substring(start, end));
+                final Element element = content.getElementsByClass("dt").first();
+
                 String text = element.text();
                 Post post = new Post();
                 post.Text = TextUtils.isEmpty(text) ? "..." : text;
@@ -131,33 +143,36 @@ public class GetPostsTask extends BaseTask
                         post.Html = post.Html.replace(image.attr("src"), "http://src.sencha.io/303/303/" + image.attr("src"));
                     }
                 }
+
+                Elements rating = content.getElementsByTag("em");
+                post.Rating = Integer.valueOf(rating.first().text());
                 
-                Element authorParent = element.parent();
-                if(authorParent != null)
+                Elements author = content.getElementsByClass("p");
+                if(!author.isEmpty())
                 {
-                	Elements rating = authorParent.getElementsByTag("em");
-                    post.Rating = Integer.valueOf(rating.first().text());
+                    Elements span = author.first().getElementsByTag("span");
+                    Elements a = span.first().getElementsByTag("a");
+                    String url = a.first().attr("href");
+                    if(url.contains("http"))
+                        post.Url = url;
+                    else
+                        post.Url = Commons.SITE_URL + url;
                     
-                    Elements author = authorParent.getElementsByClass("p");
-                    if(!author.isEmpty())
+                    if(a.size() == 2)
                     {
-                        Elements span = author.first().getElementsByTag("span");
-                        Elements a = span.first().getElementsByTag("a");
-                        String url = a.first().attr("href");
-                        if(url.contains("http"))
-                            post.Url = url;
-                        else
-                            post.Url = Commons.SITE_URL + url;
-                        
-                        if(a.size() == 2)
-                            post.Comments = a.get(0).text() + " / " + "<b>" + a.get(1).text() + "</b>";
-                        else
-                            post.Comments = Utils.getString(R.string.No_Comments);
-                        
-                        post.Author = author.first().getElementsByTag("a").first().text();
-                        post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
+                        post.totalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
+                        post.newComments = Integer.valueOf(a.get(1).text().split(" ")[0]);
                     }
+                    else
+                    {
+                        if(!a.get(0).text().equals("комментировать"))
+                            post.totalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
+                    }
+                    
+                    post.Author = author.first().getElementsByTag("a").first().text();
+                    post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
                 }
+                
                 items.add(post);
                 if(num%5 == 0)
                 {
@@ -166,7 +181,8 @@ public class GetPostsTask extends BaseTask
                     
                     items = new ArrayList<BaseItem>(0);
                 }
-            }        
+            }
+            while (lastElement == false);       
         }
         catch (Throwable t)
         {

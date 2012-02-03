@@ -1,6 +1,7 @@
 package com.home.lepradroid.serverworker;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,14 +31,13 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 
 import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.utils.Logger;
 
 public class ServerWorker
 {
@@ -92,17 +92,25 @@ public class ServerWorker
         SettingsWorker.Instance().clearCookies();
     }
     
-    public Document getContent(String url) throws Exception
+    public String getContent(String url) throws Exception
     {
-        Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
-        if(cookies == null)
-            cookies = new Pair<String, String>("", "");
+        final HttpGet httpGet = new HttpGet(url);
         
-        return Jsoup.connect(url)
-                .cookie(Commons.COOKIE_SID, cookies.first)
-                .cookie(Commons.COOKIE_UID, cookies.second)
-                .timeout(3000)
-                .get(); 
+        try
+        {
+            final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
+            if(cookies != null)
+                httpGet.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";"); 
+        }
+        catch (Exception e)
+        {
+            Logger.e(e);
+        }
+        
+        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        final HttpResponse response = client.execute(httpGet);
+        
+        return EntityUtils.toString(response.getEntity());
     }
     
     public Header[] login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException

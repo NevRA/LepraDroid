@@ -2,11 +2,10 @@ package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import org.jsoup.nodes.Document;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -93,21 +92,41 @@ public class GetCommentsTask extends BaseTask
         
         try
         {
+            int num = -1;
+            
             ServerWorker.Instance().clearCommentsById(id);
             notifyAboutCommentsUpdateBegin();
 
-            BaseItem post = ServerWorker.Instance().getPostById(groupId, id);
+            final BaseItem post = ServerWorker.Instance().getPostById(groupId, id);
             if(post == null)
                 return null; // TODO message
             
-            final Document document = ServerWorker.Instance().getContent(post.Url);
-            final Element root = document.body(); 
-            final Element holder = root.getElementById("js-commentsHolder");
-            final Elements comments = holder.getElementsByClass("dt");
-            for (@SuppressWarnings("rawtypes")
-            Iterator iterator = comments.iterator(); iterator.hasNext();)
-            {   
-                Element element = (Element) iterator.next();
+            final String html = ServerWorker.Instance().getContent(post.Url);
+            final String pref = "<div id=\"XXXXXXXX\" ";
+            final String postTree = "class=\"post tree";
+            int currentPos = 0;  
+            boolean lastElement = false;
+
+            do
+            {
+                num++;
+                
+                int start = html.indexOf(postTree, currentPos);
+                start -= pref.length();
+                int end = html.indexOf(postTree, start + 100);
+                end -= pref.length();
+                
+                if(end < 0)
+                {
+                    end = html.length();
+                    lastElement = true;
+                }
+               
+                currentPos = end;
+
+                final Element content = Jsoup.parse(html.substring(start, end));
+                final Element element = content.getElementsByClass("dt").first();
+                
                 Comment comment = new Comment();
                 comment.Text = element.text();
                 comment.Html = element.html();
@@ -131,8 +150,7 @@ public class GetCommentsTask extends BaseTask
                     }
                 }
 
-                Element parent = element.parent();
-                Elements author = parent.getElementsByClass("p");
+                Elements author = content.getElementsByClass("p");
                 if(!author.isEmpty())
                 {
                     Elements a = author.first().getElementsByTag("a");
@@ -142,7 +160,7 @@ public class GetCommentsTask extends BaseTask
                     comment.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
                 }
                 
-                Elements vote = parent.getElementsByClass("vote");
+                Elements vote = content.getElementsByClass("vote");
                 if(!vote.isEmpty())
                 {
                     Elements rating = vote.first().getElementsByTag("em");
@@ -150,7 +168,16 @@ public class GetCommentsTask extends BaseTask
                 }
                 
                 items.add(comment);
+                
+                if(num%100 == 0)
+                {
+                    ServerWorker.Instance().addNewComments(groupId, id, items);
+                    notifyAboutCommentsUpdate();
+                    
+                    items = new ArrayList<BaseItem>(0);
+                }
             }
+            while (lastElement == false);
         }
         catch (Throwable t)
         {
@@ -158,7 +185,6 @@ public class GetCommentsTask extends BaseTask
         }
         finally
         {
-            ServerWorker.Instance().addNewComments(groupId, id, items);
             notifyAboutCommentsUpdate();
             
             Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));

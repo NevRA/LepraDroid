@@ -71,7 +71,7 @@ public class GetBlogsTask extends BaseTask
     {
         final long startTime = System.nanoTime();
         
-        try
+        /*try
         {
             int num = -1;
             
@@ -146,7 +146,7 @@ public class GetBlogsTask extends BaseTask
             notifyAboutBlogsUpdate();
             
             Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));
-        }
+        }*/
                 
         return e;
     }

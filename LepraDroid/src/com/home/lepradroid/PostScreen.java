@@ -37,6 +37,7 @@ public class PostScreen extends BaseActivity
     protected void onDestroy()
     {
         ServerWorker.Instance().clearCommentsById(id);
+        
         if(postView != null)
         {
             postView.OnExit();
