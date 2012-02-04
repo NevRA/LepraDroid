@@ -8,9 +8,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.text.Html;
+import android.text.Spanned;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
+import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 
 public class Utils
@@ -109,5 +112,15 @@ public class Utils
         {
             Logger.e(e);
         }
+    }
+    
+    public static Spanned getCommentsStringFromPost(Post post)
+    {
+        if(post.totalComments != -1 && post.newComments != -1)
+            return Html.fromHtml(post.totalComments.toString() + " " + Utils.getString(R.string.Total_Comments) + " / " + "<b>" + post.newComments + " " + Utils.getString(R.string.New_Comments) + "</b>");
+        if(post.totalComments != -1)
+            return Html.fromHtml(post.totalComments.toString() + " " + Utils.getString(R.string.Total_Comments));
+        else
+            return Html.fromHtml(Utils.getString(R.string.No_Comments));
     }
 }

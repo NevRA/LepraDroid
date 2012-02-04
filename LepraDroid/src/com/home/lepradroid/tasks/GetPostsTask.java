@@ -174,7 +174,7 @@ public class GetPostsTask extends BaseTask
                 }
                 
                 items.add(post);
-                if(num%5 == 0)
+                if(num%5 == 0 || lastElement)
                 {
                     ServerWorker.Instance().addNewPosts(groupId, items);
                     notifyAboutPostsUpdate();

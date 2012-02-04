@@ -19,7 +19,9 @@
     <string name="Posts_Tab">Главная</string>
     <string name="Favorites_Tab">Избранное</string>
     <string name="MyStuff_Tab">Мои вещи</string>
-    <string name="No_Comments">новых комментариев нет</string>
+    <string name="No_Comments">комментариев нет</string>
+    <string name="Total_Comments">комментариев</string>
+    <string name="New_Comments">новых</string>
     <string name="Reload_Menu">Обновить</string>
     <string name="Logout_Menu">Завершить сессию</string>
     <string name="Post_Tab">Пост</string>

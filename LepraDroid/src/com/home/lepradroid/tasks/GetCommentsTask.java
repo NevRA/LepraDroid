@@ -169,7 +169,7 @@ public class GetCommentsTask extends BaseTask
                 
                 items.add(comment);
                 
-                if(num%100 == 0)
+                if(num%100 == 0 || lastElement)
                 {
                     ServerWorker.Instance().addNewComments(groupId, id, items);
                     notifyAboutCommentsUpdate();

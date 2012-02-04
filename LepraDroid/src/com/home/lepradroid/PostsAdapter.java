@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.utils.ImageLoader;
+import com.home.lepradroid.utils.Utils;
 
 class PostsAdapter extends ArrayAdapter<BaseItem>
 {
@@ -65,7 +66,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         author.setText(Html.fromHtml(post.Signature));
         
         TextView comments = (TextView)view.findViewById(R.id.comments);
-        comments.setText(Html.fromHtml(post.totalComments.toString() + "  / " + post.newComments.toString()));
+        comments.setText(Utils.getCommentsStringFromPost(post));
         
         TextView rating = (TextView)view.findViewById(R.id.rating);
         rating.setText(post.Rating.toString());

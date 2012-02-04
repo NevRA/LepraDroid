@@ -2,10 +2,9 @@ package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.jsoup.nodes.Document;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -71,7 +70,7 @@ public class GetBlogsTask extends BaseTask
     {
         final long startTime = System.nanoTime();
         
-        /*try
+        try
         {
             int num = -1;
             
@@ -80,15 +79,29 @@ public class GetBlogsTask extends BaseTask
             
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
-            final Document document = ServerWorker.Instance().getContent(Commons.BLOGS_URL);
-            final Element root = document.body(); 
-            final Elements blogs = root.getElementsByClass("jj_row");
-            for (@SuppressWarnings("rawtypes")
-            Iterator iterator = blogs.iterator(); iterator.hasNext();)
+            final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL);
+            final String blogRow = "<tr class=\"jj_row";
+            int currentPos = 0;
+
+            boolean lastElement = false;
+            
+            do
             {
                 num++;
                 
-                Element element = (Element) iterator.next();
+                int start = html.indexOf(blogRow, currentPos);
+                int end = html.indexOf(blogRow, start + 100);
+                
+                if(end == -1)
+                {
+                    end = html.length();
+                    lastElement = true;
+                }
+                
+                currentPos = end;
+                
+                final Element element = Jsoup.parse(html.substring(start, end));
+                
                 Blog blog = new Blog();
                 
                 Elements logos = element.getElementsByClass("jj_logo");
@@ -128,7 +141,7 @@ public class GetBlogsTask extends BaseTask
                 }
                 
                 items.add(blog);
-                if(num%5 == 0)
+                if(num%5 == 0 || lastElement)
                 {
                     ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
                     notifyAboutBlogsUpdate();
@@ -136,6 +149,7 @@ public class GetBlogsTask extends BaseTask
                     items = new ArrayList<BaseItem>(0);
                 }
             }
+            while (lastElement == false);     
         }
         catch (Throwable t)
         {
@@ -146,7 +160,7 @@ public class GetBlogsTask extends BaseTask
             notifyAboutBlogsUpdate();
             
             Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));
-        }*/
+        }
                 
         return e;
     }

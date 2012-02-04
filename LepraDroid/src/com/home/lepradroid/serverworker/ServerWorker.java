@@ -1,7 +1,6 @@
 package com.home.lepradroid.serverworker;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,7 +109,7 @@ public class ServerWorker
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
         
-        return EntityUtils.toString(response.getEntity());
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
     
     public Header[] login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
