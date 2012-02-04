@@ -114,6 +114,16 @@ public class Utils
         }
     }
     
+    public static Spanned getRatingStringFromPost(Post post)
+    {
+        if(!post.PlusVoted && !post.MinusVoted)
+            return Html.fromHtml(Integer.toString(post.Rating));
+        else if(post.PlusVoted)
+            return Html.fromHtml(Integer.toString(post.Rating - 1) + " + <font color='green'>1</font>");
+        else
+            return Html.fromHtml(Integer.toString(post.Rating + 1) + " - <font color='red'>1</font>");
+    }
+    
     public static Spanned getCommentsStringFromPost(Post post)
     {
         if(post.totalComments != -1 && post.newComments != -1)

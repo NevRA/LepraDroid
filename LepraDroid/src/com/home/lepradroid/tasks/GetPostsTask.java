@@ -117,7 +117,8 @@ public class GetPostsTask extends BaseTask
                 
                 currentPos = end;
                 
-                final Element content = Jsoup.parse(html.substring(start, end));
+                final String postHtml = html.substring(start, end);
+                final Element content = Jsoup.parse(postHtml);
                 final Element element = content.getElementsByClass("dt").first();
 
                 String text = element.text();
@@ -146,6 +147,9 @@ public class GetPostsTask extends BaseTask
 
                 Elements rating = content.getElementsByTag("em");
                 post.Rating = Integer.valueOf(rating.first().text());
+                
+                post.PlusVoted = postHtml.contains("plus voted");
+                post.MinusVoted = postHtml.contains("minus voted");
                 
                 Elements author = content.getElementsByClass("p");
                 if(!author.isEmpty())
