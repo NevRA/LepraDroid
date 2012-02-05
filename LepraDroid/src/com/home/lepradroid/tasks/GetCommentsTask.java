@@ -92,8 +92,6 @@ public class GetCommentsTask extends BaseTask
         
         try
         {
-            int num = -1;
-            
             ServerWorker.Instance().clearCommentsById(id);
             notifyAboutCommentsUpdateBegin();
 
@@ -109,8 +107,6 @@ public class GetCommentsTask extends BaseTask
 
             do
             {
-                num++;
-                
                 int start = html.indexOf(postTree, currentPos);
                 start -= pref.length();
                 int end = html.indexOf(postTree, start + 100);
@@ -172,14 +168,6 @@ public class GetCommentsTask extends BaseTask
                 comment.MinusVoted = commentHtml.contains("class=\"minus voted\"");
                 
                 items.add(comment);
-                
-                if(num%100 == 0 || lastElement)
-                {
-                    ServerWorker.Instance().addNewComments(groupId, id, items);
-                    notifyAboutCommentsUpdate();
-                    
-                    items = new ArrayList<BaseItem>(0);
-                }
             }
             while (lastElement == false);
         }
@@ -189,6 +177,8 @@ public class GetCommentsTask extends BaseTask
         }
         finally
         {
+            ServerWorker.Instance().addNewComments(groupId, id, items);
+            
             notifyAboutCommentsUpdate();
             
             Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));
