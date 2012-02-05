@@ -26,16 +26,19 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private BlogsScreen blogsPosts;
     private PostsScreen favoritePosts;
     private PostsScreen myStuffPosts;
+    private PostsScreen inboxPosts;
     private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
     private ViewPager pager;
     private boolean favoriteInit = false;
     private boolean myStuffInit = false;
+    private boolean inboxInit = false;
     
-    public static final int MAIN_TAB_NUM = 0;
-    public static final int BLOGS_TAB_NUM = 1;
-    public static final int FAVORITE_TAB_NUM = 2;
-    public static final int MYSTUFF_TAB_NUM = 3;
+    public static final int MAIN_TAB_NUM        = 0;
+    public static final int BLOGS_TAB_NUM       = 1;
+    public static final int FAVORITE_TAB_NUM    = 2;
+    public static final int MYSTUFF_TAB_NUM     = 3;
+    public static final int INBOX_TAB_NUM       = 4;
     
     private ArrayList<BaseView> pages = new ArrayList<BaseView>();
     
@@ -94,6 +97,9 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             case MYSTUFF_TAB_NUM:
                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
+            case INBOX_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                break;
             }
             
             return true;
@@ -115,10 +121,14 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         myStuffPosts = new PostsScreen(this, Commons.MYSTUFF_POSTS_ID);
         myStuffPosts.setTag(Utils.getString(R.string.MyStuff_Tab));
         
+        inboxPosts = new PostsScreen(this, Commons.INBOX_POSTS_ID);
+        inboxPosts.setTag(Utils.getString(R.string.Inbox_Tab));
+        
         pages.add(mainPosts);
         pages.add(blogsPosts);
         pages.add(favoritePosts);
         pages.add(myStuffPosts);
+        pages.add(inboxPosts);
         
         tabsAdapter = new TabsPageAdapter(this, pages);
         pager = (ViewPager) findViewById(R.id.pager);
@@ -149,6 +159,13 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                             {
                                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                                 myStuffInit = true;
+                            }
+                            break;
+                        case MYSTUFF_TAB_NUM:
+                            if(!inboxInit)
+                            {
+                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                inboxInit = true;
                             }
                             break;
                         }

@@ -19,6 +19,7 @@
     <string name="Posts_Tab">Главная</string>
     <string name="Favorites_Tab">Избранное</string>
     <string name="MyStuff_Tab">Мои вещи</string>
+    <string name="Inbox_Tab">Инбокс</string>
     <string name="No_Comments">комментариев нет</string>
     <string name="Total_Comments">комментариев</string>
     <string name="New_Comments">новых</string>

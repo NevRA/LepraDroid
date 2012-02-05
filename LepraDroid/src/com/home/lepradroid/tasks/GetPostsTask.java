@@ -97,7 +97,7 @@ public class GetPostsTask extends BaseTask
             ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
             final String html = ServerWorker.Instance().getContent(url);
-            final String postOrd = "<div class=\"post ord ";
+            final String postOrd = "<div class=\"post ord";
             int currentPos = 0;
 
             boolean lastElement = false;
