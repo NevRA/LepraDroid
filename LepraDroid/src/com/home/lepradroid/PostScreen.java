@@ -131,7 +131,5 @@ public class PostScreen extends BaseActivity
                     {
                     }
                 });
-        
-        pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
     }
 }

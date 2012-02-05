@@ -27,5 +27,6 @@
     <string name="Post_Tab">Пост</string>
     <string name="Comments_Tab">Комментарии</string>
     <string name="Author_Tab">Автор</string>
+    <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>
 
 </resources>
