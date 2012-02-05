@@ -82,8 +82,10 @@ public class AuthorView extends BaseView implements AuthorUpdateListener
     }
 
     @Override
-    public void OnAuthorUpdateBegin(String name)
+    public void OnAuthorUpdateBegin(String userName)
     {
+        if(!this.userName.equals(userName)) return;
+        
         progress.setVisibility(View.VISIBLE);
         contentLayout.setVisibility(View.GONE);
     }
