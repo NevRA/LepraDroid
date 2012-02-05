@@ -88,7 +88,7 @@ public class GetCommentsTask extends BaseTask
     {
         
         final long startTime = System.nanoTime();
-        ArrayList<BaseItem> items = new ArrayList<BaseItem>();
+        final ArrayList<BaseItem> items = new ArrayList<BaseItem>();
         
         try
         {
@@ -107,6 +107,8 @@ public class GetCommentsTask extends BaseTask
 
             do
             {
+                if(isCancelled()) break;
+                
                 int start = html.indexOf(postTree, currentPos);
                 start -= pref.length();
                 int end = html.indexOf(postTree, start + 100);
@@ -177,11 +179,12 @@ public class GetCommentsTask extends BaseTask
         }
         finally
         {
-            ServerWorker.Instance().addNewComments(groupId, id, items);
+            if(!items.isEmpty())
+                ServerWorker.Instance().addNewComments(groupId, id, items);
             
             notifyAboutCommentsUpdate();
             
-            Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));
+            Logger.d("GetCommentsTask time:" + Long.toString(System.nanoTime() - startTime));
         }
                 
         return e;

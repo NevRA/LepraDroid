@@ -69,6 +69,7 @@ public class GetBlogsTask extends BaseTask
     protected Throwable doInBackground(Void... arg0)
     {
         final long startTime = System.nanoTime();
+        final ArrayList<BaseItem> items = new ArrayList<BaseItem>();
         
         try
         {
@@ -76,8 +77,6 @@ public class GetBlogsTask extends BaseTask
             
             ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
             notifyAboutBlogsUpdateBegin();
-            
-            ArrayList<BaseItem> items = new ArrayList<BaseItem>();
             
             final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL);
             final String blogRow = "<tr class=\"jj_row";
@@ -87,6 +86,8 @@ public class GetBlogsTask extends BaseTask
             
             do
             {
+                if(isCancelled()) break;
+                
                 num++;
                 
                 int start = html.indexOf(blogRow, currentPos);
@@ -146,7 +147,7 @@ public class GetBlogsTask extends BaseTask
                     ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
                     notifyAboutBlogsUpdate();
                     
-                    items = new ArrayList<BaseItem>(0);
+                    items.clear();
                 }
             }
             while (lastElement == false);     
@@ -157,6 +158,8 @@ public class GetBlogsTask extends BaseTask
         }
         finally
         {
+            if(!items.isEmpty())
+                ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
             notifyAboutBlogsUpdate();
             
             Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));

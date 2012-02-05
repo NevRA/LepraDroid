@@ -85,6 +85,7 @@ public class GetPostsTask extends BaseTask
     protected Throwable doInBackground(Void... params)
     {
         final long startTime = System.nanoTime();
+        final ArrayList<BaseItem> items = new ArrayList<BaseItem>();
                
         try
         {
@@ -94,8 +95,6 @@ public class GetPostsTask extends BaseTask
             
             notifyAboutPostsUpdateBegin();
             
-            ArrayList<BaseItem> items = new ArrayList<BaseItem>();
-            
             final String html = ServerWorker.Instance().getContent(url);
             final String postOrd = "<div class=\"post ord";
             int currentPos = 0;
@@ -104,6 +103,8 @@ public class GetPostsTask extends BaseTask
             
             do
             {
+                if(isCancelled()) break;
+                
                 num++;
                 
                 int start = html.indexOf(postOrd, currentPos);
@@ -183,7 +184,7 @@ public class GetPostsTask extends BaseTask
                     ServerWorker.Instance().addNewPosts(groupId, items);
                     notifyAboutPostsUpdate();
                     
-                    items = new ArrayList<BaseItem>(0);
+                    items.clear();
                 }
             }
             while (lastElement == false);       
@@ -194,6 +195,9 @@ public class GetPostsTask extends BaseTask
         }
         finally
         {
+            if(!items.isEmpty())
+                ServerWorker.Instance().addNewPosts(groupId, items);
+            
             notifyAboutPostsUpdate();
             
             Logger.d("GetPostsTask time:" + Long.toString(System.nanoTime() - startTime));
