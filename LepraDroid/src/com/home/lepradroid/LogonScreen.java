@@ -19,14 +19,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 
 public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, TextWatcher, LoginListener
 {
-    private Button yarrr;
-    private EditText captcha;
-    private EditText login;
-    private EditText password;
+    private Button          yarrr;
+    private EditText        captcha;
+    private EditText        login;
+    private EditText        password;
+    private ProgressBar     progress;
+    private ImageView       captchaImage;
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -36,9 +39,11 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         setContentView(R.layout.logon_view);
         
         yarrr = (Button)findViewById(R.id.yarrr);
+        captchaImage = (ImageView) findViewById(R.id.captcha_image);
         captcha = (EditText)findViewById(R.id.captcha);
         login = (EditText)findViewById(R.id.login);
         password = (EditText)findViewById(R.id.password);
+        progress = (ProgressBar)findViewById(R.id.progress);
         
         init();
     }
@@ -72,11 +77,19 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         login.addTextChangedListener(this);
         password.addTextChangedListener(this);
         
+        captchaImage.setOnClickListener( new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                updateCaptcha();              
+            }
+        });
+        
         yarrr.setOnClickListener( new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), Utils.getString(R.string.Login_In_Progress)));              
+                pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), true, Utils.getString(R.string.Login_In_Progress)));              
             }
         });
         
@@ -86,6 +99,8 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
     private void updateCaptcha()
     {
         pushNewTask(new TaskWrapper(this, new GetCaptchaTask(), Utils.getString(R.string.Captcha_Loading_In_Progress)));
+        captchaImage.setVisibility(View.INVISIBLE);
+        progress.setVisibility(View.VISIBLE);
     }
     
     public void afterTextChanged(Editable s)
@@ -105,13 +120,14 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
 
     public void OnCaptchaUpdateListener(Drawable dw)
     {
+        captchaImage.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
+        
         if(dw == null) return;
         
         try
         {
-            ImageView captcha = (ImageView) findViewById(R.id.captcha_image);
-            
-            captcha.setImageDrawable(dw);
+            captchaImage.setImageDrawable(dw);
         }
         catch (Throwable t)
         {

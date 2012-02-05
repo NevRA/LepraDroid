@@ -13,15 +13,15 @@ public class TaskWrapper implements ProgressTracker
     private BaseActivity        progressListener;
     private ProgressDialog      progressDialog;
     
-    private void init(BaseActivity progressListener, BaseTask task, String progressMessage)
+    private void init(BaseActivity progressListener, BaseTask task, boolean showProgressDialog, String progressMessage)
     {
-        this.task = task;
-        this.progressListener = progressListener;
+        this.task                   = task;
+        this.progressListener       = progressListener;
         
         if(task == null)
             return;
         
-        if(progressListener != null && task.getStatus() != WorkerTask.Status.FINISHED )
+        if(showProgressDialog && progressListener != null && task.getStatus() != WorkerTask.Status.FINISHED )
         {
             progressDialog = new ProgressDialog(progressListener);
             progressDialog.setCancelable(false);
@@ -38,9 +38,14 @@ public class TaskWrapper implements ProgressTracker
         }
     }
     
-    public TaskWrapper(BaseActivity progress, BaseTask task, String progressMessage)
+    public TaskWrapper(BaseActivity progressListener, BaseTask task, String progressMessage)
     {
-        init(progress, task, progressMessage);
+        init(progressListener, task, false, progressMessage);
+    }
+    
+    public TaskWrapper(BaseActivity progressListener, BaseTask task, boolean showProgressDialog, String progressMessage)
+    {
+        init(progressListener, task, showProgressDialog, progressMessage);
     }
         
     public void onProgress(String message)

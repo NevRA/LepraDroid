@@ -60,8 +60,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_below="@+id/textView2"
 		        android:password="true"
-		        android:layout_centerHorizontal="true" />		
-
+		        android:layout_centerHorizontal="true" />
 		    <ImageView
 		        android:id="@+id/captcha_image"
 		        android:layout_width="240dip"
@@ -70,6 +69,16 @@
 		        android:layout_centerHorizontal="true"
 		        android:layout_marginTop="10dip"
 		        android:src="@drawable/ic_captcha" />
+		    
+		    <ProgressBar
+		        android:id="@+id/progress"
+		        android:visibility="gone"
+		        android:layout_marginTop="10dip"
+		    	android:layout_width="60dip" 
+		    	android:layout_height="60dip" 
+		    	android:layout_below="@+id/password"
+		    	android:indeterminate="true" 
+		    	android:layout_centerInParent="true"/>
 		
 		    <TextView
 		        android:id="@+id/textView3"

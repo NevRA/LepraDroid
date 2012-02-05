@@ -39,7 +39,6 @@ public class GetCaptchaTask extends BaseTask
     
     public GetCaptchaTask() 
     {
-
     }
     
     private Drawable captcha;
