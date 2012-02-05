@@ -148,8 +148,8 @@ public class GetPostsTask extends BaseTask
                 Elements rating = content.getElementsByTag("em");
                 post.Rating = Integer.valueOf(rating.first().text());
                 
-                post.PlusVoted = postHtml.contains("plus voted");
-                post.MinusVoted = postHtml.contains("minus voted");
+                post.PlusVoted = postHtml.contains("class=\"plus voted\"");
+                post.MinusVoted = postHtml.contains("class=\"minus voted\"");
                 
                 Elements author = content.getElementsByClass("p");
                 if(!author.isEmpty())
@@ -164,13 +164,13 @@ public class GetPostsTask extends BaseTask
                     
                     if(a.size() == 2)
                     {
-                        post.totalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
-                        post.newComments = Integer.valueOf(a.get(1).text().split(" ")[0]);
+                        post.TotalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
+                        post.NewComments = Integer.valueOf(a.get(1).text().split(" ")[0]);
                     }
                     else
                     {
                         if(!a.get(0).text().equals("комментировать"))
-                            post.totalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
+                            post.TotalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
                     }
                     
                     post.Author = author.first().getElementsByTag("a").first().text();

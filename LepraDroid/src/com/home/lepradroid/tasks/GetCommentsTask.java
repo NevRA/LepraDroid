@@ -124,7 +124,8 @@ public class GetCommentsTask extends BaseTask
                
                 currentPos = end;
 
-                final Element content = Jsoup.parse(html.substring(start, end));
+                final String commentHtml = html.substring(start, end);
+                final Element content = Jsoup.parse(commentHtml);
                 final Element element = content.getElementsByClass("dt").first();
                 
                 Comment comment = new Comment();
@@ -166,6 +167,9 @@ public class GetCommentsTask extends BaseTask
                     Elements rating = vote.first().getElementsByTag("em");
                     comment.Rating = Integer.valueOf(rating.first().text());
                 }
+                
+                comment.PlusVoted = commentHtml.contains("class=\"plus voted\"");
+                comment.MinusVoted = commentHtml.contains("class=\"minus voted\"");
                 
                 items.add(comment);
                 

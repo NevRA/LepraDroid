@@ -69,7 +69,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         comments.setText(Utils.getCommentsStringFromPost(post));
         
         TextView rating = (TextView)view.findViewById(R.id.rating);
-        rating.setText(Utils.getRatingStringFromPost(post));
+        rating.setText(Utils.getRatingStringFromBaseItem(post));
         
         ImageView image = (ImageView)view.findViewById(R.id.image);
         

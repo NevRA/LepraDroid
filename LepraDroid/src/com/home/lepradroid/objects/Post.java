@@ -3,10 +3,7 @@ package com.home.lepradroid.objects;
 
 public class Post extends BaseItem
 {
-    public Integer  totalComments       = -1;
-    public Integer  newComments         = -1;
-    public Integer  Rating;
-    public Boolean  PlusVoted           = false;
-    public Boolean  MinusVoted          = false;
+    public Integer  TotalComments       = -1;
+    public Integer  NewComments         = -1;
     public String   Html                = "";
 }

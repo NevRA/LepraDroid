@@ -13,6 +13,7 @@ import android.text.Spanned;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 
@@ -114,22 +115,22 @@ public class Utils
         }
     }
     
-    public static Spanned getRatingStringFromPost(Post post)
+    public static Spanned getRatingStringFromBaseItem(BaseItem item)
     {
-        if(!post.PlusVoted && !post.MinusVoted)
-            return Html.fromHtml(Integer.toString(post.Rating));
-        else if(post.PlusVoted)
-            return Html.fromHtml(Integer.toString(post.Rating - 1) + " + <font color='green'>1</font>");
+        if(!item.PlusVoted && !item.MinusVoted)
+            return Html.fromHtml(Integer.toString(item.Rating));
+        else if(item.PlusVoted)
+            return Html.fromHtml(Integer.toString(item.Rating - 1) + " + <font color='green'>1</font>");
         else
-            return Html.fromHtml(Integer.toString(post.Rating + 1) + " - <font color='red'>1</font>");
+            return Html.fromHtml(Integer.toString(item.Rating + 1) + " - <font color='red'>1</font>");
     }
     
     public static Spanned getCommentsStringFromPost(Post post)
     {
-        if(post.totalComments != -1 && post.newComments != -1)
-            return Html.fromHtml(post.totalComments.toString() + " " + Utils.getString(R.string.Total_Comments) + " / " + "<b>" + post.newComments + " " + Utils.getString(R.string.New_Comments) + "</b>");
-        if(post.totalComments != -1)
-            return Html.fromHtml(post.totalComments.toString() + " " + Utils.getString(R.string.Total_Comments));
+        if(post.TotalComments != -1 && post.NewComments != -1)
+            return Html.fromHtml(post.TotalComments.toString() + " " + Utils.getString(R.string.Total_Comments) + " / " + "<b>" + post.NewComments + " " + Utils.getString(R.string.New_Comments) + "</b>");
+        if(post.TotalComments != -1)
+            return Html.fromHtml(post.TotalComments.toString() + " " + Utils.getString(R.string.Total_Comments));
         else
             return Html.fromHtml(Utils.getString(R.string.No_Comments));
     }

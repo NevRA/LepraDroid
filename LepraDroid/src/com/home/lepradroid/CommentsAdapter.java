@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
+import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem>
 {
@@ -66,7 +67,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
         author.setText(Html.fromHtml(comment.Signature));
         
         TextView rating = (TextView)view.findViewById(R.id.rating);
-        rating.setText(comment.Rating.toString());
+        rating.setText(Utils.getRatingStringFromBaseItem(comment));
 
         return view;
     }
