@@ -112,10 +112,10 @@ public class ServerWorker
         return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
     
-    public Header[] login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
+    public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
     { 
         final HttpPost httpGet = new HttpPost(url);
-        String str = String.format("user=%s&pass=%s&captcha=%s&logincode=%s&save=1&x=30&y=7", login, password, captcha, loginCode);
+        String str = String.format("user=%s&pass=%s&captcha=%s&logincode=%s&save=1", login, password, captcha, loginCode);
         
         final StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpGet.setHeader("Content-Type","application/x-www-form-urlencoded");
@@ -124,7 +124,7 @@ public class ServerWorker
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
         
-        return response.getAllHeaders();
+        return new Pair<String, Header[]>(EntityUtils.toString(response.getEntity(), "UTF-8"), response.getAllHeaders());
     }
     
     public byte[] getImage(String url) throws ClientProtocolException, IOException

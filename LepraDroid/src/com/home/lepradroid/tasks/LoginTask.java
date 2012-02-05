@@ -4,6 +4,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.http.Header;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import android.text.TextUtils;
 import android.util.Pair;
@@ -54,8 +57,8 @@ public class LoginTask extends BaseTask
         try
         {
             String sid = null, uid = null;
-            Header[] headers = ServerWorker.Instance().login(Commons.LOGON_PAGE_URL, login, password, captcha, ServerWorker.Instance().getLoginCode());
-            for(Header header : headers)
+            final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.LOGON_PAGE_URL, login, password, captcha, ServerWorker.Instance().getLoginCode());
+            for(Header header : loginInfo.second)
             {
                 //lepro.sid=abadb37b85cd113156aea908ede94f77; lepro.uid=46808;
                 
@@ -63,13 +66,28 @@ public class LoginTask extends BaseTask
                 if(value.contains("lepro.save=1"))
                     logoned = true;
                 else if(value.contains(Commons.COOKIE_SID + "="))
-                    sid = value.split(";")[0].split("=")[1];
+                {
+                    String[] sidCookie = value.split(";")[0].split("=");
+                    if(sidCookie.length > 1)
+                        sid = sidCookie[1];
+                }
                 else if(value.contains(Commons.COOKIE_UID + "="))
-                    uid = value.split(";")[0].split("=")[1];
+                {
+                    String[] uidCookie = value.split(";")[0].split("=");
+                    if(uidCookie.length > 1)
+                        uid = uidCookie[1];
+                }
             }
             
             if(!logoned || TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
+            {
+                final Document document = Jsoup.parse(loginInfo.first);
+                final Elements errors = document.getElementsByClass("error");
+                if(errors.size() > 1) // first error about java script
+                    throw new Exception(errors.first().text());
+                
                 throw new Exception(Utils.getString(R.string.Login_Failed));
+            }
             
             SettingsWorker.Instance().saveCookies(new Pair<String, String>(sid, uid));
         }
