@@ -53,7 +53,7 @@ public class GetMainPagesTask extends BaseTask
         }
         catch (Exception e)
         {
-            // TODO: handle exception
+            setException(e);
         }
         
         Logger.d("GetAllTask time:" + Long.toString(System.nanoTime() - startTime));    
