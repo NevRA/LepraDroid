@@ -13,6 +13,7 @@ import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetBlogsTask;
 import com.home.lepradroid.tasks.GetMainPagesTask;
 import com.home.lepradroid.tasks.GetPostsTask;
@@ -31,9 +32,10 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
     private ViewPager pager;
-    private boolean favoriteInit = false;
-    private boolean myStuffInit = false;
-    private boolean inboxInit = false;
+    private boolean favoriteInit                = false;
+    private boolean myStuffInit                 = false;
+    private boolean inboxInit                   = false;
+    private boolean profileInit                 = false;
     
     public static final int MAIN_TAB_NUM        = 0;
     public static final int BLOGS_TAB_NUM       = 1;
@@ -101,6 +103,9 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                 break;
             case INBOX_TAB_NUM:
                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                break;
+            case PROFILE_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             }
             
@@ -174,6 +179,13 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                                 inboxInit = true;
                             }
                             break;
+                        case INBOX_TAB_NUM:
+                            if(!profileInit)
+                            {
+                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                profileInit = true;
+                            }
+                            break;
                         }
                     }
 
@@ -194,8 +206,17 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     {
         if(successful)
         {
+            profile.setUserName(SettingsWorker.Instance().loadUserName());
             pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
+    }
+    
+    private void cleanInitState()
+    {
+        favoriteInit = false;
+        myStuffInit = false;
+        inboxInit = false;
+        profileInit = false;
     }
     
     public void OnLogout()
@@ -203,6 +224,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         detachAllTasks();
         Utils.clearData();
         Utils.clearLogonInfo();
+        cleanInitState();
         showLogonScreen();
         titleIndicator.setCurrentItem(0);
     }

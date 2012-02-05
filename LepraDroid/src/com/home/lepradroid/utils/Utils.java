@@ -16,6 +16,7 @@ import com.home.lepradroid.R;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.settings.SettingsWorker;
 
 public class Utils
 {
@@ -117,12 +118,13 @@ public class Utils
     
     public static Spanned getRatingStringFromBaseItem(BaseItem item)
     {
+        final Integer voteWeight = SettingsWorker.Instance().loadVoteWeight();
         if(!item.PlusVoted && !item.MinusVoted)
             return Html.fromHtml(Integer.toString(item.Rating));
         else if(item.PlusVoted)
-            return Html.fromHtml(Integer.toString(item.Rating - 1) + " + <font color='green'>1</font>");
+            return Html.fromHtml(Integer.toString(item.Rating - voteWeight) + " + <font color='green'>" + voteWeight.toString() + "</font>");
         else
-            return Html.fromHtml(Integer.toString(item.Rating + 1) + " - <font color='red'>1</font>");
+            return Html.fromHtml(Integer.toString(item.Rating + voteWeight) + " - <font color='red'>" + voteWeight.toString() + "</font>");
     }
     
     public static Spanned getCommentsStringFromPost(Post post)

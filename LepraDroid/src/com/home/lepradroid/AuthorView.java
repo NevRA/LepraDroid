@@ -40,6 +40,11 @@ public class AuthorView extends BaseView implements AuthorUpdateListener
         
         init();
     }
+    
+    public void setUserName(String userName)
+    {
+        this.userName = userName;
+    }
 
     private void init()
     {

@@ -89,6 +89,7 @@ public class ServerWorker
     public void clearSessionInfo() throws Exception
     {
         SettingsWorker.Instance().clearCookies();
+        SettingsWorker.Instance().clearUserInfo();
     }
     
     public String getContent(String url) throws Exception

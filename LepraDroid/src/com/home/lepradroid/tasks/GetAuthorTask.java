@@ -103,7 +103,15 @@ public class GetAuthorTask extends BaseTask
             
             Element vote = null;
             if(SettingsWorker.Instance().loadUserName().equals(userName))
+            {
                 vote = document.getElementById("uservote");
+                final Elements userStat = document.getElementsByClass("userstat");
+                if(userStat.size() > 1)
+                {
+                    final String text = userStat.get(1).ownText();
+                    SettingsWorker.Instance().saveVoteWeight(Integer.valueOf(text.split(" ")[2]));
+                }
+            }
             else
                 vote  = document.getElementById("js-user_karma");
             

@@ -16,6 +16,7 @@ public class SettingsWorker
     private String cookie                   = "";
     private static final String COOKIES     = "cookies_pref";
     private static final String USER_NAME   = "username_pref";
+    private static final String VOTE_WEIGHT = "voteweight_pref";
     
     private SettingsWorker() 
     {
@@ -47,24 +48,40 @@ public class SettingsWorker
     
     public void clearCookies() throws Exception
     {
-        save(COOKIES, "");
+        saveString(COOKIES, "");
+    }
+    
+    public void clearUserInfo() throws Exception
+    {
+        saveInt(VOTE_WEIGHT, 0);
+        saveString(USER_NAME, "");
+    }
+    
+    public Integer loadVoteWeight()
+    {
+        return loadInt(VOTE_WEIGHT);
+    }
+    
+    public void saveVoteWeight(Integer voteWeight)
+    {
+        saveInt(VOTE_WEIGHT, voteWeight);
     }
     
     public String loadUserName()
     {
-        return load(USER_NAME);
+        return loadString(USER_NAME);
     }
     
     public void saveUserName(String userName)
     {
-        save(USER_NAME, userName);
+        saveString(USER_NAME, userName);
     }
     
     public void saveCookies(Pair<String, String> auth) throws Exception
     {
         this.cookie = auth.first + ";" + auth.second;
         
-        save(COOKIES, cookie);
+        saveString(COOKIES, cookie);
     }
     
     public boolean IsLogoned()
@@ -74,7 +91,7 @@ public class SettingsWorker
     
     public Pair<String, String> loadCookie() throws Exception
     {
-        cookie = load(COOKIES);
+        cookie = loadString(COOKIES);
         if(TextUtils.isEmpty(cookie))
             return null;
         
@@ -82,7 +99,21 @@ public class SettingsWorker
         return new Pair<String, String>(cookies[0], cookies[1]);
     }
     
-    private void save(String name, String value)
+    private Integer loadInt(String name)
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
+        return sp.getInt(name, 0);
+    }
+    
+    private void saveInt(String name, Integer value)
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
+        Editor e = sp.edit();
+        e.putInt(name, value);
+        e.commit();
+    }
+    
+    private void saveString(String name, String value)
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         Editor e = sp.edit();
@@ -90,7 +121,7 @@ public class SettingsWorker
         e.commit();
     }
     
-    private String load(String name)
+    private String loadString(String name)
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         return sp.getString(name, "");

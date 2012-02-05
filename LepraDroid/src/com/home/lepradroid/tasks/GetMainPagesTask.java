@@ -25,27 +25,38 @@ public class GetMainPagesTask extends BaseTask
     {
         final long startTime = System.nanoTime();
         
-        tasks.add((BaseTask) new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL).execute());
-        tasks.add((BaseTask) new GetAuthorTask(SettingsWorker.Instance().loadUserName()).execute());
-        tasks.add((BaseTask) new GetBlogsTask().execute());
-        //tasks.add((BaseTask) new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true).execute());
-        //tasks.add((BaseTask) new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true).execute());
-        for (BaseTask asyncTask : tasks)
+        try
         {
-            try
+            if (SettingsWorker.Instance().loadVoteWeight() == 0)
             {
-                final Throwable t = asyncTask.get();
-                if(t != null)
+                tasks.add((BaseTask) new GetAuthorTask(SettingsWorker.Instance().loadUserName()).execute());
+                tasks.get(0).get();
+            }
+            
+            tasks.add((BaseTask) new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL).execute());
+            tasks.add((BaseTask) new GetBlogsTask().execute());
+            //tasks.add((BaseTask) new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true).execute());
+            //tasks.add((BaseTask) new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true).execute());
+            for (BaseTask asyncTask : tasks)
+            {
+                try
+                {
+                    final Throwable t = asyncTask.get();
+                    if(t != null)
+                        setException(t);
+                }
+                catch (Throwable t)
+                {
                     setException(t);
-            }
-            catch (Throwable t)
-            {
-                setException(t);
-            }
+                }
+            } 
+        }
+        catch (Exception e)
+        {
+            // TODO: handle exception
         }
         
-        Logger.d("GetAllTask time:" + Long.toString(System.nanoTime() - startTime));
-       
+        Logger.d("GetAllTask time:" + Long.toString(System.nanoTime() - startTime));    
                 
         return e;
     }

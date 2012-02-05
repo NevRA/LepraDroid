@@ -26,6 +26,7 @@ public class PostScreen extends BaseActivity
     private AuthorView      authorView;
     private TitlePageIndicator 
                             titleIndicator;
+    private BaseItem        post;
     private TabsPageAdapter tabsAdapter;
     private ViewPager       pager;
     private ArrayList<BaseView> 
@@ -85,6 +86,9 @@ public class PostScreen extends BaseActivity
             case COMMENTS_TAB_NUM:
                 pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
+            case PROFILE_TAB_NUM:
+                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                break;
             }
             
             return true;
@@ -94,8 +98,8 @@ public class PostScreen extends BaseActivity
     
     private void createTabs()
     {
-        final BaseItem post = ServerWorker.Instance().getPostById(groupId, id);
-        if(post == null) return;
+        post = ServerWorker.Instance().getPostById(groupId, id);
+        if(post == null) finish();
         
         postView = new PostView(this, groupId, id);
         postView.setTag(Utils.getString(R.string.Post_Tab));
