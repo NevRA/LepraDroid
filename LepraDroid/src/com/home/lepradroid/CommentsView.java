@@ -61,7 +61,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
         adapter = new CommentsAdapter(context, R.layout.comments_row_view, new ArrayList<BaseItem>());
         list.setAdapter(adapter);
         
-        if(post.TotalComments <= 500)
+        if(post.TotalComments <= Commons.MAX_COMMENTS_COUNT)
         {
             context.pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
