@@ -1,6 +1,9 @@
 package com.home.lepradroid.utils;
 
 import java.io.File;
+
+import com.home.lepradroid.R;
+
 import android.content.Context;
 
 public class FileCache
@@ -14,7 +17,7 @@ public class FileCache
                 android.os.Environment.MEDIA_MOUNTED))
             cacheDir = new File(
                     android.os.Environment.getExternalStorageDirectory(),
-                    "LazyList");
+                    Utils.getString(R.string.app_name));
         else
             cacheDir = context.getCacheDir();
         if (!cacheDir.exists())
