@@ -27,6 +27,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private PostsScreen favoritePosts;
     private PostsScreen myStuffPosts;
     private PostsScreen inboxPosts;
+    private AuthorView  profile;
     private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
     private ViewPager pager;
@@ -39,6 +40,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     public static final int FAVORITE_TAB_NUM    = 2;
     public static final int MYSTUFF_TAB_NUM     = 3;
     public static final int INBOX_TAB_NUM       = 4;
+    public static final int PROFILE_TAB_NUM     = 5;
     
     private ArrayList<BaseView> pages = new ArrayList<BaseView>();
     
@@ -124,11 +126,15 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         inboxPosts = new PostsScreen(this, Commons.INBOX_POSTS_ID);
         inboxPosts.setTag(Utils.getString(R.string.Inbox_Tab));
         
+        profile = new AuthorView(this, SettingsWorker.Instance().loadUserName());
+        profile.setTag(Utils.getString(R.string.Profile_Tab));
+        
         pages.add(mainPosts);
         pages.add(blogsPosts);
         pages.add(favoritePosts);
         pages.add(myStuffPosts);
         pages.add(inboxPosts);
+        pages.add(profile);
         
         tabsAdapter = new TabsPageAdapter(this, pages);
         pager = (ViewPager) findViewById(R.id.pager);

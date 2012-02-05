@@ -13,8 +13,9 @@ import android.util.Pair;
 public class SettingsWorker
 {
     private static volatile SettingsWorker instance;
-    private String cookie = "";
-    private static final String COOKIES = "cookies_pref";
+    private String cookie                   = "";
+    private static final String COOKIES     = "cookies_pref";
+    private static final String USER_NAME   = "username_pref";
     
     private SettingsWorker() 
     {
@@ -47,6 +48,16 @@ public class SettingsWorker
     public void clearCookies() throws Exception
     {
         save(COOKIES, "");
+    }
+    
+    public String loadUserName()
+    {
+        return load(USER_NAME);
+    }
+    
+    public void saveUserName(String userName)
+    {
+        save(USER_NAME, userName);
     }
     
     public void saveCookies(Pair<String, String> auth) throws Exception

@@ -9,7 +9,9 @@ import android.view.MenuItem;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetCommentsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
@@ -28,6 +30,8 @@ public class PostScreen extends BaseActivity
     private ViewPager       pager;
     private ArrayList<BaseView> 
                             pages = new ArrayList<BaseView>();
+    
+    private boolean         authorInit = false;
     
     public static final int POST_TAB_NUM = 0;
     public static final int COMMENTS_TAB_NUM = 1;
@@ -90,13 +94,16 @@ public class PostScreen extends BaseActivity
     
     private void createTabs()
     {
+        final BaseItem post = ServerWorker.Instance().getPostById(groupId, id);
+        if(post == null) return;
+        
         postView = new PostView(this, groupId, id);
         postView.setTag(Utils.getString(R.string.Post_Tab));
         
         commentsView = new CommentsView(this, groupId, id);
         commentsView.setTag(Utils.getString(R.string.Comments_Tab));
         
-        authorView = new AuthorView(this);
+        authorView = new AuthorView(this, post.Author);
         authorView.setTag(Utils.getString(R.string.Author_Tab));
         
         pages.add(postView);
@@ -118,6 +125,16 @@ public class PostScreen extends BaseActivity
                     @Override
                     public void onPageSelected(int position)
                     {
+                        switch(position)
+                        {
+                        case COMMENTS_TAB_NUM:
+                            if(!authorInit)
+                            {
+                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                authorInit = true;
+                            }
+                            break;
+                        }
                     }
 
                     @Override

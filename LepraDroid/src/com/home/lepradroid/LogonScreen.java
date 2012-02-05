@@ -4,6 +4,7 @@ import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CaptchaUpdateListener;
 import com.home.lepradroid.interfaces.LoginListener;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetCaptchaTask;
 import com.home.lepradroid.tasks.LoginTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -89,6 +90,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         {
             public void onClick(View v)
             {
+                SettingsWorker.Instance().saveUserName(login.getText().toString());
                 pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), true, Utils.getString(R.string.Login_In_Progress)));              
             }
         });

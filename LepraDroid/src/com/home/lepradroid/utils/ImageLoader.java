@@ -29,17 +29,22 @@ public class ImageLoader
     private Map<ImageView, String> imageViews = Collections
             .synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService;
+    int defaultIcon;
 
     public ImageLoader(Context context)
     {
         fileCache = new FileCache(context);
         executorService = Executors.newFixedThreadPool(5);
     }
-
-    final int stub_id = R.drawable.ic_launcher;
-
+    
     public void DisplayImage(String url, ImageView imageView)
     {
+        DisplayImage(url, imageView, R.drawable.ic_launcher);
+    }
+
+    public void DisplayImage(String url, ImageView imageView, int defaultIcon)
+    {
+        this.defaultIcon = defaultIcon;
         imageViews.put(imageView, url);
         Bitmap bitmap = memoryCache.get(url);
         if (bitmap != null)
@@ -47,7 +52,7 @@ public class ImageLoader
         else
         {
             queuePhoto(url, imageView);
-            imageView.setImageResource(stub_id);
+            imageView.setImageResource(defaultIcon);
         }
     }
 
@@ -101,7 +106,7 @@ public class ImageLoader
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
             // Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE = 70;
+            final int REQUIRED_SIZE = 128;
             int width_tmp = o.outWidth, height_tmp = o.outHeight;
             int scale = 1;
             while (true)
@@ -189,7 +194,7 @@ public class ImageLoader
             if (bitmap != null)
                 photoToLoad.imageView.setImageBitmap(bitmap);
             else
-                photoToLoad.imageView.setImageResource(stub_id);
+                photoToLoad.imageView.setImageResource(defaultIcon);
         }
     }
 

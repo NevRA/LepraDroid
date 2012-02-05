@@ -3,6 +3,7 @@ package com.home.lepradroid.tasks;
 import java.util.ArrayList;
 
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 
 public class GetMainPagesTask extends BaseTask
@@ -25,6 +26,7 @@ public class GetMainPagesTask extends BaseTask
         final long startTime = System.nanoTime();
         
         tasks.add((BaseTask) new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL).execute());
+        tasks.add((BaseTask) new GetAuthorTask(SettingsWorker.Instance().loadUserName()).execute());
         tasks.add((BaseTask) new GetBlogsTask().execute());
         //tasks.add((BaseTask) new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true).execute());
         //tasks.add((BaseTask) new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, true).execute());
