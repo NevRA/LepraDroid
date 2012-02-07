@@ -1,6 +1,7 @@
 package com.home.lepradroid.serverworker;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
@@ -80,6 +82,13 @@ public class ServerWorker
         connectionParameters.setBooleanParameter(HttpConnectionParams.STALE_CONNECTION_CHECK,
                 false);
         HttpProtocolParams.setVersion(connectionParameters, HttpVersion.HTTP_1_1);
+        
+        int timeoutConnection = 300000;
+        HttpConnectionParams.setConnectionTimeout(connectionParameters, timeoutConnection);
+        // Set the default socket timeout (SO_TIMEOUT) 
+        // in milliseconds which is the timeout for waiting for data.
+        int timeoutSocket = 500000;
+        HttpConnectionParams.setSoTimeout(connectionParameters, timeoutSocket);
 
         SchemeRegistry registry = new SchemeRegistry();
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
@@ -92,7 +101,7 @@ public class ServerWorker
         SettingsWorker.Instance().clearUserInfo();
     }
     
-    public String getContent(String url) throws Exception
+    public HttpEntity getContentEntity(String url) throws Exception
     {
         final HttpGet httpGet = new HttpGet(url);
         
@@ -110,7 +119,17 @@ public class ServerWorker
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
         
-        return EntityUtils.toString(response.getEntity(), "UTF-8");
+        return response.getEntity();
+    }
+    
+    public InputStream getContentStream(String url) throws Exception
+    {        
+        return getContentEntity(url).getContent();
+    }
+    
+    public String getContent(String url) throws Exception
+    {        
+        return EntityUtils.toString(getContentEntity(url), "UTF-8");
     }
     
     public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
@@ -154,11 +173,12 @@ public class ServerWorker
         try
         {
             ArrayList<BaseItem> items = posts.get(groupId);
-            for(BaseItem item : items)
-            {
-                if(item.Id.equals(id))
-                    return item;
-            }
+            if(items != null)
+                for(BaseItem item : items)
+                {
+                    if(item.Id.equals(id))
+                        return item;
+                }
         }
         finally
         {

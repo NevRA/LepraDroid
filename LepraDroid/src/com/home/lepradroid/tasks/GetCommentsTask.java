@@ -1,5 +1,8 @@
 package com.home.lepradroid.tasks;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,82 +102,121 @@ public class GetCommentsTask extends BaseTask
             if(post == null)
                 return null; // TODO message
             
-            final String html = ServerWorker.Instance().getContent(post.Url);
+            final InputStream stream = ServerWorker.Instance().getContentStream(post.Url);
+            
             final String pref = "<div id=\"XXXXXXXX\" ";
             final String postTree = "class=\"post tree";
             int currentPos = 0;  
-            boolean lastElement = false;
-
-            do
+            
+            StringBuilder sb = new StringBuilder();
+            String line;
+ 
+            try 
             {
-                if(isCancelled()) break;
-                
-                int start = html.indexOf(postTree, currentPos);
-                start -= pref.length();
-                int end = html.indexOf(postTree, start + 100);
-                end -= pref.length();
-                
-                if(end < 0)
+                int pp = -1;
+                BufferedReader r1 = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+                while ((line = r1.readLine()) != null)
                 {
-                    end = html.length();
-                    lastElement = true;
-                }
-               
-                currentPos = end;
-
-                final String commentHtml = html.substring(start, end);
-                final Element content = Jsoup.parse(commentHtml);
-                final Element element = content.getElementsByClass("dt").first();
-                
-                Comment comment = new Comment();
-                comment.Text = element.text();
-                comment.Html = element.html();
-                
-                Elements images = element.getElementsByTag("img");
-                if(!images.isEmpty())
-                {
-                    post.ImageUrl = images.first().attr("src");
+                    sb.append(line).append("\n");
                     
-                    for (Element image : images)
+                    String html = sb.toString();
+                    
+                    if(isCancelled()) break;
+
+                    int start = html.indexOf(postTree, currentPos);
+                    if(start == -1)
                     {
-                        String width = image.attr("width");
-                        if(!TextUtils.isEmpty(width))
-                            comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
-                        
-                        String height = image.attr("height");
-                        if(!TextUtils.isEmpty(height))
-                            comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
-                        
-                        comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
+                        sb = new StringBuilder();
+                        continue;
                     }
-                }
-
-                Elements author = content.getElementsByClass("p");
-                if(!author.isEmpty())
-                {
-                    Elements a = author.first().getElementsByTag("a");
-                    comment.Url = Commons.SITE_URL + a.first().attr("href");
+                    start -= pref.length();
                     
-                    comment.Author = a.get(1).text();
-                    comment.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
+                    
+                    
+                    int end = html.indexOf(postTree, start + 100);
+                    if(end == -1)
+                    {
+                        continue;
+                    }
+                    end -= pref.length();
+                    
+                    if(end < 0)
+                    {
+                        end = html.length();
+                    }
+                    
+                    sb = new StringBuilder();
+                    sb.append(html.substring(end, html.length()));
+                   
+                    currentPos = 0;
+
+                    final String commentHtml = html.substring(start, end);
+                    final Element content = Jsoup.parse(commentHtml);
+                    final Element element = content.getElementsByClass("dt").first();
+                    
+                    Comment comment = new Comment();
+                    comment.Text = element.text();
+                    comment.Html = element.html();
+                    
+                    Elements images = element.getElementsByTag("img");
+                    if(!images.isEmpty())
+                    {
+                        post.ImageUrl = images.first().attr("src");
+                        
+                        for (Element image : images)
+                        {
+                            String width = image.attr("width");
+                            if(!TextUtils.isEmpty(width))
+                                comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
+                            
+                            String height = image.attr("height");
+                            if(!TextUtils.isEmpty(height))
+                                comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
+                            
+                            comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
+                        }
+                    }
+
+                    Elements author = content.getElementsByClass("p");
+                    if(!author.isEmpty())
+                    {
+                        Elements a = author.first().getElementsByTag("a");
+                        comment.Url = Commons.SITE_URL + a.first().attr("href");
+                        
+                        comment.Author = a.get(1).text();
+                        comment.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
+                    }
+                    
+                    Elements vote = content.getElementsByClass("vote");
+                    if(!vote.isEmpty())
+                    {
+                        Elements rating = vote.first().getElementsByTag("em");
+                        comment.Rating = Integer.valueOf(rating.first().text());
+                    }
+                    
+                    comment.PlusVoted = commentHtml.contains("class=\"plus voted\"");
+                    comment.MinusVoted = commentHtml.contains("class=\"minus voted\"");
+                    
+                    pp++;
+                    items.add(comment);
+                    if(pp % 50 == 0 && !items.isEmpty())
+                    {                       
+                        ServerWorker.Instance().addNewComments(groupId, id, items);
+                        notifyAboutCommentsUpdate();
+                        items.clear();
+                    }
+                    
+                    Logger.d("loop: " + Integer.valueOf(pp)); 
                 }
-                
-                Elements vote = content.getElementsByClass("vote");
-                if(!vote.isEmpty())
-                {
-                    Elements rating = vote.first().getElementsByTag("em");
-                    comment.Rating = Integer.valueOf(rating.first().text());
-                }
-                
-                comment.PlusVoted = commentHtml.contains("class=\"plus voted\"");
-                comment.MinusVoted = commentHtml.contains("class=\"minus voted\"");
-                
-                items.add(comment);
+            } 
+            finally 
+            {
+                stream.close();
             }
-            while (lastElement == false);
         }
         catch (Throwable t)
         {
+            Logger.e(t);
             setException(t);
         }
         finally

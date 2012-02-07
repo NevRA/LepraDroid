@@ -24,7 +24,7 @@ public class Commons
     public static final int EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE 
                                                 = 1;
     
-    public static final int MAX_COMMENTS_COUNT  = 700;
+    public static final int MAX_COMMENTS_COUNT  = 7000;
     
     public static final UUID MAIN_POSTS_ID      = UUID.randomUUID();
     public static final UUID MYSTUFF_POSTS_ID   = UUID.randomUUID();
