@@ -243,6 +243,31 @@ public class ServerWorker
         return new ArrayList<BaseItem>();
     }
     
+    public void addNewComment(UUID groupId, UUID id, BaseItem item)
+    {
+        write.lock();
+        try
+        {
+            BaseItem post = getPostById(groupId, id);
+            if(post != null)
+            {
+                if(!comments.containsKey(id))
+                {
+                    ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
+                    comments.put(id, targetList);
+                }
+                
+                comments.get(id).add(item);
+                
+                return;
+            }
+        }
+        finally
+        {
+            write.unlock();
+        }
+    }
+    
     public void addNewComments(UUID groupId, UUID id, ArrayList<BaseItem> items)
     {
         write.lock();

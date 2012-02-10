@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +31,6 @@ public class GetCommentsTask extends BaseTask
 {
     private UUID groupId;
     private UUID id;
-    private ArrayList<BaseItem> items = new ArrayList<BaseItem>();
     
     static final Class<?>[] argsClassesOnCommentsUpdate = new Class[1];
     static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[1];
@@ -113,12 +111,12 @@ public class GetCommentsTask extends BaseTask
             
             try 
             {
-                boolean lastBlock= false;
+                // TODO CHANGE TO NORMAL PARSING
+                
                 String pageA = null, pageB = null;
                 final int BUFFER_SIZE = 4 * 1024;
                 stream = new BufferedInputStream(ServerWorker.Instance().getContentStream(post.Url), BUFFER_SIZE);
-                FileCache ff = new FileCache(LepraDroidApplication.getInstance());
-                File file = ff.getFile("delme");
+                File file = new FileCache(LepraDroidApplication.getInstance()).getFile("comments");
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] chars = new byte[BUFFER_SIZE];
                 int len = 0;
@@ -128,53 +126,60 @@ public class GetCommentsTask extends BaseTask
                     len = stream.read(chars, 0, BUFFER_SIZE);
                 }
                 
+                int start = -1;
+                int end = -1;
+                
                 FileInputStream in = new FileInputStream(file);
-
-                while(!lastBlock)
+                while(true)
                 {
+                    if(isCancelled()) break;
+                    
                     Arrays.fill(chars, (byte) 0);
                     
-                    if((len = in.read(chars, 0, BUFFER_SIZE))<0)
-                        lastBlock = true;
+                    if((len = in.read(chars, 0, BUFFER_SIZE)) < 0)
+                    {
+                        if(start >= 0 && end < 0)
+                            parseRecord(pageA);
+                        
+                        break;
+                    }
                     
                     if(len == 0)
                         continue;
                     else if(pageA == null)
                     {
                         pageA = new String(chars);
-                        if(pageB == null) continue;
+                        continue;
                     }
                     else
                         pageB = new String(chars);
                
                     while(true)
                     {
-                        String html = pageA + (pageB != null ? pageB : "");
                         if(isCancelled()) break;
+                        String html = pageA + (pageB != null ? pageB : "");
     
-                        int start = html.indexOf(postTree, 0);
-                        if(start == -1)
+                        start = start >= 0 ? start : html.indexOf(postTree, 0) - pref.length();
+                        if(start < 0)
                         {
                             if(pageB != null)
                                 pageA = pageB;
-                            
-                            pageB = null;
     
                             break;
                         }
-                        start -= pref.length();   
+                        if(start > 0)
+                        {
+                            html = html.substring(start, html.length());
+                            start = 0;
+                        }
                         
-                        html = html.substring(start, html.length());
-                        
-                        int end = lastBlock ? html.length() : html.indexOf(postTree, start + pref.length() + 1);
-                        if(end == -1)
+                        end = html.length() > 500 ? html.indexOf(postTree,  500) - pref.length() : -1;
+                        if(end < 0)
                         {
                             pageA = html;
-                            pageB = null;
     
                             break;
                         }
-                        end -= pref.length();
                         
                         pageA = html.substring(end, html.length());  
                         pageB = null;
@@ -195,9 +200,6 @@ public class GetCommentsTask extends BaseTask
         }
         finally
         {
-            if(!items.isEmpty())
-                ServerWorker.Instance().addNewComments(groupId, id, items);
-            
             notifyAboutCommentsUpdate();
             
             Logger.d("GetCommentsTask time:" + Long.toString(System.nanoTime() - startTime));
@@ -253,11 +255,7 @@ public class GetCommentsTask extends BaseTask
         
         comment.PlusVoted = html.contains("class=\"plus voted\"");
         comment.MinusVoted = html.contains("class=\"minus voted\"");
-        
-        items.add(comment);
                      
-        ServerWorker.Instance().addNewComments(groupId, id, items);
-        //notifyAboutCommentsUpdate();
-        items.clear();  
+        ServerWorker.Instance().addNewComment(groupId, id, comment);
     }
 }
