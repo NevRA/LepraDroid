@@ -80,15 +80,8 @@ public class ServerWorker
         connectionParameters.setParameter(ConnManagerPNames.MAX_CONNECTIONS_PER_ROUTE, new ConnPerRouteBean(20));
         connectionParameters.setParameter(HttpProtocolParams.USE_EXPECT_CONTINUE, false);
         connectionParameters.setBooleanParameter(HttpConnectionParams.STALE_CONNECTION_CHECK,
-                false);
+                true);
         HttpProtocolParams.setVersion(connectionParameters, HttpVersion.HTTP_1_1);
-        
-        int timeoutConnection = 300000;
-        HttpConnectionParams.setConnectionTimeout(connectionParameters, timeoutConnection);
-        // Set the default socket timeout (SO_TIMEOUT) 
-        // in milliseconds which is the timeout for waiting for data.
-        int timeoutSocket = 500000;
-        HttpConnectionParams.setSoTimeout(connectionParameters, timeoutSocket);
 
         SchemeRegistry registry = new SchemeRegistry();
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
