@@ -6,6 +6,8 @@ import java.util.UUID;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,6 +33,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
     private ProgressBar     progress;
     private CommentsAdapter
                             adapter;
+    private boolean         receivedLastElements = false;
+    private boolean         shownLastElements = false;
     
     public CommentsView(BaseActivity context, UUID groupId, UUID id)
     {
@@ -61,6 +65,28 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
         adapter = new CommentsAdapter(context, R.layout.comments_row_view, new ArrayList<BaseItem>());
         list.setAdapter(adapter);
         
+        list.setOnScrollListener(new OnScrollListener() 
+        {
+            public void onScrollStateChanged(AbsListView arg0, int arg1) {}
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, final int totalItemCount) 
+            {
+                if (visibleItemCount > 0 && firstVisibleItem != 0 && firstVisibleItem + visibleItemCount == totalItemCount) 
+                {
+                    if(!receivedLastElements)
+                    {
+                        adapter.addProgressElement();
+                        updateAdapter();
+                    }
+                    else if(!shownLastElements)
+                    {
+                        adapter.removeProgressElement();
+                        updateAdapter();
+                        shownLastElements = true;
+                    }
+                }
+            }
+        });
+        
         if(post.TotalComments <= Commons.MAX_COMMENTS_COUNT)
         {
             context.pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
@@ -87,6 +113,9 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
     {
         if(this.id != id) return;
         
+        receivedLastElements = false;
+        shownLastElements = false;
+        
         progress.setVisibility(View.VISIBLE);
         progress.setIndeterminate(true);
         list.setVisibility(View.GONE);
@@ -98,13 +127,17 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
     {
         synchronized (this)
         {
-            adapter.updateData(ServerWorker.Instance().getComments(groupId, id));
-            adapter.notifyDataSetChanged();
+            ArrayList<BaseItem> comments = ServerWorker.Instance().getComments(groupId, id);
+            if(comments.size() != adapter.getCount())
+            {
+                adapter.updateData(comments);
+                adapter.notifyDataSetChanged();
+            }
         }
     }
 
     @Override
-    public void OnCommentsUpdate(UUID id)
+    public void OnCommentsUpdateFirstEntries(UUID id)
     {
         if(this.id != id) return;
         
@@ -116,5 +149,19 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
         }
         
         updateAdapter();
+
+    }
+
+    @Override
+    public void OnCommentsUpdateFinished(UUID id)
+    {
+        if(this.id != id) return;
+        
+        receivedLastElements = true;
+        if(adapter.isEmpty())
+        {
+            shownLastElements = true;
+            OnCommentsUpdateFirstEntries(id);
+        }
     }
 }

@@ -30,17 +30,23 @@ public class GetCommentsTask extends BaseTask
 {
     private UUID groupId;
     private UUID id;
+    private int commentsCout = 0;
     
-    static final Class<?>[] argsClassesOnCommentsUpdate = new Class[1];
+    static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[1];
+    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[1];
     static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[1];
-    static Method methodOnCommentsUpdate;
+    static Method methodOnCommentsUpdateFinished;
+    static Method methodOnCommentsUpdateFirstEtries;
     static Method methodOnCommentsUpdateBegin;
     static 
     {
         try
         {
-            argsClassesOnCommentsUpdate[0] = UUID.class;
-            methodOnCommentsUpdate = CommentsUpdateListener.class.getMethod("OnCommentsUpdate", argsClassesOnCommentsUpdate); 
+            argsClassesOnCommentsUpdateFinished[0] = UUID.class;
+            methodOnCommentsUpdateFinished = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFinished", argsClassesOnCommentsUpdateFinished);
+            
+            argsClassesOnCommentsUpdateFirstEtries[0] = UUID.class;
+            methodOnCommentsUpdateFirstEtries = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFirstEntries", argsClassesOnCommentsUpdateFirstEtries); 
             
             argsClassesOnCommentsUpdateBegin[0] = UUID.class;
             methodOnCommentsUpdateBegin = CommentsUpdateListener.class.getMethod("OnCommentsUpdateBegin", argsClassesOnCommentsUpdateBegin); 
@@ -85,7 +91,20 @@ public class GetCommentsTask extends BaseTask
         
         for(CommentsUpdateListener listener : listeners)
         {
-            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnCommentsUpdate, args)));
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnCommentsUpdateFirstEtries, args)));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyAboutCommentsUpdateFinished()
+    {
+        final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
+        final Object args[] = new Object[1];
+        args[0] = id;
+        
+        for(CommentsUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnCommentsUpdateFinished, args)));
         }
     }
     
@@ -208,7 +227,7 @@ public class GetCommentsTask extends BaseTask
         }
         finally
         {
-            notifyAboutCommentsUpdate();
+            notifyAboutCommentsUpdateFinished();
             
             Logger.d("GetCommentsTask time:" + Long.toString(System.nanoTime() - startTime));
         }
@@ -265,5 +284,12 @@ public class GetCommentsTask extends BaseTask
         comment.MinusVoted = html.contains("class=\"minus voted\"");
                      
         ServerWorker.Instance().addNewComment(groupId, id, comment);
+        
+        commentsCout ++;
+        
+        if(commentsCout == 50)
+        {
+            notifyAboutCommentsUpdate();
+        }
     }
 }

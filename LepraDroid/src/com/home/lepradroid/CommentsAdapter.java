@@ -44,31 +44,72 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
     
     public void updateData(ArrayList<BaseItem> comments)
     {
+        boolean containProgressElement = false;
+        containProgressElement = isContainProgressElement();
+        
         this.comments = comments;
+        
+        if(containProgressElement)
+            addProgressElement();
+    }
+    
+    public void addProgressElement()
+    {
+        synchronized(comments)
+        {
+            if(!comments.isEmpty() && comments.get(comments.size() - 1) != null)
+                comments.add(null);   
+        }
+    }
+    
+    public boolean isContainProgressElement()
+    {
+        synchronized(comments)
+        {
+            if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
+                return true;
+            else
+                return false;
+        }
+    }
+    
+    public void removeProgressElement()
+    {
+        synchronized(comments)
+        {
+            if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
+                comments.remove(null);
+        }
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
         final Comment comment = (Comment)getItem(position);
+        LayoutInflater aInflater = LayoutInflater.from(getContext());
         
-        LayoutInflater aInflater=LayoutInflater.from(getContext());
+        if(comment != null)
+        {
+            convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
+            
+            WebView webView = (WebView)convertView.findViewById(R.id.text);
+            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            WebSettings webSettings = webView.getSettings();
+            webSettings.setDefaultFontSize(13);
+            String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+            webView.loadData(header + comment.Html, "text/html", "UTF-8");
+            
+            TextView author = (TextView)convertView.findViewById(R.id.author);
+            author.setText(Html.fromHtml(comment.Signature));
+            
+            TextView rating = (TextView)convertView.findViewById(R.id.rating);
+            rating.setText(Utils.getRatingStringFromBaseItem(comment));
+        }
+        else
+        {
+            convertView = (View) aInflater.inflate(R.layout.footer_view, null);
+        }
 
-        View view = aInflater.inflate(R.layout.comments_row_view, parent, false);
-        
-        WebView webView = (WebView)view.findViewById(R.id.text);
-        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setDefaultFontSize(13);
-        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-        webView.loadData(header + comment.Html, "text/html", "UTF-8");
-        
-        TextView author = (TextView)view.findViewById(R.id.author);
-        author.setText(Html.fromHtml(comment.Signature));
-        
-        TextView rating = (TextView)view.findViewById(R.id.rating);
-        rating.setText(Utils.getRatingStringFromBaseItem(comment));
-
-        return view;
+        return convertView;
     }
 }

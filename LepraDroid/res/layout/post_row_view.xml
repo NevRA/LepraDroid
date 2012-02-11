@@ -27,7 +27,6 @@
 	        android:layout_height="fill_parent"
 	        android:textStyle="bold"
 	        android:layout_centerVertical="true"
-	        android:ellipsize="end"
 	        android:maxLines="4"/>
     </RelativeLayout>
     
