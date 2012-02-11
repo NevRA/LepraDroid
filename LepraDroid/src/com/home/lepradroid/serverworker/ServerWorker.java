@@ -325,7 +325,7 @@ public class ServerWorker
         try
         {
             if(comments.containsKey(id))
-                    comments.remove(id);
+                comments.remove(id);
         }
         finally
         {

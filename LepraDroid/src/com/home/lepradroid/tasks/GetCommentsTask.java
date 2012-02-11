@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -96,6 +95,8 @@ public class GetCommentsTask extends BaseTask
         final long startTime = System.nanoTime();
         
         BufferedInputStream stream = null;
+        FileInputStream fileStream = null;
+        File file = null;
         
         try
         {
@@ -113,33 +114,35 @@ public class GetCommentsTask extends BaseTask
             {
                 // TODO CHANGE TO NORMAL PARSING
                 
-                String pageA = null, pageB = null;
-                final int BUFFER_SIZE = 4 * 1024;
+                final int BUFFER_SIZE = 8 * 1024;
                 stream = new BufferedInputStream(ServerWorker.Instance().getContentStream(post.Url), BUFFER_SIZE);
-                File file = new FileCache(LepraDroidApplication.getInstance()).getFile("comments");
+                file = new FileCache(LepraDroidApplication.getInstance()).getFile("comments");
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] chars = new byte[BUFFER_SIZE];
                 int len = 0;
                 while (len != -1)
                 {
+                    if(isCancelled()) break;
+                    
                     fos.write(chars, 0, len);
                     len = stream.read(chars, 0, BUFFER_SIZE);
                 }
                 
+                fos.close();
+                
+                String pageA = null, pageB = null;
                 int start = -1;
                 int end = -1;
                 
-                FileInputStream in = new FileInputStream(file);
+                fileStream = new FileInputStream(file);
                 while(true)
                 {
                     if(isCancelled()) break;
                     
-                    Arrays.fill(chars, (byte) 0);
-                    
-                    if((len = in.read(chars, 0, BUFFER_SIZE)) < 0)
+                    if((len = fileStream.read(chars, 0, BUFFER_SIZE)) < 0)
                     {
                         if(start >= 0 && end < 0)
-                            parseRecord(pageA);
+                            parseRecord(pageA); // to read last record
                         
                         break;
                     }
@@ -148,21 +151,21 @@ public class GetCommentsTask extends BaseTask
                         continue;
                     else if(pageA == null)
                     {
-                        pageA = new String(chars);
+                        pageA = new String(chars, 0, len);
                         continue;
                     }
                     else
-                        pageB = new String(chars);
+                        pageB = new String(chars, 0, len);
                
                     while(true)
                     {
                         if(isCancelled()) break;
-                        String html = pageA + (pageB != null ? pageB : "");
+                        String html = pageA + pageB;
     
                         start = start >= 0 ? start : html.indexOf(postTree, 0) - pref.length();
                         if(start < 0)
                         {
-                            if(pageB != null)
+                            if(!TextUtils.isEmpty(pageB))
                                 pageA = pageB;
     
                             break;
@@ -182,7 +185,7 @@ public class GetCommentsTask extends BaseTask
                         }
                         
                         pageA = html.substring(end, html.length());  
-                        pageB = null;
+                        pageB = "";
     
                         parseRecord(html.substring(start, end));
                     }
@@ -190,7 +193,12 @@ public class GetCommentsTask extends BaseTask
             } 
             finally 
             {
-                stream.close();
+                if(stream != null)
+                    stream.close();
+                if(fileStream != null)
+                    fileStream.close();
+                if(file != null)
+                    file.delete();
             }
         }
         catch (Throwable t)

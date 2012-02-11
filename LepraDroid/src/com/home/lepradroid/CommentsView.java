@@ -77,6 +77,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
     @Override
     public void OnExit()
     {
+        context = null;
         adapter.clear();
         ListenersWorker.Instance().unregisterListener(this);
     }
