@@ -97,7 +97,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
             WebSettings webSettings = webView.getSettings();
             webSettings.setDefaultFontSize(13);
             String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-            webView.loadData(header + comment.Html, "text/html", "UTF-8");
+            webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
             
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.Signature));

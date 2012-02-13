@@ -46,7 +46,7 @@ public class PostView extends BaseView
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-        webView.loadData(header + ((Post)item).Html, "text/html", "UTF-8");
+        webView.loadDataWithBaseURL("", header + ((Post)item).Html, "text/html", "UTF-8", null );
     }
 
     @Override

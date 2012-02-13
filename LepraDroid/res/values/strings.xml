@@ -7,7 +7,7 @@
     <string name="password_label">Пароль:</string>
     <string name="captcha_label">Шесть букв с картинки:</string>
     <string name="yarrr_label">YARRR!</string>
-    <string name="Error">Упс, ошибко!</string>
+    <string name="Error">Упс, ошибка!</string>
     <string name="Loading">Загружается</string>
     <string name="Captcha_Loading_In_Progress">Загружается капча...</string>
     <string name="Posts_Loading_In_Progress">Загружаем посты...</string>
