@@ -37,6 +37,8 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private boolean inboxInit                   = false;
     private boolean profileInit                 = false;
     
+    private ArrayList<BaseView> pages           = new ArrayList<BaseView>();
+    
     public static final int MAIN_TAB_NUM        = 0;
     public static final int BLOGS_TAB_NUM       = 1;
     public static final int FAVORITE_TAB_NUM    = 2;
@@ -44,7 +46,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     public static final int INBOX_TAB_NUM       = 4;
     public static final int PROFILE_TAB_NUM     = 5;
     
-    private ArrayList<BaseView> pages = new ArrayList<BaseView>();
+    
     
 	@Override
 	protected void onDestroy() 

@@ -26,6 +26,9 @@ public class Commons
     
     public static final int MAX_COMMENTS_COUNT  = 5000;
     
+    public static final int MAX_BLOG_HEADER_LENGTH  
+                                                = 20;
+    
     public static final UUID MAIN_POSTS_ID      = UUID.randomUUID();
     public static final UUID MYSTUFF_POSTS_ID   = UUID.randomUUID();
     public static final UUID BLOGS_POSTS_ID     = UUID.randomUUID();
