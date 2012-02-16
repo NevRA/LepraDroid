@@ -92,17 +92,16 @@
 		        android:id="@+id/captcha"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/textView3" />
-		    
+		        android:layout_below="@+id/textView3" />
 		    <Button
 		        android:id="@+id/yarrr"
-		        android:layout_width="100dip"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_below="@+id/captcha"
 		        android:layout_centerHorizontal="true"
 		        android:layout_marginTop="10dip"
-		        android:enabled="false"
-		        android:text="@string/yarrr_label" />
+		        android:background="@drawable/loginbutton_background"
+		        android:enabled="false" />
 
 		</RelativeLayout>
     </ScrollView>
