@@ -64,6 +64,11 @@ public class TaskWrapper implements ProgressTracker
         }
     }
     
+    public BaseTask getTask() 
+    {
+        return task;
+    }
+    
     public Object retainTask() 
     {
         // Detach task from tracker (this) before retain

@@ -91,6 +91,20 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
         }
     }
     
+    public <T> void popAllTasksLikeThis(Class<T> type)
+    {
+        for(TaskWrapper task : tasks)
+        {
+            BaseTask rawTask = task.getTask();
+            if(type.isAssignableFrom(rawTask.getClass()))
+            {
+                rawTask.finish();
+                tasks.remove(task);
+                break;
+            }
+        }
+    }
+    
     public void pushNewTask(TaskWrapper task)
     {
         tasks.add(task);

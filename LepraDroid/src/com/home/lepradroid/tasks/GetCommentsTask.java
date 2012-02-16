@@ -20,8 +20,8 @@ import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
-import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
+import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.FileCache;
 import com.home.lepradroid.utils.Logger;
@@ -122,7 +122,7 @@ public class GetCommentsTask extends BaseTask
             ServerWorker.Instance().clearCommentsById(id);
             notifyAboutCommentsUpdateBegin();
 
-            BaseItem post = ServerWorker.Instance().getPostById(groupId, id);
+            Post post = (Post)ServerWorker.Instance().getPostById(groupId, id);
             if(post == null)
                 return null; // TODO message
             
@@ -133,17 +133,28 @@ public class GetCommentsTask extends BaseTask
             {
                 // TODO CHANGE TO NORMAL PARSING
                 
-                final int BUFFER_SIZE = 8 * 1024;
+                final int BUFFER_SIZE = 2 * 1024;
+                final int HEADERS_BYTES_TO_SKIP = 18000;
                 stream = new BufferedInputStream(ServerWorker.Instance().getContentStream(post.Url), BUFFER_SIZE);
                 file = new FileCache(LepraDroidApplication.getInstance()).getFile("comments");
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] chars = new byte[BUFFER_SIZE];
                 int len = 0;
+                long totalSkipped = 0;
+                long skipped = -1;
                 while (len != -1)
                 {
                     if(isCancelled()) break;
                     
                     fos.write(chars, 0, len);
+                    while(skipped != 0 && totalSkipped < HEADERS_BYTES_TO_SKIP)
+                    {
+                        if(isCancelled()) break;
+                        
+                        skipped = stream.skip(1000);
+                        totalSkipped += skipped;
+                    }
+                    
                     len = stream.read(chars, 0, BUFFER_SIZE);
                 }
                 
@@ -152,6 +163,7 @@ public class GetCommentsTask extends BaseTask
                 String pageA = null, pageB = null;
                 int start = -1;
                 int end = -1;
+                String header = "";
                 
                 fileStream = new FileInputStream(file);
                 while(true)
@@ -171,10 +183,36 @@ public class GetCommentsTask extends BaseTask
                     else if(pageA == null)
                     {
                         pageA = new String(chars, 0, len);
+                        if(TextUtils.isEmpty(post.commentsWtf))
+                            header += pageA;
                         continue;
                     }
                     else
+                    {
+                        
                         pageB = new String(chars, 0, len);
+                        if(TextUtils.isEmpty(post.commentsWtf))
+                            header += pageB;
+                    }
+                    
+                    if(TextUtils.isEmpty(post.commentsWtf) && !TextUtils.isEmpty(header))
+                    {
+                        Element content = Jsoup.parse(header);
+                        Element commentsForm = content.getElementById("comments-form");
+                        if(commentsForm != null)
+                        {
+                            Elements wtf = commentsForm.getElementsByAttributeValue("name", "wtf");
+                            if(!wtf.isEmpty())
+                            {
+                                post.commentsWtf = wtf.attr("value");
+                            }
+                            
+                            header = null;
+                        }
+                    }
+                    
+                    if(TextUtils.isEmpty(post.commentsWtf))
+                        continue;
                
                     while(true)
                     {
@@ -227,7 +265,8 @@ public class GetCommentsTask extends BaseTask
         }
         finally
         {
-            notifyAboutCommentsUpdateFinished();
+            if(!isCancelled())
+                notifyAboutCommentsUpdateFinished();
             
             Logger.d("GetCommentsTask time:" + Long.toString(System.nanoTime() - startTime));
         }

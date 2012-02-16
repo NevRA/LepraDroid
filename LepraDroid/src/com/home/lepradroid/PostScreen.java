@@ -84,6 +84,7 @@ public class PostScreen extends BaseActivity
             switch(pager.getCurrentItem())
             {
             case COMMENTS_TAB_NUM:
+                popAllTasksLikeThis(GetCommentsTask.class);
                 pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case PROFILE_TAB_NUM:
