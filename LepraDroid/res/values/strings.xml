@@ -25,6 +25,8 @@
     <string name="No_Comments">комментариев нет</string>
     <string name="Total_Comments">комментариев</string>
     <string name="New_Comments">новых</string>
+    <string name="Comment_Menu">Комментировать</string>
+    <string name="Add_Comment_Title">Добавить комментарий?</string>
     <string name="Reload_Menu">Обновить</string>
     <string name="Logout_Menu">Завершить сессию</string>
     <string name="Post_Tab">Пост</string>

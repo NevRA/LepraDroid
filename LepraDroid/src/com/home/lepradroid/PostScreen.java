@@ -3,9 +3,13 @@ package com.home.lepradroid;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
@@ -62,6 +66,25 @@ public class PostScreen extends BaseActivity
         super.onDestroy();
     }
     
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        menu.clear();
+        menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
+        switch(pager.getCurrentItem())
+        {
+        case COMMENTS_TAB_NUM:
+            menu.add(0, MENU_ADD_COMMENT, 1, Utils.getString(R.string.Comment_Menu)).setIcon(R.drawable.ic_add_comment);
+            break;
+        default:
+            menu.add(0, MENU_LOGOUT, 1, Utils.getString(R.string.Logout_Menu)).setIcon(R.drawable.ic_logout);
+            break;
+        }
+        
+        return true;
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -90,11 +113,36 @@ public class PostScreen extends BaseActivity
             case PROFILE_TAB_NUM:
                 pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
+            default:
+                break;
             }
-            
             return true;
+        case MENU_ADD_COMMENT:
+            addComment();
+            return true; 
         }
         return false;
+    }
+    
+    private void addComment()
+    {
+        final EditText input = new EditText(this);
+        
+        new AlertDialog.Builder(PostScreen.this)
+        .setTitle(Utils.getString(R.string.Add_Comment_Title))
+        .setView(input)
+        .setPositiveButton(Utils.getString(R.string.yarrr_label), new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog, int whichButton) 
+            {
+                final String value = input.getText().toString(); 
+            }
+        }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog, int whichButton) 
+            {
+            }
+        }).show();
     }
     
     private void createTabs()

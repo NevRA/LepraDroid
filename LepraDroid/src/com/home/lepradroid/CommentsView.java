@@ -99,6 +99,11 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
             tooManyComments.setText(String.format(Utils.getString(R.string.Too_Many_Comments), Commons.MAX_COMMENTS_COUNT));
         }
     }
+    
+    public boolean isReceivedLastElement()
+    {
+        return receivedLastElements;
+    }
 
     @Override
     public void OnExit()

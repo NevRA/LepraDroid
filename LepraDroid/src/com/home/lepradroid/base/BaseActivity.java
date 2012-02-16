@@ -24,6 +24,8 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
 {
     protected static final int MENU_RELOAD = 0;
     protected static final int MENU_LOGOUT = 1;
+    protected static final int MENU_ADD_COMMENT  
+                                           = 2;
     
     private ArrayList<TaskWrapper> tasks = new ArrayList<TaskWrapper>();
     
