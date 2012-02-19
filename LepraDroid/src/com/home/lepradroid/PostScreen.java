@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
@@ -20,6 +21,11 @@ import com.home.lepradroid.tasks.GetCommentsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
+import org.apache.http.client.methods.HttpGet;
+import org.jsoup.select.Elements;
+
+import static com.home.lepradroid.commons.Commons.*;
+
 
 public class PostScreen extends BaseActivity
 {
@@ -150,11 +156,25 @@ public class PostScreen extends BaseActivity
         post = ServerWorker.Instance().getPostById(groupId, id);
         if(post == null) finish();
         
+        String  fromName = "";
+                
+        if (groupId.equals(MAIN_POSTS_ID)){
+            fromName = Utils.getString(R.string.Posts_Tab);
+        }  else if (groupId.equals(FAVORITE_POSTS_ID)){
+            fromName = Utils.getString(R.string.Favorites_Tab);
+        } else if (groupId.equals(INBOX_POSTS_ID)){
+            fromName = Utils.getString(R.string.Inbox_Tab);
+        } else if (groupId.equals(MYSTUFF_POSTS_ID)){
+            fromName = Utils.getString(R.string.MyStuff_Tab);
+        } else {
+            fromName = Commons.BLOGS_TITLE;
+        }
+
         postView = new PostView(this, groupId, id);
-        postView.setTag(Utils.getString(R.string.Post_Tab));
+        postView.setTag(fromName + " " + Utils.getString(R.string.Post_Tab));
         
         commentsView = new CommentsView(this, groupId, id);
-        commentsView.setTag(Utils.getString(R.string.Comments_Tab));
+        commentsView.setTag(fromName + " " + Utils.getString(R.string.Comments_Tab));
         
         authorView = new AuthorView(this, post.Author);
         authorView.setTag(Utils.getString(R.string.Author_Tab));
