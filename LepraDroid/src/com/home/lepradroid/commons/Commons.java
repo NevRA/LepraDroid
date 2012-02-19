@@ -34,4 +34,7 @@ public class Commons
     public static final UUID BLOGS_POSTS_ID     = UUID.randomUUID();
     public static final UUID FAVORITE_POSTS_ID  = UUID.randomUUID();
     public static final UUID INBOX_POSTS_ID     = UUID.randomUUID();
+
+    public static String BLOGS_TITLE = "";
+
 }
