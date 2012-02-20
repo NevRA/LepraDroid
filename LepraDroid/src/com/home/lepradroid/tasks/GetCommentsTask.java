@@ -120,7 +120,7 @@ public class GetCommentsTask extends BaseTask
         {
             if(isCancelled()) break;
             
-            totalSkipped += stream.skip(1024);
+            totalSkipped += stream.skip(HEADERS_BYTES_TO_SKIP - totalSkipped);
         }
     }
     
