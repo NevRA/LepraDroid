@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.ImagesUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -21,18 +22,22 @@ import com.home.lepradroid.serverworker.ServerWorker;
 
 public class PostsScreen extends BaseView implements PostsUpdateListener, ImagesUpdateListener
 {
-    private ListView list;
+    private ListView    list;
     private ProgressBar progress;
+    private UUID        groupId;
+    private Context     context;
+    private String      parentTitle;
+
     public PostsAdapter adapter;
-    private UUID groupId;
-    private Context context;
     
-    public PostsScreen(final Context context, final UUID groupId)
-    {
+    
+    public PostsScreen(final Context context, final UUID groupId, String parentTitle)
+    {                                                                            
         super(context);
         
         this.context = context;
         this.groupId = groupId;
+        this.parentTitle = parentTitle;
         
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -60,6 +65,8 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
                     Intent intent = new Intent(LepraDroidApplication.getInstance(), PostScreen.class);
                     intent.putExtra("groupId", groupId.toString());
                     intent.putExtra("id", item.Id.toString());
+                    intent.putExtra("postTitle",item.Text.length() > Commons.MAX_BLOG_HEADER_LENGTH ? item.Text.substring(0, Commons.MAX_BLOG_HEADER_LENGTH - 1) + "..." : item.Text);
+                    intent.putExtra("parentTitle", parentTitle.length() > Commons.MAX_BLOG_HEADER_LENGTH ? parentTitle.substring(0, Commons.MAX_BLOG_HEADER_LENGTH - 1) + "..." : parentTitle);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     LepraDroidApplication.getInstance().startActivity(intent); 
                 }

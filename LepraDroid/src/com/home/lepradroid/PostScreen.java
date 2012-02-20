@@ -13,6 +13,7 @@ import android.widget.EditText;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
@@ -20,11 +21,19 @@ import com.home.lepradroid.tasks.GetCommentsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
+import org.apache.http.client.methods.HttpGet;
+import org.jsoup.select.Elements;
+
+import static com.home.lepradroid.commons.Commons.*;
+
 
 public class PostScreen extends BaseActivity
 {
     private UUID            groupId;
     private UUID            id;
+    private String          parentTitle;
+    private String          postTitle;
+
     private PostView        postView;
     private CommentsView    commentsView;
     private AuthorView      authorView;
@@ -91,8 +100,10 @@ public class PostScreen extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_base_view);
         
-        groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
-        id = UUID.fromString(getIntent().getExtras().getString("id"));
+        groupId     = UUID.fromString(getIntent().getExtras().getString("groupId"));
+        id          = UUID.fromString(getIntent().getExtras().getString("id"));
+        parentTitle = getIntent().getExtras().getString("parentTitle");
+        postTitle   = getIntent().getExtras().getString("postTitle");
 
         createTabs();
     }
@@ -149,15 +160,15 @@ public class PostScreen extends BaseActivity
     {
         post = ServerWorker.Instance().getPostById(groupId, id);
         if(post == null) finish();
-        
+
         postView = new PostView(this, groupId, id);
-        postView.setTag(Utils.getString(R.string.Post_Tab));
+        postView.setTag(parentTitle + Commons.DELIMETER + Utils.getString(R.string.Post_Tab));
         
         commentsView = new CommentsView(this, groupId, id);
-        commentsView.setTag(Utils.getString(R.string.Comments_Tab));
+        commentsView.setTag(postTitle + Commons.DELIMETER + Utils.getString(R.string.Comments_Tab));
         
         authorView = new AuthorView(this, post.Author);
-        authorView.setTag(Utils.getString(R.string.Author_Tab));
+        authorView.setTag(postTitle + Commons.DELIMETER +Utils.getString(R.string.Author_Tab));
         
         pages.add(postView);
         pages.add(commentsView);
