@@ -27,7 +27,6 @@ public class PostScreen extends BaseActivity
     private UUID            groupId;
     private UUID            id;
     //private String          parentTitle;
-    //private String          postTitle;
 
     private PostView        postView;
     private CommentsView    commentsView;
@@ -98,7 +97,6 @@ public class PostScreen extends BaseActivity
         groupId     = UUID.fromString(getIntent().getExtras().getString("groupId"));
         id          = UUID.fromString(getIntent().getExtras().getString("id"));
         //parentTitle = getIntent().getExtras().getString("parentTitle");
-        //postTitle   = getIntent().getExtras().getString("postTitle");
 
         createTabs();
     }
