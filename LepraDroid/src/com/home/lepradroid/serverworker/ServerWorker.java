@@ -97,6 +97,7 @@ public class ServerWorker
     public HttpEntity getContentEntity(String url) throws Exception
     {
         final HttpGet httpGet = new HttpGet(url);
+        //httpGet.setHeader("charset", "utf-8");
         
         try
         {

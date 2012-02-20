@@ -95,7 +95,7 @@ public class GetPostsTask extends BaseTask
             
             notifyAboutPostsUpdateBegin();
             
-            final String html = ServerWorker.Instance().getContent(url);
+            String html = ServerWorker.Instance().getContent(url);
             final String postOrd = "<div class=\"post ord";
             int currentPos = 0;
 
@@ -117,6 +117,8 @@ public class GetPostsTask extends BaseTask
                 }
                 
                 currentPos = end;
+                
+                html = html.replaceAll("(&#150;|&#151;)", "-");
                 
                 final String postHtml = html.substring(start, end);
                 final Element content = Jsoup.parse(postHtml);

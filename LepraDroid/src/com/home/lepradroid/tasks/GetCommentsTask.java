@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
@@ -28,6 +29,9 @@ import com.home.lepradroid.utils.Logger;
 
 public class GetCommentsTask extends BaseTask
 {
+    final private int BUFFER_SIZE = 4 * 1024;
+    final private int HEADERS_BYTES_TO_SKIP = 18000;
+    
     private UUID groupId;
     private UUID id;
     private int commentsCout = 0;
@@ -108,6 +112,33 @@ public class GetCommentsTask extends BaseTask
         }
     }
     
+    private void skipHeaderBytes(BufferedInputStream stream) throws IOException
+    {
+        long totalSkipped = 0;
+        
+        while(totalSkipped < HEADERS_BYTES_TO_SKIP)
+        {
+            if(isCancelled()) break;
+            
+            totalSkipped += stream.skip(1024);
+        }
+    }
+    
+    private int readBytesToBuff_WithoutNonLatinCharsAtTheEnd(FileInputStream stream, byte[] buffer) throws IOException
+    {
+        int len = stream.read(buffer, 0, BUFFER_SIZE / 2);
+        
+        while(len > 0 && len < BUFFER_SIZE && buffer[len - 1] < 0 )
+        {
+            int readed = stream.read(buffer, len, 1);
+            if(readed == -1) break;
+            
+            len += readed;
+        }
+        
+        return len;
+    }
+    
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
@@ -133,27 +164,18 @@ public class GetCommentsTask extends BaseTask
             {
                 // TODO CHANGE TO NORMAL PARSING
                 
-                final int BUFFER_SIZE = 2 * 1024;
-                final int HEADERS_BYTES_TO_SKIP = 18000;
                 stream = new BufferedInputStream(ServerWorker.Instance().getContentStream(post.Url), BUFFER_SIZE);
                 file = new FileCache(LepraDroidApplication.getInstance()).getFile("comments");
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] chars = new byte[BUFFER_SIZE];
                 int len = 0;
-                long totalSkipped = 0;
-                long skipped = -1;
+
+                skipHeaderBytes(stream);
                 while (len != -1)
                 {
                     if(isCancelled()) break;
                     
                     fos.write(chars, 0, len);
-                    while(skipped != 0 && totalSkipped < HEADERS_BYTES_TO_SKIP)
-                    {
-                        if(isCancelled()) break;
-                        
-                        skipped = stream.skip(1000);
-                        totalSkipped += skipped;
-                    }
                     
                     len = stream.read(chars, 0, BUFFER_SIZE);
                 }
@@ -170,7 +192,7 @@ public class GetCommentsTask extends BaseTask
                 {
                     if(isCancelled()) break;
                     
-                    if((len = fileStream.read(chars, 0, BUFFER_SIZE)) < 0)
+                    if((len = readBytesToBuff_WithoutNonLatinCharsAtTheEnd(fileStream, chars)) < 0)
                     {
                         if(start >= 0 && end < 0)
                             parseRecord(pageA); // to read last record
@@ -182,7 +204,7 @@ public class GetCommentsTask extends BaseTask
                         continue;
                     else if(pageA == null)
                     {
-                        pageA = new String(chars, 0, len);
+                        pageA = new String(chars, 0, len, "UTF-8");
                         if(TextUtils.isEmpty(post.commentsWtf))
                             header += pageA;
                         continue;
@@ -190,7 +212,7 @@ public class GetCommentsTask extends BaseTask
                     else
                     {
                         
-                        pageB = new String(chars, 0, len);
+                        pageB = new String(chars, 0, len, "UTF-8");
                         if(TextUtils.isEmpty(post.commentsWtf))
                             header += pageB;
                     }
@@ -217,6 +239,7 @@ public class GetCommentsTask extends BaseTask
                     while(true)
                     {
                         if(isCancelled()) break;
+                        
                         String html = pageA + pageB;
     
                         start = start >= 0 ? start : html.indexOf(postTree, 0) - pref.length();
