@@ -40,9 +40,8 @@ public class BlogScreen extends BaseActivity
             groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
             id = UUID.fromString(getIntent().getExtras().getString("id"));
             title = getIntent().getExtras().getString("title");
-            Commons.BLOGS_TITLE = title;
-            
-            postsScreen = new PostsScreen(this, id);
+
+            postsScreen = new PostsScreen(this, id, title);
             postsScreen.setTag(title);
             
             pages.add(postsScreen);

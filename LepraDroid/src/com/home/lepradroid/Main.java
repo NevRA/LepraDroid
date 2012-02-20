@@ -118,19 +118,19 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     
     private void createTabs()
     {
-        mainPosts = new PostsScreen(this, Commons.MAIN_POSTS_ID);
+        mainPosts = new PostsScreen(this, Commons.MAIN_POSTS_ID,Utils.getString(R.string.Posts_Tab));
         mainPosts.setTag(Utils.getString(R.string.Posts_Tab));
         
         blogsPosts = new BlogsScreen(this);
         blogsPosts.setTag(Utils.getString(R.string.Blogs_Tab));
         
-        favoritePosts = new PostsScreen(this, Commons.FAVORITE_POSTS_ID);
+        favoritePosts = new PostsScreen(this, Commons.FAVORITE_POSTS_ID, Utils.getString(R.string.Favorites_Tab));
         favoritePosts.setTag(Utils.getString(R.string.Favorites_Tab));
         
-        myStuffPosts = new PostsScreen(this, Commons.MYSTUFF_POSTS_ID);
+        myStuffPosts = new PostsScreen(this, Commons.MYSTUFF_POSTS_ID, Utils.getString(R.string.MyStuff_Tab));
         myStuffPosts.setTag(Utils.getString(R.string.MyStuff_Tab));
         
-        inboxPosts = new PostsScreen(this, Commons.INBOX_POSTS_ID);
+        inboxPosts = new PostsScreen(this, Commons.INBOX_POSTS_ID, Utils.getString(R.string.Inbox_Tab));
         inboxPosts.setTag(Utils.getString(R.string.Inbox_Tab));
         
         profile = new AuthorView(this, SettingsWorker.Instance().loadUserName());
