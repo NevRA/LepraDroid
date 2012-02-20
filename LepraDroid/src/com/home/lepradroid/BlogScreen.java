@@ -9,7 +9,6 @@ import android.view.MenuItem;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
-import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetPostsTask;
