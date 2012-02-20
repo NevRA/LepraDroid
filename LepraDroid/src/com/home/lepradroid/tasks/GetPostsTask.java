@@ -165,6 +165,8 @@ public class GetPostsTask extends BaseTask
                     else
                         post.Url = Commons.SITE_URL + url;
                     
+                    post.Pid = post.Url.split("comments/")[1];
+                    
                     if(a.size() == 2)
                     {
                         post.TotalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);

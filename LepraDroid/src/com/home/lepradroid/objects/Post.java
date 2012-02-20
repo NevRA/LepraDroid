@@ -7,4 +7,5 @@ public class Post extends BaseItem
     public Integer  NewComments         = -1;
     public String   Html                = "";
     public String   commentsWtf         = "";
+    public String   Pid                 = "";
 }

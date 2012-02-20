@@ -14,9 +14,11 @@ import android.widget.EditText;
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetCommentsTask;
+import com.home.lepradroid.tasks.PostCommentTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -140,6 +142,9 @@ public class PostScreen extends BaseActivity
             public void onClick(DialogInterface dialog, int whichButton) 
             {
                 final String value = input.getText().toString(); 
+                
+                final Post item = (Post)post;
+                pushNewTask(new TaskWrapper(null, new PostCommentTask(id, item.commentsWtf, "", item.Pid, value), null));
             }
         }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
         {

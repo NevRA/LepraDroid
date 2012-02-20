@@ -2,6 +2,7 @@ package com.home.lepradroid.serverworker;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -149,6 +150,32 @@ public class ServerWorker
         final HttpResponse response = client.execute(httpGet);
         
         return EntityUtils.toByteArray(response.getEntity());
+    }
+    
+    public String postComment(String wtf, String replyTo, String pid, String comment) throws ClientProtocolException, IOException
+    {
+        final HttpPost httpPost = new HttpPost(Commons.POST_COMMENT_URL);
+        String str = String.format("wtf=%s&step=1&i=0&replyto=%s&pid=%s&iframe=0&file=&comment=%s", wtf, replyTo, pid, URLEncoder.encode(comment));
+        
+        try
+        {
+            final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
+            if(cookies != null)
+                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";"); 
+        }
+        catch (Exception e)
+        {
+            Logger.e(e);
+        }
+        
+        final StringEntity se = new StringEntity(str, HTTP.UTF_8);
+        httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
+        httpPost.setEntity(se);
+        
+        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        final HttpResponse response = client.execute(httpPost);
+        
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
     public String getLoginCode()

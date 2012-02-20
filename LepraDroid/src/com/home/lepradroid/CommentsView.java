@@ -11,20 +11,23 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.interfaces.AddedCommentUpdateListener;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetCommentsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
-public class CommentsView extends BaseView implements CommentsUpdateListener
+public class CommentsView extends BaseView implements CommentsUpdateListener, AddedCommentUpdateListener
 {
     private BaseActivity    context;
     private UUID            groupId;
@@ -35,6 +38,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
                             adapter;
     private boolean         receivedLastElements = false;
     private boolean         shownLastElements = false;
+    private ArrayList<BaseItem> 
+                            newComments = new ArrayList<BaseItem>();
     
     public CommentsView(BaseActivity context, UUID groupId, UUID id)
     {
@@ -132,12 +137,26 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
     {
         synchronized (this)
         {
+            boolean addedOwnerComment = false;
+            if(receivedLastElements && shownLastElements && !newComments.isEmpty())
+            {
+                ServerWorker.Instance().addNewComments(groupId, id, newComments);
+                
+                newComments.clear();
+                
+                addedOwnerComment = true;
+            }
+            
             ArrayList<BaseItem> comments = ServerWorker.Instance().getComments(groupId, id);
+            
             if(comments.size() != adapter.getCount())
             {
                 adapter.updateData(comments);
                 adapter.notifyDataSetChanged();
             }
+            
+            if(addedOwnerComment)
+                list.setSelection(list.getCount() - 1);
         }
     }
 
@@ -168,5 +187,18 @@ public class CommentsView extends BaseView implements CommentsUpdateListener
             shownLastElements = true;
             OnCommentsUpdateFirstEntries(id);
         }
+    }
+
+    @Override
+    public void OnAddedCommentUpdate(UUID id, Comment newComment)
+    {
+        if(this.id != id) return;
+        
+        newComments.add(newComment);
+        
+        Toast.makeText(context, Utils.getString(R.string.Added_Comment), Toast.LENGTH_LONG).show();
+        
+        if(receivedLastElements)
+            updateAdapter();
     }
 }
