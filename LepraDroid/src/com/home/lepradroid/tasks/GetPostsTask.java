@@ -118,9 +118,7 @@ public class GetPostsTask extends BaseTask
                 
                 currentPos = end;
                 
-                html = html.replaceAll("(&#150;|&#151;)", "-");
-                
-                final String postHtml = html.substring(start, end);
+                final String postHtml = html.substring(start, end).replaceAll("(&#150;|&#151;)", "-");
                 final Element content = Jsoup.parse(postHtml);
                 final Element element = content.getElementsByClass("dt").first();
 
@@ -165,7 +163,10 @@ public class GetPostsTask extends BaseTask
                     else
                         post.Url = Commons.SITE_URL + url;
                     
-                    post.Pid = post.Url.split("comments/")[1];
+                    if(groupId.equals(Commons.INBOX_POSTS_ID))
+                        post.Pid = post.Url.split("inbox/")[1];
+                    else
+                        post.Pid = post.Url.split("comments/")[1];
                     
                     if(a.size() == 2)
                     {
