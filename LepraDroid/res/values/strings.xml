@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, Main!</string>
     <string name="app_name">LepraDroid by R</string>
     <string name="login_label">Логин:</string>
     <string name="password_label">Пароль:</string>
@@ -9,11 +7,11 @@
     <string name="yarrr_label">YARRR!</string>
     <string name="Error">Упс, ошибка!</string>
     <string name="Loading">Загружается</string>
-    <string name="Captcha_Loading_In_Progress">Загружается капча...</string>
-    <string name="Posts_Loading_In_Progress">Загружаем посты...</string>
-    <string name="Blogs_Loading_In_Progress">Загружаем блоги...</string>
+    <string name="Captcha_Loading_In_Progress">Загружается капча&#8230;</string>
+    <string name="Posts_Loading_In_Progress">Загружаем посты&#8230;</string>
+    <string name="Blogs_Loading_In_Progress">Загружаем блоги&#8230;</string>
     <string name="Captcha_Not_Found">Не могу найти капчу</string>
-    <string name="Login_In_Progress">Логинимся...</string>
+    <string name="Login_In_Progress">Логинимся&#8230;</string>
     <string name="Login_Failed">Не могу залогониться, пожалуйста, проверьте введенные данные и попробуйте снова</string>
     <string name="Unknown_Error">Произошла какая-та напонятная ошибка, может быть что-то есть в логах</string>
     <string name="Blogs_Tab">Подлепры</string>
