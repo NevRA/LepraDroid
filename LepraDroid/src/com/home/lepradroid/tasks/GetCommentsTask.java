@@ -30,7 +30,6 @@ import com.home.lepradroid.utils.Logger;
 public class GetCommentsTask extends BaseTask
 {
     final private int BUFFER_SIZE = 4 * 1024;
-    final private int HEADERS_BYTES_TO_SKIP = 18000;
     
     private UUID groupId;
     private UUID id;
@@ -112,18 +111,6 @@ public class GetCommentsTask extends BaseTask
         }
     }
     
-    private void skipHeaderBytes(BufferedInputStream stream) throws IOException
-    {
-        long totalSkipped = 0;
-        
-        while(totalSkipped < HEADERS_BYTES_TO_SKIP)
-        {
-            if(isCancelled()) break;
-            
-            totalSkipped += stream.skip(HEADERS_BYTES_TO_SKIP - totalSkipped);
-        }
-    }
-    
     private int readBytesToBuff_WithoutNonLatinCharsAtTheEnd(FileInputStream stream, byte[] buffer) throws IOException
     {
         int len = stream.read(buffer, 0, BUFFER_SIZE / 2);
@@ -170,7 +157,6 @@ public class GetCommentsTask extends BaseTask
                 byte[] chars = new byte[BUFFER_SIZE];
                 int len = 0;
 
-                skipHeaderBytes(stream);
                 while (len != -1)
                 {
                     if(isCancelled()) break;
