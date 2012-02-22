@@ -211,22 +211,15 @@ public class ServerWorker
     
     public ArrayList<BaseItem> getPostsById(UUID groupId, boolean clone)
     {
-        read.lock();
+        write.lock();
         try
         {
             ArrayList<BaseItem> items = posts.get(groupId);
             if(items == null)
             {
                 items = new ArrayList<BaseItem>(0);
-                write.lock();
-                try
-                {
-                    posts.put(groupId, items);
-                }
-                finally
-                {
-                    write.unlock();
-                }
+
+                posts.put(groupId, items);
             }
             if(clone)
                 return cloneList(items);
@@ -235,7 +228,7 @@ public class ServerWorker
         }
         finally
         {
-            read.unlock();
+            write.unlock();
         }
     }
     
