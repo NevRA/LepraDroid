@@ -32,6 +32,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private TitlePageIndicator titleIndicator;
     private TabsPageAdapter tabsAdapter;
     private ViewPager pager;
+    private boolean blogsInit                   = false;
     private boolean favoriteInit                = false;
     private boolean myStuffInit                 = false;
     private boolean inboxInit                   = false;
@@ -40,10 +41,10 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private ArrayList<BaseView> pages           = new ArrayList<BaseView>();
     
     public static final int MAIN_TAB_NUM        = 0;
-    public static final int BLOGS_TAB_NUM       = 1;
-    public static final int FAVORITE_TAB_NUM    = 2;
-    public static final int MYSTUFF_TAB_NUM     = 3;
-    public static final int INBOX_TAB_NUM       = 4;
+    public static final int BLOGS_TAB_NUM       = 3;
+    public static final int FAVORITE_TAB_NUM    = 4;
+    public static final int MYSTUFF_TAB_NUM     = 1;
+    public static final int INBOX_TAB_NUM       = 2;
     public static final int PROFILE_TAB_NUM     = 5;
     
     
@@ -137,10 +138,10 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         profile.setTag(Utils.getString(R.string.Profile_Tab));
         
         pages.add(mainPosts);
-        pages.add(blogsPosts);
-        pages.add(favoritePosts);
         pages.add(myStuffPosts);
         pages.add(inboxPosts);
+        pages.add(blogsPosts);
+        pages.add(favoritePosts);
         pages.add(profile);
         
         tabsAdapter = new TabsPageAdapter(this, pages);
@@ -168,10 +169,10 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                             }
                             break;
                         case FAVORITE_TAB_NUM:
-                            if(!myStuffInit)
+                            if(!profileInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                                myStuffInit = true;
+                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                profileInit = true;
                             }
                             break;
                         case MYSTUFF_TAB_NUM:
@@ -182,10 +183,10 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                             }
                             break;
                         case INBOX_TAB_NUM:
-                            if(!profileInit)
+                            if(!blogsInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                                profileInit = true;
+                                pushNewTask(new TaskWrapper(null, new GetBlogsTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                blogsInit = true;
                             }
                             break;
                         }
@@ -219,6 +220,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         myStuffInit = false;
         inboxInit = false;
         profileInit = false;
+        blogsInit = false;
     }
     
     public void OnLogout()
