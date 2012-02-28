@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.Spanned;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.home.lepradroid.LepraDroidApplication;
@@ -142,7 +143,7 @@ public class Utils
             return Html.fromHtml(Utils.getString(R.string.No_Comments));
     }
     
-    public static void addComment(Context context, final UUID groupId, final UUID postId, final UUID commentId)
+    public static void addComment(final Context context, final UUID groupId, final UUID postId, final UUID commentId)
     {
         final Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
         final Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
@@ -166,5 +167,15 @@ public class Utils
             {
             }
         }).show();
+        
+        input.postDelayed(new Runnable() 
+        {
+            @Override
+            public void run() 
+            {
+                final InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(input, 0);
+            }
+        },200);
     }
 }
