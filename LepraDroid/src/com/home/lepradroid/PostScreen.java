@@ -133,7 +133,7 @@ public class PostScreen extends BaseActivity
     private void createTabs()
     {
         post = ServerWorker.Instance().getPostById(groupId, id);
-        if(post == null) finish();
+        if(post == null) {finish(); return;}
 
         postView = new PostView(this, groupId, id);
         postView.setTag(Utils.getString(R.string.Post_Tab));
