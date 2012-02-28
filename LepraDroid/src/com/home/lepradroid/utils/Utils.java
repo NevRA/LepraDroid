@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
+import android.text.Selection;
 import android.text.Spanned;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -149,7 +150,11 @@ public class Utils
         final Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
         
         final EditText input = new EditText(context);
-        input.setText(comment != null ? comment.Author + ": " : "");
+        final String text = comment != null ? comment.Author + ": " : "";
+        
+        input.setText(text);
+        Selection.setSelection(input.getText(), text.length());
+        
         new AlertDialog.Builder(context)
         .setTitle(Utils.getString(R.string.Add_Comment_Title))
         .setView(input)
