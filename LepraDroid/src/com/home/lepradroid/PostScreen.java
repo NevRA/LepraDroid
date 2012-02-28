@@ -3,22 +3,17 @@ package com.home.lepradroid;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.objects.BaseItem;
-import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetCommentsTask;
-import com.home.lepradroid.tasks.PostCommentTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
@@ -132,26 +127,7 @@ public class PostScreen extends BaseActivity
     
     private void addComment()
     {
-        final EditText input = new EditText(this);
-        
-        new AlertDialog.Builder(PostScreen.this)
-        .setTitle(Utils.getString(R.string.Add_Comment_Title))
-        .setView(input)
-        .setPositiveButton(Utils.getString(R.string.yarrr_label), new DialogInterface.OnClickListener() 
-        {
-            public void onClick(DialogInterface dialog, int whichButton) 
-            {
-                final String value = input.getText().toString(); 
-                
-                final Post item = (Post)post;
-                pushNewTask(new TaskWrapper(null, new PostCommentTask(id, item.commentsWtf, "", item.Pid, value), null));
-            }
-        }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
-        {
-            public void onClick(DialogInterface dialog, int whichButton) 
-            {
-            }
-        }).show();
+        Utils.addComment(this, groupId, id, null);
     }
     
     private void createTabs()

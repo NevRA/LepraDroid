@@ -289,6 +289,7 @@ public class GetCommentsTask extends BaseTask
         Element element = content.getElementsByClass("dt").first();
         
         Comment comment = new Comment();
+        comment.Pid = content.getElementsByTag("div").first().id();
         comment.Text = element.text();
         comment.Html = element.html();
         

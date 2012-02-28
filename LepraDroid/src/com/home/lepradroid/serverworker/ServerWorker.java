@@ -34,10 +34,12 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 
@@ -242,17 +244,38 @@ public class ServerWorker
         return clonedList;
     }
     
-    public ArrayList<BaseItem> getComments(UUID groupId, UUID id)
+    public BaseItem getComment(UUID groupId, UUID postId, UUID commentId)
     {
         read.lock();
         try
         {
-            BaseItem post = getPostById(groupId, id);
+            ArrayList<BaseItem> items = getComments(groupId, postId);
+            
+            for(BaseItem item : items)
+            {
+                if(item.Id.equals(commentId))
+                    return item;
+            }
+        }
+        finally
+        {
+            read.unlock();
+        }
+
+        return null;
+    }
+    
+    public ArrayList<BaseItem> getComments(UUID groupId, UUID postId)
+    {
+        read.lock();
+        try
+        {
+            BaseItem post = getPostById(groupId, postId);
             if(post != null)
             {
-                if(comments.containsKey(id))
+                if(comments.containsKey(postId))
                 {
-                    return cloneList(comments.get(id));
+                    return cloneList(comments.get(postId));
                 }
             }
         }
@@ -264,7 +287,7 @@ public class ServerWorker
         return new ArrayList<BaseItem>();
     }
     
-    public void addNewComment(UUID groupId, UUID id, BaseItem item)
+    public int addNewComment(UUID groupId, UUID id, BaseItem item)
     {
         write.lock();
         try
@@ -278,39 +301,41 @@ public class ServerWorker
                     comments.put(id, targetList);
                 }
                 
-                comments.get(id).add(item);
+                Comment comment = (Comment)item;
+                ArrayList<BaseItem> comments = this.comments.get(id);
                 
-                return;
+                if(TextUtils.isEmpty(comment.ParentPid))
+                {
+                    comments.add(item);
+                    return comments.size() - 1;
+                }
+                else
+                {
+                    for(int pos = 0; pos < comments.size(); ++pos)
+                    {
+                        Comment parentComment = (Comment)comments.get(pos);
+                        if(parentComment.Pid.equals(comment.ParentPid))
+                        {
+                            comments.add(pos + 1, item);
+                            return pos + 1;
+                        }
+                    }
+                }
             }
         }
         finally
         {
             write.unlock();
         }
+        
+        return -1;
     }
     
     public void addNewComments(UUID groupId, UUID id, ArrayList<BaseItem> items)
-    {
-        write.lock();
-        try
+    {    
+        for(BaseItem item : items)
         {
-            BaseItem post = getPostById(groupId, id);
-            if(post != null)
-            {
-                if(!comments.containsKey(id))
-                {
-                    ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
-                    comments.put(id, targetList);
-                }
-                
-                comments.get(id).addAll(items);
-                
-                return;
-            }
-        }
-        finally
-        {
-            write.unlock();
+            addNewComment(groupId, id, item);
         }
     }
     

@@ -70,6 +70,8 @@ public class PostCommentTask extends BaseTask
             final JSONObject json = new JSONObject(ServerWorker.Instance().postComment(wtf, replyTo, pid, comment)).getJSONObject("new_comment");
             final Comment comment = new Comment();
             comment.Author = json.getString("user_login");
+            comment.ParentPid = replyTo;
+            comment.Pid = json.getString("comment_id");
             comment.Html = this.comment;
             comment.Signature = (json.getString("gender").equals("m") ? "Написал" : "Написала") + " " +
                     json.getString("rank") + " " + "<b>" + json.getString("user_login") + "</b>, " + 

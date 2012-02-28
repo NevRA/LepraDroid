@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -67,7 +68,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
         TextView tooManyComments = (TextView) contentView.findViewById(R.id.too_many_comments);
         
-        adapter = new CommentsAdapter(context, R.layout.comments_row_view, new ArrayList<BaseItem>());
+        adapter = new CommentsAdapter(context, groupId, post.Id, R.layout.comments_row_view, new ArrayList<BaseItem>());
         list.setAdapter(adapter);
         
         list.setOnScrollListener(new OnScrollListener() 
@@ -138,11 +139,18 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
         synchronized (this)
         {
             boolean addedOwnerComment = false;
-            if(receivedLastElements && shownLastElements && !newComments.isEmpty())
+            int index = -1;
+            
+            for(int pos = newComments.size() - 1; pos >= 0; pos--)
             {
-                ServerWorker.Instance().addNewComments(groupId, id, newComments);
+                final Comment comment = (Comment)newComments.get(pos);
+                if(TextUtils.isEmpty(comment.ParentPid) && (!receivedLastElements || !shownLastElements || newComments.isEmpty()))
+                {
+                    continue;
+                }
                 
-                newComments.clear();
+                index = ServerWorker.Instance().addNewComment(groupId, id, newComments.get(pos));
+                newComments.remove(pos);
                 
                 addedOwnerComment = true;
             }
@@ -156,14 +164,14 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
             }
             
             if(addedOwnerComment)
-                list.setSelection(list.getCount() - 1);
+                list.setSelection(index);
         }
     }
 
     @Override
     public void OnCommentsUpdateFirstEntries(UUID id)
     {
-        if(this.id != id) return;
+        if(!this.id.equals(id)) return;
         
         if(progress.getVisibility() == View.VISIBLE)
         {
@@ -179,7 +187,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
     @Override
     public void OnCommentsUpdateFinished(UUID id)
     {
-        if(this.id != id) return;
+        if(!this.id.equals(id)) return;
         
         receivedLastElements = true;
         if(adapter.isEmpty())
@@ -192,7 +200,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
     @Override
     public void OnAddedCommentUpdate(UUID id, Comment newComment)
     {
-        if(this.id != id) return;
+        if(!this.id.equals(id)) return;
         
         newComments.add(newComment);
         

@@ -3,6 +3,7 @@ package com.home.lepradroid.utils;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,13 +11,17 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.Spanned;
+import android.widget.EditText;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
 import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.PostCommentTask;
+import com.home.lepradroid.tasks.TaskWrapper;
 
 public class Utils
 {
@@ -135,5 +140,31 @@ public class Utils
             return Html.fromHtml(post.TotalComments.toString() + " " + Utils.getString(R.string.Total_Comments));
         else
             return Html.fromHtml(Utils.getString(R.string.No_Comments));
+    }
+    
+    public static void addComment(Context context, final UUID groupId, final UUID postId, final UUID commentId)
+    {
+        final Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
+        final Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
+        
+        final EditText input = new EditText(context);
+        input.setText(comment != null ? comment.Author + ": " : "");
+        new AlertDialog.Builder(context)
+        .setTitle(Utils.getString(R.string.Add_Comment_Title))
+        .setView(input)
+        .setPositiveButton(Utils.getString(R.string.yarrr_label), new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog, int whichButton) 
+            {
+                final String value = input.getText().toString(); 
+                
+                new TaskWrapper(null, new PostCommentTask(post.Id, post.commentsWtf, comment != null ? comment.Pid : "", post.Pid, value), null);
+            }
+        }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog, int whichButton) 
+            {
+            }
+        }).show();
     }
 }

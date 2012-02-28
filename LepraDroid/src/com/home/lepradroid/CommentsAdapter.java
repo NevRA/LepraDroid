@@ -1,11 +1,13 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import android.content.Context;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -18,13 +20,17 @@ import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem>
 {
+    private UUID postId;
+    private UUID groupId;
     private ArrayList<BaseItem> comments = new ArrayList<BaseItem>();
             
-    public CommentsAdapter(Context context, int textViewResourceId,
+    public CommentsAdapter(Context context, UUID groupId, UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
     {
         super(context, textViewResourceId, comments);
         this.comments = comments;
+        this.postId = postId;
+        this.groupId = groupId;
     }
 
     public int getCount() 
@@ -104,6 +110,15 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
             
             TextView rating = (TextView)convertView.findViewById(R.id.rating);
             rating.setText(Utils.getRatingStringFromBaseItem(comment));
+            
+            webView.setOnLongClickListener(new OnLongClickListener() 
+            {
+                public boolean onLongClick(View v) 
+                {
+                    Utils.addComment(getContext(), groupId, postId, comment.Id);
+                    return true;
+                }
+            });
         }
         else
         {
