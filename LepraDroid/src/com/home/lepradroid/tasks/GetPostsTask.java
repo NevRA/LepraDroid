@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -19,6 +21,7 @@ import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 
 public class GetPostsTask extends BaseTask
@@ -110,6 +113,20 @@ public class GetPostsTask extends BaseTask
                 int start = html.indexOf(postOrd, currentPos);
                 int end = html.indexOf(postOrd, start + 100);
                 
+                if(url.equals(Commons.SITE_URL) && TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
+                {
+                    String header = html.substring(0, start);
+                    Element content = Jsoup.parse(header);
+                    
+                    Element vote = content.getElementById("content_left_inner");
+                    Element script = vote.getElementsByTag("script").first();
+                    
+                    Pattern pattern = Pattern.compile("wtf_vote = '(.+)'");
+                    Matcher matcher = pattern.matcher(script.data());
+                    if(matcher.find())
+                        SettingsWorker.Instance().saveVoteWtf(matcher.group(1));
+                }
+                
                 if(end == -1)
                 {
                     end = html.length();
@@ -118,9 +135,9 @@ public class GetPostsTask extends BaseTask
                 
                 currentPos = end;
                 
-                final String postHtml = html.substring(start, end).replaceAll("(&#150;|&#151;)", "-");
-                final Element content = Jsoup.parse(postHtml);
-                final Element element = content.getElementsByClass("dt").first();
+                String postHtml = html.substring(start, end).replaceAll("(&#150;|&#151;)", "-");
+                Element content = Jsoup.parse(postHtml);
+                Element element = content.getElementsByClass("dt").first();
 
                 String text = element.text();
                 Post post = new Post();

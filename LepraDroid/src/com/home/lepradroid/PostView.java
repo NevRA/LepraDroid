@@ -5,6 +5,7 @@ import java.util.UUID;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.webkit.WebView;
+import android.widget.Button;
 
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -44,6 +45,14 @@ public class PostView extends BaseView
         
         WebView webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        
+        Button plus = (Button) contentView.findViewById(R.id.plus);
+        Button minus = (Button) contentView.findViewById(R.id.minus);
+        
+        if(item.MinusVoted)
+            minus.setEnabled(false);
+        if(item.PlusVoted)
+            plus.setEnabled(false);
         
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
         webView.loadDataWithBaseURL("", header + ((Post)item).Html, "text/html", "UTF-8", null );

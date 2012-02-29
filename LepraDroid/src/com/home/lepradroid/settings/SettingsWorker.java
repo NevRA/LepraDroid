@@ -1,14 +1,14 @@
 package com.home.lepradroid.settings;
 
 
-import com.home.lepradroid.LepraDroidApplication;
-import com.home.lepradroid.utils.Logger;
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Pair;
+
+import com.home.lepradroid.LepraDroidApplication;
+import com.home.lepradroid.utils.Logger;
 
 public class SettingsWorker
 {
@@ -16,6 +16,7 @@ public class SettingsWorker
     private String cookie                   = "";
     private static final String COOKIES     = "cookies_pref";
     private static final String USER_NAME   = "username_pref";
+    private static final String VOTE_WTF    = "votewtf_pref";
     private static final String VOTE_WEIGHT = "voteweight_pref";
     
     private SettingsWorker() 
@@ -55,6 +56,17 @@ public class SettingsWorker
     {
         saveInt(VOTE_WEIGHT, 0);
         saveString(USER_NAME, "");
+        saveString(VOTE_WTF, "");
+    }
+    
+    public String loadVoteWtf()
+    {
+        return loadString(VOTE_WTF);
+    }
+    
+    public void saveVoteWtf(String vote_wtf)
+    {
+        saveString(VOTE_WTF, vote_wtf);
     }
     
     public Integer loadVoteWeight()
