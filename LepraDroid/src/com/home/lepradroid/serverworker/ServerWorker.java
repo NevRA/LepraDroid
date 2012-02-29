@@ -38,6 +38,8 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.commons.Commons.RateType;
+import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
@@ -152,6 +154,43 @@ public class ServerWorker
         final HttpResponse response = client.execute(httpGet);
         
         return EntityUtils.toByteArray(response.getEntity());
+    }
+    
+    public String rateItem(RateType type, String wtf, String id, RateValueType value) throws ClientProtocolException, IOException
+    {
+        final HttpPost httpPost = new HttpPost(Commons.ITEM_VOTE_URL);
+        String str = "";
+        switch (type)
+        {
+        case POST:
+            str = String.format("type=1&wtf=%s&id=p%s&value=%s", wtf, id, value == RateValueType.MINUS ? "-1" : "1");
+            break;
+        case COMMENT:
+            break;
+
+        default:
+            break;
+        }
+
+        try
+        {
+            final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
+            if(cookies != null)
+                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";"); 
+        }
+        catch (Exception e)
+        {
+            Logger.e(e);
+        }
+        
+        final StringEntity se = new StringEntity(str, HTTP.UTF_8);
+        httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
+        httpPost.setEntity(se);
+        
+        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        final HttpResponse response = client.execute(httpPost);
+        
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
     
     public String postComment(String wtf, String replyTo, String pid, String comment) throws ClientProtocolException, IOException

@@ -113,7 +113,7 @@ public class GetPostsTask extends BaseTask
                 int start = html.indexOf(postOrd, currentPos);
                 int end = html.indexOf(postOrd, start + 100);
                 
-                if(url.equals(Commons.SITE_URL) && TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
+                if(num == 0 && url.equals(Commons.SITE_URL) && TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
                 {
                     String header = html.substring(0, start);
                     Element content = Jsoup.parse(header);

@@ -14,6 +14,7 @@ public class Commons
                                                 = SITE_URL + "commctl/";
     
     public static final String BLOGS_URL        = SITE_URL + "underground/";
+    public static final String ITEM_VOTE_URL    = SITE_URL + "rate/";
     
     public static final String APP_TAG          = "LepraDroid";
     
@@ -38,5 +39,16 @@ public class Commons
     public static final UUID INBOX_POSTS_ID     = UUID.randomUUID();
 
     public static final String DELIMETER        = " / ";
-
+    
+    public enum RateType
+    {
+        POST,
+        COMMENT
+    }
+    
+    public enum RateValueType
+    {
+        MINUS,
+        PLUS
+    }
 }
