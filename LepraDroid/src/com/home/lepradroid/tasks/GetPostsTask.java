@@ -113,6 +113,14 @@ public class GetPostsTask extends BaseTask
                 int start = html.indexOf(postOrd, currentPos);
                 int end = html.indexOf(postOrd, start + 100);
                 
+                if(     start == -1 && 
+                        html.indexOf("<title>Лепрозорий: вход</title>") != -1)
+                {
+                    new LogoutTask().execute();
+                    cancel(false);
+                    break;
+                }
+                
                 if(num == 0 && url.equals(Commons.SITE_URL) && TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
                 {
                     String header = html.substring(0, start);
