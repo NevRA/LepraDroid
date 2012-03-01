@@ -120,9 +120,9 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
     }
 
     @Override
-    public void OnCommentsUpdateBegin(UUID id)
+    public void OnCommentsUpdateBegin(UUID groupId, UUID postId)
     {
-        if(this.id != id) return;
+        if(!this.id.equals(postId)) return;
         
         receivedLastElements = false;
         shownLastElements = false;
@@ -169,9 +169,9 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
     }
 
     @Override
-    public void OnCommentsUpdateFirstEntries(UUID id)
+    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId)
     {
-        if(!this.id.equals(id)) return;
+        if(!this.id.equals(postId)) return;
         
         if(progress.getVisibility() == View.VISIBLE)
         {
@@ -185,15 +185,15 @@ public class CommentsView extends BaseView implements CommentsUpdateListener, Ad
     }
 
     @Override
-    public void OnCommentsUpdateFinished(UUID id)
+    public void OnCommentsUpdateFinished(UUID groupId, UUID postId)
     {
-        if(!this.id.equals(id)) return;
+        if(!this.id.equals(postId)) return;
         
         receivedLastElements = true;
         if(adapter.isEmpty())
         {
             shownLastElements = true;
-            OnCommentsUpdateFirstEntries(id);
+            OnCommentsUpdateFirstEntries(groupId, postId);
         }
     }
 

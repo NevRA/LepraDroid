@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import android.content.Context;
 import android.text.Html;
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.utils.ImageLoader;
@@ -19,14 +21,16 @@ import com.home.lepradroid.utils.Utils;
 
 class PostsAdapter extends ArrayAdapter<BaseItem>
 {
+    private UUID groupId;
     private ArrayList<BaseItem> posts = new ArrayList<BaseItem>();
     public ImageLoader          imageLoader;
             
-    public PostsAdapter(Context context, int textViewResourceId,
+    public PostsAdapter(Context context, UUID groupId, int textViewResourceId,
             ArrayList<BaseItem> posts)
     {
         super(context, textViewResourceId, posts);
         this.posts = posts;
+        this.groupId = groupId;
         imageLoader=new ImageLoader(LepraDroidApplication.getInstance());
     }
 
@@ -69,7 +73,10 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         comments.setText(Utils.getCommentsStringFromPost(post));
         
         TextView rating = (TextView)view.findViewById(R.id.rating);
-        rating.setText(Utils.getRatingStringFromBaseItem(post));
+        if(groupId.equals(Commons.INBOX_POSTS_ID))
+            rating.setVisibility(View.GONE);
+        else
+            rating.setText(Utils.getRatingStringFromBaseItem(post));
         
         ImageView image = (ImageView)view.findViewById(R.id.image);
         

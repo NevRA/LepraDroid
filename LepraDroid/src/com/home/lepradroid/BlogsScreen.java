@@ -106,7 +106,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
     @Override
     public void OnImagesUpdate(UUID groupId)
     {
-        if(Commons.BLOGS_POSTS_ID != groupId) return;
+        if(!Commons.BLOGS_POSTS_ID.equals(groupId)) return;
         adapter.notifyDataSetChanged();
     }
 

@@ -32,12 +32,12 @@ public class GetCommentsTask extends BaseTask
     final private int BUFFER_SIZE = 4 * 1024;
     
     private UUID groupId;
-    private UUID id;
+    private UUID postId;
     private int commentsCout = 0;
     
-    static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[1];
-    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[1];
-    static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[1];
+    static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
+    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
+    static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[2];
     static Method methodOnCommentsUpdateFinished;
     static Method methodOnCommentsUpdateFirstEtries;
     static Method methodOnCommentsUpdateBegin;
@@ -46,12 +46,15 @@ public class GetCommentsTask extends BaseTask
         try
         {
             argsClassesOnCommentsUpdateFinished[0] = UUID.class;
+            argsClassesOnCommentsUpdateFinished[1] = UUID.class;
             methodOnCommentsUpdateFinished = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFinished", argsClassesOnCommentsUpdateFinished);
             
             argsClassesOnCommentsUpdateFirstEtries[0] = UUID.class;
+            argsClassesOnCommentsUpdateFirstEtries[1] = UUID.class;
             methodOnCommentsUpdateFirstEtries = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFirstEntries", argsClassesOnCommentsUpdateFirstEtries); 
             
             argsClassesOnCommentsUpdateBegin[0] = UUID.class;
+            argsClassesOnCommentsUpdateBegin[1] = UUID.class;
             methodOnCommentsUpdateBegin = CommentsUpdateListener.class.getMethod("OnCommentsUpdateBegin", argsClassesOnCommentsUpdateBegin); 
         }
         catch (Throwable t) 
@@ -66,18 +69,19 @@ public class GetCommentsTask extends BaseTask
         super.finish();
     }
     
-    public GetCommentsTask(UUID groupId, UUID id)
+    public GetCommentsTask(UUID groupId, UUID postId)
     {
         this.groupId = groupId;
-        this.id = id;
+        this.postId = postId;
     }
     
     @SuppressWarnings("unchecked")
     public void notifyAboutCommentsUpdateBegin()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[1];
-        args[0] = id;
+        final Object args[] = new Object[2];
+        args[0] = groupId;
+        args[1] = postId;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -89,8 +93,9 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutCommentsUpdate()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[1];
-        args[0] = id;
+        final Object args[] = new Object[2];
+        args[0] = groupId;
+        args[1] = postId;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -102,8 +107,9 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutCommentsUpdateFinished()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[1];
-        args[0] = id;
+        final Object args[] = new Object[2];
+        args[0] = groupId;
+        args[1] = postId;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -137,10 +143,10 @@ public class GetCommentsTask extends BaseTask
         
         try
         {
-            ServerWorker.Instance().clearCommentsById(id);
+            ServerWorker.Instance().clearCommentsById(postId);
             notifyAboutCommentsUpdateBegin();
 
-            Post post = (Post)ServerWorker.Instance().getPostById(groupId, id);
+            Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
             if(post == null)
                 return null; // TODO message
             
@@ -167,6 +173,8 @@ public class GetCommentsTask extends BaseTask
                 }
                 
                 fos.close();
+                
+                post.NewComments = -1;
                 
                 String pageA = null, pageB = null;
                 int start = -1;
@@ -332,7 +340,7 @@ public class GetCommentsTask extends BaseTask
         comment.PlusVoted = html.contains("class=\"plus voted\"");
         comment.MinusVoted = html.contains("class=\"minus voted\"");
                      
-        ServerWorker.Instance().addNewComment(groupId, id, comment);
+        ServerWorker.Instance().addNewComment(groupId, postId, comment);
         
         commentsCout ++;
         

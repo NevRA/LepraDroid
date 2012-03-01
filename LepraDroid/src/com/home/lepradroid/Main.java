@@ -34,7 +34,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private ViewPager pager;
     private boolean blogsInit                   = false;
     private boolean favoriteInit                = false;
-    private boolean myStuffInit                 = false;
+    //private boolean myStuffInit                 = false;
     private boolean inboxInit                   = false;
     private boolean profileInit                 = false;
     
@@ -217,7 +217,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     private void cleanInitState()
     {
         favoriteInit = false;
-        myStuffInit = false;
+        //myStuffInit = false;
         inboxInit = false;
         profileInit = false;
         blogsInit = false;

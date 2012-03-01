@@ -14,13 +14,15 @@ import android.widget.ProgressBar;
 
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.interfaces.CommentsUpdateListener;
 import com.home.lepradroid.interfaces.ImagesUpdateListener;
+import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 
-public class PostsScreen extends BaseView implements PostsUpdateListener, ImagesUpdateListener
+public class PostsScreen extends BaseView implements CommentsUpdateListener, PostsUpdateListener, ImagesUpdateListener, ItemRateUpdateListener
 {
     private ListView    list;
     private ProgressBar progress;
@@ -51,7 +53,7 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
     {      
         list = (ListView) contentView.findViewById(R.id.list);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
-        adapter = new PostsAdapter(context, R.layout.post_row_view, new ArrayList<BaseItem>());
+        adapter = new PostsAdapter(context, groupId, R.layout.post_row_view, new ArrayList<BaseItem>());
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -75,7 +77,7 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
 
     public void OnPostsUpdate(UUID groupId, boolean haveNewRecords)
     {
-    	if(this.groupId != groupId) return;
+        if(!this.groupId.equals(groupId)) return;
     	
     	if(progress.getVisibility() == View.VISIBLE)
         {
@@ -90,7 +92,7 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
     @Override
     public void OnPostsUpdateBegin(UUID groupId)
     {
-        if(this.groupId != groupId) return;
+        if(!this.groupId.equals(groupId)) return;
         
         progress.setVisibility(View.VISIBLE);
         progress.setIndeterminate(true);
@@ -117,7 +119,7 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
     @Override
     public void OnImagesUpdate(UUID groupId)
     {
-        if(this.groupId != groupId) return;
+        if(!this.groupId.equals(groupId)) return;
         adapter.notifyDataSetChanged();
     }
 
@@ -125,5 +127,32 @@ public class PostsScreen extends BaseView implements PostsUpdateListener, Images
     public void OnExit()
     {
         ListenersWorker.Instance().unregisterListener(this);
+    }
+
+    @Override
+    public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
+    {
+        if(!this.groupId.equals(groupId)) return;
+        updateAdapter();
+    }
+
+    @Override
+    public void OnCommentsUpdateBegin(UUID groupId, UUID postId)
+    {
+        if(!this.groupId.equals(groupId)) return;
+    }
+
+    @Override
+    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId)
+    {
+        if(!this.groupId.equals(groupId)) return;
+        updateAdapter();
+    }
+
+    @Override
+    public void OnCommentsUpdateFinished(UUID groupId, UUID postId)
+    {
+        if(!this.groupId.equals(groupId)) return;
+        updateAdapter();
     }    
 }

@@ -31,6 +31,8 @@
     <string name="Comments_Tab">Комментарии</string>
     <string name="Author_Tab">Автор</string>
     <string name="Added_Comment">Комментарий добавлен</string>
+    <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
+    <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>
 
 </resources>
