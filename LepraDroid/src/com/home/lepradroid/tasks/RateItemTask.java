@@ -17,6 +17,7 @@ import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
 
 public class RateItemTask extends BaseTask
 {
@@ -77,7 +78,7 @@ public class RateItemTask extends BaseTask
         try
         {
             String response = ServerWorker.Instance().rateItem(type, wtf, id, value);
-            if(     TextUtils.isDigitsOnly(response) || 
+            if(     Utils.isIntNumber(response) || 
                     groupId.equals(Commons.FAVORITE_POSTS_ID))
             {
                 BaseItem item = ServerWorker.Instance().getPostById(groupId, postId);

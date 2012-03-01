@@ -183,4 +183,18 @@ public class Utils
             }
         },200);
     }
+    
+    public static boolean isIntNumber(String num)
+    {
+        try
+        {
+            Integer.parseInt(num);
+        } 
+        catch(NumberFormatException nfe) 
+        {
+            return false;
+        }
+        
+        return true;
+    }
 }
