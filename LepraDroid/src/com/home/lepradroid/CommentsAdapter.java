@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Picture;
+import android.graphics.Point;
+import android.graphics.drawable.PictureDrawable;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -101,8 +107,35 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
             
             if(comment.IsNew)
             {
-                RelativeLayout border = (RelativeLayout)convertView.findViewById(R.id.new_comments_border);
-                border.setBackgroundResource(R.drawable.new_comment_border);
+                RelativeLayout border = (RelativeLayout)convertView.findViewById(R.id.root);
+                Picture picture = new Picture();
+                Canvas canvas = picture.beginRecording(15, 15);
+                Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+                paint.setStrokeWidth(2);
+                paint.setColor(android.graphics.Color.RED);     
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                paint.setAntiAlias(true);
+
+                Point point1_draw = new Point(0, 0);       
+                Point point2_draw = new Point(15, 0);   
+                Point point3_draw = new Point(0, 15);
+
+                Path path = new Path();
+                path.setFillType(Path.FillType.EVEN_ODD);
+                path.moveTo(point1_draw.x,point1_draw.y);
+                path.lineTo(point2_draw.x,point2_draw.y);
+                path.lineTo(point3_draw.x,point3_draw.y);
+                path.lineTo(point1_draw.x,point1_draw.y);
+                path.close();
+
+                canvas.drawPath(path, paint);
+                picture.endRecording();
+                
+                PictureDrawable drawable = new PictureDrawable(picture);
+                border.setBackgroundDrawable(drawable);
+                
+                //border.setBackgroundResource(R.drawable.new_comment_border);
             }
             
             WebView webView = (WebView)convertView.findViewById(R.id.text);
