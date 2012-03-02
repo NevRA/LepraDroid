@@ -38,6 +38,7 @@
 		    <EditText
 		        android:id="@+id/login"
 		        android:layout_width="fill_parent"
+		        android:inputType="textPersonName"
 		        android:layout_height="wrap_content"
 		        android:layout_below="@+id/textView1"
 		        android:layout_centerHorizontal="true" >
@@ -58,6 +59,7 @@
 		        android:id="@+id/password"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
+		        android:inputType="textPassword"
 		        android:layout_below="@+id/textView2"
 		        android:password="true"
 		        android:layout_centerHorizontal="true" />
@@ -92,6 +94,7 @@
 		        android:id="@+id/captcha"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
+		        android:inputType="textPersonName"
 		        android:layout_below="@+id/textView3" />
 		    <Button
 		        android:id="@+id/yarrr"

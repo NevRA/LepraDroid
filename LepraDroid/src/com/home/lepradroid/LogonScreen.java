@@ -10,13 +10,17 @@ import com.home.lepradroid.tasks.LoginTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -83,6 +87,23 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
             public void onClick(View v)
             {
                 updateCaptcha();              
+            }
+        });
+        
+        captcha.setOnKeyListener(new OnKeyListener() 
+        {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) 
+            {
+                if(keyCode == KeyEvent.KEYCODE_ENTER) 
+                {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(captcha.getWindowToken(), 0);
+                    yarrr.requestFocusFromTouch();
+                    return true;
+                }
+                
+                return false;
             }
         });
         
