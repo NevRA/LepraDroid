@@ -77,11 +77,12 @@ public class RateItemTask extends BaseTask
         {
             String response = ServerWorker.Instance().rateItem(type, wtf, id, value);
             if(     Utils.isIntNumber(response) || 
-                    groupId.equals(Commons.FAVORITE_POSTS_ID))
+                    groupId.equals(Commons.FAVORITE_POSTS_ID) || 
+                    groupId.equals(Commons.MYSTUFF_POSTS_ID))
             {
                 BaseItem item = ServerWorker.Instance().getPostById(groupId, postId);
                 
-                item.Rating = groupId.equals(Commons.FAVORITE_POSTS_ID) ? item.Rating : Integer.valueOf(response);
+                item.Rating = (groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId.equals(Commons.MYSTUFF_POSTS_ID)) ? item.Rating : Integer.valueOf(response);
                 switch (value)
                 {
                 case MINUS:

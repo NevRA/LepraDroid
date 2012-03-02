@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
@@ -97,6 +98,12 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
         if(comment != null)
         {
             convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
+            
+            if(comment.IsNew)
+            {
+                RelativeLayout border = (RelativeLayout)convertView.findViewById(R.id.new_comments_border);
+                border.setBackgroundResource(R.drawable.new_comment_border);
+            }
             
             WebView webView = (WebView)convertView.findViewById(R.id.text);
             webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);

@@ -34,6 +34,7 @@ public class GetCommentsTask extends BaseTask
     private UUID groupId;
     private UUID postId;
     private int commentsCout = 0;
+    private String postAuthor = "";
     
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
@@ -149,6 +150,8 @@ public class GetCommentsTask extends BaseTask
             Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
             if(post == null)
                 return null; // TODO message
+            
+            postAuthor = post.Author;
             
             final String pref = "<div id=\"XXXXXXXX\" ";
             final String postTree = "class=\"post tree";
@@ -301,6 +304,9 @@ public class GetCommentsTask extends BaseTask
         comment.Text = element.text();
         comment.Html = element.html();
         
+        if(element.parent().attr("class").contains("new"))
+            comment.IsNew = true;
+        
         Elements images = element.getElementsByTag("img");
         if(!images.isEmpty())
         {
@@ -327,7 +333,10 @@ public class GetCommentsTask extends BaseTask
             comment.Url = Commons.SITE_URL + a.first().attr("href");
             
             comment.Author = a.get(1).text();
-            comment.Signature = author.first().text().split("\\|")[0].replace(comment.Author, "<b>" + comment.Author + "</b>");
+            if(postAuthor.equals(comment.Author))
+               comment.IsPostAuthor = true;
+               
+            comment.Signature = author.first().text().split("\\|")[0].replace(comment.Author, "<b>" + (comment.IsPostAuthor ? "<font color=\"red\">" : "") + comment.Author + (comment.IsPostAuthor ? "</font>" : "") + "</b>");
         }
         
         Elements vote = content.getElementsByClass("vote");

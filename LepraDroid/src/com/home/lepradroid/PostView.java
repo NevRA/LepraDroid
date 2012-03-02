@@ -118,7 +118,8 @@ public class PostView extends BaseView implements ItemRateUpdateListener
        
        if(successful)
        {
-           if(groupId.equals(Commons.FAVORITE_POSTS_ID))
+           if(     groupId.equals(Commons.FAVORITE_POSTS_ID) ||
+                   groupId.equals(Commons.MYSTUFF_POSTS_ID))
                Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show();
            else
                Toast.makeText(context, Utils.getString(R.string.Rated_Item) + " " + Integer.toString(newRating), Toast.LENGTH_LONG).show();
