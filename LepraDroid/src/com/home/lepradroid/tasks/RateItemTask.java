@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
-import android.text.TextUtils;
 import android.util.Pair;
 
 import com.home.lepradroid.commons.Commons;
@@ -15,7 +14,6 @@ import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
-import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
 
