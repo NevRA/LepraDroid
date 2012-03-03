@@ -27,7 +27,7 @@
     <string name="Add_Comment_Title">Добавить комментарий?</string>
     <string name="Reload_Menu">Обновить</string>
     <string name="Logout_Menu">Завершить сессию</string>
-    <string name="Logout_Menu_Confirm">Вы действительно хотите завершиь сессию?</string>
+    <string name="Logout_Menu_Confirm">Вы действительно хотите завершить сессию?</string>
     <string name="Yes_Please">Да, пожалуйста</string>
     <string name="No_Thanks">Нет, спасибо</string>
     <string name="Post_Tab">Пост</string>
