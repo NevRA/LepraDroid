@@ -82,17 +82,23 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
             exitAlert.setTitle(R.string.Logout_Menu);
             String message = this.getString(R.string.Logout_Menu_Confirm);
             exitAlert.setMessage(message);
-            exitAlert.setPositiveButton(this.getString(R.string.Yes_Please), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    new LogoutTask().execute();
-                    dialog.cancel();
-                }
-            });
-            exitAlert.setNegativeButton(this.getString(R.string.No_Thanks), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+            exitAlert.setPositiveButton(this.getString(R.string.Yes_Please),
+                    new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            new LogoutTask().execute();
+                            dialog.cancel();
+                        }
+                    });
+            exitAlert.setNegativeButton(this.getString(R.string.No_Thanks),
+                    new DialogInterface.OnClickListener()
+                    {
+                        public void onClick(DialogInterface dialog, int which)
+                        {
+                            dialog.cancel();
+                        }
+                    });
             exitAlert.show();
             return true;
         }
