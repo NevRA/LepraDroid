@@ -114,7 +114,7 @@ public class GetPostsTask extends BaseTask
                 int end = html.indexOf(postOrd, start + 100);
                 
                 if(     start == -1 && 
-                        html.indexOf("<title>Лепрозорий: вход</title>") != -1)
+                        html.indexOf("<title>Р›РµРїСЂРѕР·РѕСЂРёР№: РІС…РѕРґ</title>") != -1)
                 {
                     new LogoutTask().execute();
                     cancel(false);
@@ -200,7 +200,7 @@ public class GetPostsTask extends BaseTask
                     }
                     else
                     {
-                        if(!a.get(0).text().equals("комментировать"))
+                        if(!a.get(0).text().equals("РєРѕРјРјРµРЅС‚РёСЂРѕРІР°С‚СЊ"))
                             post.TotalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
                     }
                     

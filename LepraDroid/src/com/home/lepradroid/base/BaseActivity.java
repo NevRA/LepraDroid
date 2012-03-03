@@ -2,6 +2,8 @@ package com.home.lepradroid.base;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import com.home.lepradroid.R;
 import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.interfaces.ProgressListener;
@@ -75,7 +77,23 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
         switch (item.getItemId())
         {
         case MENU_LOGOUT:
-            new LogoutTask().execute();
+            AlertDialog.Builder exitAlert = new AlertDialog.Builder(this);
+            exitAlert.setCancelable(false);
+            exitAlert.setTitle(R.string.Logout_Menu);
+            String message = this.getString(R.string.Logout_Menu_Confirm);
+            exitAlert.setMessage(message);
+            exitAlert.setPositiveButton(this.getString(R.string.Yes_Please), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    new LogoutTask().execute();
+                    dialog.cancel();
+                }
+            });
+            exitAlert.setNegativeButton(this.getString(R.string.No_Thanks), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            exitAlert.show();
             return true;
         }
         return false;
