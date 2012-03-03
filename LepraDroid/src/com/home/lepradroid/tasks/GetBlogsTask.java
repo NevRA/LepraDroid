@@ -137,7 +137,7 @@ public class GetBlogsTask extends BaseTask
                     if(div.size() >= 3)
                     {
                         // TODO text from resources 
-                        blog.Stat = "<b>" + div.get(0).text() + "</b>" + " постов / " + "<b>" + div.get(1).text() + "</b>"  + " комментариев / " + "<b>" + div.get(2).text() + "</b>"  + " подписчиков";
+                        blog.Stat = "<b>" + div.get(0).text() + "</b>" + " РїРѕСЃС‚РѕРІ / " + "<b>" + div.get(1).text() + "</b>"  + " РєРѕРјРјРµРЅС‚Р°СЂРёРµРІ / " + "<b>" + div.get(2).text() + "</b>"  + " РїРѕРґРїРёСЃС‡РёРєРѕРІ";
                     }
                 }
                 
