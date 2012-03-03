@@ -73,9 +73,9 @@ public class PostCommentTask extends BaseTask
             comment.ParentPid = replyTo;
             comment.Pid = json.getString("comment_id");
             comment.Html = this.comment;
-            comment.Signature = (json.getString("gender").equals("m") ? "Написал" : "Написала") + " " +
+            comment.Signature = (json.getString("gender").equals("m") ? "РќР°РїРёСЃР°Р»" : "РќР°РїРёСЃР°Р»Р°") + " " +
                     json.getString("rank") + " " + "<b>" + json.getString("user_login") + "</b>, " + 
-                    json.getString("date") + " в " + json.getString("time");
+                    json.getString("date") + " РІ " + json.getString("time");
             
             notifyOnAddedCommentUpdate(comment);
         }
