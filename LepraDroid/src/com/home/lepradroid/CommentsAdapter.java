@@ -5,9 +5,10 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.text.Html;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -19,18 +20,43 @@ import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem>
-{
-    private UUID postId;
-    private UUID groupId;
+{   
+    //private UUID postId;
+    //private UUID groupId;
     private ArrayList<BaseItem> comments = new ArrayList<BaseItem>();
+    private GestureDetector gestureDetector;
+    private UUID replyToCommentId;
             
-    public CommentsAdapter(Context context, UUID groupId, UUID postId, int textViewResourceId,
+    public CommentsAdapter(Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
     {
         super(context, textViewResourceId, comments);
         this.comments = comments;
-        this.postId = postId;
-        this.groupId = groupId;
+        //this.postId = postId;
+        //this.groupId = groupId;
+        
+        gestureDetector = new GestureDetector(
+                new GestureDetector.SimpleOnGestureListener()
+                {
+                    @Override
+                    public void onLongPress(MotionEvent e)
+                    {
+                        Utils.addComment(getContext(), groupId, postId, replyToCommentId);
+                    }
+
+                    @Override
+                    public boolean onDoubleTap(MotionEvent e)
+                    {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onDown(MotionEvent e)
+                    {
+                        return false;
+                    }
+                });
+        gestureDetector.setIsLongpressEnabled(true);
     }
 
     public int getCount() 
@@ -116,13 +142,14 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
             
             TextView rating = (TextView)convertView.findViewById(R.id.rating);
             rating.setText(Utils.getRatingStringFromBaseItem(comment));
-            
-            webView.setOnLongClickListener(new OnLongClickListener() 
+             
+            webView.setOnTouchListener(new View.OnTouchListener() 
             {
-                public boolean onLongClick(View v) 
+                @Override
+                public boolean onTouch(View arg0, MotionEvent event)
                 {
-                    Utils.addComment(getContext(), groupId, postId, comment.Id);
-                    return true;
+                    replyToCommentId = comment.Id;
+                    return gestureDetector.onTouchEvent(event);
                 }
             });
         }
