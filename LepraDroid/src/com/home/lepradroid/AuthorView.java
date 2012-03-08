@@ -6,14 +6,24 @@ import android.view.View;
 import android.widget.*;
 
 import com.home.lepradroid.base.BaseView;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.AuthorUpdateListener;
+import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.Author;
+import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.utils.ImageLoader;
+import com.home.lepradroid.utils.Utils;
 
-public class AuthorView extends BaseView implements AuthorUpdateListener {
+import java.util.UUID;
+
+public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRateUpdateListener {
+    private Context context;
+    private Author author;
     private String userName;
+    private String id;
     private RelativeLayout contentLayout;
     private TextView name;
     private TextView ego;
@@ -27,7 +37,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener {
 
     public AuthorView(Context context, String userName) {
         super(context);
-
+        this.context = context;
         this.userName = userName;
 
         LayoutInflater inflater = (LayoutInflater) context
@@ -44,6 +54,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener {
     }
 
     private void init() {
+        author = (Author) ServerWorker.Instance().getAuthorByName(userName);
         imageLoader = new ImageLoader(LepraDroidApplication.getInstance());
 
         contentLayout = (RelativeLayout) contentView.findViewById(R.id.content);
@@ -68,17 +79,72 @@ public class AuthorView extends BaseView implements AuthorUpdateListener {
 
         progress.setVisibility(View.GONE);
         contentLayout.setVisibility(View.VISIBLE);
-        
+
         if (!SettingsWorker.Instance().loadUserName().equals(userName))
             buttonsLayout.setVisibility(View.VISIBLE);
 
-        if (data == null) return;
 
+        if (data == null) return;
+        id = data.Id;
         name.setText(data.Name);
         ego.setText(data.Ego);
         rating.setText(data.Rating.toString());
         //rating.setTextColor(data.Rating > 0 ? Color.GREEN : Color.RED);
         imageLoader.DisplayImage(data.ImageUrl, userPic, R.drawable.ic_user);
+
+        if(data.MinusVoted)
+            minus.setEnabled(false);
+        if(data.PlusVoted)
+            plus.setEnabled(false);
+
+        minus.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rateItem(Commons.RateValueType.MINUS);
+                minus.setEnabled(false);
+                plus.setEnabled(true);
+            }
+        });
+
+        plus.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rateItem(Commons.RateValueType.PLUS);
+                minus.setEnabled(true);
+                plus.setEnabled(false);
+            }
+        });
+
+    }
+
+    private void rateItem(Commons.RateValueType type) {
+        new RateItemTask(Commons.RateType.KARMA, SettingsWorker.Instance().loadVoteKarmaWtf(), id, type).execute();
+    }
+
+
+    @Override
+    public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
+    {
+        //if(!this.groupId.equals(groupId) || !this.id.equals(postId)) return;
+
+        if(successful)
+        {
+            if(     groupId.equals(Commons.FAVORITE_POSTS_ID) ||
+                    groupId.equals(Commons.MYSTUFF_POSTS_ID))
+                Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show();
+            else
+                Toast.makeText(context, Utils.getString(R.string.Rated_Item) + " " + Integer.toString(newRating), Toast.LENGTH_LONG).show();
+        }
+
+        if(author.MinusVoted)
+            minus.setEnabled(false);
+        else
+            minus.setEnabled(true);
+
+        if(author.PlusVoted)
+            plus.setEnabled(false);
+        else
+            plus.setEnabled(true);
     }
 
     @Override

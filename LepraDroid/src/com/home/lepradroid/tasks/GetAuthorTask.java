@@ -2,7 +2,10 @@ package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import android.text.TextUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -97,6 +100,7 @@ public class GetAuthorTask extends BaseTask
             }
             
             final Element userInfo = document.getElementsByClass("userbasicinfo").first();
+            data.Id = userInfo.getElementsByClass("vote").first().attr("uid");
             data.Name = userInfo.getElementsByTag("h3").first().text();
             
             data.Ego = document.getElementsByClass("userego").first().text();
@@ -116,7 +120,29 @@ public class GetAuthorTask extends BaseTask
                 vote  = document.getElementById("js-user_karma");
             
             data.Rating = Integer.valueOf(vote.getElementsByTag("em").text());
-            
+
+            System.out.println("data.Rating = " + data.Rating);
+
+            Element vote1 = userInfo.getElementsByClass("vote1").first();
+            Element vote2 = userInfo.getElementsByClass("vote2").first();
+
+            data.MinusVoted = vote1.text().contains("class=\"minus voted\"") &&  vote2.text().contains("class=\"minus voted\"");
+            data.PlusVoted  = vote1.text().contains("class=\"plus voted\"") &&  vote2.text().contains("class=\"plus voted\"");
+
+            if (TextUtils.isEmpty(SettingsWorker.Instance().loadVoteKarmaWtf()))
+            {
+                Element script = userInfo.getElementsByTag("script").first();
+                Pattern pattern = Pattern.compile("VoteBlockUser.wtf = \"(.+)\"");
+                Matcher matcher = pattern.matcher(script.data());
+                if(matcher.find()){
+                    SettingsWorker.Instance().saveVoteKarmaWtf(matcher.group(1));
+                }
+            }
+
+
+            ServerWorker.Instance().addNewAuthor(data);
+
+
             notifyAboutAuthorUpdate(data);
         }
         catch (Exception e)
