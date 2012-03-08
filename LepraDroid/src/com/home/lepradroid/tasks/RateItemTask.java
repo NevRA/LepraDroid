@@ -86,6 +86,7 @@ public class RateItemTask extends BaseTask
         try
         {
             String response = ServerWorker.Instance().rateItem(type, wtf, id, value);
+            System.out.println("response = " + response);
             if(     Utils.isIntNumber(response) ||
                     groupId.equals(Commons.FAVORITE_POSTS_ID) ||
                     groupId.equals(Commons.MYSTUFF_POSTS_ID))
@@ -96,16 +97,19 @@ public class RateItemTask extends BaseTask
                 {
                     case POST:
                         item = ServerWorker.Instance().getPostById(groupId, postId);
+                        item.Rating = (groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId.equals(Commons.MYSTUFF_POSTS_ID)) ? item.Rating : Integer.valueOf(response);
                         break;
                     case KARMA:
                         item = ServerWorker.Instance().getAuthorById(id);
+                        item.Rating = Integer.valueOf(response);
+                        System.out.println("item = " + item);
                         break;
                     default:
                         break;
                 }
 
 
-                item.Rating = (groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId.equals(Commons.MYSTUFF_POSTS_ID)) ? item.Rating : Integer.valueOf(response);
+
                 switch (value)
                 {
                 case MINUS:
@@ -119,7 +123,7 @@ public class RateItemTask extends BaseTask
                 default:
                     break;
                 }
-
+                System.out.println("Notify rating update = true");
                 notifyOnItemRateUpdate(true, item.Rating);
             }
             else

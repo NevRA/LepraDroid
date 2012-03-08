@@ -6,4 +6,5 @@ public class Author extends RateItem
     public String   Name                = "";
     public String   ImageUrl            = "";
     public String   Ego                 = "";
+    public String   UserName            = "";
 }

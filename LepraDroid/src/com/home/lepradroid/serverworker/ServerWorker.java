@@ -171,7 +171,7 @@ public class ServerWorker
 
             case KARMA:
                 httpPost = new HttpPost(Commons.KARMA_VOTE_URL);
-                str = String.format("wtf=%s&u_id=%s&value=%s", wtf, id, value == RateValueType.MINUS ? "-2" : "2");
+                str = String.format("wtf=%s&u_id=%s&value=%s", wtf, id, value == RateValueType.MINUS ? "4" : "2");
             default:
                 break;
         }
@@ -447,7 +447,7 @@ public class ServerWorker
         {
             for (Author a: authors)
             {
-                if (a.Name.equals(name)) return a;
+                if (a.UserName.equals(name)) return a;
             }
         }
         finally

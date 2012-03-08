@@ -21,9 +21,7 @@ import java.util.UUID;
 
 public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRateUpdateListener {
     private Context context;
-    private Author author;
     private String userName;
-    private String id;
     private RelativeLayout contentLayout;
     private TextView name;
     private TextView ego;
@@ -54,7 +52,6 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
     }
 
     private void init() {
-        author = (Author) ServerWorker.Instance().getAuthorByName(userName);
         imageLoader = new ImageLoader(LepraDroidApplication.getInstance());
 
         contentLayout = (RelativeLayout) contentView.findViewById(R.id.content);
@@ -74,7 +71,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
     }
 
     @Override
-    public void OnAuthorUpdate(String userName, Author data) {
+    public void OnAuthorUpdate(String userName,final Author data) {
         if (!this.userName.equals(userName)) return;
 
         progress.setVisibility(View.GONE);
@@ -85,7 +82,6 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
 
 
         if (data == null) return;
-        id = data.Id;
         name.setText(data.Name);
         ego.setText(data.Ego);
         rating.setText(data.Rating.toString());
@@ -100,7 +96,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
         minus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                rateItem(Commons.RateValueType.MINUS);
+                rateItem(Commons.RateValueType.MINUS, data.Id);
                 minus.setEnabled(false);
                 plus.setEnabled(true);
             }
@@ -109,7 +105,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
         plus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                rateItem(Commons.RateValueType.PLUS);
+                rateItem(Commons.RateValueType.PLUS, data.Id);
                 minus.setEnabled(true);
                 plus.setEnabled(false);
             }
@@ -117,7 +113,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
 
     }
 
-    private void rateItem(Commons.RateValueType type) {
+    private void rateItem(Commons.RateValueType type, String id) {
         new RateItemTask(Commons.RateType.KARMA, SettingsWorker.Instance().loadVoteKarmaWtf(), id, type).execute();
     }
 
@@ -125,17 +121,13 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
     @Override
     public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
     {
-        //if(!this.groupId.equals(groupId) || !this.id.equals(postId)) return;
-
+        if(userName.equals(SettingsWorker.Instance().loadUserName())) return;
         if(successful)
         {
-            if(     groupId.equals(Commons.FAVORITE_POSTS_ID) ||
-                    groupId.equals(Commons.MYSTUFF_POSTS_ID))
-                Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show();
-            else
-                Toast.makeText(context, Utils.getString(R.string.Rated_Item) + " " + Integer.toString(newRating), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, Utils.getString(R.string.Rated_Item) + " " + Integer.toString(newRating), Toast.LENGTH_LONG).show();
+            rating.setText(String.valueOf(newRating));
         }
-
+        Author author = ServerWorker.Instance().getAuthorByName(userName);
         if(author.MinusVoted)
             minus.setEnabled(false);
         else
