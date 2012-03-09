@@ -21,6 +21,7 @@
     </RelativeLayout>
     
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/authorLayout"
         android:layout_below="@+id/main"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent" 

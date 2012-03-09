@@ -27,6 +27,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
     private ArrayList<BaseItem> comments            = new ArrayList<BaseItem>();
     private GestureDetector     gestureDetector;
     private int                 commentPos          = -1;
+    private boolean             navigationTurnedOn  = true;
             
     public CommentsAdapter(Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
@@ -48,6 +49,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
                     @Override
                     public boolean onDoubleTap(MotionEvent e)
                     {
+                        if(!navigationTurnedOn ) return true;
+                        
                         Comment comment = (Comment)getItem(commentPos);
                         comment.IsExpand = !comment.IsExpand;
                         notifyDataSetChanged();
@@ -61,6 +64,11 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
                     }
                 });
         gestureDetector.setIsLongpressEnabled(true);
+    }
+    
+    public void setNavigationMode(boolean navigationTurnedOn)
+    {
+        this.navigationTurnedOn = navigationTurnedOn;
     }
 
     public int getCount() 
@@ -132,8 +140,11 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
             
             RelativeLayout webViewLayout = (RelativeLayout)convertView.findViewById(R.id.main);
             ViewGroup.LayoutParams params = webViewLayout.getLayoutParams();
-            if(comment.IsExpand)
+            if(!navigationTurnedOn || comment.IsExpand)
             {
+                RelativeLayout authorLayout = (RelativeLayout)convertView.findViewById(R.id.authorLayout);
+                authorLayout.setPadding(authorLayout.getPaddingLeft(), 0, authorLayout.getPaddingRight(), authorLayout.getPaddingBottom());
+                
                 params.height = ViewGroup.LayoutParams.FILL_PARENT; 
                 webViewLayout.setLayoutParams(params);
             }

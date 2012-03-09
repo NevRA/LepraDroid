@@ -25,6 +25,8 @@
     <string name="New_Comments">новых</string>
     <string name="Comment_Menu">Комментировать</string>
     <string name="Add_Comment_Title">Добавить комментарий?</string>
+    <string name="Turn_On_Navigation">Включить навигацию</string>
+    <string name="Turn_Off_Navigation">Отключить навигацию</string>
     <string name="Reload_Menu">Обновить</string>
     <string name="Logout_Menu">Завершить сессию</string>
     <string name="Logout_Menu_Confirm">Вы действительно хотите завершить сессию?</string>
@@ -34,6 +36,8 @@
     <string name="Comments_Tab">Комментарии</string>
     <string name="Author_Tab">Автор</string>
     <string name="Added_Comment">Комментарий добавлен</string>
+    <string name="No_New_Comments">Новых комментариев больше нет</string>
+    <string name="Searching_For_New_Comments">Идет поиск новых комментариев...</string>
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>

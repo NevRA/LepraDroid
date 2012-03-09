@@ -34,13 +34,16 @@ public class PostScreen extends BaseActivity
     private TabsPageAdapter tabsAdapter;
     private ViewPager       pager;
     private ArrayList<BaseView> 
-                            pages = new ArrayList<BaseView>();
+                            pages               = new ArrayList<BaseView>();
     
-    private boolean         authorInit = false;
+    private boolean         authorInit          = false;
     
-    public static final int POST_TAB_NUM = 0;
-    public static final int COMMENTS_TAB_NUM = 1;
-    public static final int PROFILE_TAB_NUM = 2;
+    private boolean         navigationTurnedOn
+                                                = true;
+    
+    public static final int POST_TAB_NUM        = 0;
+    public static final int COMMENTS_TAB_NUM    = 1;
+    public static final int PROFILE_TAB_NUM     = 2;
     
     @Override
     protected void onDestroy()
@@ -71,13 +74,16 @@ public class PostScreen extends BaseActivity
     public boolean onPrepareOptionsMenu(Menu menu)
     {
         menu.clear();
-        menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
+        
         switch(pager.getCurrentItem())
         {
         case COMMENTS_TAB_NUM:
-            menu.add(0, MENU_ADD_COMMENT, 1, Utils.getString(R.string.Comment_Menu)).setIcon(R.drawable.ic_add_comment);
+            menu.add(0, MENU_COMMENT_NAVIGATE, 0, navigationTurnedOn ? Utils.getString(R.string.Turn_Off_Navigation) : Utils.getString(R.string.Turn_On_Navigation)).setIcon(R.drawable.ic_comment_navigation);
+            menu.add(0, MENU_RELOAD, 1, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
+            menu.add(0, MENU_ADD_COMMENT, 2, Utils.getString(R.string.Comment_Menu)).setIcon(R.drawable.ic_add_comment);
             break;
         default:
+            menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
             menu.add(0, MENU_LOGOUT, 1, Utils.getString(R.string.Logout_Menu)).setIcon(R.drawable.ic_logout);
             break;
         }
@@ -121,6 +127,10 @@ public class PostScreen extends BaseActivity
         case MENU_ADD_COMMENT:
             addComment();
             return true; 
+        case MENU_COMMENT_NAVIGATE:
+            navigationTurnedOn = !navigationTurnedOn;
+            commentsView.setNavigationMode(navigationTurnedOn);
+            return true;
         }
         return false;
     }

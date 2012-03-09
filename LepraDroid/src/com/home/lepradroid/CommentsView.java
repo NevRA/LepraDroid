@@ -33,19 +33,24 @@ import com.home.lepradroid.utils.Utils;
 public class CommentsView extends BaseView implements CommentsUpdateListener,
         AddedCommentUpdateListener
 {
-    private BaseActivity context;
-    private UUID groupId;
-    private UUID id;
-    private ListView list;
-    private ProgressBar progress;
+    private BaseActivity    context;
+    private UUID            groupId;
+    private UUID            id;
+    private ListView        list;
+    private ProgressBar     progress;
     private CommentsAdapter adapter;
-    private LinearLayout buttons;
-    private Button up;
-    private Button down;
-    private boolean receivedLastElements = false;
-    private boolean shownLastElements = false;
-    private boolean waitingNextRecord = false;
-    private ArrayList<BaseItem> newComments = new ArrayList<BaseItem>();
+    private LinearLayout    buttons;
+    private Button          up;
+    private Button          down;
+    private boolean         receivedLastElements 
+                                    = false;
+    private boolean         shownLastElements 
+                                    = false;
+    private boolean         waitingNextRecord 
+                                    = false;
+    private ArrayList<BaseItem> 
+                            newComments 
+                                    = new ArrayList<BaseItem>();
 
     public CommentsView(BaseActivity context, UUID groupId, UUID id)
     {
@@ -62,6 +67,13 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             contentView = inflater.inflate(R.layout.comments_view, null);
             init();
         }
+    }
+    
+    public void setNavigationMode(boolean navigationTurnedOn)
+    {
+        buttons.setVisibility(navigationTurnedOn ? View.VISIBLE : View.GONE);
+        adapter.setNavigationMode(navigationTurnedOn);
+        adapter.notifyDataSetChanged();
     }
 
     private void init()
@@ -182,11 +194,11 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         else
         {
             if (shownLastElements)
-                Toast.makeText(context, "Новых комментариев больше нет",
+                Toast.makeText(context, Utils.getString(R.string.No_New_Comments),
                         Toast.LENGTH_LONG).show();
             else
             {
-                Toast.makeText(context, "Идет поиск новых комментариев...",
+                Toast.makeText(context, Utils.getString(R.string.Searching_For_New_Comments),
                         Toast.LENGTH_LONG).show();
                 
                 waitingNextRecord = true;
