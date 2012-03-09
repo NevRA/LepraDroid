@@ -7,4 +7,5 @@ public class Comment extends BaseItem
     public String   Pid                 = "";
     public boolean  IsNew               = false;
     public boolean  IsPostAuthor        = false;
+    public boolean  IsExpand            = false;
 }

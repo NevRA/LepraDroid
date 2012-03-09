@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="center" >
+    android:layout_height="fill_parent" >
     
     <ProgressBar
         android:id="@+id/progress"
@@ -17,6 +16,7 @@
 	    android:visibility="gone"
 	    android:textStyle="bold"
 	    android:gravity="center_horizontal"
+	    android:layout_centerInParent="true"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="10dip" />
@@ -26,12 +26,14 @@
         android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:fastScrollEnabled="true" >
+        android:fastScrollEnabled="true"
+        android:layout_above="@+id/buttons" >
     </ListView>
     
     <LinearLayout 
         android:id="@+id/buttons"
         android:orientation="horizontal"
+        android:visibility="gone"
         android:layout_marginTop="5dip"
         android:layout_alignParentBottom="true"
         android:gravity="center_horizontal|center_vertical"

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
@@ -23,9 +24,9 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
 {   
     //private UUID postId;
     //private UUID groupId;
-    private ArrayList<BaseItem> comments = new ArrayList<BaseItem>();
-    private GestureDetector gestureDetector;
-    private UUID replyToCommentId;
+    private ArrayList<BaseItem> comments            = new ArrayList<BaseItem>();
+    private GestureDetector     gestureDetector;
+    private int                 commentPos          = -1;
             
     public CommentsAdapter(Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
@@ -41,13 +42,16 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
                     @Override
                     public void onLongPress(MotionEvent e)
                     {
-                        Utils.addComment(getContext(), groupId, postId, replyToCommentId);
+                        Utils.addComment(getContext(), groupId, postId, getItem(commentPos).Id);
                     }
 
                     @Override
                     public boolean onDoubleTap(MotionEvent e)
                     {
-                        return false;
+                        Comment comment = (Comment)getItem(commentPos);
+                        comment.IsExpand = !comment.IsExpand;
+                        notifyDataSetChanged();
+                        return true;
                     }
 
                     @Override
@@ -115,7 +119,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
     }
     
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) 
+    public View getView(final int position, View convertView, ViewGroup parent) 
     {
         final Comment comment = (Comment)getItem(position);
         LayoutInflater aInflater = LayoutInflater.from(getContext());
@@ -125,10 +129,14 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
             convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
             CommentRootLayout border = (CommentRootLayout)convertView.findViewById(R.id.root);
             border.setIsNew(comment.IsNew);
-            /*if(comment.IsNew))
+            
+            RelativeLayout webViewLayout = (RelativeLayout)convertView.findViewById(R.id.main);
+            ViewGroup.LayoutParams params = webViewLayout.getLayoutParams();
+            if(comment.IsExpand)
             {
-                border.setBackgroundResource(R.drawable.new_comment_border);
-            }*/
+                params.height = ViewGroup.LayoutParams.FILL_PARENT; 
+                webViewLayout.setLayoutParams(params);
+            }
             
             WebView webView = (WebView)convertView.findViewById(R.id.text);
             webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
@@ -148,7 +156,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
                 @Override
                 public boolean onTouch(View arg0, MotionEvent event)
                 {
-                    replyToCommentId = comment.Id;
+                    commentPos = position;
                     return gestureDetector.onTouchEvent(event);
                 }
             });

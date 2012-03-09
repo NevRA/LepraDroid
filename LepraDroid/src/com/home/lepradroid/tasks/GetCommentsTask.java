@@ -39,9 +39,11 @@ public class GetCommentsTask extends BaseTask
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[2];
+    static final Class<?>[] argsClassesOnCommentsUpdate = new Class[2];
     static Method methodOnCommentsUpdateFinished;
     static Method methodOnCommentsUpdateFirstEtries;
     static Method methodOnCommentsUpdateBegin;
+    static Method methodOnCommentsUpdate;
     static 
     {
         try
@@ -57,6 +59,10 @@ public class GetCommentsTask extends BaseTask
             argsClassesOnCommentsUpdateBegin[0] = UUID.class;
             argsClassesOnCommentsUpdateBegin[1] = UUID.class;
             methodOnCommentsUpdateBegin = CommentsUpdateListener.class.getMethod("OnCommentsUpdateBegin", argsClassesOnCommentsUpdateBegin); 
+            
+            argsClassesOnCommentsUpdate[0] = UUID.class;
+            argsClassesOnCommentsUpdate[1] = UUID.class;
+            methodOnCommentsUpdate = CommentsUpdateListener.class.getMethod("OnCommentsUpdate", argsClassesOnCommentsUpdate); 
         }
         catch (Throwable t) 
         {           
@@ -91,7 +97,7 @@ public class GetCommentsTask extends BaseTask
     }
     
     @SuppressWarnings("unchecked")
-    public void notifyAboutCommentsUpdate()
+    public void notifyAboutFirstCommentsUpdate()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
         final Object args[] = new Object[2];
@@ -115,6 +121,20 @@ public class GetCommentsTask extends BaseTask
         for(CommentsUpdateListener listener : listeners)
         {
             publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnCommentsUpdateFinished, args)));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyAboutCommentsUpdate()
+    {
+        final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
+        final Object args[] = new Object[2];
+        args[0] = groupId;
+        args[1] = postId;
+        
+        for(CommentsUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnCommentsUpdate, args)));
         }
     }
     
@@ -354,6 +374,11 @@ public class GetCommentsTask extends BaseTask
         commentsCout ++;
         
         if(commentsCout == 50)
+        {
+            notifyAboutFirstCommentsUpdate();
+        }
+        else if(commentsCout != 0 && 
+                commentsCout % 100 == 0)
         {
             notifyAboutCommentsUpdate();
         }

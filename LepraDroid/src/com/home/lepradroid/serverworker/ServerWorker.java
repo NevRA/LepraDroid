@@ -73,10 +73,10 @@ public class ServerWorker
                 }
             }
         }
-
+        
         return instance;
     }
-
+    
     private void init()
     {
         connectionParameters = new BasicHttpParams();
@@ -91,70 +91,70 @@ public class ServerWorker
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         connectionManager = new ThreadSafeClientConnManager(connectionParameters, registry);
     }
-
+    
     public void clearSessionInfo() throws Exception
     {
         SettingsWorker.Instance().clearCookies();
         SettingsWorker.Instance().clearUserInfo();
     }
-
+    
     public HttpEntity getContentEntity(String url) throws Exception
     {
         final HttpGet httpGet = new HttpGet(url);
         //httpGet.setHeader("charset", "utf-8");
-
+        
         try
         {
             final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
             if(cookies != null)
-                httpGet.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
+                httpGet.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";"); 
         }
         catch (Exception e)
         {
             Logger.e(e);
         }
-
+        
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
-
+        
         return response.getEntity();
     }
-
+    
     public InputStream getContentStream(String url) throws Exception
-    {
+    {        
         return getContentEntity(url).getContent();
     }
-
+    
     public String getContent(String url) throws Exception
-    {
+    {        
         return EntityUtils.toString(getContentEntity(url), "UTF-8");
     }
-
+    
     public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
-    {
+    { 
         final HttpPost httpGet = new HttpPost(url);
         String str = String.format("user=%s&pass=%s&captcha=%s&logincode=%s&save=1", URLEncoder.encode(login), URLEncoder.encode(password), captcha, loginCode);
-
+        
         final StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpGet.setHeader("Content-Type","application/x-www-form-urlencoded");
         httpGet.setEntity(se);
-
+        
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
-
+        
         return new Pair<String, Header[]>(EntityUtils.toString(response.getEntity(), "UTF-8"), response.getAllHeaders());
     }
-
+    
     public byte[] getImage(String url) throws ClientProtocolException, IOException
     {
         final HttpGet httpGet = new HttpGet(url);
-
+        
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
-
+        
         return EntityUtils.toByteArray(response.getEntity());
     }
-
+    
     public String rateItem(RateType type, String wtf, String id, RateValueType value) throws ClientProtocolException, IOException {
 
         HttpPost httpPost = null;
@@ -180,46 +180,46 @@ public class ServerWorker
         {
             final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
             if(cookies != null)
-                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
+                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";"); 
         }
         catch (Exception e)
         {
             Logger.e(e);
         }
-
+        
         final StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
         httpPost.setEntity(se);
-
+        
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpPost);
-
+        
         return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
-
+    
     public String postComment(String wtf, String replyTo, String pid, String comment) throws ClientProtocolException, IOException
     {
         final HttpPost httpPost = new HttpPost(Commons.POST_COMMENT_URL);
         String str = String.format("wtf=%s&step=1&i=0&replyto=%s&pid=%s&iframe=0&file=&comment=%s", wtf, replyTo, pid, URLEncoder.encode(comment));
-
+        
         try
         {
             final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
             if(cookies != null)
-                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
+                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";"); 
         }
         catch (Exception e)
         {
             Logger.e(e);
         }
-
+        
         final StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
         httpPost.setEntity(se);
-
+        
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpPost);
-
+        
         return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
@@ -232,7 +232,7 @@ public class ServerWorker
     {
         this.loginCode = loginCode;
     }
-
+    
     public BaseItem getPostById(UUID groupId, UUID id)
     {
         read.lock();
@@ -250,10 +250,10 @@ public class ServerWorker
         {
             read.unlock();
         }
-
+        
         return null;
     }
-
+    
     public ArrayList<BaseItem> getPostsById(UUID groupId, boolean clone)
     {
         write.lock();
@@ -276,7 +276,7 @@ public class ServerWorker
             write.unlock();
         }
     }
-
+    
     public static ArrayList<BaseItem> cloneList(ArrayList<BaseItem> list)
     {
         ArrayList<BaseItem> clonedList = new ArrayList<BaseItem>(list.size());
@@ -286,14 +286,14 @@ public class ServerWorker
         }
         return clonedList;
     }
-
+    
     public BaseItem getComment(UUID groupId, UUID postId, UUID commentId)
     {
         read.lock();
         try
         {
             ArrayList<BaseItem> items = getComments(groupId, postId);
-
+            
             for(BaseItem item : items)
             {
                 if(item.Id.equals(commentId))
@@ -307,18 +307,19 @@ public class ServerWorker
 
         return null;
     }
-
-    public ArrayList<BaseItem> getComments(UUID groupId, UUID postId)
+    
+    public int getPrevNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
     {
         read.lock();
         try
         {
-            BaseItem post = getPostById(groupId, postId);
-            if(post != null)
+            ArrayList<BaseItem> comments = this.comments.get(postId);
+            if(comments != null)
             {
-                if(comments.containsKey(postId))
+                for(int pos = prevCommentNewPosition - 1; pos >= 0 && prevCommentNewPosition < comments.size(); --pos)
                 {
-                    return cloneList(comments.get(postId));
+                    if(((Comment)comments.get(pos)).IsNew)
+                        return pos;
                 }
             }
         }
@@ -326,42 +327,79 @@ public class ServerWorker
         {
             read.unlock();
         }
-
+        
+        return -1;
+    }
+    
+    public int getNextNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
+    {
+        read.lock();
+        try
+        {
+            ArrayList<BaseItem> comments = this.comments.get(postId);
+            if(comments != null)
+            {
+                for(int pos = prevCommentNewPosition + 1; pos < comments.size(); ++pos)
+                {
+                    if(((Comment)comments.get(pos)).IsNew)
+                        return pos;
+                }
+            }
+        }
+        finally
+        {
+            read.unlock();
+        }
+        
+        return -1;
+    }
+    
+    public ArrayList<BaseItem> getComments(UUID groupId, UUID postId)
+    {
+        read.lock();
+        try
+        {
+            if(comments.containsKey(postId))
+            {
+                return cloneList(comments.get(postId));
+            }
+        }
+        finally
+        {
+            read.unlock();
+        }
+        
         return new ArrayList<BaseItem>();
     }
-
+    
     public int addNewComment(UUID groupId, UUID id, BaseItem item)
     {
         write.lock();
         try
         {
-            BaseItem post = getPostById(groupId, id);
-            if(post != null)
+            if(!comments.containsKey(id))
             {
-                if(!comments.containsKey(id))
+                ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
+                comments.put(id, targetList);
+            }
+            
+            Comment comment = (Comment)item;
+            ArrayList<BaseItem> comments = this.comments.get(id);
+            
+            if(TextUtils.isEmpty(comment.ParentPid))
+            {
+                comments.add(item);
+                return comments.size() - 1;
+            }
+            else
+            {
+                for(int pos = 0; pos < comments.size(); ++pos)
                 {
-                    ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
-                    comments.put(id, targetList);
-                }
-
-                Comment comment = (Comment)item;
-                ArrayList<BaseItem> comments = this.comments.get(id);
-
-                if(TextUtils.isEmpty(comment.ParentPid))
-                {
-                    comments.add(item);
-                    return comments.size() - 1;
-                }
-                else
-                {
-                    for(int pos = 0; pos < comments.size(); ++pos)
+                    Comment parentComment = (Comment)comments.get(pos);
+                    if(parentComment.Pid.equals(comment.ParentPid))
                     {
-                        Comment parentComment = (Comment)comments.get(pos);
-                        if(parentComment.Pid.equals(comment.ParentPid))
-                        {
-                            comments.add(pos + 1, item);
-                            return pos + 1;
-                        }
+                        comments.add(pos + 1, item);
+                        return pos + 1;
                     }
                 }
             }
@@ -370,18 +408,18 @@ public class ServerWorker
         {
             write.unlock();
         }
-
+        
         return -1;
     }
-
+    
     public void addNewComments(UUID groupId, UUID id, ArrayList<BaseItem> items)
-    {
+    {    
         for(BaseItem item : items)
         {
             addNewComment(groupId, id, item);
         }
     }
-
+    
     public void addNewPosts(UUID groupId, ArrayList<BaseItem> posts)
     {
         write.lock();
@@ -394,7 +432,7 @@ public class ServerWorker
             write.unlock();
         }
     }
-
+    
     public void addNewPost(UUID groupId, BaseItem post)
     {
         write.lock();
@@ -473,7 +511,7 @@ public class ServerWorker
             write.unlock();
         }
     }
-
+    
     public void clearPostsById(UUID groupId)
     {
         write.lock();
@@ -486,7 +524,7 @@ public class ServerWorker
             write.unlock();
         }
     }
-
+    
     public void clearComments()
     {
         write.lock();
@@ -499,7 +537,7 @@ public class ServerWorker
             write.unlock();
         }
     }
-
+    
     public void clearPosts()
     {
         write.lock();
