@@ -89,7 +89,6 @@ public class RateItemTask extends BaseTask
         try
         {
             String response = ServerWorker.Instance().rateItem(type, wtf, id, valueType, value);
-            System.out.println("response = " + response);
             if(     Utils.isIntNumber(response) ||
                     groupId.equals(Commons.FAVORITE_POSTS_ID) ||
                     groupId.equals(Commons.MYSTUFF_POSTS_ID))
