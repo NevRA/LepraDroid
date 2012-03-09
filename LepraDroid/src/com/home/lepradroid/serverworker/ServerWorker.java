@@ -304,18 +304,60 @@ public class ServerWorker
         return null;
     }
     
+    public int getPrevNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
+    {
+        read.lock();
+        try
+        {
+            ArrayList<BaseItem> comments = this.comments.get(postId);
+            if(comments != null)
+            {
+                for(int pos = prevCommentNewPosition - 1; pos >= 0 && prevCommentNewPosition < comments.size(); --pos)
+                {
+                    if(((Comment)comments.get(pos)).IsNew)
+                        return pos;
+                }
+            }
+        }
+        finally
+        {
+            read.unlock();
+        }
+        
+        return -1;
+    }
+    
+    public int getNextNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
+    {
+        read.lock();
+        try
+        {
+            ArrayList<BaseItem> comments = this.comments.get(postId);
+            if(comments != null)
+            {
+                for(int pos = prevCommentNewPosition + 1; pos < comments.size(); ++pos)
+                {
+                    if(((Comment)comments.get(pos)).IsNew)
+                        return pos;
+                }
+            }
+        }
+        finally
+        {
+            read.unlock();
+        }
+        
+        return -1;
+    }
+    
     public ArrayList<BaseItem> getComments(UUID groupId, UUID postId)
     {
         read.lock();
         try
         {
-            BaseItem post = getPostById(groupId, postId);
-            if(post != null)
+            if(comments.containsKey(postId))
             {
-                if(comments.containsKey(postId))
-                {
-                    return cloneList(comments.get(postId));
-                }
+                return cloneList(comments.get(postId));
             }
         }
         finally
@@ -331,33 +373,29 @@ public class ServerWorker
         write.lock();
         try
         {
-            BaseItem post = getPostById(groupId, id);
-            if(post != null)
+            if(!comments.containsKey(id))
             {
-                if(!comments.containsKey(id))
+                ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
+                comments.put(id, targetList);
+            }
+            
+            Comment comment = (Comment)item;
+            ArrayList<BaseItem> comments = this.comments.get(id);
+            
+            if(TextUtils.isEmpty(comment.ParentPid))
+            {
+                comments.add(item);
+                return comments.size() - 1;
+            }
+            else
+            {
+                for(int pos = 0; pos < comments.size(); ++pos)
                 {
-                    ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
-                    comments.put(id, targetList);
-                }
-                
-                Comment comment = (Comment)item;
-                ArrayList<BaseItem> comments = this.comments.get(id);
-                
-                if(TextUtils.isEmpty(comment.ParentPid))
-                {
-                    comments.add(item);
-                    return comments.size() - 1;
-                }
-                else
-                {
-                    for(int pos = 0; pos < comments.size(); ++pos)
+                    Comment parentComment = (Comment)comments.get(pos);
+                    if(parentComment.Pid.equals(comment.ParentPid))
                     {
-                        Comment parentComment = (Comment)comments.get(pos);
-                        if(parentComment.Pid.equals(comment.ParentPid))
-                        {
-                            comments.add(pos + 1, item);
-                            return pos + 1;
-                        }
+                        comments.add(pos + 1, item);
+                        return pos + 1;
                     }
                 }
             }

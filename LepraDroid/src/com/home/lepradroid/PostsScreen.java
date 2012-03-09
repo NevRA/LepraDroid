@@ -154,5 +154,10 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     {
         if(!this.groupId.equals(groupId)) return;
         updateAdapter();
+    }
+
+    @Override
+    public void OnCommentsUpdate(UUID groupId, UUID postId)
+    {
     }    
 }
