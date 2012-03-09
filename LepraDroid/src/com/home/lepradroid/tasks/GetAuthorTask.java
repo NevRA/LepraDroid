@@ -121,15 +121,12 @@ public class GetAuthorTask extends BaseTask
             
             data.Rating = Integer.valueOf(vote.getElementsByTag("em").text());
 
-            System.out.println("data.Rating = " + data.Rating);
 
             Element vote1 = userInfo.getElementsByClass("vote1").first();
             Element vote2 = userInfo.getElementsByClass("vote2").first();
 
             data.MinusVoted = vote1.getElementsByTag("a").first().attr("class").equals("minus voted") && vote2.getElementsByTag("a").first().attr("class").equals("minus voted");
-            System.out.println("minus voted = " + data.MinusVoted);
             data.PlusVoted  = vote1.getElementsByTag("a").first().attr("class").equals("plus voted") && vote2.getElementsByTag("a").first().attr("class").equals("plus voted");
-            System.out.println("plus voted = " + data.PlusVoted);
 
             if (TextUtils.isEmpty(SettingsWorker.Instance().loadVoteKarmaWtf()))
             {
