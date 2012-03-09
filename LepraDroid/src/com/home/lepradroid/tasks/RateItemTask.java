@@ -25,8 +25,9 @@ public class RateItemTask extends BaseTask
     private RateType        type;
     private String          wtf;
     private String          id;
-    private RateValueType   value;
-
+    private RateValueType   valueType;
+    private String          value;
+    
     static final Class<?>[] argsClassesOnItemRateUpdate = new Class[4];
     static Method methodOnItemRateUpdate;
     static
@@ -61,21 +62,23 @@ public class RateItemTask extends BaseTask
         }
     }
 
-    public RateItemTask(UUID groupId, UUID postId, RateType type, String wtf, String id, RateValueType value)
+    public RateItemTask(UUID groupId, UUID postId, RateType type, String wtf, String id, RateValueType valueType, String value)
     {
         this.groupId = groupId;
         this.postId = postId;
         this.type = type;
         this.wtf = wtf;
         this.id = id;
+        this.valueType = valueType;
         this.value = value;
     }
 
-    public RateItemTask(RateType type, String wtf, String id, RateValueType value)
+    public RateItemTask(RateType type, String wtf, String id, RateValueType valueType, String value)
     {
         this.type = type;
         this.wtf = wtf;
         this.id = id;
+        this.valueType = valueType;
         this.value = value;
     }
 
@@ -85,7 +88,7 @@ public class RateItemTask extends BaseTask
     {
         try
         {
-            String response = ServerWorker.Instance().rateItem(type, wtf, id, value);
+            String response = ServerWorker.Instance().rateItem(type, wtf, id, valueType, value);
             System.out.println("response = " + response);
             if(     Utils.isIntNumber(response) ||
                     groupId.equals(Commons.FAVORITE_POSTS_ID) ||
@@ -109,7 +112,7 @@ public class RateItemTask extends BaseTask
 
 
 
-                switch (value)
+                switch (valueType)
                 {
                 case MINUS:
                     item.PlusVoted = false;

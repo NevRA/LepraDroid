@@ -81,7 +81,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
             @Override
             public void onClick(View v)
             {
-                rateItem(RateValueType.MINUS);
+                rateItem(RateValueType.MINUS, "-1");
                 minus.setEnabled(false);
                 plus.setEnabled(true);
             }
@@ -92,16 +92,17 @@ public class PostView extends BaseView implements ItemRateUpdateListener
             @Override
             public void onClick(View v)
             {
-                rateItem(RateValueType.PLUS);
+                rateItem(RateValueType.PLUS, "1");
                 minus.setEnabled(true);
                 plus.setEnabled(false);
             }
         });
     }
     
-    private void rateItem(RateValueType type)
+    private void rateItem(RateValueType type, String value)
     {
-        new RateItemTask(groupId, id, RateType.POST, SettingsWorker.Instance().loadVoteWtf(), post.Pid, type).execute();
+        new 
+                RateItemTask(groupId, id, RateType.POST, SettingsWorker.Instance().loadVoteWtf(), post.Pid, type, value).execute();
     }
 
     @Override

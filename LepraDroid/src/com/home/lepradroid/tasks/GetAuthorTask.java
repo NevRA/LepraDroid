@@ -90,7 +90,11 @@ public class GetAuthorTask extends BaseTask
             final String html = ServerWorker.Instance().getContent(Commons.SITE_URL + "users/" + userName);
             final Document document = Jsoup.parse(html);
             
-            data = new Author();
+            data = ServerWorker.Instance().getAuthorByName(userName);
+            if (data == null)
+                data = new Author();
+
+
             data.UserName = userName;
             final Element userPic = document.getElementsByClass("userpic").first();
             final Elements images = userPic.getElementsByTag("img");
@@ -125,9 +129,10 @@ public class GetAuthorTask extends BaseTask
             Element vote1 = userInfo.getElementsByClass("vote1").first();
             Element vote2 = userInfo.getElementsByClass("vote2").first();
 
-            data.MinusVoted = vote1.getElementsByTag("a").first().attr("class").equals("minus voted") && vote2.getElementsByTag("a").first().attr("class").equals("minus voted");
+            data.MinusVoted = vote1.getElementsByTag("a").last().attr("class").equals("minus voted") && vote2.getElementsByTag("a").last().attr("class").equals("minus voted");
+            System.out.println("data.MinusVoted = " + data.MinusVoted);
             data.PlusVoted  = vote1.getElementsByTag("a").first().attr("class").equals("plus voted") && vote2.getElementsByTag("a").first().attr("class").equals("plus voted");
-
+            System.out.println("data.PlusVoted = " + data.PlusVoted);
             if (TextUtils.isEmpty(SettingsWorker.Instance().loadVoteKarmaWtf()))
             {
                 Element script = userInfo.getElementsByTag("script").first();

@@ -85,8 +85,10 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
         name.setText(data.Name);
         ego.setText(data.Ego);
         rating.setText(data.Rating.toString());
-        //rating.setTextColor(data.Rating > 0 ? Color.GREEN : Color.RED);
         imageLoader.DisplayImage(data.ImageUrl, userPic, R.drawable.ic_user);
+
+        minus.setEnabled(true);
+        plus.setEnabled(true);
 
         if(data.MinusVoted)
             minus.setEnabled(false);
@@ -96,7 +98,8 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
         minus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                rateItem(Commons.RateValueType.MINUS, data.Id);
+                rateItem(Commons.RateValueType.MINUS, data.Id, "3");
+                rateItem(Commons.RateValueType.MINUS, data.Id, "4");
                 minus.setEnabled(false);
                 plus.setEnabled(true);
             }
@@ -105,7 +108,8 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
         plus.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                rateItem(Commons.RateValueType.PLUS, data.Id);
+                rateItem(Commons.RateValueType.PLUS, data.Id, "1");
+                rateItem(Commons.RateValueType.PLUS, data.Id, "2");
                 minus.setEnabled(true);
                 plus.setEnabled(false);
             }
@@ -113,8 +117,8 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,ItemRat
 
     }
 
-    private void rateItem(Commons.RateValueType type, String id) {
-        new RateItemTask(Commons.RateType.KARMA, SettingsWorker.Instance().loadVoteKarmaWtf(), id, type).execute();
+    private void rateItem(Commons.RateValueType type, String id, String value) {
+        new RateItemTask(Commons.RateType.KARMA, SettingsWorker.Instance().loadVoteKarmaWtf(), id, type, value).execute();
     }
 
 
