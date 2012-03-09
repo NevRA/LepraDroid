@@ -102,7 +102,6 @@ public class RateItemTask extends BaseTask
                     case KARMA:
                         item = ServerWorker.Instance().getAuthorById(id);
                         item.Rating = Integer.valueOf(response);
-                        System.out.println("item = " + item);
                         break;
                     default:
                         break;
@@ -123,7 +122,6 @@ public class RateItemTask extends BaseTask
                 default:
                     break;
                 }
-                System.out.println("Notify rating update = true");
                 notifyOnItemRateUpdate(true, item.Rating);
             }
             else
