@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetCommentsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -180,6 +182,9 @@ public class PostScreen extends BaseActivity
                             {
                                 pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
                                 authorInit = true;
+                                
+                                if(!SettingsWorker.Instance().loadIsCommentClickTipDisabled())
+                                    Toast.makeText(PostScreen.this, Utils.getString(R.string.Double_Tuch_Comment_Tip), Toast.LENGTH_LONG).show();
                             }
                             break;
                         }

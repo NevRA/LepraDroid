@@ -236,13 +236,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         updateAdapter();
     }
 
-    private void updateNavigatingButtons()
-    {
-        if (ServerWorker.Instance().getNextNewCommentPosition(groupId, id, -1) != -1)
-            buttons.setVisibility(View.VISIBLE);
-        else
-            buttons.setVisibility(View.GONE);
-    }
 
     private void updateAdapter()
     {
@@ -315,8 +308,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             if (waitingNextRecord)
                 goToNextNewComment();
         }
-
-        updateNavigatingButtons();
     }
 
     @Override

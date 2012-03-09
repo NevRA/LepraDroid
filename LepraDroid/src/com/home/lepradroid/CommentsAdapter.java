@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem>
@@ -50,6 +51,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem>
                     public boolean onDoubleTap(MotionEvent e)
                     {
                         if(!navigationTurnedOn ) return true;
+                        
+                        SettingsWorker.Instance().saveCommentClickTipDisabled(true);
                         
                         Comment comment = (Comment)getItem(commentPos);
                         comment.IsExpand = !comment.IsExpand;

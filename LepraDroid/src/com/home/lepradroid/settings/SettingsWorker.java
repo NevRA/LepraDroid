@@ -18,6 +18,8 @@ public class SettingsWorker
     private static final String USER_NAME   = "username_pref";
     private static final String VOTE_WTF    = "votewtf_pref";
     private static final String VOTE_WEIGHT = "voteweight_pref";
+    private static final String COMMENT_CLICK_TIP 
+                                            = "commentclicktip_pref";
     
     private SettingsWorker() 
     {
@@ -57,6 +59,7 @@ public class SettingsWorker
         saveInt(VOTE_WEIGHT, 0);
         saveString(USER_NAME, "");
         saveString(VOTE_WTF, "");
+        saveBoolean(COMMENT_CLICK_TIP, false);
     }
     
     public String loadVoteWtf()
@@ -77,6 +80,16 @@ public class SettingsWorker
     public void saveVoteWeight(Integer voteWeight)
     {
         saveInt(VOTE_WEIGHT, voteWeight);
+    }
+    
+    public Boolean loadIsCommentClickTipDisabled()
+    {
+        return loadBoolean(COMMENT_CLICK_TIP);
+    }
+    
+    public void saveCommentClickTipDisabled(Boolean disabled)
+    {
+        saveBoolean(COMMENT_CLICK_TIP, disabled);
     }
     
     public String loadUserName()
@@ -137,5 +150,19 @@ public class SettingsWorker
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         return sp.getString(name, "");
+    }
+    
+    private void saveBoolean(String name, Boolean value)
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
+        Editor e = sp.edit();
+        e.putBoolean(name, value);
+        e.commit();
+    }
+    
+    private Boolean loadBoolean(String name)
+    {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
+        return sp.getBoolean(name, false);
     }
 }

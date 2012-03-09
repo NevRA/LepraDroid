@@ -38,6 +38,7 @@
     <string name="Added_Comment">Комментарий добавлен</string>
     <string name="No_New_Comments">Новых комментариев больше нет</string>
     <string name="Searching_For_New_Comments">Идет поиск новых комментариев...</string>
+    <string name="Double_Tuch_Comment_Tip">Чтобы увидеть комментарий полностью, нажмите на него два раза</string>
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>
