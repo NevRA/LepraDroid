@@ -13,14 +13,15 @@ import com.home.lepradroid.utils.Logger;
 public class SettingsWorker
 {
     private static volatile SettingsWorker instance;
-    private String cookie                   = "";
-    private static final String COOKIES     = "cookies_pref";
-    private static final String USER_NAME   = "username_pref";
-    private static final String VOTE_WTF    = "votewtf_pref";
-    private static final String VOTE_WEIGHT = "voteweight_pref";
+    private String cookie                      = "";
+    private static final String COOKIES        = "cookies_pref";
+    private static final String USER_NAME      = "username_pref";
+    private static final String VOTE_WTF       = "votewtf_pref";
+    private static final String VOTE_WEIGHT    = "voteweight_pref";
+    private static final String VOTE_KARMA_WTF = "votekarmawtf_pref";
     private static final String COMMENT_CLICK_TIP 
-                                            = "commentclicktip_pref";
-    
+                                               = "commentclicktip_pref";
+
     private SettingsWorker() 
     {
         try
@@ -59,6 +60,7 @@ public class SettingsWorker
         saveInt(VOTE_WEIGHT, 0);
         saveString(USER_NAME, "");
         saveString(VOTE_WTF, "");
+        saveString(VOTE_KARMA_WTF, "");
         saveBoolean(COMMENT_CLICK_TIP, false);
     }
     
@@ -71,7 +73,17 @@ public class SettingsWorker
     {
         saveString(VOTE_WTF, vote_wtf);
     }
-    
+
+    public String loadVoteKarmaWtf()
+    {
+        return loadString(VOTE_KARMA_WTF);
+    }
+
+    public void saveVoteKarmaWtf(String vote_karma_wtf)
+    {
+        saveString(VOTE_KARMA_WTF, vote_karma_wtf);
+    }
+
     public Integer loadVoteWeight()
     {
         return loadInt(VOTE_WEIGHT);

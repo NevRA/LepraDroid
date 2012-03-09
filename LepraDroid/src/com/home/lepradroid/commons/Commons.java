@@ -15,7 +15,8 @@ public class Commons
     
     public static final String BLOGS_URL        = SITE_URL + "underground/";
     public static final String ITEM_VOTE_URL    = SITE_URL + "rate/";
-    
+    public static final String KARMA_VOTE_URL   = SITE_URL + "karma/";
+
     public static final String APP_TAG          = "LepraDroid";
     
     public static final String COOKIE_SID       = "lepro.sid";
@@ -43,7 +44,9 @@ public class Commons
     public enum RateType
     {
         POST,
-        COMMENT
+        COMMENT,
+        KARMA
+
     }
     
     public enum RateValueType

@@ -12,23 +12,24 @@ import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
-import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.RateItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
 
 public class RateItemTask extends BaseTask
 {
-    private UUID            groupId;
-    private UUID            postId;
-    private RateType        type;
-    private String          wtf;
-    private String          id;
-    private RateValueType   value;
-    
+    private UUID groupId;
+    private UUID postId;
+    private RateType type;
+    private String wtf;
+    private String id;
+    private RateValueType valueType;
+
     static final Class<?>[] argsClassesOnItemRateUpdate = new Class[4];
     static Method methodOnItemRateUpdate;
-    static 
+
+    static
     {
         try
         {
@@ -36,38 +37,52 @@ public class RateItemTask extends BaseTask
             argsClassesOnItemRateUpdate[1] = UUID.class;
             argsClassesOnItemRateUpdate[2] = int.class;
             argsClassesOnItemRateUpdate[3] = boolean.class;
-            methodOnItemRateUpdate = ItemRateUpdateListener.class.getMethod("OnItemRateUpdate", argsClassesOnItemRateUpdate);
+            methodOnItemRateUpdate = ItemRateUpdateListener.class.getMethod(
+                    "OnItemRateUpdate", argsClassesOnItemRateUpdate);
         }
-        catch (Throwable t) 
-        {           
+        catch (Throwable t)
+        {
             Logger.e(t);
-        }        
+        }
     }
-    
+
     @SuppressWarnings("unchecked")
     public void notifyOnItemRateUpdate(boolean successful, int newRating)
     {
-        final List<ItemRateUpdateListener> listeners = ListenersWorker.Instance().getListeners(ItemRateUpdateListener.class);
+        final List<ItemRateUpdateListener> listeners = ListenersWorker
+                .Instance().getListeners(ItemRateUpdateListener.class);
         final Object args[] = new Object[4];
         args[0] = groupId;
         args[1] = postId;
         args[2] = newRating;
         args[3] = successful;
-        
-        for(ItemRateUpdateListener listener : listeners)
+
+        for (ItemRateUpdateListener listener : listeners)
         {
-            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnItemRateUpdate, args)));
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(
+                    listener, new Pair<Method, Object[]>(
+                            methodOnItemRateUpdate, args)));
         }
     }
-    
-    public RateItemTask(UUID groupId, UUID postId, RateType type, String wtf, String id, RateValueType value)
+
+    public RateItemTask(UUID groupId, UUID postId, RateType type, String wtf,
+            String id, RateValueType valueType)
     {
         this.groupId = groupId;
         this.postId = postId;
         this.type = type;
         this.wtf = wtf;
         this.id = id;
-        this.value = value;
+        this.valueType = valueType;
+    }
+
+    public RateItemTask(RateType type, String wtf, String id,
+            RateValueType valueType)
+    {
+        this.type = type;
+        this.wtf = wtf;
+        this.id = id;
+        this.valueType = valueType;
     }
 
     @Override
@@ -75,15 +90,50 @@ public class RateItemTask extends BaseTask
     {
         try
         {
-            String response = ServerWorker.Instance().rateItem(type, wtf, id, value);
-            if(     Utils.isIntNumber(response) || 
-                    groupId.equals(Commons.FAVORITE_POSTS_ID) || 
-                    groupId.equals(Commons.MYSTUFF_POSTS_ID))
+            String response = "";
+
+            switch (type)
             {
-                BaseItem item = ServerWorker.Instance().getPostById(groupId, postId);
-                
-                item.Rating = (groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId.equals(Commons.MYSTUFF_POSTS_ID)) ? item.Rating : Integer.valueOf(response);
-                switch (value)
+            case POST:
+                response = ServerWorker.Instance().rateItem(type, wtf, id,
+                        valueType,
+                        valueType == RateValueType.MINUS ? "-1" : "1");
+                break;
+            case KARMA:
+                response = ServerWorker.Instance()
+                        .rateItem(type, wtf, id, valueType,
+                                valueType == RateValueType.MINUS ? "3" : "1");
+                response = ServerWorker.Instance()
+                        .rateItem(type, wtf, id, valueType,
+                                valueType == RateValueType.MINUS ? "4" : "2");
+                break;
+            default:
+                break;
+            }
+
+            if (Utils.isIntNumber(response)
+                    || groupId.equals(Commons.FAVORITE_POSTS_ID)
+                    || groupId.equals(Commons.MYSTUFF_POSTS_ID))
+            {
+                RateItem item = null;
+
+                switch (type)
+                {
+                case POST:
+                    item = ServerWorker.Instance().getPostById(groupId, postId);
+                    item.Rating = (groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId
+                            .equals(Commons.MYSTUFF_POSTS_ID)) ? item.Rating
+                            : Integer.valueOf(response);
+                    break;
+                case KARMA:
+                    item = ServerWorker.Instance().getAuthorById(id);
+                    item.Rating = Integer.valueOf(response);
+                    break;
+                default:
+                    break;
+                }
+
+                switch (valueType)
                 {
                 case MINUS:
                     item.PlusVoted = false;
@@ -96,19 +146,18 @@ public class RateItemTask extends BaseTask
                 default:
                     break;
                 }
-                
                 notifyOnItemRateUpdate(true, item.Rating);
             }
             else
                 notifyOnItemRateUpdate(false, 0);
-            
+
         }
         catch (Exception e)
         {
             setException(e);
             notifyOnItemRateUpdate(false, 0);
         }
-        
+
         return e;
     }
 
