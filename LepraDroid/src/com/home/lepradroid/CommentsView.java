@@ -48,6 +48,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
                                     = false;
     private boolean         waitingNextRecord 
                                     = false;
+    private boolean         navigationTurnedOn
+                                    = false;
     private ArrayList<BaseItem> 
                             newComments 
                                     = new ArrayList<BaseItem>();
@@ -71,6 +73,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     
     public void setNavigationMode(boolean navigationTurnedOn)
     {
+        this.navigationTurnedOn = navigationTurnedOn;
         buttons.setVisibility(navigationTurnedOn ? View.VISIBLE : View.GONE);
         adapter.setNavigationMode(navigationTurnedOn);
         adapter.notifyDataSetChanged();
@@ -286,7 +289,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             progress.setVisibility(View.GONE);
             progress.setIndeterminate(false);
             list.setVisibility(View.VISIBLE);
-            buttons.setVisibility(View.VISIBLE);
+            if(navigationTurnedOn)
+                buttons.setVisibility(View.VISIBLE);
         }
 
         updateAdapter();

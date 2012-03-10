@@ -41,7 +41,7 @@ public class PostScreen extends BaseActivity
     private boolean         authorInit          = false;
     
     private boolean         navigationTurnedOn
-                                                = true;
+                                                = false;
     
     public static final int POST_TAB_NUM        = 0;
     public static final int COMMENTS_TAB_NUM    = 1;
@@ -132,6 +132,9 @@ public class PostScreen extends BaseActivity
         case MENU_COMMENT_NAVIGATE:
             navigationTurnedOn = !navigationTurnedOn;
             commentsView.setNavigationMode(navigationTurnedOn);
+            if(navigationTurnedOn)
+                if(!SettingsWorker.Instance().loadIsCommentClickTipDisabled())
+                    Toast.makeText(PostScreen.this, Utils.getString(R.string.Double_Tuch_Comment_Tip), Toast.LENGTH_LONG).show();
             return true;
         }
         return false;
@@ -152,6 +155,7 @@ public class PostScreen extends BaseActivity
         
         commentsView = new CommentsView(this, groupId, id);
         commentsView.setTag(Utils.getString(R.string.Comments_Tab));
+        commentsView.setNavigationMode(navigationTurnedOn);
         
         authorView = new AuthorView(this, post.Author);
         authorView.setTag(Utils.getString(R.string.Author_Tab));
@@ -182,9 +186,6 @@ public class PostScreen extends BaseActivity
                             {
                                 pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
                                 authorInit = true;
-                                
-                                if(!SettingsWorker.Instance().loadIsCommentClickTipDisabled())
-                                    Toast.makeText(PostScreen.this, Utils.getString(R.string.Double_Tuch_Comment_Tip), Toast.LENGTH_LONG).show();
                             }
                             break;
                         }
