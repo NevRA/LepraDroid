@@ -193,7 +193,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         }
         else
         {
-            if (shownLastElements)
+            if (receivedLastElements)
                 Toast.makeText(context, Utils.getString(R.string.No_New_Comments),
                         Toast.LENGTH_LONG).show();
             else
