@@ -28,7 +28,9 @@ public class RateItemTask extends BaseTask
     private RateValueType valueType;
 
     static final Class<?>[] argsClassesOnItemRateUpdate = new Class[4];
+    static final Class<?>[] argsClassesOnUserItemRateUpdate = new Class[2];
     static Method methodOnItemRateUpdate;
+    static Method methodOnUserItemRateUpdate;
 
     static
     {
@@ -38,12 +40,36 @@ public class RateItemTask extends BaseTask
             argsClassesOnItemRateUpdate[1] = UUID.class;
             argsClassesOnItemRateUpdate[2] = int.class;
             argsClassesOnItemRateUpdate[3] = boolean.class;
+            
+            argsClassesOnUserItemRateUpdate[0] = String.class;
+            argsClassesOnUserItemRateUpdate[1] = boolean.class;
+            
             methodOnItemRateUpdate = ItemRateUpdateListener.class.getMethod(
                     "OnItemRateUpdate", argsClassesOnItemRateUpdate);
+            
+            methodOnUserItemRateUpdate = ItemRateUpdateListener.class.getMethod(
+                    "OnItemRateUpdate", argsClassesOnUserItemRateUpdate);
         }
         catch (Throwable t)
         {
             Logger.e(t);
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyOnUserItemRateUpdate(String userId, boolean successful)
+    {
+        final List<ItemRateUpdateListener> listeners = ListenersWorker
+                .Instance().getListeners(ItemRateUpdateListener.class);
+        final Object args[] = new Object[2];
+        args[0] = id;
+        args[1] = successful;
+
+        for (ItemRateUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(
+                    listener, new Pair<Method, Object[]>(
+                            methodOnUserItemRateUpdate, args)));
         }
     }
 
@@ -149,19 +175,27 @@ public class RateItemTask extends BaseTask
                 default:
                     break;
                 }
-                notifyOnItemRateUpdate(true, item.Rating);
+                
+                notifyOnRate(true, item.Rating);
             }
             else
-                notifyOnItemRateUpdate(false, 0);
-
+                notifyOnRate(false, 0);
         }
         catch (Throwable e)
         {
             setException(e);
-            notifyOnItemRateUpdate(false, 0);
+            
+            notifyOnRate(false, 0);
         }
 
         return e;
     }
-
+    
+    private void notifyOnRate(boolean successful, int newRating)
+    {
+        if(type == RateType.KARMA) 
+            notifyOnUserItemRateUpdate(id, successful);
+        else
+            notifyOnItemRateUpdate(successful, newRating);
+    }
 }

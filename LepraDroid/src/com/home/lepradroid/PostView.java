@@ -135,4 +135,9 @@ public class PostView extends BaseView implements ItemRateUpdateListener
        else
            plus.setEnabled(true);
     }
+
+    @Override
+    public void OnItemRateUpdate(String userId, boolean successful)
+    {
+    }
 }

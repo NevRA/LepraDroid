@@ -159,5 +159,10 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     @Override
     public void OnCommentsUpdate(UUID groupId, UUID postId)
     {
+    }
+
+    @Override
+    public void OnItemRateUpdate(String userId, boolean successful)
+    {
     }    
 }

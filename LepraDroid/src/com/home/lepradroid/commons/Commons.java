@@ -46,7 +46,6 @@ public class Commons
         POST,
         COMMENT,
         KARMA
-
     }
     
     public enum RateValueType

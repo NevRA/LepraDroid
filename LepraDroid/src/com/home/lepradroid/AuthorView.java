@@ -24,6 +24,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
 {
     private Context context;
     private String userName;
+    private String userId;
     private RelativeLayout contentLayout;
     private TextView name;
     private TextView ego;
@@ -74,6 +75,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     @Override
     public void OnExit()
     {
+        context = null;
         ListenersWorker.Instance().unregisterListener(this);
     }
 
@@ -91,6 +93,8 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
 
         if (data == null)
             return;
+        
+        userId = data.Id;
         name.setText(data.Name);
         ego.setText(data.Ego);
         rating.setText(data.Rating.toString());
@@ -133,21 +137,22 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         new RateItemTask(Commons.RateType.KARMA, SettingsWorker.Instance()
                 .loadVoteKarmaWtf(), id, type).execute();
     }
-
+    
     @Override
-    public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating,
-            boolean successful)
+    public void OnItemRateUpdate(String userId, boolean successful)
     {
-        if (userName.equals(SettingsWorker.Instance().loadUserName()))
+        if (    userName.equals(SettingsWorker.Instance().loadUserName()) ||
+                !this.userId.equals(userId))
             return;
+        
         if (successful)
         {
             Toast.makeText(
                     context,
                     Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG)
                     .show();
-            rating.setText(String.valueOf(newRating));
         }
+        
         Author author = ServerWorker.Instance().getAuthorByName(userName);
         if (author.MinusVoted)
             minus.setEnabled(false);
@@ -158,6 +163,12 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
             plus.setEnabled(false);
         else
             plus.setEnabled(true);
+    }
+
+    @Override
+    public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating,
+            boolean successful)
+    {
     }
 
     @Override
