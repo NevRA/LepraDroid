@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -50,7 +51,7 @@ public class ServerWorker
     private ClientConnectionManager connectionManager;
     private HttpParams connectionParameters;
     private Map<UUID, ArrayList<BaseItem>> posts = new HashMap<UUID, ArrayList<BaseItem>>();
-    private List<Author> authors = new ArrayList<Author>();
+    private Map<String, Author> authors = new HashMap<String, Author>();
     private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
     private final Lock read  = readWriteLock.readLock();
     private final Lock write = readWriteLock.writeLock();
@@ -451,8 +452,15 @@ public class ServerWorker
         write.lock();
         try
         {
-            if (!authors.contains(author))
-                authors.add(author);
+            if(authors.containsKey(author.Id))
+            {
+                Author orig = authors.get(author.Id);
+                orig.Rating = author.Rating;
+                orig.PlusVoted = author.PlusVoted;
+                orig.MinusVoted = author.MinusVoted;
+            }
+            else
+                authors.put(author.Id, author);
         }
         finally
         {
@@ -460,23 +468,17 @@ public class ServerWorker
         }
     }
 
-    public Author getAuthorById(String u_id)
+    public Author getAuthorById(String id)
     {
         read.lock();
         try
         {
-            for (Author a: authors)
-            {
-                if (a.Id.equals(u_id)) return a;
-            }
+            return authors.get(id);
         }
         finally
         {
             read.unlock();
         }
-
-        return null;
-
     }
 
     public Author getAuthorByName(String name)
@@ -484,9 +486,9 @@ public class ServerWorker
         read.lock();
         try
         {
-            for (Author a: authors)
+            for (Entry<String, Author> a : authors.entrySet())
             {
-                if (a.UserName.equals(name)) return a;
+                if (a.getValue().UserName.equals(name)) return a.getValue();
             }
         }
         finally
@@ -495,9 +497,7 @@ public class ServerWorker
         }
 
         return null;
-
     }
-
 
     public void clearCommentsById(UUID id)
     {

@@ -144,8 +144,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         {
             Toast.makeText(
                     context,
-                    Utils.getString(R.string.Rated_Item) + " "
-                            + Integer.toString(newRating), Toast.LENGTH_LONG)
+                    Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG)
                     .show();
             rating.setText(String.valueOf(newRating));
         }

@@ -12,6 +12,7 @@ import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
+import com.home.lepradroid.objects.Author;
 import com.home.lepradroid.objects.RateItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
@@ -127,7 +128,9 @@ public class RateItemTask extends BaseTask
                     break;
                 case KARMA:
                     item = ServerWorker.Instance().getAuthorById(id);
-                    item.Rating = Integer.valueOf(response);
+                    Throwable res = new GetAuthorTask(((Author)item).UserName, true).execute().get();
+                    if(res != null)
+                        throw res;
                     break;
                 default:
                     break;
@@ -152,7 +155,7 @@ public class RateItemTask extends BaseTask
                 notifyOnItemRateUpdate(false, 0);
 
         }
-        catch (Exception e)
+        catch (Throwable e)
         {
             setException(e);
             notifyOnItemRateUpdate(false, 0);

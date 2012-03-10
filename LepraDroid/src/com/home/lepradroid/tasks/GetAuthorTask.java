@@ -46,6 +46,13 @@ public class GetAuthorTask extends BaseTask
     }
     
     private String userName;
+    private boolean withoutBeginNotify = false;
+    
+    public GetAuthorTask(String userName, boolean withoutBeginNotify)
+    {
+        this.withoutBeginNotify = withoutBeginNotify;
+        this.userName = userName;
+    }
     
     public GetAuthorTask(String userName)
     {
@@ -85,7 +92,8 @@ public class GetAuthorTask extends BaseTask
         Author data = null;
         try
         {
-            notifyAboutAuthorUpdateBegin();
+            if(!withoutBeginNotify)
+                notifyAboutAuthorUpdateBegin();
             
             final String html = ServerWorker.Instance().getContent(Commons.SITE_URL + "users/" + userName);
             final Document document = Jsoup.parse(html);
@@ -121,29 +129,28 @@ public class GetAuthorTask extends BaseTask
                 }
             }
             else
+            {
                 vote  = document.getElementById("js-user_karma");
+                
+                Element vote1 = userInfo.getElementsByClass("vote1").first();
+                Element vote2 = userInfo.getElementsByClass("vote2").first();
+
+                data.MinusVoted = vote1.getElementsByTag("a").last().attr("class").equals("minus voted") && vote2.getElementsByTag("a").last().attr("class").equals("minus voted");
+                data.PlusVoted  = vote1.getElementsByTag("a").first().attr("class").equals("plus voted") && vote2.getElementsByTag("a").first().attr("class").equals("plus voted");
+                if (TextUtils.isEmpty(SettingsWorker.Instance().loadVoteKarmaWtf()))
+                {
+                    Element script = userInfo.getElementsByTag("script").first();
+                    Pattern pattern = Pattern.compile("VoteBlockUser.wtf = \"(.+)\"");
+                    Matcher matcher = pattern.matcher(script.data());
+                    if(matcher.find()){
+                        SettingsWorker.Instance().saveVoteKarmaWtf(matcher.group(1));
+                    }
+                }
+            }
             
             data.Rating = Integer.valueOf(vote.getElementsByTag("em").text());
 
-
-            Element vote1 = userInfo.getElementsByClass("vote1").first();
-            Element vote2 = userInfo.getElementsByClass("vote2").first();
-
-            data.MinusVoted = vote1.getElementsByTag("a").last().attr("class").equals("minus voted") && vote2.getElementsByTag("a").last().attr("class").equals("minus voted");
-            data.PlusVoted  = vote1.getElementsByTag("a").first().attr("class").equals("plus voted") && vote2.getElementsByTag("a").first().attr("class").equals("plus voted");
-            if (TextUtils.isEmpty(SettingsWorker.Instance().loadVoteKarmaWtf()))
-            {
-                Element script = userInfo.getElementsByTag("script").first();
-                Pattern pattern = Pattern.compile("VoteBlockUser.wtf = \"(.+)\"");
-                Matcher matcher = pattern.matcher(script.data());
-                if(matcher.find()){
-                    SettingsWorker.Instance().saveVoteKarmaWtf(matcher.group(1));
-                }
-            }
-
-
             ServerWorker.Instance().addNewAuthor(data);
-
 
             notifyAboutAuthorUpdate(data);
         }
