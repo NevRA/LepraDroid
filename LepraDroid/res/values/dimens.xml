@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ <dimen name="comment_webview_height">60dip</dimen>
+ <dimen name="comment_author_layout_padding_top">4dip</dimen>
+</resources>
