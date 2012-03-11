@@ -8,54 +8,54 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
-public class CommentRootLayout extends RelativeLayout
-{
-    private boolean isNew = false;
-    
-    public CommentRootLayout(Context context, AttributeSet attrs)
-    {
-        super(context, attrs);
-        setWillNotDraw(false);
-    }
+public class CommentRootLayout extends RelativeLayout {
+	private boolean isNew = false;
+	private Path path;
+	private Paint paint;
 
-    public CommentRootLayout(Context context)
-    {
-        super(context);
-        setWillNotDraw(false);
-    }
-    
-    public void setIsNew(boolean isNew)
-    {
-        this.isNew = isNew;
-    }
+	public CommentRootLayout(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		setWillNotDraw(false);
+		initGraphics();
+	}
 
-    @Override
-    protected void onDraw(Canvas canvas)
-    {
-        if(isNew)
-        {
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	public CommentRootLayout(Context context) {
+		super(context);
+		setWillNotDraw(false);
+		initGraphics();
+	}
 
-            paint.setStrokeWidth(2);
-            paint.setColor(android.graphics.Color.RED);     
-            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            paint.setAntiAlias(true);
+	public void setIsNew(boolean isNew) {
+		this.isNew = isNew;
+	}
 
-            Point point1_draw = new Point(0, 0);       
-            Point point2_draw = new Point(15, 0);   
-            Point point3_draw = new Point(0, 15);
+	@Override
+	protected void onDraw(Canvas canvas) {
+		if (isNew) {
+			canvas.drawPath(path, paint);
+		}
 
-            Path path = new Path();
-            path.setFillType(Path.FillType.EVEN_ODD);
-            path.moveTo(point1_draw.x,point1_draw.y);
-            path.lineTo(point2_draw.x,point2_draw.y);
-            path.lineTo(point3_draw.x,point3_draw.y);
-            path.lineTo(point1_draw.x,point1_draw.y);
-            path.close();
+		super.onDraw(canvas);
+	}
 
-            canvas.drawPath(path, paint);
-        }
+	private void initGraphics() {
+		paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        super.onDraw(canvas);
-    }
+		paint.setStrokeWidth(2);
+		paint.setColor(android.graphics.Color.RED);
+		paint.setStyle(Paint.Style.FILL_AND_STROKE);
+		paint.setAntiAlias(true);
+
+		Point point1_draw = new Point(0, 0);
+		Point point2_draw = new Point(15, 0);
+		Point point3_draw = new Point(0, 15);
+
+		path = new Path();
+		path.setFillType(Path.FillType.EVEN_ODD);
+		path.moveTo(point1_draw.x, point1_draw.y);
+		path.lineTo(point2_draw.x, point2_draw.y);
+		path.lineTo(point3_draw.x, point3_draw.y);
+		path.lineTo(point1_draw.x, point1_draw.y);
+		path.close();
+	}
 }
