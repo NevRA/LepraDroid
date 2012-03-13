@@ -32,8 +32,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     private int                 commentPos          = -1;
     private boolean             navigationTurnedOn  = true;
     private ListView            listView            = null;
-    private int					authorLayoutPaddingTop;
-    private int					commentWebViewHeight;
       
     public CommentsAdapter(ListView parentListView, Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
@@ -43,9 +41,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         this.listView = parentListView;
         //this.postId = postId;
         //this.groupId = groupId;
-        
-        authorLayoutPaddingTop = context.getResources().getDimensionPixelOffset(R.dimen.comment_author_layout_padding_top);
-        commentWebViewHeight = context.getResources().getDimensionPixelOffset(R.dimen.comment_webview_height);
         
         gestureDetector = new GestureDetector(
                 new GestureDetector.SimpleOnGestureListener()
@@ -161,15 +156,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         }
     }
     
-    class CommentViewHolder{
-    	CommentRootLayout border;
-    	RelativeLayout webViewLayout;
-    	RelativeLayout authorLayout;
-    	WebView webView;
-    	TextView author;
-    	TextView rating;
-    }
-    
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) 
     {
@@ -178,70 +164,43 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         
         if(comment != null)
         {
-        	
-			CommentViewHolder holder;
-			if (convertView != null && convertView.getTag() != null) {
-				holder = (CommentViewHolder) convertView.getTag();
-			} else {
-				convertView = aInflater.inflate(R.layout.comments_row_view,
-						parent, false);
-				holder = new CommentViewHolder();
-				holder.border = (CommentRootLayout) convertView
-						.findViewById(R.id.root);
-				holder.webViewLayout = (RelativeLayout) convertView
-						.findViewById(R.id.main);
-				holder.authorLayout = (RelativeLayout) convertView
-						.findViewById(R.id.authorLayout);
-				holder.webView = (WebView) convertView.findViewById(R.id.text);
-				holder.author = (TextView) convertView
-						.findViewById(R.id.author);
-				holder.rating = (TextView) convertView
-						.findViewById(R.id.rating);
-				convertView.setTag(holder);
-			}
-
-			holder.border.setIsNew(comment.IsNew);
-
-			ViewGroup.LayoutParams params = holder.webViewLayout
-					.getLayoutParams();
-			if (!navigationTurnedOn || comment.IsExpand) {
-				holder.authorLayout.setPadding(
-						holder.authorLayout.getPaddingLeft(), 0,
-						holder.authorLayout.getPaddingRight(),
-						holder.authorLayout.getPaddingBottom());
-				params.height = ViewGroup.LayoutParams.FILL_PARENT;
-				holder.webViewLayout.setLayoutParams(params);
-			} else {
-				holder.authorLayout.setPadding(
-						holder.authorLayout.getPaddingLeft(),
-						authorLayoutPaddingTop,
-						holder.authorLayout.getPaddingRight(),
-						holder.authorLayout.getPaddingBottom());
-				params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-				holder.webViewLayout.setLayoutParams(params);
-			}
-
-			holder.webView
-					.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-			WebSettings webSettings = holder.webView.getSettings();
-			webSettings.setDefaultFontSize(13);
-			String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
-
-			holder.webView.clearView();
-			holder.webView.loadDataWithBaseURL("", header + comment.Html,
-					"text/html", "UTF-8", null);
-
-			holder.author.setText(Html.fromHtml(comment.Signature));
-
-			holder.rating.setText(Utils.getRatingStringFromBaseItem(comment));
-
-			holder.webView.setOnTouchListener(new View.OnTouchListener() {
-				@Override
-				public boolean onTouch(View arg0, MotionEvent event) {
-					commentPos = position;
-					return gestureDetector.onTouchEvent(event);
-				}
-			});
+            convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
+            CommentRootLayout border = (CommentRootLayout)convertView.findViewById(R.id.root);
+            border.setIsNew(comment.IsNew);
+            
+            RelativeLayout webViewLayout = (RelativeLayout)convertView.findViewById(R.id.main);
+            ViewGroup.LayoutParams params = webViewLayout.getLayoutParams();
+            if(!navigationTurnedOn || comment.IsExpand)
+            {
+                RelativeLayout authorLayout = (RelativeLayout)convertView.findViewById(R.id.authorLayout);
+                authorLayout.setPadding(authorLayout.getPaddingLeft(), 0, authorLayout.getPaddingRight(), authorLayout.getPaddingBottom());
+                
+                params.height = ViewGroup.LayoutParams.FILL_PARENT; 
+                webViewLayout.setLayoutParams(params);
+            }
+            
+            WebView webView = (WebView)convertView.findViewById(R.id.text);
+            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            WebSettings webSettings = webView.getSettings();
+            webSettings.setDefaultFontSize(13);
+            String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+            webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
+            
+            TextView author = (TextView)convertView.findViewById(R.id.author);
+            author.setText(Html.fromHtml(comment.Signature));
+            
+            TextView rating = (TextView)convertView.findViewById(R.id.rating);
+            rating.setText(Utils.getRatingStringFromBaseItem(comment));
+             
+            webView.setOnTouchListener(new View.OnTouchListener() 
+            {
+                @Override
+                public boolean onTouch(View arg0, MotionEvent event)
+                {
+                    commentPos = position;
+                    return gestureDetector.onTouchEvent(event);
+                }
+            });
         }
         else
         {
