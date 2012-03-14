@@ -20,14 +20,17 @@ import com.home.lepradroid.objects.Blog;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
 
-public class GetBlogsTask extends BaseTask {
+public class GetBlogsTask extends BaseTask
+{
     static final Class<?>[] argsClassesOnBlogsUpdate = new Class[1];
     static final Class<?>[] argsClassesOnBlogsUpdateBegin = new Class[0];
     static Method methodOnBlogsUpdate;
     static Method methodOnBlogsUpdateBegin;
 
-    static {
-        try {
+    static
+    {
+        try
+        {
             argsClassesOnBlogsUpdate[0] = boolean.class;
             methodOnBlogsUpdate = BlogsUpdateListener.class.getMethod("OnBlogsUpdate", argsClassesOnBlogsUpdate);
 
@@ -38,33 +41,39 @@ public class GetBlogsTask extends BaseTask {
     }
 
     @SuppressWarnings("unchecked")
-    public void notifyAboutBlogsUpdateBegin() {
+    public void notifyAboutBlogsUpdateBegin()
+    {
         final List<BlogsUpdateListener> listeners = ListenersWorker.Instance().getListeners(BlogsUpdateListener.class);
         final Object args[] = new Object[0];
 
-        for (BlogsUpdateListener listener : listeners) {
+        for (BlogsUpdateListener listener : listeners)
+        {
             publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]>(methodOnBlogsUpdateBegin, args)));
         }
     }
 
     @SuppressWarnings("unchecked")
-    public void notifyAboutBlogsUpdate() {
+    public void notifyAboutBlogsUpdate()
+    {
         final List<BlogsUpdateListener> listeners = ListenersWorker.Instance().getListeners(BlogsUpdateListener.class);
         final Object args[] = new Object[1];
         args[0] = true;
 
-        for (BlogsUpdateListener listener : listeners) {
+        for (BlogsUpdateListener listener : listeners)
+        {
             publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]>(methodOnBlogsUpdate, args)));
         }
     }
 
     @Override
-    protected Throwable doInBackground(Void... arg0) {
+    protected Throwable doInBackground(Void... arg0)
+    {
         final long startTime = System.nanoTime();
         final ArrayList<BaseItem> items = new ArrayList<BaseItem>();
         final ArrayList<String> urls = new ArrayList<String>();
 
-        try {
+        try
+        {
             int num = -1;
 
             ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
@@ -77,7 +86,8 @@ public class GetBlogsTask extends BaseTask {
             int currentPos = 0;
             boolean lastElement = false;
 
-            do {
+            do
+            {
                 if (isCancelled()) break;
 
                 num++;
@@ -85,7 +95,8 @@ public class GetBlogsTask extends BaseTask {
                 int start = html.indexOf(blogRow, currentPos);
                 int end = html.indexOf(blogRow, start + 100);
 
-                if (end == -1) {
+                if (end == -1)
+                {
                     end = html.length();
                     lastElement = true;
                 }
@@ -97,7 +108,8 @@ public class GetBlogsTask extends BaseTask {
                 Blog blog = new Blog();
 
                 Elements logos = element.getElementsByClass("jj_logo");
-                if (!logos.isEmpty()) {
+                if (!logos.isEmpty())
+                {
                     Element logo = logos.first();
 
                     Elements url = logo.getElementsByTag("a");
@@ -114,25 +126,30 @@ public class GetBlogsTask extends BaseTask {
                     blog.Text = title.first().text();
 
                 Elements author = element.getElementsByClass("jj_creator");
-                if (!author.isEmpty()) {
+                if (!author.isEmpty())
+                {
                     blog.Author = author.first().getElementsByTag("a").first().text();
                     blog.Signature = author.first().text();
                 }
 
                 Elements stat = element.getElementsByClass("jj_stat_table");
-                if (!stat.isEmpty()) {
+                if (!stat.isEmpty())
+                {
                     Elements div = stat.first().getElementsByTag("div");
-                    if (div.size() >= 3) {
+                    if (div.size() >= 3)
+                    {
                         // TODO text from resources 
                         blog.Stat = "<b>" + div.get(0).text() + "</b>" + " постов / " + "<b>" + div.get(1).text() + "</b>" + " комментариев / " + "<b>" + div.get(2).text() + "</b>" + " подписчиков";
                     }
                 }
-                if (!urls.contains(blog.Url)){
+                if (!urls.contains(blog.Url))
+                {
                     urls.add(blog.Url);
                     items.add(blog);
                 }
 
-                if (num % 5 == 0 || lastElement) {
+                if (num % 5 == 0 || lastElement)
+                {
                     ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
                     notifyAboutBlogsUpdate();
 
@@ -140,9 +157,11 @@ public class GetBlogsTask extends BaseTask {
                 }
             }
             while (lastElement == false);
-        } catch (Throwable t) {
+        } catch (Throwable t)
+        {
             setException(t);
-        } finally {
+        } finally
+        {
             if (!items.isEmpty())
                 ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
             notifyAboutBlogsUpdate();
@@ -154,7 +173,8 @@ public class GetBlogsTask extends BaseTask {
     }
 
 
-    private void getSubBlogs(final String html, List<BaseItem> items, List<String> urls) {
+    private void getSubBlogs(final String html, List<BaseItem> items, List<String> urls)
+    {
 
         final String subBlogRowStart = "<div class=\"subs_loaded hidden\">";
         final String subBlogRowEnd = "<div class=\"js-subs_container\">";
@@ -163,7 +183,8 @@ public class GetBlogsTask extends BaseTask {
         Elements subDivs = Jsoup.parse(html.substring(start, end)).getElementsByClass("sub");
 
         Iterator<Element> i = subDivs.iterator();
-        while (i.hasNext()) {
+        while (i.hasNext())
+        {
 
             Element div = i.next();
             Blog blog = new Blog();
@@ -186,11 +207,11 @@ public class GetBlogsTask extends BaseTask {
             if (!author.isEmpty())
                 blog.Signature = author.first().getElementsByTag("a").first().text();
 
-            if (!urls.contains(blog.Url)){
+            if (!urls.contains(blog.Url))
+            {
                 urls.add(blog.Url);
                 items.add(blog);
             }
-            System.out.println("Blog = \n" + "URL = " + blog.Url + "\n ImageUrl = " + blog.ImageUrl + "\n Text = " + blog.Text + "\n Author = " + blog.Author );
 
         }
     }
