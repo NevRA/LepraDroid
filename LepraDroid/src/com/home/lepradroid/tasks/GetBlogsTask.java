@@ -80,9 +80,9 @@ public class GetBlogsTask extends BaseTask
             notifyAboutBlogsUpdateBegin();
 
             final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL);
-            final String blogRow = "<tr class=\"jj_row";
             getSubBlogs(html, items, urls);
 
+            final String blogRow = "<tr class=\"jj_row";
             int currentPos = 0;
             boolean lastElement = false;
 
@@ -182,11 +182,8 @@ public class GetBlogsTask extends BaseTask
         int end = html.indexOf(subBlogRowEnd);
         Elements subDivs = Jsoup.parse(html.substring(start, end)).getElementsByClass("sub");
 
-        Iterator<Element> i = subDivs.iterator();
-        while (i.hasNext())
-        {
+        for (Element div : subDivs) {
 
-            Element div = i.next();
             Blog blog = new Blog();
 
             Elements url = div.getElementsByTag("a");
@@ -205,10 +202,11 @@ public class GetBlogsTask extends BaseTask
 
             Elements author = div.getElementsByClass("creator");
             if (!author.isEmpty())
-                blog.Signature = author.first().getElementsByTag("a").first().text();
+                blog.Signature = "создатель - " + author.first().getElementsByTag("a").first().text();
 
-            if (!urls.contains(blog.Url))
-            {
+            blog.Stat = "<b>Лепро-Навигация</b>";
+
+            if (!urls.contains(blog.Url)) {
                 urls.add(blog.Url);
                 items.add(blog);
             }
