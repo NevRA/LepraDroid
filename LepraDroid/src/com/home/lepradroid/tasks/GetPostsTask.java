@@ -126,8 +126,8 @@ public class GetPostsTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... params)
     {
-        final long startTime = System.nanoTime();
-        final ArrayList<BaseItem> items = new ArrayList<BaseItem>();
+        long startTime = System.nanoTime();
+        ArrayList<BaseItem> items = new ArrayList<BaseItem>();
                
         try
         {
@@ -151,7 +151,7 @@ public class GetPostsTask extends BaseTask
                 num++;
                 
                 int start = html.indexOf(postOrd, currentPos);
-                int end = html.indexOf(postOrd, start + 100);
+                int end = html.indexOf(postOrd, start + 300);
                 
                 if(     start == -1 && 
                         html.indexOf("<title>Лепрозорий: вход</title>") != -1)
@@ -213,8 +213,10 @@ public class GetPostsTask extends BaseTask
                         String height = image.attr("height");
                         if(!TextUtils.isEmpty(height))
                             post.Html = post.Html.replace("height=\"" + height + "\"", "");
-                        
-                        post.Html = post.Html.replace(image.attr("src"), "http://src.sencha.io/303/303/" + image.attr("src"));
+
+                        String src = image.attr("src");
+                        if(!TextUtils.isEmpty(src))
+                            post.Html = post.Html.replace(src, "http://src.sencha.io/303/303/" + src);
                     }
                 }
 
