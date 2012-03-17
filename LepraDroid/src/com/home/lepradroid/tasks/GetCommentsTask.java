@@ -26,6 +26,7 @@ import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.FileCache;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
 
 public class GetCommentsTask extends BaseTask
 {
@@ -316,7 +317,7 @@ public class GetCommentsTask extends BaseTask
     
     private void parseRecord(String html)
     {
-        Element content = Jsoup.parse(html);
+        Element content = Jsoup.parse(Utils.replaceBadHtmlTags(html));
         Element element = content.getElementsByClass("dt").first();
         
         Comment comment = new Comment();

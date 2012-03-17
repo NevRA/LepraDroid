@@ -183,7 +183,7 @@ public class GetPostsTask extends BaseTask
                 
                 currentPos = end;
                 
-                String postHtml = html.substring(start, end).replaceAll("(&#150;|&#151;)", "-");
+                String postHtml = Utils.replaceBadHtmlTags(html.substring(start, end));
                 Element content = Jsoup.parse(postHtml);
                 
                 if(page == 0 && lastElement && (groupId.equals(Commons.MAIN_POSTS_ID) || isCustomBlogPosts))

@@ -203,4 +203,9 @@ public class Utils
     {
         return (!groupId.equals(Commons.MAIN_POSTS_ID) && !groupId.equals(Commons.MYSTUFF_POSTS_ID) && !groupId.equals(Commons.FAVORITE_POSTS_ID) && !groupId.equals(Commons.INBOX_POSTS_ID));
     }
+    
+    public static String replaceBadHtmlTags(String html)
+    {
+        return html.replaceAll("(&#150;|&#151;)", "-").replaceAll("(&#133;)", "...");
+    }
 }
