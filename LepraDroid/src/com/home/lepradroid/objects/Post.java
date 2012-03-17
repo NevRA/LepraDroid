@@ -8,4 +8,5 @@ public class Post extends BaseItem
     public String   Html                = "";
     public String   commentsWtf         = "";
     public String   Pid                 = "";
+    public boolean  voteDisabled        = false;
 }

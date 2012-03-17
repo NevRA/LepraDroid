@@ -17,6 +17,7 @@ import android.widget.EditText;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.objects.Post;
@@ -196,5 +197,10 @@ public class Utils
         }
         
         return true;
+    }
+    
+    public static boolean isCustomBlogPosts(UUID groupId)
+    {
+        return (!groupId.equals(Commons.MAIN_POSTS_ID) && !groupId.equals(Commons.MYSTUFF_POSTS_ID) && !groupId.equals(Commons.FAVORITE_POSTS_ID) && !groupId.equals(Commons.INBOX_POSTS_ID));
     }
 }

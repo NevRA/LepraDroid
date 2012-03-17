@@ -60,6 +60,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         
         LinearLayout buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
         if(     groupId.equals(Commons.INBOX_POSTS_ID) ||
+                post.voteDisabled ||
                 post.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()))
         {
             buttons.setVisibility(View.GONE);

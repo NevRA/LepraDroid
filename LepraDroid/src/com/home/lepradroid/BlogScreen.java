@@ -39,8 +39,11 @@ public class BlogScreen extends BaseActivity
             groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
             id = UUID.fromString(getIntent().getExtras().getString("id"));
             title = getIntent().getExtras().getString("title");
+            
+            post = ServerWorker.Instance().getPostById(groupId, id);
+            if(post == null) finish(); // TODO message
 
-            postsScreen = new PostsScreen(this, id, title);
+            postsScreen = new PostsScreen(this, id, post.Url, title);
             postsScreen.setTag(title);
             
             pages.add(postsScreen);
@@ -54,11 +57,7 @@ public class BlogScreen extends BaseActivity
             titleIndicator.setViewPager(pager);
             titleIndicator.setCurrentItem(0);
             
-            post = ServerWorker.Instance().getPostById(groupId, id);
-            if(post != null)
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url), Utils.getString(R.string.Posts_Loading_In_Progress)));
-            else
-                finish(); // TODO message
+            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
         catch (Exception e)
         {

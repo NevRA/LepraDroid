@@ -52,6 +52,7 @@ public class ServerWorker
     private HttpParams connectionParameters;
     private Map<UUID, ArrayList<BaseItem>> posts = new HashMap<UUID, ArrayList<BaseItem>>();
     private Map<String, Author> authors = new HashMap<String, Author>();
+    private Map<UUID, Integer> postsPagesCount = new HashMap<UUID, Integer>();
     private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
     private final Lock read  = readWriteLock.readLock();
     private final Lock write = readWriteLock.writeLock();
@@ -431,6 +432,35 @@ public class ServerWorker
         finally
         {
             write.unlock();
+        }
+    }
+    
+    public void addPostPagesCount(UUID groupId, Integer cout)
+    {
+        write.lock();
+        try
+        {
+            postsPagesCount.put(groupId, cout);
+        }
+        finally
+        {
+            write.unlock();
+        }
+    }
+    
+    public Integer getPostPagesCount(UUID groupId)
+    {
+        read.lock();
+        try
+        {
+            if(postsPagesCount.containsKey(groupId))
+                return postsPagesCount.get(groupId);
+            else
+                return 0;
+        }
+        finally
+        {
+            read.unlock();
         }
     }
 

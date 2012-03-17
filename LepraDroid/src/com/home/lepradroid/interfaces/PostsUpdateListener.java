@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public interface PostsUpdateListener extends UpdateListener
 {
-    void OnPostsUpdateBegin(UUID id); 
-    void OnPostsUpdate(UUID id, boolean haveNewRecords); 
+    void OnPostsUpdateBegin(UUID id, int page); 
+    void OnPostsUpdate(UUID id, int page); 
+    void OnPostsUpdateFinished(UUID id, int page, boolean successful); 
 }

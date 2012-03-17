@@ -23,26 +23,40 @@ import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
 
 public class GetPostsTask extends BaseTask
 {
     private UUID groupId;
     private String url;
+    private boolean refresh = true;
+    private boolean receivedPosts = false;
+    private boolean isCustomBlogPosts = false;
+    private int page = 0;
     
+    static final Class<?>[] argsClassesOnPostsUpdateBegin = new Class[2];
     static final Class<?>[] argsClassesOnPostsUpdate = new Class[2];
-    static final Class<?>[] argsClassesOnPostsUpdateBegin = new Class[1];
-    static Method methodOnPostsUpdate;
+    static final Class<?>[] argsClassesOnPostsUpdateFinished = new Class[3];
+    
     static Method methodOnPostsUpdateBegin;
+    static Method methodOnPostsUpdate;
+    static Method methodOnPostsUpdateFinished;
     static 
     {
         try
         {
         	argsClassesOnPostsUpdate[0] = UUID.class;
-        	argsClassesOnPostsUpdate[1] = boolean.class;
+        	argsClassesOnPostsUpdate[1] = int.class;
             methodOnPostsUpdate = PostsUpdateListener.class.getMethod("OnPostsUpdate", argsClassesOnPostsUpdate); 
             
             argsClassesOnPostsUpdateBegin[0] = UUID.class;
+            argsClassesOnPostsUpdateBegin[1] = int.class;
             methodOnPostsUpdateBegin = PostsUpdateListener.class.getMethod("OnPostsUpdateBegin", argsClassesOnPostsUpdateBegin); 
+        
+            argsClassesOnPostsUpdateFinished[0] = UUID.class;
+            argsClassesOnPostsUpdateFinished[1] = int.class;
+            argsClassesOnPostsUpdateFinished[2] = boolean.class;
+            methodOnPostsUpdateFinished = PostsUpdateListener.class.getMethod("OnPostsUpdateFinished", argsClassesOnPostsUpdateFinished);
         }
         catch (Throwable t) 
         {           
@@ -51,17 +65,28 @@ public class GetPostsTask extends BaseTask
     }
     
     public GetPostsTask(UUID groupId, String url)
+    {
+        this.groupId = groupId;
+        this.url = url;
+        isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
+    }
+    
+    public GetPostsTask(UUID groupId, String url, int page, boolean refresh)
     {       
         this.groupId = groupId;
         this.url = url;
+        this.refresh = refresh;
+        this.page = page;
+        isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
     }
     
     @SuppressWarnings("unchecked")
     public void notifyAboutPostsUpdateBegin()
     {
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
-        final Object args[] = new Object[1];
+        final Object args[] = new Object[2];
         args[0] = groupId;
+        args[1] = page;
         
         for(PostsUpdateListener listener : listeners)
         {
@@ -75,12 +100,26 @@ public class GetPostsTask extends BaseTask
         final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
         final Object args[] = new Object[2];
         args[0] = groupId;
-        args[1] = true; // TODO add new 'load new posts'
-        
+        args[1] = page;
         
         for(PostsUpdateListener listener : listeners)
         {
             publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdate, args)));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyAboutPostsUpdateFinished(boolean successful)
+    {
+        final List<PostsUpdateListener> listeners = ListenersWorker.Instance().getListeners(PostsUpdateListener.class);
+        final Object args[] = new Object[3];
+        args[0] = groupId;
+        args[1] = page;
+        args[2] = successful;
+        
+        for(PostsUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]> (methodOnPostsUpdateFinished, args)));
         }
     }
 
@@ -94,11 +133,12 @@ public class GetPostsTask extends BaseTask
         {
             int num = -1;
             
-            ServerWorker.Instance().clearPostsById(groupId);
+            if(refresh)
+                ServerWorker.Instance().clearPostsById(groupId);
             
             notifyAboutPostsUpdateBegin();
             
-            String html = ServerWorker.Instance().getContent(url);
+            String html = ServerWorker.Instance().getContent(url + ((groupId.equals(Commons.MAIN_POSTS_ID) || isCustomBlogPosts ) ? "pages/" + Integer.toString(page + 1) : ""));
             final String postOrd = "<div class=\"post ord";
             int currentPos = 0;
 
@@ -145,6 +185,13 @@ public class GetPostsTask extends BaseTask
                 
                 String postHtml = html.substring(start, end).replaceAll("(&#150;|&#151;)", "-");
                 Element content = Jsoup.parse(postHtml);
+                
+                if(page == 0 && lastElement && (groupId.equals(Commons.MAIN_POSTS_ID) || isCustomBlogPosts))
+                {
+                    Element element = content.getElementById("total_pages");
+                    ServerWorker.Instance().addPostPagesCount(groupId, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
+                }
+                
                 Element element = content.getElementsByClass("dt").first();
 
                 String text = element.text();
@@ -172,7 +219,10 @@ public class GetPostsTask extends BaseTask
                 }
 
                 Elements rating = content.getElementsByTag("em");
-                post.Rating = Integer.valueOf(rating.first().text());
+                if(!rating.isEmpty())
+                    post.Rating = Integer.valueOf(rating.first().text());
+                else
+                    post.voteDisabled = true;
                 
                 post.PlusVoted = postHtml.contains("class=\"plus voted\"");
                 post.MinusVoted = postHtml.contains("class=\"minus voted\"");
@@ -211,25 +261,30 @@ public class GetPostsTask extends BaseTask
                 items.add(post);
                 if(num%5 == 0 || lastElement)
                 {
+                    receivedPosts = true;
                     ServerWorker.Instance().addNewPosts(groupId, items);
                     notifyAboutPostsUpdate();
                     
                     items.clear();
                 }
             }
-            while (lastElement == false);       
+            while (lastElement == false);   
+            
+            if(!items.isEmpty())
+            {
+                ServerWorker.Instance().addNewPosts(groupId, items);
+                notifyAboutPostsUpdateFinished(true);
+            }
+            else
+                notifyAboutPostsUpdateFinished(receivedPosts);
         }
         catch (Throwable t)
         {
             setException(t);
+            notifyAboutPostsUpdateFinished(false);
         }
         finally
         {
-            if(!items.isEmpty())
-                ServerWorker.Instance().addNewPosts(groupId, items);
-            
-            notifyAboutPostsUpdate();
-            
             Logger.d("GetPostsTask time:" + Long.toString(System.nanoTime() - startTime));
         }
         

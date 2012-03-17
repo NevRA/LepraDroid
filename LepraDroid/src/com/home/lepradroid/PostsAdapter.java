@@ -54,39 +54,74 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         this.posts = posts;
     }
     
+    public void addProgressElement()
+    {
+        synchronized(posts)
+        {
+            if(!posts.isEmpty() && posts.get(posts.size() - 1) != null)
+                posts.add(null);   
+        }
+    }
+    
+    public boolean isContainProgressElement()
+    {
+        synchronized(posts)
+        {
+            if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
+                return true;
+            else
+                return false;
+        }
+    }
+    
+    public void removeProgressElement()
+    {
+        synchronized(posts)
+        {
+            if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
+                posts.remove(null);
+        }
+    }
+    
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
         final Post post = (Post)getItem(position);
-
         LayoutInflater aInflater=LayoutInflater.from(getContext());
-
-        View view = aInflater.inflate(R.layout.post_row_view, parent, false);
         
-        TextView text = (TextView)view.findViewById(R.id.text);
-        text.setText(post.Text);
-        
-        TextView author = (TextView)view.findViewById(R.id.author);
-        author.setText(Html.fromHtml(post.Signature));
-        
-        TextView comments = (TextView)view.findViewById(R.id.comments);
-        comments.setText(Utils.getCommentsStringFromPost(post));
-        
-        TextView rating = (TextView)view.findViewById(R.id.rating);
-        if(groupId.equals(Commons.INBOX_POSTS_ID))
-            rating.setVisibility(View.GONE);
-        else
-            rating.setText(Utils.getRatingStringFromBaseItem(post));
-        
-        ImageView image = (ImageView)view.findViewById(R.id.image);
-        
-        if(!TextUtils.isEmpty(post.ImageUrl))
+        if(post != null)
         {
-            image.setVisibility(View.VISIBLE);
+            View view = aInflater.inflate(R.layout.post_row_view, parent, false);
             
-            imageLoader.DisplayImage(post.ImageUrl, image);
+            TextView text = (TextView)view.findViewById(R.id.text);
+            text.setText(post.Text);
+            
+            TextView author = (TextView)view.findViewById(R.id.author);
+            author.setText(Html.fromHtml(post.Signature));
+            
+            TextView comments = (TextView)view.findViewById(R.id.comments);
+            comments.setText(Utils.getCommentsStringFromPost(post));
+            
+            TextView rating = (TextView)view.findViewById(R.id.rating);
+            if(groupId.equals(Commons.INBOX_POSTS_ID) || post.voteDisabled)
+                rating.setVisibility(View.GONE);
+            else
+                rating.setText(Utils.getRatingStringFromBaseItem(post));
+            
+            ImageView image = (ImageView)view.findViewById(R.id.image);
+            
+            if(!TextUtils.isEmpty(post.ImageUrl))
+            {
+                image.setVisibility(View.VISIBLE);
+                
+                imageLoader.DisplayImage(post.ImageUrl, image);
+            }
+            
+            return view;
         }
-
-        return view;
+        else
+        {
+            return (View) aInflater.inflate(R.layout.footer_view, null);
+        }
     }
 }

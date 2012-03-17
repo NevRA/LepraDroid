@@ -2,7 +2,6 @@ package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -35,7 +34,9 @@ public class GetBlogsTask extends BaseTask
             methodOnBlogsUpdate = BlogsUpdateListener.class.getMethod("OnBlogsUpdate", argsClassesOnBlogsUpdate);
 
             methodOnBlogsUpdateBegin = BlogsUpdateListener.class.getMethod("OnBlogsUpdateBegin", argsClassesOnBlogsUpdateBegin);
-        } catch (Throwable t) {
+        } 
+        catch (Throwable t) 
+        {
             Logger.e(t);
         }
     }
@@ -173,17 +174,19 @@ public class GetBlogsTask extends BaseTask
     }
 
 
-    private void getSubBlogs(final String html, List<BaseItem> items, List<String> urls)
+    private void getSubBlogs(final String html, List<BaseItem> items,
+            List<String> urls)
     {
 
         final String subBlogRowStart = "<div class=\"subs_loaded hidden\">";
         final String subBlogRowEnd = "<div class=\"js-subs_container\">";
         int start = html.indexOf(subBlogRowStart);
         int end = html.indexOf(subBlogRowEnd);
-        Elements subDivs = Jsoup.parse(html.substring(start, end)).getElementsByClass("sub");
+        Elements subDivs = Jsoup.parse(html.substring(start, end))
+                .getElementsByClass("sub");
 
-        for (Element div : subDivs) {
-
+        for (Element div : subDivs)
+        {
             Blog blog = new Blog();
 
             Elements url = div.getElementsByTag("a");
@@ -192,25 +195,25 @@ public class GetBlogsTask extends BaseTask
 
             Elements images = div.getElementsByTag("img");
             if (!images.isEmpty())
-                blog.ImageUrl = "http://src.sencha.io/80/80/" + images.first().attr("src");
-
+                blog.ImageUrl = "http://src.sencha.io/80/80/"
+                        + images.first().attr("src");
 
             Elements title = div.getElementsByTag("h5");
             if (!title.isEmpty())
                 blog.Text = title.first().text();
 
-
             Elements author = div.getElementsByClass("creator");
             if (!author.isEmpty())
-                blog.Signature = "создатель - " + author.first().getElementsByTag("a").first().text();
+                blog.Signature = "создатель - "
+                        + author.first().getElementsByTag("a").first().text();
 
             blog.Stat = "<b>Лепро-Навигация</b>";
 
-            if (!urls.contains(blog.Url)) {
+            if (!urls.contains(blog.Url))
+            {
                 urls.add(blog.Url);
                 items.add(blog);
             }
-
         }
     }
 

@@ -1,6 +1,5 @@
 package com.home.lepradroid;
 
-
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -8,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -21,6 +22,9 @@ import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.tasks.GetPostsTask;
+import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.utils.Utils;
 
 public class PostsScreen extends BaseView implements CommentsUpdateListener, PostsUpdateListener, ImagesUpdateListener, ItemRateUpdateListener
 {
@@ -29,17 +33,21 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     private UUID        groupId;
     private Context     context;
     private String      parentTitle;
+    private String      url;
+    private int         page = 0;
+    private boolean     lastPageLoadedSuccessful = false;
 
     public PostsAdapter adapter;
     
     
-    public PostsScreen(final Context context, final UUID groupId, String parentTitle)
+    public PostsScreen(final Context context, final UUID groupId, final String url, String parentTitle)
     {                                                                            
         super(context);
         
         this.context = context;
         this.groupId = groupId;
         this.parentTitle = parentTitle;
+        this.url = url;
         
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -73,9 +81,33 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
                 }
             }
         });
+        
+        list.setOnScrollListener(new OnScrollListener()
+        {
+            public void onScrollStateChanged(AbsListView arg0, int arg1)
+            {
+            }
+
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                    int visibleItemCount, final int totalItemCount)
+            {
+                if (    visibleItemCount > 0
+                        && firstVisibleItem != 0
+                        && firstVisibleItem + visibleItemCount == totalItemCount)
+                {
+                    if (lastPageLoadedSuccessful && page < ServerWorker.Instance().getPostPagesCount(groupId) - 1)
+                    {
+                        new TaskWrapper(null, new GetPostsTask(groupId, url, page + 1, false), Utils.getString(R.string.Posts_Loading_In_Progress));
+                        adapter.addProgressElement();
+                        adapter.notifyDataSetChanged();
+                        lastPageLoadedSuccessful = false;
+                    }
+                }
+            }
+        });
     }
 
-    public void OnPostsUpdate(UUID groupId, boolean haveNewRecords)
+    public void OnPostsUpdate(UUID groupId, int page)
     {
         if(!this.groupId.equals(groupId)) return;
     	
@@ -86,20 +118,43 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
             list.setVisibility(View.VISIBLE);
         }
     	
+    	this.page = page;
+    	
         updateAdapter();
     }
     
     @Override
-    public void OnPostsUpdateBegin(UUID groupId)
+    public void OnPostsUpdateBegin(UUID groupId, int page)
     {
         if(!this.groupId.equals(groupId)) return;
         
-        progress.setVisibility(View.VISIBLE);
-        progress.setIndeterminate(true);
-        list.setVisibility(View.GONE);
+        if(page == 0)
+        {
+            progress.setVisibility(View.VISIBLE);
+            progress.setIndeterminate(true);
+            list.setVisibility(View.GONE);
+        }
         
-        updateAdapter();
+        this.page = page;
     }
+    
+    @Override
+    public void OnPostsUpdateFinished(UUID id, int page, boolean successful)
+    {
+        if(!this.groupId.equals(groupId)) return;
+        
+        this.lastPageLoadedSuccessful = successful;
+        
+        if(successful)
+        {
+            OnPostsUpdate(groupId, page);
+        }
+        else
+        {
+            adapter.removeProgressElement();
+            adapter.notifyDataSetChanged();
+        }
+    } 
 
     @Override
     protected void onLayout(boolean arg0, int arg1, int arg2, int arg3, int arg4)
@@ -164,5 +219,5 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     @Override
     public void OnItemRateUpdate(String userId, boolean successful)
     {
-    }    
+    }
 }
