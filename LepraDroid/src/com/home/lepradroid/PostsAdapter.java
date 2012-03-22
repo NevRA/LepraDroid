@@ -86,7 +86,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
-        final Post post = (Post)getItem(position);
+        Post post = (Post)getItem(position);
         LayoutInflater aInflater=LayoutInflater.from(getContext());
         
         if(post != null)
