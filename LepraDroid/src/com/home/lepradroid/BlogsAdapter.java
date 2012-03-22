@@ -63,7 +63,7 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
         
         TextView author = (TextView)view.findViewById(R.id.author);
         author.setText(Html.fromHtml(blog.Signature));
-        
+
         TextView stat = (TextView)view.findViewById(R.id.stat);
         stat.setText(Html.fromHtml(blog.Stat));
         
