@@ -21,7 +21,6 @@ import com.home.lepradroid.utils.Logger;
 
 public class GetBlogsTask extends BaseTask
 {
-    
     static final Class<?>[] argsClassesOnBlogsUpdateBegin = new Class[1];
     static final Class<?>[] argsClassesOnBlogsUpdate = new Class[1];
     static final Class<?>[] argsClassesOnBlogsUpdateFinished = new Class[2];
@@ -232,7 +231,6 @@ public class GetBlogsTask extends BaseTask
 
     private void getSubBlogs(final String html, List<BaseItem> items)
     {
-
         final String subBlogRowStart = "<div class=\"subs_loaded hidden\">";
         final String subBlogRowEnd = "<div class=\"js-subs_container\">";
         int start = html.indexOf(subBlogRowStart);
@@ -267,5 +265,4 @@ public class GetBlogsTask extends BaseTask
             items.add(blog);
         }
     }
-
 }

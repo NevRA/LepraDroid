@@ -16,7 +16,6 @@ import android.widget.ProgressBar;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
-import com.home.lepradroid.interfaces.ImagesUpdateListener;
 import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -26,7 +25,7 @@ import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
-public class PostsScreen extends BaseView implements CommentsUpdateListener, PostsUpdateListener, ImagesUpdateListener, ItemRateUpdateListener
+public class PostsScreen extends BaseView implements CommentsUpdateListener, PostsUpdateListener, ItemRateUpdateListener
 {
     private ListView    list;
     private ProgressBar progress;
@@ -169,13 +168,6 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
             adapter.updateData(ServerWorker.Instance().getPostsById(groupId, true));
             adapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public void OnImagesUpdate(UUID groupId)
-    {
-        if(!this.groupId.equals(groupId)) return;
-        adapter.notifyDataSetChanged();
     }
 
     @Override
