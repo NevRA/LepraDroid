@@ -93,9 +93,11 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             switch(pager.getCurrentItem())
             {
             case MAIN_TAB_NUM:
+                popAllTasksLikeThis(GetPostsTask.class);
                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case BLOGS_TAB_NUM:
+                popAllTasksLikeThis(GetBlogsTask.class);
                 pushNewTask(new TaskWrapper(null, new GetBlogsTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case FAVORITE_TAB_NUM:

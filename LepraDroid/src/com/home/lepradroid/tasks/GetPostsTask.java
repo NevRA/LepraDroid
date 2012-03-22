@@ -260,6 +260,8 @@ public class GetPostsTask extends BaseTask
                     post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
                 }
                 
+                if(isCancelled()) break;
+                
                 items.add(post);
                 if(num%5 == 0 || lastElement)
                 {
@@ -270,15 +272,18 @@ public class GetPostsTask extends BaseTask
                     items.clear();
                 }
             }
-            while (lastElement == false);   
+            while (lastElement == false); 
             
-            if(!items.isEmpty())
+            if(!isCancelled())
             {
-                ServerWorker.Instance().addNewPosts(groupId, items);
-                notifyAboutPostsUpdateFinished(true);
+                if(!items.isEmpty())
+                {
+                    ServerWorker.Instance().addNewPosts(groupId, items);
+                    notifyAboutPostsUpdateFinished(true);
+                }
+                else
+                    notifyAboutPostsUpdateFinished(receivedPosts);
             }
-            else
-                notifyAboutPostsUpdateFinished(receivedPosts);
         }
         catch (Throwable t)
         {

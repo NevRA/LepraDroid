@@ -422,12 +422,26 @@ public class ServerWorker
         }
     }
 
-    public void addNewPosts(UUID groupId, ArrayList<BaseItem> posts)
+    public void addNewPosts(UUID groupId, ArrayList<BaseItem> newPosts)
     {
         write.lock();
         try
         {
-            getPostsById(groupId, false).addAll(posts);
+            ArrayList<BaseItem> oldPosts = getPostsById(groupId, false);
+            if(groupId.equals(Commons.BLOGS_POSTS_ID))
+            {
+                for(BaseItem post : newPosts)
+                {
+                    int pos = 0;
+                    for(; pos < oldPosts.size(); ++pos)
+                        if(oldPosts.get(pos).Url.equals(post.Url))
+                            break;
+                    if(pos == oldPosts.size())
+                        oldPosts.add(post);
+                }
+            }
+            else
+                oldPosts.addAll(newPosts);
         }
         finally
         {

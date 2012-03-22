@@ -21,19 +21,42 @@ import com.home.lepradroid.utils.Logger;
 
 public class GetBlogsTask extends BaseTask
 {
+    
+    static final Class<?>[] argsClassesOnBlogsUpdateBegin = new Class[1];
     static final Class<?>[] argsClassesOnBlogsUpdate = new Class[1];
-    static final Class<?>[] argsClassesOnBlogsUpdateBegin = new Class[0];
-    static Method methodOnBlogsUpdate;
+    static final Class<?>[] argsClassesOnBlogsUpdateFinished = new Class[2];
+    
     static Method methodOnBlogsUpdateBegin;
+    static Method methodOnBlogsUpdate;
+    static Method methodOnBlogsUpdateFinished;
+    
+    private boolean refresh = true;
+    private int page = 0;
+    
+    public GetBlogsTask()
+    {
+        refresh = true;
+    }
+    
+    public GetBlogsTask(int page)
+    {       
+        this.refresh = false;
+        this.page = page;
+    }
 
     static
     {
         try
         {
-            argsClassesOnBlogsUpdate[0] = boolean.class;
-            methodOnBlogsUpdate = BlogsUpdateListener.class.getMethod("OnBlogsUpdate", argsClassesOnBlogsUpdate);
-
+            argsClassesOnBlogsUpdateBegin[0] = int.class;
             methodOnBlogsUpdateBegin = BlogsUpdateListener.class.getMethod("OnBlogsUpdateBegin", argsClassesOnBlogsUpdateBegin);
+            
+            argsClassesOnBlogsUpdate[0] = int.class;
+            methodOnBlogsUpdate = BlogsUpdateListener.class.getMethod("OnBlogsUpdate", argsClassesOnBlogsUpdate);
+            
+            argsClassesOnBlogsUpdateFinished[0] = int.class;
+            argsClassesOnBlogsUpdateFinished[1] = boolean.class;
+            methodOnBlogsUpdateFinished = BlogsUpdateListener.class.getMethod("OnBlogsUpdateFinished", argsClassesOnBlogsUpdateFinished);            
         } 
         catch (Throwable t) 
         {
@@ -45,7 +68,8 @@ public class GetBlogsTask extends BaseTask
     public void notifyAboutBlogsUpdateBegin()
     {
         final List<BlogsUpdateListener> listeners = ListenersWorker.Instance().getListeners(BlogsUpdateListener.class);
-        final Object args[] = new Object[0];
+        final Object args[] = new Object[1];
+        args[0] = page;
 
         for (BlogsUpdateListener listener : listeners)
         {
@@ -58,11 +82,25 @@ public class GetBlogsTask extends BaseTask
     {
         final List<BlogsUpdateListener> listeners = ListenersWorker.Instance().getListeners(BlogsUpdateListener.class);
         final Object args[] = new Object[1];
-        args[0] = true;
+        args[0] = page;
 
         for (BlogsUpdateListener listener : listeners)
         {
             publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]>(methodOnBlogsUpdate, args)));
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void notifyAboutBlogsUpdateFinished(boolean successful)
+    {
+        final List<BlogsUpdateListener> listeners = ListenersWorker.Instance().getListeners(BlogsUpdateListener.class);
+        final Object args[] = new Object[2];
+        args[0] = page;
+        args[1] = successful;
+
+        for (BlogsUpdateListener listener : listeners)
+        {
+            publishProgress(new Pair<UpdateListener, Pair<Method, Object[]>>(listener, new Pair<Method, Object[]>(methodOnBlogsUpdateFinished, args)));
         }
     }
 
@@ -71,21 +109,25 @@ public class GetBlogsTask extends BaseTask
     {
         final long startTime = System.nanoTime();
         final ArrayList<BaseItem> items = new ArrayList<BaseItem>();
-        final ArrayList<String> urls = new ArrayList<String>();
 
         try
         {
             int num = -1;
-
-            ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
+            
+            if(refresh)
+                ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
+            
             notifyAboutBlogsUpdateBegin();
+            
+            final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL + "subscribers/" + Integer.valueOf(page + 1));
 
-            final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL);
-            getSubBlogs(html, items, urls);
-
+            if(refresh)
+                getSubBlogs(html, items);
+            
             final String blogRow = "<tr class=\"jj_row";
             int currentPos = 0;
             boolean lastElement = false;
+            boolean receivedBlogs = false;
 
             do
             {
@@ -104,11 +146,16 @@ public class GetBlogsTask extends BaseTask
 
                 currentPos = end;
 
-                final Element element = Jsoup.parse(html.substring(start, end));
+                final Element content = Jsoup.parse(html.substring(start, end));
+                if(page == 0 && lastElement)
+                {
+                    Element element = content.getElementById("total_pages");
+                    ServerWorker.Instance().addPostPagesCount(Commons.BLOGS_POSTS_ID, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
+                }
 
                 Blog blog = new Blog();
 
-                Elements logos = element.getElementsByClass("jj_logo");
+                Elements logos = content.getElementsByClass("jj_logo");
                 if (!logos.isEmpty())
                 {
                     Element logo = logos.first();
@@ -122,35 +169,34 @@ public class GetBlogsTask extends BaseTask
                         blog.ImageUrl = "http://src.sencha.io/80/80/" + images.first().attr("src");
                 }
 
-                Elements title = element.getElementsByTag("h5");
+                Elements title = content.getElementsByTag("h5");
                 if (!title.isEmpty())
                     blog.Text = title.first().text();
 
-                Elements author = element.getElementsByClass("jj_creator");
+                Elements author = content.getElementsByClass("jj_creator");
                 if (!author.isEmpty())
                 {
                     blog.Author = author.first().getElementsByTag("a").first().text();
                     blog.Signature = author.first().text();
                 }
 
-                Elements stat = element.getElementsByClass("jj_stat_table");
+                Elements stat = content.getElementsByClass("jj_stat_table");
                 if (!stat.isEmpty())
                 {
                     Elements div = stat.first().getElementsByTag("div");
                     if (div.size() >= 3)
                     {
-                        // TODO text from resources 
                         blog.Stat = "<b>" + div.get(0).text() + "</b>" + " постов / " + "<b>" + div.get(1).text() + "</b>" + " комментариев / " + "<b>" + div.get(2).text() + "</b>" + " подписчиков";
                     }
                 }
-                if (!urls.contains(blog.Url))
-                {
-                    urls.add(blog.Url);
-                    items.add(blog);
-                }
+                
+                items.add(blog);
+                
+                if(isCancelled()) break;
 
                 if (num % 5 == 0 || lastElement)
                 {
+                    receivedBlogs = true;
                     ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
                     notifyAboutBlogsUpdate();
 
@@ -158,15 +204,25 @@ public class GetBlogsTask extends BaseTask
                 }
             }
             while (lastElement == false);
-        } catch (Throwable t)
+            
+            if(!isCancelled()) 
+            {
+                if (!items.isEmpty())
+                {
+                    ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
+                    notifyAboutBlogsUpdateFinished(true);
+                }
+                else           
+                    notifyAboutBlogsUpdateFinished(receivedBlogs);
+            }
+        } 
+        catch (Throwable t)
         {
             setException(t);
-        } finally
+            notifyAboutBlogsUpdateFinished(false);
+        } 
+        finally
         {
-            if (!items.isEmpty())
-                ServerWorker.Instance().addNewPosts(Commons.BLOGS_POSTS_ID, items);
-            notifyAboutBlogsUpdate();
-
             Logger.d("GetBlogsTask time:" + Long.toString(System.nanoTime() - startTime));
         }
 
@@ -174,8 +230,7 @@ public class GetBlogsTask extends BaseTask
     }
 
 
-    private void getSubBlogs(final String html, List<BaseItem> items,
-            List<String> urls)
+    private void getSubBlogs(final String html, List<BaseItem> items)
     {
 
         final String subBlogRowStart = "<div class=\"subs_loaded hidden\">";
@@ -208,12 +263,8 @@ public class GetBlogsTask extends BaseTask
                         + author.first().getElementsByTag("a").first().text();
 
             blog.Stat = "<b>Лепро-Навигация</b>";
-
-            if (!urls.contains(blog.Url))
-            {
-                urls.add(blog.Url);
-                items.add(blog);
-            }
+            
+            items.add(blog);
         }
     }
 

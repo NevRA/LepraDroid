@@ -7,10 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.BlogsUpdateListener;
@@ -18,13 +21,18 @@ import com.home.lepradroid.interfaces.ImagesUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.tasks.GetBlogsTask;
+import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.utils.Utils;
 
 public class BlogsScreen extends BaseView implements BlogsUpdateListener, ImagesUpdateListener
 {
-    private ListView list;
-    private ProgressBar progress;
-    public BlogsAdapter adapter;
-    private Context context;
+    private ListView        list;
+    private ProgressBar     progress;
+    public  BlogsAdapter    adapter;
+    private Context         context;
+    private int             page = 0;
+    private boolean         lastPageLoadedSuccessful = false;
 
     public BlogsScreen(final Context context)
     {
@@ -66,6 +74,32 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
                 }
             }
         });
+        
+        list.setOnScrollListener(new OnScrollListener()
+        {
+            public void onScrollStateChanged(AbsListView arg0, int arg1)
+            {
+            }
+
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                    int visibleItemCount, final int totalItemCount)
+            {
+                if (    visibleItemCount > 0
+                        && firstVisibleItem != 0
+                        && firstVisibleItem + visibleItemCount == totalItemCount)
+                {
+                    if (lastPageLoadedSuccessful && page < ServerWorker.Instance().getPostPagesCount(Commons.BLOGS_POSTS_ID) - 1)
+                    {
+                        BaseActivity activity = (BaseActivity) context;
+                        activity.popAllTasksLikeThis(GetBlogsTask.class);
+                        activity.pushNewTask(new TaskWrapper(null, new GetBlogsTask(page + 1), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                        adapter.addProgressElement();
+                        adapter.notifyDataSetChanged();
+                        lastPageLoadedSuccessful = false;
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -75,17 +109,20 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
     }
 
     @Override
-    public void OnBlogsUpdateBegin()
+    public void OnBlogsUpdateBegin(int page)
     {
-        progress.setVisibility(View.VISIBLE);
-        progress.setIndeterminate(true);
-        list.setVisibility(View.GONE);
+        if(page == 0)
+        {
+            progress.setVisibility(View.VISIBLE);
+            progress.setIndeterminate(true);
+            list.setVisibility(View.GONE);
+        }
         
-        updateAdapter();
+        this.page = page;
     }
     
     @Override
-    public void OnBlogsUpdate(boolean haveNewRecords)
+    public void OnBlogsUpdate(int page)
     { 
         if(progress.getVisibility() == View.VISIBLE)
         {
@@ -93,8 +130,26 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
             progress.setIndeterminate(false);
             list.setVisibility(View.VISIBLE);
         }
+
+        this.page = page;
         
         updateAdapter();
+    }
+    
+    @Override
+    public void OnBlogsUpdateFinished(int page, boolean successful)
+    { 
+        this.lastPageLoadedSuccessful = successful;
+        
+        if(successful)
+        {
+            OnBlogsUpdate(page);
+        }
+        else
+        {
+            adapter.removeProgressElement();
+            adapter.notifyDataSetChanged();
+        }
     }
     
     private void updateAdapter()
@@ -113,6 +168,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener, Images
     @Override
     public void OnExit()
     {
+        context = null;
         adapter.clear();
         ListenersWorker.Instance().unregisterListener(this);
     } 
