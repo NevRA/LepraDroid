@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
@@ -95,7 +96,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
             return;
         
         userId = data.Id;
-        name.setText(data.Name);
+        name.setText(Html.fromHtml("<b>" + data.Name + " (" + data.UserName + ")" + "</b>"));
         ego.setText(data.Ego);
         rating.setText(data.Rating.toString());
         imageLoader.DisplayImage(data.ImageUrl, userPic, R.drawable.ic_user);
