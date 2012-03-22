@@ -23,7 +23,8 @@ import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
-public class PostView extends BaseView implements ItemRateUpdateListener {
+public class PostView extends BaseView implements ItemRateUpdateListener 
+{
     private Context context;
     private UUID    groupId;
     private UUID    id;
@@ -136,6 +137,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener {
     }
 
     @Override
-    public void OnItemRateUpdate(String userId, boolean successful) {
+    public void OnItemRateUpdate(String userId, boolean successful) 
+    {
     }
 }

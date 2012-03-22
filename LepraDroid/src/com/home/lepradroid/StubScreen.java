@@ -1,23 +1,24 @@
 package com.home.lepradroid;
 
+import java.util.UUID;
+
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.interfaces.PostsUpdateListener;
+import com.home.lepradroid.interfaces.PostUpdateListener;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetPostTask;
+import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.LinksCatcher;
 
-import java.util.UUID;
-
-
-public class StubScreen extends BaseActivity implements PostsUpdateListener
+public class StubScreen extends BaseActivity implements PostUpdateListener
 {
-
     private String url;
     private Integer linkType;
+    private UUID postId = UUID.randomUUID();
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -30,30 +31,16 @@ public class StubScreen extends BaseActivity implements PostsUpdateListener
 
         if (url != null && linkType != null && linkType == LinksCatcher.LINK_POST)
         {
-
-            new GetPostTask(Commons.OTHER_POSTS_ID, url).execute();
-
+            pushNewTask(new TaskWrapper(null, new GetPostTask(Commons.OTHER_POSTS_ID, postId, url), ""));
         }
         else
         {
             finish();
         }
-
-    }
-
-
-    @Override
-    public void OnPostsUpdateBegin(UUID id, int page)
-    {
     }
 
     @Override
-    public void OnPostsUpdate(UUID id, int page)
-    {
-    }
-
-    @Override
-    public void OnPostsUpdateFinished(UUID id, int page, boolean successful)
+    public void OnPostUpdateFinished(UUID postId, boolean successful)
     {
         if (!successful)
             finish();
