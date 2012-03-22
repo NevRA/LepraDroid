@@ -21,6 +21,7 @@ import com.home.lepradroid.interfaces.ExitListener;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
@@ -181,6 +182,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             
             WebView webView = (WebView)convertView.findViewById(R.id.text);
             webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            webView.setWebViewClient(new LinksCatcher());
             WebSettings webSettings = webView.getSettings();
             webSettings.setDefaultFontSize(13);
             String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
