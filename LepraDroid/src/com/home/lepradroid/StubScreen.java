@@ -47,7 +47,7 @@ public class StubScreen extends BaseActivity implements PostUpdateListener
 
         if (linkType == LinksCatcher.LINK_POST)
         {
-            BaseItem post = ServerWorker.Instance().getPostsById(Commons.OTHER_POSTS_ID, false).get(0);
+            BaseItem post = ServerWorker.Instance().getPostById(Commons.OTHER_POSTS_ID, postId);
             Intent intent = new Intent(this, PostScreen.class);
             intent.putExtra("groupId", Commons.OTHER_POSTS_ID.toString());
             intent.putExtra("id", post.Id.toString());

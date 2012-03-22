@@ -182,7 +182,7 @@ public class GetCommentsTask extends BaseTask
                 // TODO CHANGE TO NORMAL PARSING
                 
                 stream = new BufferedInputStream(ServerWorker.Instance().getContentStream(post.Url), BUFFER_SIZE);
-                file = new FileCache(LepraDroidApplication.getInstance()).getFile("comments");
+                file = new FileCache(LepraDroidApplication.getInstance()).getFile(post.Id.toString() + ".comments");
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] chars = new byte[BUFFER_SIZE];
                 int len = 0;

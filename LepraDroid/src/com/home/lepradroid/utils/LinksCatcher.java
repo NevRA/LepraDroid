@@ -15,8 +15,8 @@ public class LinksCatcher extends WebViewClient
     public static final int LINK_COMMENT = 2;
     public static final int LINK_PROFILE = 3;
 
-    private static final String PATTERN_POST = "http://.*leprosorium.ru/comments/\\d{7}(#new)?";
-    private static final String PATTERN_COMMENT = "http://.*leprosorium.ru/comments/\\d{7}#\\d{8}";
+    private static final String PATTERN_POST = "http://.*leprosorium.ru/comments/\\d{5,8}(#new)?";
+    private static final String PATTERN_COMMENT = "http://.*leprosorium.ru/comments/\\d{5,8}#\\d{5,8}";
     private static final String PATTERN_PROFILE = "http://leprosorium.ru/users/.*";
 
     @Override
