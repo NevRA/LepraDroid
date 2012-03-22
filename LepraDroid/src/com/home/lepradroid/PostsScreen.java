@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
@@ -96,7 +97,9 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
                 {
                     if (lastPageLoadedSuccessful && page < ServerWorker.Instance().getPostPagesCount(groupId) - 1)
                     {
-                        new TaskWrapper(null, new GetPostsTask(groupId, url, page + 1, false), Utils.getString(R.string.Posts_Loading_In_Progress));
+                        BaseActivity activity = (BaseActivity) context;
+                        activity.popAllTasksLikeThis(GetPostsTask.class);
+                        activity.pushNewTask(new TaskWrapper(null, new GetPostsTask(groupId, url, page + 1, false), Utils.getString(R.string.Posts_Loading_In_Progress)));
                         adapter.addProgressElement();
                         adapter.notifyDataSetChanged();
                         lastPageLoadedSuccessful = false;
@@ -173,6 +176,8 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     @Override
     public void OnExit()
     {
+        context = null;
+        adapter.clear();
         ListenersWorker.Instance().unregisterListener(this);
     }
 
