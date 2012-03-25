@@ -143,6 +143,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
                 }
             }
         });
+        
+        list.setFadingEdgeLength(0);
 
         if (post.TotalComments <= Commons.MAX_COMMENTS_COUNT)
         {

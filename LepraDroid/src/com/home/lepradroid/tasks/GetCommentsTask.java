@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -24,6 +26,7 @@ import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.FileCache;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
@@ -36,6 +39,8 @@ public class GetCommentsTask extends BaseTask
     private UUID postId;
     private int commentsCout = 0;
     private String postAuthor = "";
+    private Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
+    private String userName = "";
     
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
@@ -172,6 +177,7 @@ public class GetCommentsTask extends BaseTask
             if(post == null)
                 return null; // TODO message
             
+            userName = SettingsWorker.Instance().loadUserName();
             postAuthor = post.Author;
             
             final String pref = "<div id=\"XXXXXXXX\" ";
@@ -319,11 +325,18 @@ public class GetCommentsTask extends BaseTask
     {
         Element content = Jsoup.parse(Utils.replaceBadHtmlTags(html));
         Element element = content.getElementsByClass("dt").first();
-        
+        Element root = content.getElementsByTag("div").first();
+
         Comment comment = new Comment();
-        comment.Pid = content.getElementsByTag("div").first().id();
+        comment.Pid = root.id();
         comment.Text = element.text();
         comment.Html = element.html();
+        
+        Matcher level = patternLevel.matcher(root.className());
+        if(level.find())
+        {
+            comment.Level = Integer.valueOf(level.group(1));
+        }
         
         if(element.parent().attr("class").contains("new"))
             comment.IsNew = true;
@@ -356,8 +369,14 @@ public class GetCommentsTask extends BaseTask
             comment.Author = a.get(1).text();
             if(postAuthor.equals(comment.Author))
                comment.IsPostAuthor = true;
-               
-            comment.Signature = author.first().text().split("\\|")[0].replace(comment.Author, "<b>" + (comment.IsPostAuthor ? "<font color=\"red\">" : "") + comment.Author + (comment.IsPostAuthor ? "</font>" : "") + "</b>");
+            
+            String color = "black";
+            if(comment.IsPostAuthor)
+                color = "red";
+            else if (comment.Author.equals(userName))
+                color = "#3270FF";
+            
+            comment.Signature = author.first().text().split("\\|")[0].replace(comment.Author, "<b>" + "<font color=\"" + color + "\">" + comment.Author + "</font>" + "</b>");
         }
         
         Elements vote = content.getElementsByClass("vote");

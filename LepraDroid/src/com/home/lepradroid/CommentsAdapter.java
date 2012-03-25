@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Html;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -13,10 +14,12 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.ExitListener;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
@@ -33,6 +36,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     private int                 commentPos          = -1;
     private boolean             navigationTurnedOn  = true;
     private ListView            listView            = null;
+    private int                 commentLevelIndicatorLength
+                                                    = 0;
       
     public CommentsAdapter(ListView parentListView, Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
@@ -42,6 +47,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         this.listView = parentListView;
         //this.postId = postId;
         //this.groupId = groupId;
+        
+        commentLevelIndicatorLength = getContext().getResources().getDimensionPixelSize(R.dimen.comment_level_padding_left);
         
         gestureDetector = new GestureDetector(
                 new GestureDetector.SimpleOnGestureListener()
@@ -166,9 +173,18 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         if(comment != null)
         {
             convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
-            CommentRootLayout border = (CommentRootLayout)convertView.findViewById(R.id.root);
-            border.setIsNew(comment.IsNew);
             
+            FrameLayout root = (FrameLayout)convertView.findViewById(R.id.root);
+            CommentRootLayout content = (CommentRootLayout)convertView.findViewById(R.id.content);
+            int effectiveLevel = Math.min(Commons.MAX_COMMENT_LEVEL, comment.Level);
+            content.setLevel(effectiveLevel);
+            
+            if(effectiveLevel > 0)
+            {
+                root.setPadding(root.getPaddingLeft() + (effectiveLevel * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
+                content.setPadding(content.getPaddingLeft() * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
+            }
+
             RelativeLayout webViewLayout = (RelativeLayout)convertView.findViewById(R.id.main);
             ViewGroup.LayoutParams params = webViewLayout.getLayoutParams();
             if(!navigationTurnedOn || comment.IsExpand)
@@ -203,6 +219,13 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     return gestureDetector.onTouchEvent(event);
                 }
             });
+            
+            if(comment.IsNew)
+            {
+                webView.setBackgroundColor(0x00000000);
+                root.setBackgroundColor(Color.parseColor("#FFE6E6E6"));
+                content.setBackgroundColor(Color.parseColor("#FFE6E6E6"));
+            }
         }
         else
         {

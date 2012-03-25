@@ -2,4 +2,5 @@
 <resources>
  <dimen name="comment_webview_height">60dip</dimen>
  <dimen name="comment_author_layout_padding_top">4dip</dimen>
+ <dimen name="comment_level_padding_left">5dip</dimen>
 </resources>
