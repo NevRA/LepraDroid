@@ -22,6 +22,7 @@ public class PostCommentTask extends BaseTask
     private String pid;
     private String comment;
     private UUID   id;
+    private int    level;
     
     static final Class<?>[] argsClassesOnAddedCommentUpdate = new Class[2];
     static Method methodOnAddedCommentUpdate;
@@ -39,13 +40,14 @@ public class PostCommentTask extends BaseTask
         }        
     }
     
-    public PostCommentTask(UUID id, String wtf, String replyTo, String pid, String comment)
+    public PostCommentTask(UUID id, String wtf, String replyTo, String pid, int level, String comment)
     {
         this.id = id;
         this.wtf = wtf;
         this.replyTo = replyTo;
         this.pid = pid;
         this.comment = comment;
+        this.level = level;
     }
     
     @SuppressWarnings("unchecked")
@@ -69,6 +71,7 @@ public class PostCommentTask extends BaseTask
         {
             final JSONObject json = new JSONObject(ServerWorker.Instance().postComment(wtf, replyTo, pid, comment)).getJSONObject("new_comment");
             final Comment comment = new Comment();
+            comment.Level = level;
             comment.Author = json.getString("user_login");
             comment.ParentPid = replyTo;
             comment.Pid = json.getString("comment_id");

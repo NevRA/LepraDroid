@@ -1,9 +1,14 @@
 package com.home.lepradroid.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
+import java.util.zip.GZIPInputStream;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.HttpEntityWrapper;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,6 +33,31 @@ import com.home.lepradroid.tasks.TaskWrapper;
 
 public class Utils
 {
+    public static class GzipDecompressingEntity extends HttpEntityWrapper
+    {
+        public GzipDecompressingEntity(final HttpEntity entity)
+        {
+            super(entity);
+        }
+
+        @Override
+        public InputStream getContent() throws IOException,
+                IllegalStateException
+        {
+            // the wrapped entity's getContent() decides about repeatability
+            InputStream wrappedin = wrappedEntity.getContent();
+
+            return new GZIPInputStream(wrappedin);
+        }
+
+        @Override
+        public long getContentLength()
+        {
+            // length of ungzipped content is not known
+            return -1;
+        }
+    }
+    
     public static String getString(Context context, int resourseId)
     {
         return context.getResources().getString(resourseId);
@@ -165,7 +195,7 @@ public class Utils
             {
                 final String value = input.getText().toString(); 
                 
-                new TaskWrapper(null, new PostCommentTask(post.Id, post.commentsWtf, comment != null ? comment.Pid : "", post.Pid, value), null);
+                new TaskWrapper(null, new PostCommentTask(post.Id, post.commentsWtf, comment != null ? comment.Pid : "", post.Pid, comment != null ? comment.Level + 1 : 0, value), null);
             }
         }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
         {

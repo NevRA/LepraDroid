@@ -3,12 +3,14 @@ package com.home.lepradroid.serverworker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import com.home.lepradroid.objects.Author;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,10 +41,12 @@ import android.util.Pair;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.RateType;
 import com.home.lepradroid.commons.Commons.RateValueType;
+import com.home.lepradroid.objects.Author;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
 
 public class ServerWorker
 {
@@ -99,11 +103,11 @@ public class ServerWorker
         SettingsWorker.Instance().clearCookies();
         SettingsWorker.Instance().clearUserInfo();
     }
-
+    
     public HttpEntity getContentEntity(String url) throws Exception
     {
         final HttpGet httpGet = new HttpGet(url);
-        //httpGet.setHeader("charset", "utf-8");
+        httpGet.addHeader("Accept-Encoding", "gzip");
 
         try
         {
@@ -118,6 +122,16 @@ public class ServerWorker
 
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
         final HttpResponse response = client.execute(httpGet);
+        
+        Header[] contentEncodings = response.getHeaders("Content-Encoding");
+        if(contentEncodings != null)
+            for(Header header : contentEncodings)
+            {
+                if (header.getValue().equalsIgnoreCase("gzip")) 
+                {
+                    return new Utils.GzipDecompressingEntity(response.getEntity());
+                }
+            }
 
         return response.getEntity();
     }
