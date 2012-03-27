@@ -14,13 +14,13 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_launcher"
                 android:scaleType="center" />
-            <TextView android:textSize="10.5dip" android:textStyle="bold"
+            <TextView android:textSize="7.5dip" android:textStyle="bold"
                 android:textColor="#ffffffff" android:gravity="center"
                 android:layout_gravity="bottom|right|center"
                 android:id="@+id/widget_counter"
                 android:background="@android:drawable/ic_notification_overlay"
                 android:layout_width="21dip" 
-                android:layout_height="20dip" 
+                android:layout_height="19dip" 
                 android:visibility="invisible"
                 android:singleLine="true"
                 android:shadowColor="#ff000000" android:shadowRadius="1.0"/>

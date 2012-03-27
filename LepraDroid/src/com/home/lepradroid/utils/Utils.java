@@ -17,8 +17,10 @@ import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.Selection;
 import android.text.Spanned;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RemoteViews;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
@@ -237,5 +239,11 @@ public class Utils
     public static String replaceBadHtmlTags(String html)
     {
         return html.replaceAll("(&#150;|&#151;)", "-").replaceAll("(&#133;)", "...");
+    }
+    
+    public static void updateWidget(RemoteViews remoteViews, int counter)
+    {
+        remoteViews.setViewVisibility(R.id.widget_counter, counter == 0 ? View.INVISIBLE : View.VISIBLE);
+        remoteViews.setTextViewText(R.id.widget_counter, counter < 1000 ? Integer.toString(counter) : ">1K");
     }
 }

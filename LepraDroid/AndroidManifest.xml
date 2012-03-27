@@ -21,6 +21,7 @@
 	        <meta-data android:name="android.appwidget.provider"
 	                android:resource="@xml/widget_provider" />
 		</receiver>
+		<service android:name=".UpdateWidgetService"></service>
         <activity
             android:name=".Main"
             android:theme="@style/StyledIndicators"
