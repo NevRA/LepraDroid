@@ -16,6 +16,7 @@ import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetBlogsTask;
 import com.home.lepradroid.tasks.GetMainPagesTask;
+import com.home.lepradroid.tasks.GetNewItemsCountTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
@@ -62,6 +63,8 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        new GetNewItemsCountTask(this).execute();
         
         createTabs();
         
