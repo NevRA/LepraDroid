@@ -244,6 +244,6 @@ public class Utils
     public static void updateWidget(RemoteViews remoteViews, int counter)
     {
         remoteViews.setViewVisibility(R.id.widget_counter, counter == 0 ? View.INVISIBLE : View.VISIBLE);
-        remoteViews.setTextViewText(R.id.widget_counter, counter < 1000 ? Integer.toString(counter) : ">1K");
+        remoteViews.setTextViewText(R.id.widget_counter, Integer.toString(counter));
     }
 }
