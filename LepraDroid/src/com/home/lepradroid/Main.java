@@ -16,7 +16,7 @@ import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetBlogsTask;
 import com.home.lepradroid.tasks.GetMainPagesTask;
-import com.home.lepradroid.tasks.GetNewItemsCountTask;
+import com.home.lepradroid.tasks.UpdateBadgeCounterTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
@@ -64,15 +64,22 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        new GetNewItemsCountTask(this).execute();
+        new UpdateBadgeCounterTask().execute();
         
-        createTabs();
-        
-        if(!SettingsWorker.Instance().IsLogoned())
-            showLogonScreen();
-        else
+        try
         {
-            pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            createTabs();
+
+            if(!SettingsWorker.Instance().IsLogoned())
+                showLogonScreen();
+            else
+            {
+                pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            }
+        }
+        catch (Exception e)
+        {
+            // TODO
         }
     }
     
@@ -216,6 +223,8 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         {
             profile.setUserName(SettingsWorker.Instance().loadUserName());
             pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            
+            new UpdateBadgeCounterTask().execute();
         }
     }
     
@@ -236,6 +245,8 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         cleanInitState();
         showLogonScreen();
         titleIndicator.setCurrentItem(0);
+        
+        new UpdateBadgeCounterTask().execute();
     }
     
     private void showLogonScreen()

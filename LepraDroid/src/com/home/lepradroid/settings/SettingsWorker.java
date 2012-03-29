@@ -13,7 +13,6 @@ import com.home.lepradroid.utils.Logger;
 public class SettingsWorker
 {
     private static volatile SettingsWorker instance;
-    private String cookie                      = "";
     private static final String COOKIES        = "cookies_pref";
     private static final String USER_NAME      = "username_pref";
     private static final String VOTE_WTF       = "votewtf_pref";
@@ -116,19 +115,17 @@ public class SettingsWorker
     
     public void saveCookies(Pair<String, String> auth) throws Exception
     {
-        this.cookie = auth.first + ";" + auth.second;
-        
-        saveString(COOKIES, cookie);
+        saveString(COOKIES, auth.first + ";" + auth.second);
     }
     
-    public boolean IsLogoned()
+    public boolean IsLogoned() throws Exception
     {
-        return (!TextUtils.isEmpty(cookie));
+        return (loadCookie() != null);
     }
     
     public Pair<String, String> loadCookie() throws Exception
     {
-        cookie = loadString(COOKIES);
+        String cookie = loadString(COOKIES);
         if(TextUtils.isEmpty(cookie))
             return null;
         

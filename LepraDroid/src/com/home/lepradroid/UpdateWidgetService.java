@@ -6,9 +6,12 @@ import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
+import android.util.Pair;
 import android.widget.RemoteViews;
 
-import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.UpdateBadgeCounterTask;
+import com.home.lepradroid.utils.Badge;
 import com.home.lepradroid.utils.Utils;
 
 public class UpdateWidgetService extends Service
@@ -37,8 +40,13 @@ public class UpdateWidgetService extends Service
                 
                 PendingIntent pendIntent = PendingIntent.getActivity(getApplicationContext(), 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                int counter = ServerWorker.Instance().getNewItemsCount();
-                Utils.updateWidget(remoteViews, counter);
+                Badge badge;
+                if(SettingsWorker.Instance().IsLogoned())
+                    badge = UpdateBadgeCounterTask.GetItemsCount();
+                else
+                    badge = new Badge(new Pair<Integer, Integer>(0, 0), new Pair<Integer, Integer>(0, 0));
+                
+                Utils.updateWidget(remoteViews, badge);
                 remoteViews.setOnClickPendingIntent(R.id.widget, pendIntent);
                 
                 appWidgetManager.updateAppWidget(widgetId, remoteViews);

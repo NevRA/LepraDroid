@@ -34,7 +34,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
 
 import android.text.TextUtils;
 import android.util.Pair;
@@ -240,14 +239,14 @@ public class ServerWorker
         return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
     
-    public int getNewItemsCount() throws Exception
+    /*public int getNewItemsCount() throws Exception
     {
         JSONObject json = new JSONObject(ServerWorker.Instance().getContent(Commons.LEPROPANEL_URL));
         int count = Integer.valueOf(json.getString("inboxunreadcomms"));
         count += Integer.valueOf(json.getString("myunreadcomms"));
         
         return count;
-    }
+    }*/
 
     public String getLoginCode()
     {

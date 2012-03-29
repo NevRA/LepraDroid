@@ -241,9 +241,9 @@ public class Utils
         return html.replaceAll("(&#150;|&#151;)", "-").replaceAll("(&#133;)", "...");
     }
     
-    public static void updateWidget(RemoteViews remoteViews, int counter)
+    public static void updateWidget(RemoteViews remoteViews, Badge badge)
     {
-        remoteViews.setViewVisibility(R.id.widget_counter, counter == 0 ? View.INVISIBLE : View.VISIBLE);
-        remoteViews.setTextViewText(R.id.widget_counter, Integer.toString(counter));
+        remoteViews.setViewVisibility(R.id.widget_counter, badge.isNoNewItems() ? View.INVISIBLE : View.VISIBLE);
+        remoteViews.setTextViewText(R.id.widget_counter, badge.ToString());
     }
 }

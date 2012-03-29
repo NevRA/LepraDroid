@@ -315,6 +315,8 @@ public class GetCommentsTask extends BaseTask
             if(!isCancelled())
                 notifyAboutCommentsUpdateFinished();
             
+            new UpdateBadgeCounterTask().execute();
+            
             Logger.d("GetCommentsTask time:" + Long.toString(System.nanoTime() - startTime));
         }
    
