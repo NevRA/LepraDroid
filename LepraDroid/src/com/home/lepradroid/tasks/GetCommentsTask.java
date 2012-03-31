@@ -249,9 +249,9 @@ public class GetCommentsTask extends BaseTask
                         {
                             Elements wtf = commentsForm.getElementsByAttributeValue("name", "wtf");
                             if(!wtf.isEmpty())
-                            {
                                 post.commentsWtf = wtf.attr("value");
-                            }
+                            else
+                                continue;
                             
                             header = null;
                         }
