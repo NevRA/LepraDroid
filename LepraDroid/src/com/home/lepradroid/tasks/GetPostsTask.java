@@ -194,9 +194,7 @@ public class GetPostsTask extends BaseTask
                 
                 Element element = content.getElementsByClass("dt").first();
 
-                String text = element.text();
                 Post post = new Post();
-                post.Text = TextUtils.isEmpty(text) ? "..." : text;
                 post.Html = element.html();
                 
                 Elements images = element.getElementsByTag("img");
@@ -206,17 +204,19 @@ public class GetPostsTask extends BaseTask
                     
                     for (Element image : images)
                     {
-                        String width = image.attr("width");
-                        if(!TextUtils.isEmpty(width))
-                            post.Html = post.Html.replace("width=\"" + width + "\"", "");
-                        
-                        String height = image.attr("height");
-                        if(!TextUtils.isEmpty(height))
-                            post.Html = post.Html.replace("height=\"" + height + "\"", "");
-
                         String src = image.attr("src");
                         if(!TextUtils.isEmpty(src))
+                        {
+                            String width = image.attr("width");
+                            if(!TextUtils.isEmpty(width))
+                                post.Html = post.Html.replace("width=\"" + width + "\"", "");
+                            
+                            String height = image.attr("height");
+                            if(!TextUtils.isEmpty(height))
+                                post.Html = post.Html.replace("height=\"" + height + "\"", "");
+
                             post.Html = post.Html.replace(src, "http://src.sencha.io/303/303/" + src);
+                        }
                     }
                 }
 

@@ -9,6 +9,7 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.HttpEntityWrapper;
+import org.jsoup.Jsoup;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -245,5 +246,10 @@ public class Utils
     {
         remoteViews.setViewVisibility(R.id.widget_counter, badge.isNoNewItems() ? View.INVISIBLE : View.VISIBLE);
         remoteViews.setTextViewText(R.id.widget_counter, badge.ToString());
+    }
+    
+    public static String html2text(String html) 
+    {
+        return Jsoup.parse(html).text();
     }
 }

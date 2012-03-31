@@ -331,7 +331,6 @@ public class GetCommentsTask extends BaseTask
 
         Comment comment = new Comment();
         comment.Pid = root.id();
-        comment.Text = element.text();
         comment.Html = element.html();
         
         Matcher level = patternLevel.matcher(root.className());
@@ -350,15 +349,19 @@ public class GetCommentsTask extends BaseTask
             
             for (Element image : images)
             {
-                String width = image.attr("width");
-                if(!TextUtils.isEmpty(width))
-                    comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
-                
-                String height = image.attr("height");
-                if(!TextUtils.isEmpty(height))
-                    comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
-                
-                comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
+                String src = image.attr("src");
+                if(!TextUtils.isEmpty(src))
+                {
+                    String width = image.attr("width");
+                    if(!TextUtils.isEmpty(width))
+                        comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
+                    
+                    String height = image.attr("height");
+                    if(!TextUtils.isEmpty(height))
+                        comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
+                    
+                    comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
+                }
             }
         }
 

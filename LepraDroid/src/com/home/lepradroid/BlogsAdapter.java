@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Blog;
 import com.home.lepradroid.utils.ImageLoader;
+import com.home.lepradroid.utils.Utils;
 
 class BlogsAdapter extends ArrayAdapter<BaseItem>
 {
@@ -89,7 +90,7 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
             View view = aInflater.inflate(R.layout.blog_row_view, parent, false);
             
             TextView text = (TextView)view.findViewById(R.id.text);
-            text.setText(blog.Text);
+            text.setText(Utils.html2text(blog.Html));
             
             TextView author = (TextView)view.findViewById(R.id.author);
             author.setText(Html.fromHtml(blog.Signature));

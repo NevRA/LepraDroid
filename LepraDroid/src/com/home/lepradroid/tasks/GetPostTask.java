@@ -85,10 +85,8 @@ public class GetPostTask extends BaseTask
 
             Element element = content.getElementsByClass("dt").first();
 
-            String text = element.text();
             Post post = new Post();
             post.Id = postId;
-            post.Text = TextUtils.isEmpty(text) ? "..." : text;
             post.Html = element.html();
             
             Elements images = element.getElementsByTag("img");

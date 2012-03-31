@@ -170,7 +170,7 @@ public class GetBlogsTask extends BaseTask
 
                 Elements title = content.getElementsByTag("h5");
                 if (!title.isEmpty())
-                    blog.Text = title.first().text();
+                    blog.Html = title.first().html();
 
                 Elements author = content.getElementsByClass("jj_creator");
                 if (!author.isEmpty())
@@ -253,7 +253,7 @@ public class GetBlogsTask extends BaseTask
 
             Elements title = div.getElementsByTag("h5");
             if (!title.isEmpty())
-                blog.Text = title.first().text();
+                blog.Html = title.first().html();
 
             Elements author = div.getElementsByClass("creator");
             if (!author.isEmpty())

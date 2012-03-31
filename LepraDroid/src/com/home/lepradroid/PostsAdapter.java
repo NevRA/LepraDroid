@@ -93,28 +93,29 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         {
             View view = aInflater.inflate(R.layout.post_row_view, parent, false);
             
-            TextView text = (TextView)view.findViewById(R.id.text);
-            text.setText(post.Text);
+            TextView textView = (TextView)view.findViewById(R.id.text);
+            String text = Utils.html2text(post.Html);
+            textView.setText(TextUtils.isEmpty(text) ? "..." : text);
             
-            TextView author = (TextView)view.findViewById(R.id.author);
-            author.setText(Html.fromHtml(post.Signature));
+            TextView authorView = (TextView)view.findViewById(R.id.author);
+            authorView.setText(Html.fromHtml(post.Signature));
             
-            TextView comments = (TextView)view.findViewById(R.id.comments);
-            comments.setText(Utils.getCommentsStringFromPost(post));
+            TextView commentsView = (TextView)view.findViewById(R.id.comments);
+            commentsView.setText(Utils.getCommentsStringFromPost(post));
             
-            TextView rating = (TextView)view.findViewById(R.id.rating);
+            TextView ratingView = (TextView)view.findViewById(R.id.rating);
             if(groupId.equals(Commons.INBOX_POSTS_ID) || post.voteDisabled)
-                rating.setVisibility(View.GONE);
+                ratingView.setVisibility(View.GONE);
             else
-                rating.setText(Utils.getRatingStringFromBaseItem(post));
+                ratingView.setText(Utils.getRatingStringFromBaseItem(post));
             
-            ImageView image = (ImageView)view.findViewById(R.id.image);
+            ImageView imageView = (ImageView)view.findViewById(R.id.image);
             
             if(!TextUtils.isEmpty(post.ImageUrl))
             {
-                image.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.VISIBLE);
                 
-                imageLoader.DisplayImage(post.ImageUrl, image);
+                imageLoader.DisplayImage(post.ImageUrl, imageView);
             }
             
             return view;
