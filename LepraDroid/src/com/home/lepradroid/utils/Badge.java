@@ -7,6 +7,12 @@ public class Badge
     public Pair<Integer, Integer> things;
     public Pair<Integer, Integer> inbox;
     
+    public Badge()
+    {
+        things = new Pair<Integer, Integer>(0, 0);
+        inbox = new Pair<Integer, Integer>(0, 0);
+    }
+    
     public Badge(Pair<Integer, Integer> things, Pair<Integer, Integer> inbox)
     {
         this.things = things;

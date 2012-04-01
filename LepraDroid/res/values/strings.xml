@@ -28,6 +28,7 @@
     <string name="Turn_On_Navigation">Навигация по новым комментариям</string>
     <string name="Turn_Off_Navigation">Отключить навигацию</string>
     <string name="Reload_Menu">Обновить</string>
+    <string name="Settings_Menu">Настройки</string>
     <string name="Logout_Menu">Завершить сессию</string>
     <string name="Logout_Menu_Confirm">Вы действительно хотите завершить сессию?</string>
     <string name="Yes_Please">Да, пожалуйста</string>
@@ -42,5 +43,17 @@
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>
-
+	<string name ="MainSettings_NotifyCategoryId">notify_category_pref</string>
+	<string name ="MainSettings_NotifyCategoryName">Непрочитанные сообшения</string>
+	<string name ="MainSettings_NotifyId">notify_pref</string>
+	<string name ="MainSettings_NotifyName">Уведомления</string>
+	<string name ="MainSettings_NotifySummary">Виджет будет генерировать уведомления о непрочитанных сообщениях</string>
+	<string name ="MainSettings_NotifySoundId">notify_sound_pref</string>
+	<string name ="MainSettings_NotifySoundName">Сигнал</string>
+	<string name ="MainSettings_NotifySoundSummary">Выберите сигнал уведомления</string>
+	<string name ="MainSettings_NotifyVibrateId">notify_vibrate_pref</string>
+	<string name ="MainSettings_NotifyVibrateName">Вибрация</string>
+	<string name ="MainSettings_NotifyVibrateSummary">Использовать или нет вибрацию</string>
+	<string name ="New_unread_messages">Новые сообщения</string>
+	<string name ="New_unread_messages_summary">Запустить приложение</string>
 </resources>

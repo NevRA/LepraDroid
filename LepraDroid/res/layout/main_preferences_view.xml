@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	<PreferenceCategory 
+        android:title="@string/MainSettings_NotifyCategoryName"
+        android:key="@string/MainSettings_NotifyCategoryId"> 
+        <CheckBoxPreference
+	    	android:key="@string/MainSettings_NotifyId"
+			android:title="@string/MainSettings_NotifyName"
+			android:summary="@string/MainSettings_NotifySummary"
+			android:defaultValue="true"/>
+        <RingtonePreference
+			android:key="@string/MainSettings_NotifySoundId"
+			android:dependency="@string/MainSettings_NotifyId"
+			android:title="@string/MainSettings_NotifySoundName"
+			android:ringtoneType="notification"
+			android:defaultValue="content://settings/system/notification_sound"
+			android:summary="@string/MainSettings_NotifySoundSummary"/>
+        <CheckBoxPreference
+			android:dependency="@string/MainSettings_NotifyId"
+			android:key="@string/MainSettings_NotifyVibrateId"
+			android:title="@string/MainSettings_NotifyVibrateName"
+			android:summary="@string/MainSettings_NotifyVibrateSummary"
+			android:defaultValue="true"/>
+  	</PreferenceCategory>  
+</PreferenceScreen>

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.home.lepradroid.base.BaseActivity;
@@ -12,6 +13,7 @@ import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.LogoutListener;
+import com.home.lepradroid.settings.MainPreferences;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetBlogsTask;
@@ -123,6 +125,9 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                 pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             }
+        case MENU_SETTINGS:
+            Intent intent = new Intent(this, MainPreferences.class);
+            startActivity(intent);
             
             return true;
         }
@@ -226,6 +231,18 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             
             new UpdateBadgeCounterTask().execute();
         }
+    }
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        menu.clear();
+
+        menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
+        menu.add(0, MENU_SETTINGS, 0, Utils.getString(R.string.Settings_Menu)).setIcon(R.drawable.ic_settings);
+        menu.add(0, MENU_LOGOUT, 0, Utils.getString(R.string.Logout_Menu)).setIcon(R.drawable.ic_logout);
+        
+        return true;
     }
     
     private void cleanInitState()

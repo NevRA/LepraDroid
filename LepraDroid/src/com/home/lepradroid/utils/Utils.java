@@ -12,9 +12,17 @@ import org.apache.http.entity.HttpEntityWrapper;
 import org.jsoup.Jsoup;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Selection;
 import android.text.Spanned;
@@ -24,6 +32,7 @@ import android.widget.EditText;
 import android.widget.RemoteViews;
 
 import com.home.lepradroid.LepraDroidApplication;
+import com.home.lepradroid.Main;
 import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
@@ -242,14 +251,81 @@ public class Utils
         return html.replaceAll("(&#150;|&#151;)", "-").replaceAll("(&#133;)", "...");
     }
     
-    public static void updateWidget(RemoteViews remoteViews, Badge badge)
+    public static int updateWidget(RemoteViews remoteViews, Badge badge)
     {
+        Integer newCounter = badge.things.first + badge.things.second + badge.inbox.first + badge.inbox.second;
+        SettingsWorker.Instance().saveUnreadCounter(newCounter);
+        
         remoteViews.setViewVisibility(R.id.widget_counter, badge.isNoNewItems() ? View.INVISIBLE : View.VISIBLE);
         remoteViews.setTextViewText(R.id.widget_counter, badge.ToString());
+        
+        return newCounter;
     }
     
     public static String html2text(String html) 
     {
         return Jsoup.parse(html).text();
+    }
+    
+    public static int getNotificationDefaults(Context context)
+    {
+        int ret = 0;
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if(prefs.getBoolean(Utils.getString(R.string.MainSettings_NotifyVibrateId), true))
+            ret |= Notification.DEFAULT_VIBRATE;
+       
+        return ret;
+    }
+    
+    public static boolean isNotificationsEnabled(Context context)
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(Utils.getString(R.string.MainSettings_NotifyId), true);
+    }
+    
+    public static Uri getNotificationSound(Context context)
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final String strRingtonePreference = prefs.getString(Utils.getString(R.string.MainSettings_NotifySoundId), "DEFAULT_SOUND");        
+        return Uri.parse(strRingtonePreference);
+    }
+    
+    public static void pushNotification(Context context)
+    {
+        if(!isNotificationsEnabled(context)) return;
+        
+        final Notification notification = new Notification(
+                R.drawable.ic_launcher, 
+                Utils.getString(R.string.New_unread_messages),
+                System.currentTimeMillis());
+        
+        final NotificationManager notificationManager = 
+            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        
+        final Intent intent = new Intent(context, Main.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+           
+        notification.setLatestEventInfo(
+                context, 
+                Utils.getString(R.string.New_unread_messages), 
+                Utils.getString(R.string.New_unread_messages_summary),
+                PendingIntent.getActivity(
+                        context,
+                        0,
+                        intent,
+                        PendingIntent.FLAG_UPDATE_CURRENT)); 
+
+        notification.icon = R.drawable.ic_launcher;
+        notification.defaults |= getNotificationDefaults(context);
+        notification.sound = getNotificationSound(context);
+
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.flags |= Notification.FLAG_SHOW_LIGHTS; 
+        notification.ledARGB = Color.GREEN; 
+        notification.ledOffMS = 400; 
+        notification.ledOnMS = 300;
+        
+        notificationManager.notify(31337, notification );
     }
 }

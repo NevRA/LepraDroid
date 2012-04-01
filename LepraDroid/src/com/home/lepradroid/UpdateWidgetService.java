@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
-import android.util.Pair;
 import android.widget.RemoteViews;
 
 import com.home.lepradroid.settings.SettingsWorker;
@@ -35,21 +34,27 @@ public class UpdateWidgetService extends Service
                 
                 Intent clickIntent = new Intent(getApplicationContext(), Main.class);
                 clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
-                clickIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                clickIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                clickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 clickIntent.setData(Uri.parse(clickIntent.toUri(Intent.URI_INTENT_SCHEME)));
                 
                 PendingIntent pendIntent = PendingIntent.getActivity(getApplicationContext(), 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
+                
                 Badge badge;
                 if(SettingsWorker.Instance().IsLogoned())
                     badge = UpdateBadgeCounterTask.GetItemsCount();
                 else
-                    badge = new Badge(new Pair<Integer, Integer>(0, 0), new Pair<Integer, Integer>(0, 0));
+                    badge = new Badge();
                 
-                Utils.updateWidget(remoteViews, badge);
+                Integer prevCounter = SettingsWorker.Instance().loadUnreadCounter();
+                Integer newCounter = Utils.updateWidget(remoteViews, badge);
+                
                 remoteViews.setOnClickPendingIntent(R.id.widget, pendIntent);
-                
                 appWidgetManager.updateAppWidget(widgetId, remoteViews);
+                
+                if(prevCounter < newCounter)
+                    Utils.pushNotification(this
+                            .getApplicationContext());
             }
             catch (Exception e)
             {

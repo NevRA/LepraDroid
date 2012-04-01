@@ -13,6 +13,7 @@ import com.home.lepradroid.utils.Logger;
 public class SettingsWorker
 {
     private static volatile SettingsWorker instance;
+    private static final String UNREAD_COUNTER = "unread_counter_pref";
     private static final String COOKIES        = "cookies_pref";
     private static final String USER_NAME      = "username_pref";
     private static final String VOTE_WTF       = "votewtf_pref";
@@ -57,6 +58,7 @@ public class SettingsWorker
     public void clearUserInfo() throws Exception
     {
         saveInt(VOTE_WEIGHT, 0);
+        saveInt(UNREAD_COUNTER, 0);
         saveString(USER_NAME, "");
         saveString(VOTE_WTF, "");
         saveString(VOTE_KARMA_WTF, "");
@@ -81,6 +83,16 @@ public class SettingsWorker
     public void saveVoteKarmaWtf(String vote_karma_wtf)
     {
         saveString(VOTE_KARMA_WTF, vote_karma_wtf);
+    }
+    
+    public Integer loadUnreadCounter()
+    {
+        return loadInt(UNREAD_COUNTER);
+    }
+    
+    public void saveUnreadCounter(Integer counter)
+    {
+        saveInt(UNREAD_COUNTER, counter);
     }
 
     public Integer loadVoteWeight()
