@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public interface ItemRateUpdateListener extends UpdateListener
 {
-    void OnItemRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful);
-    void OnItemRateUpdate(String userId, boolean successful);
+    void OnPostRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful);
+    void OnCommentRateUpdate(UUID groupId, UUID postId, boolean successful);
+    void OnAuthorRateUpdate(String userId, boolean successful);
 }

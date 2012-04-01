@@ -171,7 +171,7 @@ public class ServerWorker
         return EntityUtils.toByteArray(response.getEntity());
     }
 
-    public String rateItem(RateType type, String wtf, String id, RateValueType valueType, String value) throws ClientProtocolException, IOException {
+    public String rateItem(RateType type, String wtf, String id, String postId, RateValueType valueType, String value) throws ClientProtocolException, IOException {
 
         HttpPost httpPost = null;
         String str = "";
@@ -179,10 +179,12 @@ public class ServerWorker
 
             case POST:
                 httpPost = new HttpPost(Commons.ITEM_VOTE_URL);
-                str = String.format("type=1&wtf=%s&id=p%s&value=%s", wtf, id, valueType == RateValueType.MINUS ? "-1" : "1");
+                str = String.format("type=1&wtf=%s&id=p%s&value=%s", wtf, postId, valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
 
             case COMMENT:
+                httpPost = new HttpPost(Commons.ITEM_VOTE_URL);
+                str = String.format("type=0&wtf=%s&id=p%s&post_id=%s&value=%s", wtf, id, postId, valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
 
             case KARMA:

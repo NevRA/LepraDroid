@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.commons.Commons.RateType;
 import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -32,13 +31,13 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     private Button  plus;
     private Button  minus;
 
-    public PostView(Context context, UUID groupId, UUID id)
+    public PostView(Context context, UUID groupId, UUID postId)
     {
         super(context);
 
         this.context = context;
         this.groupId = groupId;
-        this.id = id;
+        this.id = postId;
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -101,7 +100,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
     private void rateItem(RateValueType type)
     {
-        new RateItemTask(groupId, id, RateType.POST, SettingsWorker.Instance().loadVoteWtf(), post.Pid, type).execute();
+        new RateItemTask(groupId, id, type).execute();
     }
 
     @Override
@@ -112,7 +111,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     }
 
     @Override
-    public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
+    public void OnPostRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
     {
        if(!this.groupId.equals(groupId) || !this.id.equals(postId)) return;
 
@@ -137,7 +136,14 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     }
 
     @Override
-    public void OnItemRateUpdate(String userId, boolean successful) 
+    public void OnAuthorRateUpdate(String userId, boolean successful) 
     {
+    }
+
+    @Override
+    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+            boolean successful)
+    {
+        if(!this.groupId.equals(groupId) || !this.id.equals(postId)) return;
     }
 }

@@ -182,7 +182,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     }
 
     @Override
-    public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
+    public void OnPostRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
     {
         if(!this.groupId.equals(groupId)) return;
         updateAdapter();
@@ -214,7 +214,14 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     }
 
     @Override
-    public void OnItemRateUpdate(String userId, boolean successful)
+    public void OnAuthorRateUpdate(String userId, boolean successful)
     {
+    }
+
+    @Override
+    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+            boolean successful)
+    {
+        if(!this.groupId.equals(groupId)) return;
     }
 }

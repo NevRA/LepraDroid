@@ -67,6 +67,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         setContentView(R.layout.main);
         
         new UpdateBadgeCounterTask().execute();
+        Utils.removeNotification(this);
         
         try
         {

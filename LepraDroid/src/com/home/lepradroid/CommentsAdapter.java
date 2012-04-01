@@ -1,9 +1,12 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.text.Html;
 import android.view.GestureDetector;
@@ -20,10 +23,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ExitListener;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.RateItemTask;
+import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
@@ -56,7 +62,40 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     @Override
                     public void onLongPress(MotionEvent e)
                     {
-                        Utils.addComment(getContext(), groupId, postId, getItem(commentPos).Id);
+                        final Comment item = (Comment)getItem(commentPos);
+                        List<String> actions = new ArrayList<String>(0);
+                        actions.add("Ответить");
+                        if(!item.PlusVoted)
+                            actions.add("Нравится");
+                        if(!item.MinusVoted)
+                            actions.add("Не нравится");
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setTitle("Выберите действие");
+                        builder.setItems(actions.toArray(new String[actions.size()]), new DialogInterface.OnClickListener() 
+                        {
+                            public void onClick(DialogInterface dialog, int pos) 
+                            {
+                                switch (pos)
+                                {
+                                case 0:
+                                    Utils.addComment(getContext(), groupId, postId, item.Id);
+                                    break;
+                                case 1:
+                                    if(!item.PlusVoted)
+                                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.PLUS), "");
+                                    else 
+                                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
+                                    break;
+                                case 2:
+                                    new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
+                                    break;
+                                default:
+                                    break;
+                                }
+                            }
+                        });
+                        builder.create().show();
                     }
 
                     @Override

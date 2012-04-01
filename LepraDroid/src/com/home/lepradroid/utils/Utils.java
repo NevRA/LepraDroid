@@ -290,6 +290,14 @@ public class Utils
         return Uri.parse(strRingtonePreference);
     }
     
+    public static void removeNotification(Context context)
+    {
+        final NotificationManager notificationManager = 
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        
+        notificationManager.cancel(Commons.NOTIFICATION_ID);
+    }
+    
     public static void pushNotification(Context context)
     {
         if(!isNotificationsEnabled(context)) return;
@@ -326,6 +334,6 @@ public class Utils
         notification.ledOffMS = 400; 
         notification.ledOnMS = 300;
         
-        notificationManager.notify(31337, notification );
+        notificationManager.notify(Commons.NOTIFICATION_ID, notification );
     }
 }

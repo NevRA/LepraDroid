@@ -140,7 +140,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     }
     
     @Override
-    public void OnItemRateUpdate(String userId, boolean successful)
+    public void OnAuthorRateUpdate(String userId, boolean successful)
     {
         if (    userName.equals(SettingsWorker.Instance().loadUserName()) ||
                 !this.userId.equals(userId))
@@ -167,7 +167,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     }
 
     @Override
-    public void OnItemRateUpdate(UUID groupId, UUID postId, int newRating,
+    public void OnPostRateUpdate(UUID groupId, UUID postId, int newRating,
             boolean successful)
     {
     }
@@ -181,5 +181,11 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         progress.setVisibility(View.VISIBLE);
         contentLayout.setVisibility(View.GONE);
         buttonsLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+            boolean successful)
+    { 
     }
 }

@@ -21,6 +21,7 @@ import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.AddedCommentUpdateListener;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
+import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
@@ -31,11 +32,11 @@ import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
 public class CommentsView extends BaseView implements CommentsUpdateListener,
-        AddedCommentUpdateListener
+        AddedCommentUpdateListener, ItemRateUpdateListener
 {
     private BaseActivity    context;
     private UUID            groupId;
-    private UUID            id;
+    private UUID            postId;
     private ListView        list;
     private ProgressBar     progress;
     private CommentsAdapter adapter;
@@ -60,7 +61,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
         this.context = context;
         this.groupId = groupId;
-        this.id = id;
+        this.postId = id;
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -81,7 +82,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
     private void init()
     {
-        Post post = (Post) ServerWorker.Instance().getPostById(groupId, id);
+        Post post = (Post) ServerWorker.Instance().getPostById(groupId, postId);
         if (post == null)
             return;
 
@@ -149,7 +150,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         if (post.TotalComments <= Commons.MAX_COMMENTS_COUNT)
         {
             context.pushNewTask(new TaskWrapper(null, new GetCommentsTask(
-                    groupId, id), Utils
+                    groupId, postId), Utils
                     .getString(R.string.Posts_Loading_In_Progress)));
         }
         else
@@ -166,7 +167,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     private void goToPrevNewComment()
     {
         int prevPosition = ServerWorker.Instance().getPrevNewCommentPosition(
-                groupId, id, list.getFirstVisiblePosition());
+                groupId, postId, list.getFirstVisiblePosition());
         if (prevPosition != -1)
         {
             list.setSelection(prevPosition);
@@ -179,7 +180,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         waitingNextRecord = false;
 
         final int nextPosition = ServerWorker.Instance()
-                .getNextNewCommentPosition(groupId, id,
+                .getNextNewCommentPosition(groupId, postId,
                         list.getFirstVisiblePosition());
         if (nextPosition != -1
                 && list.getLastVisiblePosition() != list.getCount() - 1)
@@ -228,7 +229,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     @Override
     public void OnCommentsUpdateBegin(UUID groupId, UUID postId)
     {
-        if (!this.id.equals(postId))
+        if (!this.postId.equals(postId))
             return;
 
         receivedLastElements = false;
@@ -241,9 +242,14 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
         updateAdapter();
     }
-
-
+    
+    
     private void updateAdapter()
+    {
+        updateAdapter(false);
+    }
+
+    private void updateAdapter(boolean forceUpdate)
     {
         synchronized (this)
         {
@@ -260,7 +266,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
                     continue;
                 }
 
-                index = ServerWorker.Instance().addNewComment(groupId, id,
+                index = ServerWorker.Instance().addNewComment(groupId, postId,
                         newComments.get(pos));
                 newComments.remove(pos);
 
@@ -268,9 +274,9 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             }
 
             ArrayList<BaseItem> comments = ServerWorker.Instance().getComments(
-                    groupId, id);
+                    groupId, postId);
 
-            if (comments.size() != adapter.getCount())
+            if (comments.size() != adapter.getCount() || forceUpdate)
             {
                 adapter.updateData(comments);
                 adapter.notifyDataSetChanged();
@@ -284,7 +290,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     @Override
     public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId)
     {
-        if (!this.id.equals(postId))
+        if (!this.postId.equals(postId))
             return;
 
         if (progress.getVisibility() == View.VISIBLE)
@@ -303,7 +309,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     @Override
     public void OnCommentsUpdateFinished(UUID groupId, UUID postId)
     {
-        if (!this.id.equals(postId))
+        if (!this.postId.equals(postId))
             return;
 
         receivedLastElements = true;
@@ -320,7 +326,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     @Override
     public void OnAddedCommentUpdate(UUID id, Comment newComment)
     {
-        if (!this.id.equals(id))
+        if (!this.postId.equals(id))
             return;
 
         newComments.add(newComment);
@@ -335,14 +341,39 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     @Override
     public void OnCommentsUpdate(UUID groupId, UUID postId)
     {
-        if (!this.id.equals(id))
+        if (!this.postId.equals(postId))
             return;
         
         if(     waitingNextRecord &&
-                ServerWorker.Instance().getNextNewCommentPosition(groupId, id, list.getFirstVisiblePosition()) != -1)
+                ServerWorker.Instance().getNextNewCommentPosition(groupId, postId, list.getFirstVisiblePosition()) != -1)
         {
             updateAdapter();
             goToNextNewComment();
         }
+    }
+
+    @Override
+    public void OnPostRateUpdate(UUID groupId, UUID postId, int newRating,
+            boolean successful)
+    {
+    }
+
+    @Override
+    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+            boolean successful)
+    {
+        if (!this.groupId.equals(groupId) || !this.postId.equals(postId))
+            return;
+        
+        if(successful)
+        {
+            updateAdapter(true);
+            Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void OnAuthorRateUpdate(String userId, boolean successful)
+    {  
     }
 }
