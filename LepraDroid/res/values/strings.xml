@@ -43,8 +43,13 @@
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>
+    <string name ="MainSettings_GeneralCategoryId">general_category_pref</string>
+	<string name ="MainSettings_GeneralCategoryName">Основные</string>
 	<string name ="MainSettings_NotifyCategoryId">notify_category_pref</string>
 	<string name ="MainSettings_NotifyCategoryName">Непрочитанные сообшения</string>
+	<string name ="MainSettings_ImagesId">images_pref</string>
+	<string name ="MainSettings_ImagesName">Картинки</string>
+	<string name ="MainSettings_ImagesSummary">Загружать картинки в постах и комментариях</string>
 	<string name ="MainSettings_NotifyId">notify_pref</string>
 	<string name ="MainSettings_NotifyName">Уведомления</string>
 	<string name ="MainSettings_NotifySummary">Виджет будет генерировать уведомления о непрочитанных сообщениях</string>

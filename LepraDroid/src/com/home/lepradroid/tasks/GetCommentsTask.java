@@ -41,6 +41,7 @@ public class GetCommentsTask extends BaseTask
     private String postAuthor = "";
     private Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
     private String userName = "";
+    private boolean isImagesEnabled = true;
     
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
@@ -86,6 +87,7 @@ public class GetCommentsTask extends BaseTask
     {
         this.groupId = groupId;
         this.postId = postId;
+        isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
     }
     
     @SuppressWarnings("unchecked")
@@ -345,24 +347,29 @@ public class GetCommentsTask extends BaseTask
         Elements images = element.getElementsByTag("img");
         if(!images.isEmpty())
         {
-            comment.ImageUrl = images.first().attr("src");
-            
-            for (Element image : images)
+            if(isImagesEnabled)
             {
-                String src = image.attr("src");
-                if(!TextUtils.isEmpty(src))
+                comment.ImageUrl = images.first().attr("src");
+                
+                for (Element image : images)
                 {
-                    String width = image.attr("width");
-                    if(!TextUtils.isEmpty(width))
-                        comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
-                    
-                    String height = image.attr("height");
-                    if(!TextUtils.isEmpty(height))
-                        comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
-                    
-                    comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
+                    String src = image.attr("src");
+                    if(!TextUtils.isEmpty(src))
+                    {
+                        String width = image.attr("width");
+                        if(!TextUtils.isEmpty(width))
+                            comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
+                        
+                        String height = image.attr("height");
+                        if(!TextUtils.isEmpty(height))
+                            comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
+                        
+                        comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
+                    }
                 }
             }
+            else
+                comment.Html = comment.Html.replaceAll("<img", "<noimg");
         }
 
         Elements author = content.getElementsByClass("p");

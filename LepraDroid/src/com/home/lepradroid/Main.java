@@ -103,34 +103,38 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
         switch (item.getItemId())
         {
         case MENU_RELOAD:
-            switch(pager.getCurrentItem())
+            int currentItem = pager.getCurrentItem();
+            if(currentItem == MAIN_TAB_NUM)
             {
-            case MAIN_TAB_NUM:
                 popAllTasksLikeThis(GetPostsTask.class);
                 pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                break;
-            case BLOGS_TAB_NUM:
+            }
+            else if(currentItem == BLOGS_TAB_NUM)
+            {
                 popAllTasksLikeThis(GetBlogsTask.class);
                 pushNewTask(new TaskWrapper(null, new GetBlogsTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                break;
-            case FAVORITE_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                break;
-            case MYSTUFF_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                break;
-            case INBOX_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                break;
-            case PROFILE_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                break;
             }
+            else if(currentItem == FAVORITE_TAB_NUM)
+            {
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            }
+            else if(currentItem == MYSTUFF_TAB_NUM)
+            {
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            }
+            else if(currentItem == INBOX_TAB_NUM)
+            {
+                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            }
+            else if(currentItem == PROFILE_TAB_NUM)
+            {
+                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            }
+            break;
         case MENU_SETTINGS:
             Intent intent = new Intent(this, MainPreferences.class);
             startActivity(intent);
-            
-            return true;
+            break;
         }
         return false;
     }

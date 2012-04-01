@@ -290,6 +290,12 @@ public class Utils
         return Uri.parse(strRingtonePreference);
     }
     
+    public static boolean isImagesEnabled(Context context)
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(Utils.getString(R.string.MainSettings_ImagesId), true);        
+    }
+    
     public static void removeNotification(Context context)
     {
         final NotificationManager notificationManager = 

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory 
+        android:title="@string/MainSettings_GeneralCategoryName"
+        android:key="@string/MainSettings_GeneralCategoryId"> 
+        <CheckBoxPreference
+			android:key="@string/MainSettings_ImagesId"
+			android:title="@string/MainSettings_ImagesName"
+			android:summary="@string/MainSettings_ImagesSummary"
+			android:defaultValue="true"/>
+    </PreferenceCategory>
 	<PreferenceCategory 
         android:title="@string/MainSettings_NotifyCategoryName"
         android:key="@string/MainSettings_NotifyCategoryId"> 
