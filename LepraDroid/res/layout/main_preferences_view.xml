@@ -32,7 +32,7 @@
 			android:defaultValue="content://settings/system/notification_sound"
 			android:summary="@string/MainSettings_NotifySoundSummary"/>
         <CheckBoxPreference
-			android:dependency="@string/MainSettings_NotifyId"
+			android:dependency="@string/MainSettings_NotifyVibrateId"
 			android:key="@string/MainSettings_NotifyVibrateId"
 			android:title="@string/MainSettings_NotifyVibrateName"
 			android:summary="@string/MainSettings_NotifyVibrateSummary"
