@@ -68,6 +68,12 @@
 	<string name ="MainSettings_AuthorId">author_pref</string>
 	<string name ="MainSettings_AuthorName">Автор</string>
 	<string name ="MainSettings_AuthorSummary">Роман Абдульманов (R).\nroman.abdulmanov@gmail.com\nНажмите, чтобы увидеть профиль</string>
+	<string name ="MainSettings_HistoryId">history_pref</string>
+	<string name ="MainSettings_HistoryName">История изменений</string>
+	<string name ="MainSettings_HistorySummary"></string>
+	<string name ="MainSettings_VersionId">version_pref</string>
+	<string name ="MainSettings_VersionName">Версия</string>
+	<string name ="MainSettings_VersionSummary"></string>
 	<string name ="New_unread_messages">Новые сообщения</string>
 	<string name ="New_unread_messages_summary">Запустить приложение</string>
 	<string name ="CommentAction_Author">Профиль</string>

@@ -45,5 +45,14 @@
             android:key="@string/MainSettings_AuthorId"
 			android:title="@string/MainSettings_AuthorName"
 			android:summary="@string/MainSettings_AuthorSummary"/>
+        <Preference 
+            android:key="@string/MainSettings_HistoryId"
+			android:title="@string/MainSettings_HistoryName"
+			android:summary="@string/MainSettings_HistorySummary"/>
+        <Preference 
+            android:key="@string/MainSettings_VersionId"
+			android:title="@string/MainSettings_VersionName"
+			android:summary="@string/MainSettings_VersionSummary"
+			android:enabled="false" />
     </PreferenceCategory>  
 </PreferenceScreen>
