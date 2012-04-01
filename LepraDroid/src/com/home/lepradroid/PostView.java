@@ -76,6 +76,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
         String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
         webView.loadDataWithBaseURL("", header + post.Html, "text/html", "UTF-8", null );
+        Utils.setWebViewFontSize(getContext(), webView);
         webView.setWebViewClient(new LinksCatcher());
         minus.setOnClickListener(new OnClickListener()
         {

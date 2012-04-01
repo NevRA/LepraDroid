@@ -28,8 +28,10 @@ import android.text.Selection;
 import android.text.Spanned;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.Main;
@@ -288,6 +290,28 @@ public class Utils
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         final String strRingtonePreference = prefs.getString(Utils.getString(R.string.MainSettings_NotifySoundId), "DEFAULT_SOUND");        
         return Uri.parse(strRingtonePreference);
+    }
+    
+    public static boolean isNormalFontSize(Context context)
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(Utils.getString(R.string.MainSettings_FontSizeId), "normal").equals("normal");        
+    }
+    
+    public static void setTextViewFontSize(Context context, TextView view)
+    {
+        if(!isNormalFontSize(context))
+        {
+            view.setTextSize(view.getTextSize() * 1.1f);
+        }
+    }
+    
+    public static void setWebViewFontSize(Context context, WebView view)
+    {
+        if(!isNormalFontSize(context))
+        {
+            view.getSettings().setDefaultFontSize((int)(view.getSettings().getDefaultFontSize() * 1.3f));
+        }
     }
     
     public static boolean isImagesEnabled(Context context)

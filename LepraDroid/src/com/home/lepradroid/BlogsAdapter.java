@@ -91,12 +91,15 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
             
             TextView text = (TextView)view.findViewById(R.id.text);
             text.setText(Utils.html2text(blog.Html));
+            Utils.setTextViewFontSize(getContext(), text);
             
             TextView author = (TextView)view.findViewById(R.id.author);
             author.setText(Html.fromHtml(blog.Signature));
+            Utils.setTextViewFontSize(getContext(), author);
 
             TextView stat = (TextView)view.findViewById(R.id.stat);
             stat.setText(Html.fromHtml(blog.Stat));
+            Utils.setTextViewFontSize(getContext(), stat);
             
             ImageView image = (ImageView)view.findViewById(R.id.image);
             

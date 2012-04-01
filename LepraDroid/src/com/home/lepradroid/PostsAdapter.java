@@ -21,8 +21,8 @@ import com.home.lepradroid.utils.Utils;
 
 class PostsAdapter extends ArrayAdapter<BaseItem>
 {
-    private UUID groupId;
-    private ArrayList<BaseItem> posts = new ArrayList<BaseItem>();
+    private UUID                groupId;
+    private ArrayList<BaseItem> posts               = new ArrayList<BaseItem>();
     public ImageLoader          imageLoader;
             
     public PostsAdapter(Context context, UUID groupId, int textViewResourceId,
@@ -31,7 +31,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         super(context, textViewResourceId, posts);
         this.posts = posts;
         this.groupId = groupId;
-        imageLoader=new ImageLoader(LepraDroidApplication.getInstance());
+        imageLoader = new ImageLoader(LepraDroidApplication.getInstance());
     }
 
     public int getCount() 
@@ -96,14 +96,18 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
             TextView textView = (TextView)view.findViewById(R.id.text);
             String text = Utils.html2text(post.Html);
             textView.setText(TextUtils.isEmpty(text) ? "..." : text);
+            Utils.setTextViewFontSize(getContext(), textView);
             
             TextView authorView = (TextView)view.findViewById(R.id.author);
             authorView.setText(Html.fromHtml(post.Signature));
+            Utils.setTextViewFontSize(getContext(), authorView);
             
             TextView commentsView = (TextView)view.findViewById(R.id.comments);
             commentsView.setText(Utils.getCommentsStringFromPost(post));
+            Utils.setTextViewFontSize(getContext(), commentsView);
             
             TextView ratingView = (TextView)view.findViewById(R.id.rating);
+            Utils.setTextViewFontSize(getContext(), ratingView);
             if(groupId.equals(Commons.INBOX_POSTS_ID) || post.voteDisabled)
                 ratingView.setVisibility(View.GONE);
             else

@@ -240,14 +240,17 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             webView.setWebViewClient(new LinksCatcher());
             WebSettings webSettings = webView.getSettings();
             webSettings.setDefaultFontSize(13);
+            Utils.setWebViewFontSize(getContext(), webView);
             String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
             webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
             
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.Signature));
+            Utils.setTextViewFontSize(getContext(), author);
             
             TextView rating = (TextView)convertView.findViewById(R.id.rating);
             rating.setText(Utils.getRatingStringFromBaseItem(comment));
+            Utils.setTextViewFontSize(getContext(), rating);
              
             webView.setOnTouchListener(new View.OnTouchListener() 
             {

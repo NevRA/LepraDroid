@@ -64,8 +64,11 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
 
         contentLayout = (RelativeLayout) contentView.findViewById(R.id.content);
         name = (TextView) contentView.findViewById(R.id.name);
+        Utils.setTextViewFontSize(getContext(), name);
         ego = (TextView) contentView.findViewById(R.id.userego);
+        Utils.setTextViewFontSize(getContext(), ego);
         rating = (TextView) contentView.findViewById(R.id.rating);
+        Utils.setTextViewFontSize(getContext(), rating);
         userPic = (ImageView) contentView.findViewById(R.id.image);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
         buttonsLayout = (LinearLayout) contentView.findViewById(R.id.buttons);
