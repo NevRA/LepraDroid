@@ -24,6 +24,12 @@
 			android:title="@string/MainSettings_NotifyName"
 			android:summary="@string/MainSettings_NotifySummary"
 			android:defaultValue="true"/>
+        <CheckBoxPreference
+			android:dependency="@string/MainSettings_NotifyId"
+			android:key="@string/MainSettings_NotifyOnlyOnFirstId"
+			android:title="@string/MainSettings_NotifyOnlyOnFirstName"
+			android:summary="@string/MainSettings_NotifyOnlyOnFirstSummary"
+			android:defaultValue="true"/>
         <RingtonePreference
 			android:key="@string/MainSettings_NotifySoundId"
 			android:dependency="@string/MainSettings_NotifyId"

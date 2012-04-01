@@ -279,6 +279,12 @@ public class Utils
         return ret;
     }
     
+    public static boolean isNotifyOnUnreadOnlyOnce(Context context)
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(Utils.getString(R.string.MainSettings_NotifyOnlyOnFirstId), true);
+    }
+    
     public static boolean isNotificationsEnabled(Context context)
     {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

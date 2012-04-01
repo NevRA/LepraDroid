@@ -65,6 +65,9 @@
 	<string name ="MainSettings_NotifyVibrateId">notify_vibrate_pref</string>
 	<string name ="MainSettings_NotifyVibrateName">Вибрация</string>
 	<string name ="MainSettings_NotifyVibrateSummary">Использовать или нет вибрацию</string>
+	<string name ="MainSettings_NotifyOnlyOnFirstId">notify_only_on_first_pref</string>
+	<string name ="MainSettings_NotifyOnlyOnFirstName">Только один раз</string>
+	<string name ="MainSettings_NotifyOnlyOnFirstSummary">Возобновить уведомления только после прочтнения имеющихся непрочитанных сообщений</string>
 	<string name ="MainSettings_AuthorId">author_pref</string>
 	<string name ="MainSettings_AuthorName">Автор</string>
 	<string name ="MainSettings_AuthorSummary">Роман Абдульманов (R).\nroman.abdulmanov@gmail.com\nНажмите, чтобы увидеть профиль</string>
