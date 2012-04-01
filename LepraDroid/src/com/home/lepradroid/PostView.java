@@ -141,7 +141,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     }
 
     @Override
-    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+    public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
             boolean successful)
     {
         if(!this.groupId.equals(groupId) || !this.id.equals(postId)) return;

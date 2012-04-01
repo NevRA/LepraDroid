@@ -184,7 +184,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     }
 
     @Override
-    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+    public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
             boolean successful)
     { 
     }

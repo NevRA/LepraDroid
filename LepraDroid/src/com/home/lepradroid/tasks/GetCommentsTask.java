@@ -393,6 +393,7 @@ public class GetCommentsTask extends BaseTask
         
         comment.PlusVoted = html.contains("class=\"plus voted\"");
         comment.MinusVoted = html.contains("class=\"minus voted\"");
+        comment.Num = commentsCout;
                      
         ServerWorker.Instance().addNewComment(groupId, postId, comment);
         

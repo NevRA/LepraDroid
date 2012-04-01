@@ -32,7 +32,7 @@ public class RateItemTask extends BaseTask
     private RateValueType valueType;
 
     static final Class<?>[] argsClassesOnPostRateUpdate = new Class[4];
-    static final Class<?>[] argsClassesOnCommentRateUpdate = new Class[3];
+    static final Class<?>[] argsClassesOnCommentRateUpdate = new Class[4];
     static final Class<?>[] argsClassesOnAuthorRateUpdate = new Class[2];
     static Method methodOnPostRateUpdate;
     static Method methodOnCommentRateUpdate;
@@ -49,7 +49,8 @@ public class RateItemTask extends BaseTask
             
             argsClassesOnCommentRateUpdate[0] = UUID.class;
             argsClassesOnCommentRateUpdate[1] = UUID.class;
-            argsClassesOnCommentRateUpdate[2] = boolean.class;
+            argsClassesOnCommentRateUpdate[2] = UUID.class;
+            argsClassesOnCommentRateUpdate[3] = boolean.class;
             
             argsClassesOnAuthorRateUpdate[0] = String.class;
             argsClassesOnAuthorRateUpdate[1] = boolean.class;
@@ -110,10 +111,11 @@ public class RateItemTask extends BaseTask
     {
         final List<ItemRateUpdateListener> listeners = ListenersWorker
                 .Instance().getListeners(ItemRateUpdateListener.class);
-        final Object args[] = new Object[3];
+        final Object args[] = new Object[4];
         args[0] = groupId;
         args[1] = postId;
-        args[2] = successful;
+        args[2] = commentId;
+        args[3] = successful;
 
         for (ItemRateUpdateListener listener : listeners)
         {

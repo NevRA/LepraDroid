@@ -219,7 +219,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     }
 
     @Override
-    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+    public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
             boolean successful)
     {
         if(!this.groupId.equals(groupId)) return;

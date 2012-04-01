@@ -357,19 +357,29 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             boolean successful)
     {
     }
+    
+    private void updateCommentRating(UUID groupId, UUID postId, UUID commentId)
+    {
+        Comment comment = (Comment) ServerWorker.Instance().getComment(groupId, postId, commentId);
+        if(comment != null)
+        {
+            int visiblePosition = list.getFirstVisiblePosition();
+            View v = list.getChildAt(comment.Num - visiblePosition);
+            TextView rating = (TextView) v.findViewById(R.id.rating);
+            rating.setText(Utils.getRatingStringFromBaseItem(comment));
+            Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show(); 
+        }
+    }
 
     @Override
-    public void OnCommentRateUpdate(UUID groupId, UUID postId,
+    public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
             boolean successful)
     {
         if (!this.groupId.equals(groupId) || !this.postId.equals(postId))
             return;
         
         if(successful)
-        {
-            updateAdapter(true);
-            Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show();
-        }
+            updateCommentRating(groupId, postId, commentId);
     }
 
     @Override
