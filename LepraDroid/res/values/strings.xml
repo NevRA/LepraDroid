@@ -49,7 +49,7 @@
     <string name ="MainSettings_GeneralCategoryId">general_category_pref</string>
 	<string name ="MainSettings_GeneralCategoryName">Основные</string>
 	<string name ="MainSettings_NotifyCategoryId">notify_category_pref</string>
-	<string name ="MainSettings_NotifyCategoryName">Непрочитанные сообшения</string>
+	<string name ="MainSettings_NotifyCategoryName">Непрочитанные сообщения</string>
 	<string name ="MainSettings_ImagesId">images_pref</string>
 	<string name ="MainSettings_ImagesName">Картинки</string>
 	<string name ="MainSettings_ImagesSummary">Загружать картинки в постах и комментариях</string>
