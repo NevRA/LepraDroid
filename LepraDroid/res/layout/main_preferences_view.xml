@@ -38,4 +38,12 @@
 			android:summary="@string/MainSettings_NotifyVibrateSummary"
 			android:defaultValue="true"/>
   	</PreferenceCategory>  
+  	<PreferenceCategory 
+      	android:title="@string/MainSettings_AboutCategoryName"
+       	android:key="@string/MainSettings_AboutCategoryId"> 
+        <Preference 
+            android:key="@string/MainSettings_AuthorId"
+			android:title="@string/MainSettings_AuthorName"
+			android:summary="@string/MainSettings_AuthorSummary"/>
+    </PreferenceCategory>  
 </PreferenceScreen>

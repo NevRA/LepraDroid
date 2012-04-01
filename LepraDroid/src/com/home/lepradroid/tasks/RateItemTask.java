@@ -146,11 +146,10 @@ public class RateItemTask extends BaseTask
         this.commentId = commentId;
     }
 
-    public RateItemTask(RateType type, String wtf, String id,
-            RateValueType valueType)
+    public RateItemTask(String id, RateValueType valueType)
     {
-        this.type = type;
-        this.wtf = wtf;
+        this.type = RateType.KARMA;
+        this.wtf = SettingsWorker.Instance().loadVoteKarmaWtf();
         this.id = id;
         this.valueType = valueType;
     }

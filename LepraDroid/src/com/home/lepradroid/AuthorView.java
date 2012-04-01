@@ -138,8 +138,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
 
     private void rateItem(Commons.RateValueType type, String id)
     {
-        new RateItemTask(Commons.RateType.KARMA, SettingsWorker.Instance()
-                .loadVoteKarmaWtf(), id, type).execute();
+        new RateItemTask(id, type).execute();
     }
     
     @Override

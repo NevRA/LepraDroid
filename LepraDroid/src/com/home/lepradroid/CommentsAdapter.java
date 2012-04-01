@@ -7,6 +7,7 @@ import java.util.UUID;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.Html;
 import android.view.GestureDetector;
@@ -64,11 +65,12 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     {
                         final Comment item = (Comment)getItem(commentPos);
                         List<String> actions = new ArrayList<String>(0);
-                        actions.add("Ответить");
+                        actions.add(Utils.getString(R.string.CommentAction_Author));
+                        actions.add(Utils.getString(R.string.CommentAction_Reply));
                         if(!item.PlusVoted)
-                            actions.add("Нравится");
+                            actions.add(Utils.getString(R.string.CommentAction_Like));
                         if(!item.MinusVoted)
-                            actions.add("Не нравится");
+                            actions.add(Utils.getString(R.string.CommentAction_Dislike));
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         builder.setTitle("Выберите действие");
@@ -79,15 +81,21 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                                 switch (pos)
                                 {
                                 case 0:
-                                    Utils.addComment(getContext(), groupId, postId, item.Id);
+                                    Intent intent = new Intent(getContext(), AuthorScreen.class);
+                                    intent.putExtra("username", item.Author);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    LepraDroidApplication.getInstance().startActivity(intent); 
                                     break;
                                 case 1:
+                                    Utils.addComment(getContext(), groupId, postId, item.Id);
+                                    break;
+                                case 2:
                                     if(!item.PlusVoted)
                                         new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.PLUS), "");
                                     else 
                                         new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
                                     break;
-                                case 2:
+                                case 3:
                                     new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
                                     break;
                                 default:

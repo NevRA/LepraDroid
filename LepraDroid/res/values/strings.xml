@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LepraDroid by R</string>
+    <string name="Author_Name">R</string>
     <string name="login_label">Логин:</string>
     <string name="password_label">Пароль:</string>
     <string name="captcha_label">Шесть букв с картинки:</string>
@@ -43,6 +44,8 @@
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>
+    <string name ="MainSettings_AboutCategoryId">about_category_pref</string>
+	<string name ="MainSettings_AboutCategoryName">О программе</string>
     <string name ="MainSettings_GeneralCategoryId">general_category_pref</string>
 	<string name ="MainSettings_GeneralCategoryName">Основные</string>
 	<string name ="MainSettings_NotifyCategoryId">notify_category_pref</string>
@@ -62,6 +65,13 @@
 	<string name ="MainSettings_NotifyVibrateId">notify_vibrate_pref</string>
 	<string name ="MainSettings_NotifyVibrateName">Вибрация</string>
 	<string name ="MainSettings_NotifyVibrateSummary">Использовать или нет вибрацию</string>
+	<string name ="MainSettings_AuthorId">author_pref</string>
+	<string name ="MainSettings_AuthorName">Автор</string>
+	<string name ="MainSettings_AuthorSummary">Роман Абдульманов (R).\nroman.abdulmanov@gmail.com\nНажмите, чтобы увидеть профиль</string>
 	<string name ="New_unread_messages">Новые сообщения</string>
 	<string name ="New_unread_messages_summary">Запустить приложение</string>
+	<string name ="CommentAction_Author">Профиль</string>
+	<string name ="CommentAction_Reply">Ответить</string>
+	<string name ="CommentAction_Like">Нравится</string>
+	<string name ="CommentAction_Dislike">Не нравится</string>
 </resources>
