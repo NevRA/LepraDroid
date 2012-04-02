@@ -48,9 +48,8 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         if (inflater != null)
         {
             contentView = inflater.inflate(R.layout.author_view, null);
+            init();
         }
-
-        init();
     }
 
     public void setUserName(String userName)

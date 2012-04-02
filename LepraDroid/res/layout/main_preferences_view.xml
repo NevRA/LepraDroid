@@ -15,6 +15,11 @@
             android:defaultValue="normal" 
             android:entries="@array/fontSize"
             android:entryValues="@array/fontSizeValues"/>
+        <CheckBoxPreference
+			android:key="@string/MainSettings_LoadCommentsOnPostId"
+			android:title="@string/MainSettings_LoadCommentsOnPostName"
+			android:summary="@string/MainSettings_LoadCommentsOnPostSummary"
+			android:defaultValue="true"/>
     </PreferenceCategory>
 	<PreferenceCategory 
         android:title="@string/MainSettings_NotifyCategoryName"

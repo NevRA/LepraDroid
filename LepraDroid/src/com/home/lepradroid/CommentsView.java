@@ -27,8 +27,6 @@ import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
-import com.home.lepradroid.tasks.GetCommentsTask;
-import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
 public class CommentsView extends BaseView implements CommentsUpdateListener,
@@ -147,13 +145,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         
         list.setFadingEdgeLength(0);
 
-        if (post.TotalComments <= Commons.MAX_COMMENTS_COUNT)
-        {
-            context.pushNewTask(new TaskWrapper(null, new GetCommentsTask(
-                    groupId, postId), Utils
-                    .getString(R.string.Posts_Loading_In_Progress)));
-        }
-        else
+        if (post.TotalComments > Commons.MAX_COMMENTS_COUNT)
         {
             progress.setVisibility(View.GONE);
             buttons.setVisibility(View.GONE);

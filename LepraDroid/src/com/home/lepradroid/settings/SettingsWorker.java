@@ -21,6 +21,7 @@ public class SettingsWorker
     private static final String VOTE_KARMA_WTF = "votekarmawtf_pref";
     private static final String COMMENT_CLICK_TIP 
                                                = "commentclicktip_pref";
+    private static final String VERSION        = "version_pref";
 
     private SettingsWorker() 
     {
@@ -59,6 +60,7 @@ public class SettingsWorker
     {
         saveInt(VOTE_WEIGHT, 0);
         saveInt(UNREAD_COUNTER, 0);
+        saveString(VERSION, "");
         saveString(USER_NAME, "");
         saveString(VOTE_WTF, "");
         saveString(VOTE_KARMA_WTF, "");
@@ -113,6 +115,16 @@ public class SettingsWorker
     public void saveCommentClickTipDisabled(Boolean disabled)
     {
         saveBoolean(COMMENT_CLICK_TIP, disabled);
+    }
+    
+    public String loadVersion()
+    {
+        return loadString(VERSION);
+    }
+    
+    public void saveVersion(String version)
+    {
+        saveString(VERSION, version);
     }
     
     public String loadUserName()

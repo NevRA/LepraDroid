@@ -39,6 +39,8 @@ public class UpdateWidgetService extends Service
                 clickIntent.setData(Uri.parse(clickIntent.toUri(Intent.URI_INTENT_SCHEME)));
                 
                 PendingIntent pendIntent = PendingIntent.getActivity(getApplicationContext(), 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                remoteViews.setOnClickPendingIntent(R.id.widget, pendIntent);
+                appWidgetManager.updateAppWidget(widgetId, remoteViews);
                 
                 Badge badge;
                 if(SettingsWorker.Instance().IsLogoned())
@@ -48,9 +50,6 @@ public class UpdateWidgetService extends Service
                 
                 Integer prevCounter = SettingsWorker.Instance().loadUnreadCounter();
                 Integer newCounter = Utils.updateWidget(remoteViews, badge);
-                
-                remoteViews.setOnClickPendingIntent(R.id.widget, pendIntent);
-                appWidgetManager.updateAppWidget(widgetId, remoteViews);
                 
                 if(Utils.isNotifyOnUnreadOnlyOnce(this.getApplicationContext()))
                 {

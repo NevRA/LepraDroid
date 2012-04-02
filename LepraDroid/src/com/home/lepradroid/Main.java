@@ -18,9 +18,9 @@ import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetBlogsTask;
 import com.home.lepradroid.tasks.GetMainPagesTask;
-import com.home.lepradroid.tasks.UpdateBadgeCounterTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.tasks.UpdateBadgeCounterTask;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -58,6 +58,24 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
 		Utils.clearData();
 		super.onDestroy();
 	}
+	
+	private void showHistoryOnStartUp()
+	{
+	    try
+        {
+	        String oldVersionName = SettingsWorker.Instance().loadVersion();
+	        String versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+	        if(!oldVersionName.equalsIgnoreCase(versionName))
+	        {
+	            SettingsWorker.Instance().saveVersion(versionName);
+	            Utils.showChangesHistory(this);
+	        }
+        }
+	    catch (Exception e)
+	    {
+            // TODO
+        }
+	}
     
     /** Called when the activity is first created. */
     @Override
@@ -77,6 +95,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
                 showLogonScreen();
             else
             {
+                showHistoryOnStartUp();
                 pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
             }
         }
@@ -235,6 +254,8 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
             pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
             
             new UpdateBadgeCounterTask().execute();
+            
+            showHistoryOnStartUp();
         }
     }
     

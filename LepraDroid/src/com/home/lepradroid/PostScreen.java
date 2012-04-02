@@ -11,7 +11,8 @@ import android.widget.Toast;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
-import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
@@ -24,7 +25,7 @@ import com.viewpagerindicator.TitlePageIndicator;
 public class PostScreen extends BaseActivity
 {
     private UUID            groupId;
-    private UUID            id;
+    private UUID            postId;
     //private String          parentTitle;
 
     private PostView        postView;
@@ -32,7 +33,7 @@ public class PostScreen extends BaseActivity
     private AuthorView      authorView;
     private TitlePageIndicator 
                             titleIndicator;
-    private BaseItem        post;
+    private Post            post;
     private TabsPageAdapter tabsAdapter;
     private ViewPager       pager;
     private ArrayList<BaseView> 
@@ -50,7 +51,7 @@ public class PostScreen extends BaseActivity
     @Override
     protected void onDestroy()
     {
-        ServerWorker.Instance().clearCommentsById(id);
+        ServerWorker.Instance().clearCommentsById(postId);
         
         if(postView != null)
         {
@@ -100,7 +101,7 @@ public class PostScreen extends BaseActivity
         setContentView(R.layout.post_base_view);
         
         groupId     = UUID.fromString(getIntent().getExtras().getString("groupId"));
-        id          = UUID.fromString(getIntent().getExtras().getString("id"));
+        postId          = UUID.fromString(getIntent().getExtras().getString("id"));
         //parentTitle = getIntent().getExtras().getString("parentTitle");
 
         createTabs();
@@ -117,7 +118,7 @@ public class PostScreen extends BaseActivity
             {
             case COMMENTS_TAB_NUM:
                 popAllTasksLikeThis(GetCommentsTask.class);
-                pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, id), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, postId), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case PROFILE_TAB_NUM:
                 pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
@@ -142,20 +143,28 @@ public class PostScreen extends BaseActivity
     
     private void addComment()
     {
-        Utils.addComment(this, groupId, id, null);
+        Utils.addComment(this, groupId, postId, null);
     }
     
     private void createTabs()
     {
-        post = ServerWorker.Instance().getPostById(groupId, id);
+        post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
         if(post == null) {finish(); return;}
 
-        postView = new PostView(this, groupId, id);
+        postView = new PostView(this, groupId, postId);
         postView.setTag(Utils.getString(R.string.Post_Tab));
         
-        commentsView = new CommentsView(this, groupId, id);
+        commentsView = new CommentsView(this, groupId, postId);
         commentsView.setTag(Utils.getString(R.string.Comments_Tab));
         commentsView.setNavigationMode(navigationTurnedOn);
+        
+        if(     post.TotalComments <= Commons.MAX_COMMENTS_COUNT &&
+                Utils.isCommentsLoadingWithPost(this))
+        {
+            pushNewTask(new TaskWrapper(null, new GetCommentsTask(
+                    groupId, postId), Utils
+                        .getString(R.string.Posts_Loading_In_Progress)));
+        }
         
         authorView = new AuthorView(this, post.Author);
         authorView.setTag(Utils.getString(R.string.Author_Tab));
@@ -186,6 +195,13 @@ public class PostScreen extends BaseActivity
                             {
                                 pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
                                 authorInit = true;
+                                
+                                if(!Utils.isCommentsLoadingWithPost(PostScreen.this))
+                                {
+                                    pushNewTask(new TaskWrapper(null, new GetCommentsTask(
+                                            groupId, postId), Utils
+                                                .getString(R.string.Posts_Loading_In_Progress)));
+                                }
                             }
                             break;
                         }

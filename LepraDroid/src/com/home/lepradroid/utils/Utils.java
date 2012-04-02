@@ -26,6 +26,7 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Selection;
 import android.text.Spanned;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
@@ -279,6 +280,12 @@ public class Utils
         return ret;
     }
     
+    public static boolean isCommentsLoadingWithPost(Context context)
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(Utils.getString(R.string.MainSettings_LoadCommentsOnPostId), true);
+    }
+    
     public static boolean isNotifyOnUnreadOnlyOnce(Context context)
     {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -371,5 +378,26 @@ public class Utils
         notification.ledOnMS = 300;
         
         notificationManager.notify(Commons.NOTIFICATION_ID, notification );
+    }
+    
+    public static void showChangesHistory(Context context)
+    {
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        View alertDialogView = inflater.inflate(R.layout.history_view, null);
+
+        WebView webView = (WebView) alertDialogView.findViewById(R.id.DialogWebView);
+        webView.getSettings().setDefaultFontSize(10);
+        webView.loadUrl("file:///android_asset/history.html");
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(Utils.getString(R.string.MainSettings_HistoryName));
+        builder.setView(alertDialogView);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        }).show();
     }
 }

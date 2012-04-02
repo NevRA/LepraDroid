@@ -1,20 +1,15 @@
 package com.home.lepradroid.settings;
 
-import com.home.lepradroid.AuthorScreen;
-import com.home.lepradroid.R;
-import com.home.lepradroid.utils.Utils;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.webkit.WebView;
+
+import com.home.lepradroid.AuthorScreen;
+import com.home.lepradroid.R;
+import com.home.lepradroid.utils.Utils;
 
 public class MainPreferences extends PreferenceActivity
 {
@@ -42,22 +37,7 @@ public class MainPreferences extends PreferenceActivity
         {
             public boolean onPreferenceClick(Preference preference) 
             {
-                LayoutInflater inflater = LayoutInflater.from(MainPreferences.this);
-
-                View alertDialogView = inflater.inflate(R.layout.history_view, null);
-
-                WebView webView = (WebView) alertDialogView.findViewById(R.id.DialogWebView);
-                webView.getSettings().setDefaultFontSize(10);
-                webView.loadUrl("file:///android_asset/history.html");
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainPreferences.this);
-                builder.setView(alertDialogView);
-
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() 
-                {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }).show();
+                Utils.showChangesHistory(MainPreferences.this);
                 
                 return true;
             }
