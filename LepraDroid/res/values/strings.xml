@@ -80,7 +80,7 @@
 	<string name ="MainSettings_VersionSummary"></string>
 	<string name ="MainSettings_LoadCommentsOnPostId">load_comments_on_post_pref</string>
 	<string name ="MainSettings_LoadCommentsOnPostName">Пост c комментариями</string>
-	<string name ="MainSettings_LoadCommentsOnPostSummary">Если не отмечено, то комментарии будут загружаться только при переходе на них, пост при этом будет считаться непрочитанным</string>
+	<string name ="MainSettings_LoadCommentsOnPostSummary">Если не отмечено, то комментарии будут загружаться только при переходе на них, до перехода пост будет считаться непрочитанным</string>
 	<string name ="New_unread_messages">Новые сообщения</string>
 	<string name ="New_unread_messages_summary">Запустить приложение</string>
 	<string name ="CommentAction_Author">Профиль</string>
