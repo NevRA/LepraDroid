@@ -29,6 +29,7 @@ import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebSettings.TextSize;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.RemoteViews;
@@ -315,7 +316,7 @@ public class Utils
     {
         if(!isNormalFontSize(context))
         {
-            view.setTextSize(view.getTextSize() * 1.1f);
+            view.setTextSize(view.getTextSize() * 1.5f);
         }
     }
     
@@ -323,7 +324,7 @@ public class Utils
     {
         if(!isNormalFontSize(context))
         {
-            view.getSettings().setDefaultFontSize((int)(view.getSettings().getDefaultFontSize() * 1.3f));
+            view.getSettings().setTextSize(TextSize.LARGER);
         }
     }
     

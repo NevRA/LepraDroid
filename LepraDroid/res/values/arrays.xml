@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="fontSize">
-        <item name="normal">Обычный</item>
-        <item name="big">Увеличенный</item>
+        <item name="normal">Мобильный</item>
+        <item name="big">Планшет</item>
     </string-array>
     <string-array name="fontSizeValues">
         <item name="normal">normal</item>
