@@ -165,10 +165,15 @@ public class GetPostsTask extends BaseTask
                     break;
                 }
                 
-                if(num == 0 && url.equals(Commons.SITE_URL) && TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
+                if(     num == 0 && 
+                        groupId.equals(Commons.MAIN_POSTS_ID) &&
+                        page == 0)
                 {
                     String header = html.substring(0, start);
                     Element content = Jsoup.parse(header);
+                    
+                    Element filter = content.getElementById("js-showonindex"); 
+                    SettingsWorker.Instance().saveMainThreshold(Integer.valueOf(filter.attr("value"))); 
                     
                     Element vote = content.getElementById("content_left_inner");
                     Element script = vote.getElementsByTag("script").first();

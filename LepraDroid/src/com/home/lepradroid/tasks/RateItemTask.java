@@ -164,22 +164,22 @@ public class RateItemTask extends BaseTask
             switch (type)
             {
             case POST:
-                response = ServerWorker.Instance().rateItem(type, wtf, "", id,
+                response = ServerWorker.Instance().rateItemRequest(type, wtf, "", id,
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
             case COMMENT:
                 Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
-                response = ServerWorker.Instance().rateItem(type, wtf, comment.Pid, id,
+                response = ServerWorker.Instance().rateItemRequest(type, wtf, comment.Pid, id,
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
             case KARMA:
                 response = ServerWorker.Instance()
-                        .rateItem(type, wtf, id, "", valueType,
+                        .rateItemRequest(type, wtf, id, "", valueType,
                                 valueType == RateValueType.MINUS ? "3" : "1");
                 response = ServerWorker.Instance()
-                        .rateItem(type, wtf, id, "", valueType,
+                        .rateItemRequest(type, wtf, id, "", valueType,
                                 valueType == RateValueType.MINUS ? "4" : "2");
                 break;
             default:

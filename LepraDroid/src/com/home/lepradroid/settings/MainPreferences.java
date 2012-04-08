@@ -1,23 +1,33 @@
 package com.home.lepradroid.settings;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 
 import com.home.lepradroid.AuthorScreen;
 import com.home.lepradroid.R;
+import com.home.lepradroid.tasks.PostMainThresholdTask;
 import com.home.lepradroid.utils.Utils;
 
-public class MainPreferences extends PreferenceActivity
+public class MainPreferences extends PreferenceActivity implements OnSharedPreferenceChangeListener
 {
     @Override
-    protected void onCreate(Bundle savedInstanceState)
+    protected void onDestroy()
     {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.layout.main_preferences_view);
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+        super.onDestroy();
+    }
+    
+    private void updatePreferences()
+    {
+        final ListPreference mainFilter = (ListPreference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_MainFilterId));
+        mainFilter.setSummary(mainFilter.getEntry());
         
         final Preference author = (Preference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_AuthorId));
         author.setOnPreferenceClickListener(new OnPreferenceClickListener() 
@@ -50,6 +60,31 @@ public class MainPreferences extends PreferenceActivity
         }
         catch (NameNotFoundException e)
         {
+        }
+    }
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        addPreferencesFromResource(R.layout.main_preferences_view);
+        
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        
+        updatePreferences();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+            String key)
+    {
+        if(key.equals(Utils.getString(R.string.MainSettings_MainFilterId)))
+        {
+            updatePreferences();
+            
+            String value = sharedPreferences.getString(Utils.getString(R.string.MainSettings_MainFilterId), "1");
+            SettingsWorker.Instance().saveMainThreshold(Integer.valueOf(value));
+            new PostMainThresholdTask().execute();
         }
     }
 }

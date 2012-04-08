@@ -145,100 +145,85 @@ public class ServerWorker
     {
         return EntityUtils.toString(getContentEntity(url), "UTF-8");
     }
+    
 
     public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
     {
-        final HttpPost httpGet = new HttpPost(url);
+        HttpPost httpGet = new HttpPost(url);
         String str = String.format("user=%s&pass=%s&captcha=%s&logincode=%s&save=1", URLEncoder.encode(login), URLEncoder.encode(password), captcha, loginCode);
 
-        final StringEntity se = new StringEntity(str, HTTP.UTF_8);
+        StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpGet.setHeader("Content-Type","application/x-www-form-urlencoded");
         httpGet.setEntity(se);
 
-        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
-        final HttpResponse response = client.execute(httpGet);
+        HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        HttpResponse response = client.execute(httpGet);
 
         return new Pair<String, Header[]>(EntityUtils.toString(response.getEntity(), "UTF-8"), response.getAllHeaders());
     }
 
     public byte[] getImage(String url) throws ClientProtocolException, IOException
     {
-        final HttpGet httpGet = new HttpGet(url);
+        HttpGet httpGet = new HttpGet(url);
 
-        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
-        final HttpResponse response = client.execute(httpGet);
+        HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        HttpResponse response = client.execute(httpGet);
 
         return EntityUtils.toByteArray(response.getEntity());
     }
+    
+    public String postRequest(String url, String body) throws Exception
+    {
+        HttpPost httpPost = new HttpPost(url);
 
-    public String rateItem(RateType type, String wtf, String id, String postId, RateValueType valueType, String value) throws ClientProtocolException, IOException {
+        Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
+        if(cookies != null)
+            httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
 
-        HttpPost httpPost = null;
-        String str = "";
-        switch (type) {
+        StringEntity se = new StringEntity(body, HTTP.UTF_8);
+        httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
+        httpPost.setEntity(se);
 
+        HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        HttpResponse response = client.execute(httpPost);
+
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
+    }
+
+    public String rateItemRequest(RateType type, String wtf, String id, String postId, RateValueType valueType, String value) throws Exception {
+
+        String url = "";
+        String body = "";
+        switch (type) 
+        {
             case POST:
-                httpPost = new HttpPost(Commons.ITEM_VOTE_URL);
-                str = String.format("type=1&wtf=%s&id=p%s&value=%s", wtf, postId, valueType == RateValueType.MINUS ? "-1" : "1");
+                url = Commons.ITEM_VOTE_URL;
+                body = String.format("type=1&wtf=%s&id=p%s&value=%s", wtf, postId, valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
 
             case COMMENT:
-                httpPost = new HttpPost(Commons.ITEM_VOTE_URL);
-                str = String.format("type=0&wtf=%s&id=p%s&post_id=%s&value=%s", wtf, id, postId, valueType == RateValueType.MINUS ? "-1" : "1");
+                url = Commons.ITEM_VOTE_URL;
+                body = String.format("type=0&wtf=%s&id=p%s&post_id=%s&value=%s", wtf, id, postId, valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
 
             case KARMA:
-                httpPost = new HttpPost(Commons.KARMA_VOTE_URL);
-                str = String.format("wtf=%s&u_id=%s&value=%s", wtf, id, value);
+                url = Commons.KARMA_VOTE_URL;
+                body = String.format("wtf=%s&u_id=%s&value=%s", wtf, id, value);
             default:
                 break;
         }
 
-        try
-        {
-            final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
-            if(cookies != null)
-                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
-        }
-        catch (Exception e)
-        {
-            Logger.e(e);
-        }
-
-        final StringEntity se = new StringEntity(str, HTTP.UTF_8);
-        httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
-        httpPost.setEntity(se);
-
-        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
-        final HttpResponse response = client.execute(httpPost);
-
-        return EntityUtils.toString(response.getEntity(), "UTF-8");
+        return postRequest(url, body);
+    }
+    
+    public void postMainTresholdRequest(int value) throws Exception
+    {
+        postRequest(Commons.THRESHOLD_URL, String.format("showonindex=%s&selected_threshold=all", Integer.toString(value)));
     }
 
-    public String postComment(String wtf, String replyTo, String pid, String comment) throws ClientProtocolException, IOException
+    public String postCommentRequest(String wtf, String replyTo, String pid, String comment) throws Exception
     {
-        final HttpPost httpPost = new HttpPost(Commons.POST_COMMENT_URL);
-        String str = String.format("wtf=%s&step=1&i=0&replyto=%s&pid=%s&iframe=0&file=&comment=%s", wtf, replyTo, pid, URLEncoder.encode(comment));
-
-        try
-        {
-            final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
-            if(cookies != null)
-                httpPost.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
-        }
-        catch (Exception e)
-        {
-            Logger.e(e);
-        }
-
-        final StringEntity se = new StringEntity(str, HTTP.UTF_8);
-        httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
-        httpPost.setEntity(se);
-
-        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
-        final HttpResponse response = client.execute(httpPost);
-
-        return EntityUtils.toString(response.getEntity(), "UTF-8");
+        return postRequest(Commons.POST_COMMENT_URL, String.format("wtf=%s&step=1&i=0&replyto=%s&pid=%s&iframe=0&file=&comment=%s", wtf, replyTo, pid, URLEncoder.encode(comment)));
     }
     
     /*public int getNewItemsCount() throws Exception

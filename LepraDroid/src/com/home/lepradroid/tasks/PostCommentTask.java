@@ -69,7 +69,7 @@ public class PostCommentTask extends BaseTask
     {
         try
         {
-            final JSONObject json = new JSONObject(ServerWorker.Instance().postComment(wtf, replyTo, pid, comment)).getJSONObject("new_comment");
+            final JSONObject json = new JSONObject(ServerWorker.Instance().postCommentRequest(wtf, replyTo, pid, comment)).getJSONObject("new_comment");
             final Comment comment = new Comment();
             comment.Level = level;
             comment.Author = json.getString("user_login");
@@ -77,7 +77,7 @@ public class PostCommentTask extends BaseTask
             comment.Pid = json.getString("comment_id");
             comment.Html = this.comment;
             comment.Signature = (json.getString("gender").equals("m") ? "Написал" : "Написала") + " " +
-                    json.getString("rank") + " " + "<b>" + json.getString("user_login") + "</b>, " + 
+                    json.getString("rank") + " " + "<b>" + "<font color=\"#3270FF\">" + json.getString("user_login") + "</font>" + "</b>" + "</b>, " + 
                     json.getString("date") + " в " + json.getString("time");
             
             notifyOnAddedCommentUpdate(comment);

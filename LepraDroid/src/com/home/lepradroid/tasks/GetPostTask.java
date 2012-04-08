@@ -26,7 +26,6 @@ public class GetPostTask extends BaseTask
     private String url;
 
     static final Class<?>[] argsClassesOnPostUpdateFinished = new Class[2];
-
     static Method methodOnPostUpdateFinished;
     static
     {

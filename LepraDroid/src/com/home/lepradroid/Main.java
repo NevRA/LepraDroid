@@ -13,6 +13,7 @@ import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.LoginListener;
 import com.home.lepradroid.interfaces.LogoutListener;
+import com.home.lepradroid.interfaces.ThresholdUpdateListener;
 import com.home.lepradroid.settings.MainPreferences;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.GetAuthorTask;
@@ -24,7 +25,7 @@ import com.home.lepradroid.tasks.UpdateBadgeCounterTask;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class Main extends BaseActivity implements LoginListener, LogoutListener
+public class Main extends BaseActivity implements LoginListener, LogoutListener, ThresholdUpdateListener
 {
     private PostsScreen mainPosts;
     private BlogsScreen blogsPosts;
@@ -296,5 +297,15 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener
     {
         Intent intent = new Intent(this, LogonScreen.class);
         startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void OnThresholdUpdate(boolean successful)
+    {
+        if(successful)
+        {
+            popAllTasksLikeThis(GetPostsTask.class);
+            pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+        }
     }
 }

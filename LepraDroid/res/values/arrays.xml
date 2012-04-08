@@ -8,4 +8,14 @@
         <item name="normal">normal</item>
         <item name="big">big</item>
     </string-array>
+    <string-array name="mainFilter">
+        <item name="main">Заглавная</item>
+        <item name="main_blogs">Загланая и подсайты</item>
+        <item name="blogs">Подсайты</item>
+    </string-array>
+    <string-array name="mainFilterValues">
+        <item name="main">1</item>
+        <item name="main_blogs">0</item>
+        <item name="blogs">2</item>
+    </string-array>
 </resources>

@@ -22,6 +22,7 @@ public class SettingsWorker
     private static final String COMMENT_CLICK_TIP 
                                                = "commentclicktip_pref";
     private static final String VERSION        = "version_pref";
+    private static final String MAIN_THRESHOLD  = "main_threshold_pref";
 
     private SettingsWorker() 
     {
@@ -59,6 +60,7 @@ public class SettingsWorker
     public void clearUserInfo() throws Exception
     {
         saveInt(VOTE_WEIGHT, 0);
+        saveInt(MAIN_THRESHOLD, 1);
         saveInt(UNREAD_COUNTER, 0);
         saveString(VERSION, "");
         saveString(USER_NAME, "");
@@ -85,6 +87,16 @@ public class SettingsWorker
     public void saveVoteKarmaWtf(String vote_karma_wtf)
     {
         saveString(VOTE_KARMA_WTF, vote_karma_wtf);
+    }
+    
+    public Integer loadMainThreshold()
+    {
+        return loadInt(MAIN_THRESHOLD);
+    }
+    
+    public void saveMainThreshold(Integer threshold)
+    {
+        saveInt(MAIN_THRESHOLD, threshold);
     }
     
     public Integer loadUnreadCounter()

@@ -40,7 +40,7 @@
     <string name="Author_Tab">Автор</string>
     <string name="Added_Comment">Комментарий добавлен</string>
     <string name="No_New_Comments">Новых комментариев больше нет</string>
-    <string name="Searching_For_New_Comments">Идет поиск новых комментариев...</string>
+    <string name="Searching_For_New_Comments">Идет поиск новых комментариев&#8230;</string>
     <string name="Double_Tuch_Comment_Tip">Чтобы увидеть комментарий полностью, нажмите на него два раза</string>
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
@@ -53,6 +53,9 @@
 	<string name ="MainSettings_GeneralCategoryName">Основные</string>
 	<string name ="WidgetSettings_NotifyCategoryId">notify_category_pref</string>
 	<string name ="WidgetSettings_NotifyCategoryName">Непрочитанные сообщения</string>
+	<string name ="MainSettings_MainFilterId">mainfilter_pref</string>
+	<string name ="MainSettings_MainFilterName">Показывать на заглавной</string>
+	<string name ="MainSettings_MainFilterSummary"></string>
 	<string name ="MainSettings_ImagesId">images_pref</string>
 	<string name ="MainSettings_ImagesName">Картинки</string>
 	<string name ="MainSettings_ImagesSummary">Загружать картинки в постах и комментариях</string>
