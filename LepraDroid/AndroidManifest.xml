@@ -34,6 +34,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".settings.MainPreferences" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation" />
+        <activity android:name=".settings.WidgetPreferences" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".LogonScreen" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation"/>
         <activity android:name=".PostsScreen" android:configChanges="keyboardHidden|orientation"/>
         <activity android:name=".BlogsScreen" android:configChanges="keyboardHidden|orientation"/>

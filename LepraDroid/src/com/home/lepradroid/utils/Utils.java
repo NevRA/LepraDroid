@@ -274,7 +274,7 @@ public class Utils
     {
         int ret = 0;
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if(prefs.getBoolean(Utils.getString(R.string.MainSettings_NotifyVibrateId), true))
+        if(prefs.getBoolean(Utils.getString(R.string.WidgetSettings_NotifyVibrateId), true))
             ret |= Notification.DEFAULT_VIBRATE;
        
         return ret;
@@ -289,19 +289,19 @@ public class Utils
     public static boolean isNotifyOnUnreadOnlyOnce(Context context)
     {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(Utils.getString(R.string.MainSettings_NotifyOnlyOnFirstId), true);
+        return prefs.getBoolean(Utils.getString(R.string.WidgetSettings_NotifyOnlyOnFirstId), true);
     }
     
     public static boolean isNotificationsEnabled(Context context)
     {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getBoolean(Utils.getString(R.string.MainSettings_NotifyId), true);
+        return prefs.getBoolean(Utils.getString(R.string.WidgetSettings_NotifyId), true);
     }
     
     public static Uri getNotificationSound(Context context)
     {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String strRingtonePreference = prefs.getString(Utils.getString(R.string.MainSettings_NotifySoundId), "DEFAULT_SOUND");        
+        final String strRingtonePreference = prefs.getString(Utils.getString(R.string.WidgetSettings_NotifySoundId), "DEFAULT_SOUND");        
         return Uri.parse(strRingtonePreference);
     }
     
