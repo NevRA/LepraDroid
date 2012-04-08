@@ -342,23 +342,26 @@ public class GetCommentsTask extends BaseTask
             comment.IsNew = true;
         
         Elements images = element.getElementsByTag("img");
-        if(!images.isEmpty())
+        int imageNum = 0;
+        for (Element image : images)
         {
-            for (Element image : images)
+            String src = image.attr("src");
+            if(isImagesEnabled && !TextUtils.isEmpty(src))
             {
-                String src = image.attr("src");
-                if(isImagesEnabled && !TextUtils.isEmpty(src))
-                {
-                    image.removeAttr("width");
-                    image.removeAttr("height");
-                    image.removeAttr("src");
-                    
-                    image.attributes().put("src", Commons.IMAGE_STUB);
-                    image.attributes().put("onLoad", "getWidth(this,\"" + src + "\", " + Integer.valueOf(commentsCout).toString() + ");");
-                }
-                else
-                    image.remove();
+                image.removeAttr("width");
+                image.removeAttr("height");
+                image.removeAttr("src");
+                image.removeAttr("id");
+                
+                String id = "img" + Integer.valueOf(imageNum).toString();
+                image.attributes().put("id", id);
+                image.attributes().put("src", Commons.IMAGE_STUB);
+                image.attributes().put("onLoad", "getWidth(\"" + id + "\",\"" + src + "\", " + Integer.valueOf(commentsCout).toString() + ");");
             }
+            else
+                image.remove();
+            
+            imageNum++;
         }
         
         comment.Html = element.html();

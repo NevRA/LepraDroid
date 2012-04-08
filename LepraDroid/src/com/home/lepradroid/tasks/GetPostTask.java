@@ -11,6 +11,8 @@ import org.jsoup.select.Elements;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.home.lepradroid.LepraDroidApplication;
+import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -21,9 +23,10 @@ import com.home.lepradroid.utils.Utils;
 
 public class GetPostTask extends BaseTask
 {
-    private UUID groupId;
-    private UUID postId;
-    private String url;
+    private UUID    groupId;
+    private UUID    postId;
+    private String  url;
+    private boolean isImagesEnabled = true;
 
     static final Class<?>[] argsClassesOnPostUpdateFinished = new Class[2];
     static Method methodOnPostUpdateFinished;
@@ -46,6 +49,7 @@ public class GetPostTask extends BaseTask
         this.groupId = groupId;
         this.postId = postId;
         this.url = url;
+        isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
     }
     
     @SuppressWarnings("unchecked")
@@ -86,28 +90,35 @@ public class GetPostTask extends BaseTask
 
             Post post = new Post();
             post.Id = postId;
-            post.Html = element.html();
+            
             
             Elements images = element.getElementsByTag("img");
-            if(!images.isEmpty())
+            int imageNum = 0;
+            for (Element image : images)
             {
-                post.ImageUrl = "http://src.sencha.io/80/80/" + images.first().attr("src");
-                
-                for (Element image : images)
+                String src = image.attr("src");
+                if(isImagesEnabled)
                 {
-                    String width = image.attr("width");
-                    if(!TextUtils.isEmpty(width))
-                        post.Html = post.Html.replace("width=\"" + width + "\"", "");
+                    if(TextUtils.isEmpty(post.ImageUrl))
+                        post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
                     
-                    String height = image.attr("height");
-                    if(!TextUtils.isEmpty(height))
-                        post.Html = post.Html.replace("height=\"" + height + "\"", "");
-
-                    String src = image.attr("src");
-                    if(!TextUtils.isEmpty(src))
-                        post.Html = post.Html.replace(src, "http://src.sencha.io/303/303/" + src);
+                    image.removeAttr("width");
+                    image.removeAttr("height");
+                    image.removeAttr("src");
+                    image.removeAttr("id");
+                    
+                    String id = "img" + Integer.valueOf(imageNum).toString();
+                    image.attributes().put("id", id);
+                    image.attributes().put("src", Commons.IMAGE_STUB);
+                    image.attributes().put("onLoad", "getWidth(\"" + id + "\",\"" + src + "\");");
                 }
+                else
+                    image.remove();
+                
+                imageNum++;
             }
+            
+            post.Html = element.html();
 
             Elements rating = content.getElementsByTag("em");
             if(!rating.isEmpty())

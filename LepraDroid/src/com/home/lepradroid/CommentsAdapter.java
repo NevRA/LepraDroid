@@ -66,6 +66,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     private ListView            listView            = null;
     private int                 commentLevelIndicatorLength
                                                     = 0;
+    private LayoutInflater      aInflater           = null;
       
     public CommentsAdapter(ListView parentListView, Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
@@ -75,6 +76,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         this.listView = parentListView;
         //this.postId = postId;
         this.groupId = groupId;
+        
+        aInflater = LayoutInflater.from(getContext());
         
         commentLevelIndicatorLength = getContext().getResources().getDimensionPixelSize(R.dimen.comment_level_padding_left);
         
@@ -232,7 +235,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     public View getView(final int position, View convertView, ViewGroup parent) 
     {
         Comment comment = (Comment)getItem(position);
-        LayoutInflater aInflater = LayoutInflater.from(getContext());
         
         if(comment != null)
         {
@@ -265,11 +267,12 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             webView.setWebViewClient(new LinksCatcher());
             WebSettings webSettings = webView.getSettings();
             webSettings.setDefaultFontSize(13);
+            webSettings.setJavaScriptEnabled(true);
             Utils.setWebViewFontSize(getContext(), webView);
             String header = Commons.WEBVIEW_COMMENT_HEADER;
             webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
-            webSettings.setJavaScriptEnabled(true);
             webView.addJavascriptInterface(new ImageResizer(), "ImageResizer");
+            
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.Signature));
             Utils.setTextViewFontSize(getContext(), author);

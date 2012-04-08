@@ -205,26 +205,30 @@ public class GetPostsTask extends BaseTask
                 
                 Element element = content.getElementsByClass("dt").first();
                 Elements images = element.getElementsByTag("img");
-                if(!images.isEmpty())
+
+                int imageNum = 0;
+                for (Element image : images)
                 {
-                    for (Element image : images)
+                    String src = image.attr("src");
+                    if(isImagesEnabled)
                     {
-                        String src = image.attr("src");
-                        if(isImagesEnabled)
-                        {
-                            if(TextUtils.isEmpty(post.ImageUrl))
-                                post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
-                            
-                            image.removeAttr("width");
-                            image.removeAttr("height");
-                            image.removeAttr("src");
-                            
-                            image.attributes().put("src", Commons.IMAGE_STUB);
-                            image.attributes().put("onLoad", "getWidth(this,\"" + src + "\");");
-                        }
-                        else
-                            image.remove();
+                        if(TextUtils.isEmpty(post.ImageUrl))
+                            post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
+                        
+                        image.removeAttr("width");
+                        image.removeAttr("height");
+                        image.removeAttr("src");
+                        image.removeAttr("id");
+                        
+                        String id = "img" + Integer.valueOf(imageNum).toString();
+                        image.attributes().put("id", id);
+                        image.attributes().put("src", Commons.IMAGE_STUB);
+                        image.attributes().put("onLoad", "getWidth(\"" + id + "\",\"" + src + "\");");
                     }
+                    else
+                        image.remove();
+                    
+                    imageNum++;
                 }
                     
                 post.Html = element.html();
