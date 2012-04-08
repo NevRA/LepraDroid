@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.home.lepradroid.AuthorScreen;
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.StubScreen;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LinksCatcher extends WebViewClient
@@ -17,7 +20,7 @@ public class LinksCatcher extends WebViewClient
 
     private static final String PATTERN_POST = "http://.*leprosorium.ru/comments/\\d{5,8}(#new)?";
     private static final String PATTERN_COMMENT = "http://.*leprosorium.ru/comments/\\d{5,8}#\\d{5,8}";
-    private static final String PATTERN_PROFILE = "http://leprosorium.ru/users/.*";
+    private static final String PATTERN_PROFILE = "http://leprosorium.ru/users/(.*)";
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url)
@@ -25,21 +28,21 @@ public class LinksCatcher extends WebViewClient
         Pattern patternPost = Pattern.compile(PATTERN_POST);
         Pattern patternComment = Pattern.compile(PATTERN_COMMENT);
         Pattern patternProfile = Pattern.compile(PATTERN_PROFILE);
+        Matcher matcher;
 
         int linkType = -1;
 
-        if (patternPost.matcher(url).matches())
+        if ((matcher = patternPost.matcher(url)) != null && matcher.matches())
             linkType = LINK_POST;
 
-        if (patternComment.matcher(url).matches())
+        if ((matcher = patternComment.matcher(url)) != null && matcher.matches())
             // linkType = LINK_COMMENT; // not implemented yet
             linkType = -1;
 
-        if (patternProfile.matcher(url).matches())
-            // linkType = LINK_PROFILE; // not implemented yet
-            linkType = -1;
+        if ((matcher = patternProfile.matcher(url)) != null && matcher.matches())
+            linkType = LINK_PROFILE;
 
-        if (linkType != -1)
+        if (linkType == LINK_POST)
         {
             Intent stubIntent = new Intent(LepraDroidApplication.getInstance(),
                     StubScreen.class);
@@ -49,6 +52,14 @@ public class LinksCatcher extends WebViewClient
             stubIntent.putExtra("type", linkType);
             LepraDroidApplication.getInstance().startActivity(stubIntent);
 
+        }
+        else if (linkType == LINK_PROFILE)
+        {
+            Intent stubIntent = new Intent(LepraDroidApplication.getInstance(),
+                    AuthorScreen.class);
+            stubIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            stubIntent.putExtra("username", matcher.group(1));
+            LepraDroidApplication.getInstance().startActivity(stubIntent);
         }
         else
         {
