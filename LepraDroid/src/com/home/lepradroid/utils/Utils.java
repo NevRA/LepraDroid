@@ -26,8 +26,10 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Selection;
 import android.text.Spanned;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings.TextSize;
 import android.webkit.WebView;
@@ -340,6 +342,22 @@ public class Utils
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         notificationManager.cancel(Commons.NOTIFICATION_ID);
+    }
+    
+    public static int getWidthForWebView(int padding)
+    {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        ((WindowManager) LepraDroidApplication.getInstance().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displaymetrics);
+        
+        return (int) ((float)(displaymetrics.widthPixels - padding) * (float)(152f / (float)displaymetrics.densityDpi));
+    }
+    
+    public static int getWidthForWebView()
+    {
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        ((WindowManager) LepraDroidApplication.getInstance().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displaymetrics);
+        
+        return (int) ((float)displaymetrics.widthPixels * (float)(152f / (float)displaymetrics.densityDpi));
     }
     
     public static void pushNotification(Context context)

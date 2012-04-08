@@ -3,6 +3,7 @@ package com.home.lepradroid;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -72,6 +73,17 @@ public class PostScreen extends BaseActivity
         super.onDestroy();
     }
     
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
+
+        if (    newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ||
+                newConfig.orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            postView.reload();
+            commentsView.reload();
+        }
+    }
     
     @Override
     public boolean onPrepareOptionsMenu(Menu menu)

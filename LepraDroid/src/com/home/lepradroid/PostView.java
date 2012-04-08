@@ -30,6 +30,15 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     private Post    post;
     private Button  plus;
     private Button  minus;
+    private WebView webView;
+    
+    public class ImageResizer
+    {
+        public String getImageUrl(String src) 
+        {
+            return "http://src.sencha.io/" + Integer.valueOf(Utils.getWidthForWebView()).toString() + "/" + src;
+        }
+    }
 
     public PostView(Context context, UUID groupId, UUID postId)
     {
@@ -48,6 +57,11 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
         init();
     }
+    
+    public void reload()
+    {
+       init();
+    }
 
     private void init()
     {
@@ -55,7 +69,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         if(post == null)
             return; // TODO some message
 
-        WebView webView = (WebView) contentView.findViewById(R.id.webview);
+        webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
 
         LinearLayout buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
@@ -74,8 +88,10 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         if(post.PlusVoted)
             plus.setEnabled(false);
 
-        String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+        String header = Commons.WEBVIEW_POST_HEADER;
         webView.loadDataWithBaseURL("", header + post.Html, "text/html", "UTF-8", null );
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new ImageResizer(), "ImageResizer");
         Utils.setWebViewFontSize(getContext(), webView);
         webView.setWebViewClient(new LinksCatcher());
         minus.setOnClickListener(new OnClickListener()

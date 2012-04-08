@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.Html;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,9 +38,28 @@ import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
 {   
+    public class ImageResizer
+    {
+        public String getImageUrl(String src, int num) 
+        {
+            try
+            {
+                Comment comment = (Comment)comments.get(num);
+                int width = Utils.getWidthForWebView(commentLevelIndicatorLength * comment.Level);
+                return "http://src.sencha.io/" + Integer.valueOf(width).toString() + "/" + src;
+            }
+            catch (Throwable e)
+            {
+                Log.e(Utils.getString(R.string.app_name), Log.getStackTraceString(e));
+            }
+            
+            return Commons.IMAGE_STUB; 
+        }
+    }
+    
     //private UUID postId;
     private UUID groupId;
-    private ArrayList<BaseItem> comments            = new ArrayList<BaseItem>();
+    private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());
     private GestureDetector     gestureDetector;
     private int                 commentPos          = -1;
     private boolean             navigationTurnedOn  = true;
@@ -180,7 +201,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         boolean containProgressElement = false;
         containProgressElement = isContainProgressElement();
         
-        this.comments = comments;
+        this.comments.clear();
+        this.comments.addAll(comments);
         
         if(containProgressElement)
             addProgressElement();
@@ -188,31 +210,22 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     
     public void addProgressElement()
     {
-        synchronized(comments)
-        {
-            if(!comments.isEmpty() && comments.get(comments.size() - 1) != null)
-                comments.add(null);   
-        }
+        if(!comments.isEmpty() && comments.get(comments.size() - 1) != null)
+            comments.add(null);   
     }
     
     public boolean isContainProgressElement()
     {
-        synchronized(comments)
-        {
-            if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
-                return true;
-            else
-                return false;
-        }
+        if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
+            return true;
+        else
+            return false;
     }
     
     public void removeProgressElement()
     {
-        synchronized(comments)
-        {
-            if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
-                comments.remove(null);
-        }
+        if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
+            comments.remove(null);
     }
     
     @Override
@@ -253,9 +266,10 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             WebSettings webSettings = webView.getSettings();
             webSettings.setDefaultFontSize(13);
             Utils.setWebViewFontSize(getContext(), webView);
-            String header = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>";
+            String header = Commons.WEBVIEW_COMMENT_HEADER;
             webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
-            
+            webSettings.setJavaScriptEnabled(true);
+            webView.addJavascriptInterface(new ImageResizer(), "ImageResizer");
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.Signature));
             Utils.setTextViewFontSize(getContext(), author);

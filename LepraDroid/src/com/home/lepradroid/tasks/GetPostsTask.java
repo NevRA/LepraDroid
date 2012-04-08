@@ -201,38 +201,33 @@ public class GetPostsTask extends BaseTask
                     ServerWorker.Instance().addPostPagesCount(groupId, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
                 }
                 
-                Element element = content.getElementsByClass("dt").first();
-
                 Post post = new Post();
-                post.Html = element.html();
                 
+                Element element = content.getElementsByClass("dt").first();
                 Elements images = element.getElementsByTag("img");
                 if(!images.isEmpty())
                 {
-                    if(isImagesEnabled)
+                    for (Element image : images)
                     {
-                        post.ImageUrl = "http://src.sencha.io/80/80/" + images.first().attr("src");
-                    
-                        for (Element image : images)
+                        String src = image.attr("src");
+                        if(isImagesEnabled)
                         {
-                            String src = image.attr("src");
-                            if(!TextUtils.isEmpty(src))
-                            {
-                                String width = image.attr("width");
-                                if(!TextUtils.isEmpty(width))
-                                    post.Html = post.Html.replace("width=\"" + width + "\"", "");
-                                
-                                String height = image.attr("height");
-                                if(!TextUtils.isEmpty(height))
-                                    post.Html = post.Html.replace("height=\"" + height + "\"", "");
-    
-                                post.Html = post.Html.replace(src, "http://src.sencha.io/303/303/" + src);
-                            }
+                            if(TextUtils.isEmpty(post.ImageUrl))
+                                post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
+                            
+                            image.removeAttr("width");
+                            image.removeAttr("height");
+                            image.removeAttr("src");
+                            
+                            image.attributes().put("src", Commons.IMAGE_STUB);
+                            image.attributes().put("onLoad", "getWidth(this,\"" + src + "\");");
                         }
+                        else
+                            image.remove();
                     }
-                    else
-                        post.Html = post.Html.replaceAll("<img", "<noimg");
                 }
+                    
+                post.Html = element.html();
 
                 Elements rating = content.getElementsByTag("em");
                 if(!rating.isEmpty())

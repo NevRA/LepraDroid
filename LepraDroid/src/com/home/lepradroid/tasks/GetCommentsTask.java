@@ -333,13 +333,10 @@ public class GetCommentsTask extends BaseTask
 
         Comment comment = new Comment();
         comment.Pid = root.id();
-        comment.Html = element.html();
         
         Matcher level = patternLevel.matcher(root.className());
         if(level.find())
-        {
             comment.Level = Integer.valueOf(level.group(1));
-        }
         
         if(element.parent().attr("class").contains("new"))
             comment.IsNew = true;
@@ -347,30 +344,24 @@ public class GetCommentsTask extends BaseTask
         Elements images = element.getElementsByTag("img");
         if(!images.isEmpty())
         {
-            if(isImagesEnabled)
+            for (Element image : images)
             {
-                comment.ImageUrl = images.first().attr("src");
-                
-                for (Element image : images)
+                String src = image.attr("src");
+                if(isImagesEnabled && !TextUtils.isEmpty(src))
                 {
-                    String src = image.attr("src");
-                    if(!TextUtils.isEmpty(src))
-                    {
-                        String width = image.attr("width");
-                        if(!TextUtils.isEmpty(width))
-                            comment.Html = comment.Html.replace("width=\"" + width + "\"", "");
-                        
-                        String height = image.attr("height");
-                        if(!TextUtils.isEmpty(height))
-                            comment.Html = comment.Html.replace("height=\"" + height + "\"", "");
-                        
-                        comment.Html = comment.Html.replace(image.attr("src"), "http://src.sencha.io/305/305/" + image.attr("src"));
-                    }
+                    image.removeAttr("width");
+                    image.removeAttr("height");
+                    image.removeAttr("src");
+                    
+                    image.attributes().put("src", Commons.IMAGE_STUB);
+                    image.attributes().put("onLoad", "getWidth(this,\"" + src + "\", " + Integer.valueOf(commentsCout).toString() + ");");
                 }
+                else
+                    image.remove();
             }
-            else
-                comment.Html = comment.Html.replaceAll("<img", "<noimg");
         }
+        
+        comment.Html = element.html();
 
         Elements author = content.getElementsByClass("p");
         if(!author.isEmpty())
