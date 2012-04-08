@@ -37,7 +37,7 @@ import com.home.lepradroid.utils.Utils;
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
 {   
     //private UUID postId;
-    //private UUID groupId;
+    private UUID groupId;
     private ArrayList<BaseItem> comments            = new ArrayList<BaseItem>();
     private GestureDetector     gestureDetector;
     private int                 commentPos          = -1;
@@ -53,7 +53,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         this.comments = comments;
         this.listView = parentListView;
         //this.postId = postId;
-        //this.groupId = groupId;
+        this.groupId = groupId;
         
         commentLevelIndicatorLength = getContext().getResources().getDimensionPixelSize(R.dimen.comment_level_padding_left);
         
@@ -67,10 +67,14 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                         List<String> actions = new ArrayList<String>(0);
                         actions.add(Utils.getString(R.string.CommentAction_Author));
                         actions.add(Utils.getString(R.string.CommentAction_Reply));
-                        if(!item.PlusVoted)
-                            actions.add(Utils.getString(R.string.CommentAction_Like));
-                        if(!item.MinusVoted)
-                            actions.add(Utils.getString(R.string.CommentAction_Dislike));
+                        if(     !item.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()) &&
+                                !groupId.equals(Commons.INBOX_POSTS_ID))
+                        {
+                            if(!item.PlusVoted)
+                                actions.add(Utils.getString(R.string.CommentAction_Like));
+                            if(!item.MinusVoted)
+                                actions.add(Utils.getString(R.string.CommentAction_Dislike));
+                        }
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         builder.setTitle("Выберите действие");
@@ -257,9 +261,14 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             Utils.setTextViewFontSize(getContext(), author);
             
             TextView rating = (TextView)convertView.findViewById(R.id.rating);
-            rating.setText(Utils.getRatingStringFromBaseItem(comment));
-            Utils.setTextViewFontSize(getContext(), rating);
-             
+            if(!groupId.equals(Commons.INBOX_POSTS_ID))
+            {
+                rating.setText(Utils.getRatingStringFromBaseItem(comment));
+                Utils.setTextViewFontSize(getContext(), rating);
+            }
+            else
+                rating.setVisibility(View.GONE);
+
             webView.setOnTouchListener(new View.OnTouchListener() 
             {
                 @Override
