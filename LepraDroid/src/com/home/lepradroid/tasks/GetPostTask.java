@@ -1,6 +1,7 @@
 package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,31 +95,34 @@ public class GetPostTask extends BaseTask
             
             Elements images = element.getElementsByTag("img");
             int imageNum = 0;
+            List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
             for (Element image : images)
             {
                 String src = image.attr("src");
-                if(isImagesEnabled)
+                if(isImagesEnabled && !TextUtils.isEmpty(src))
                 {
                     if(TextUtils.isEmpty(post.ImageUrl))
                         post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
+                    
+                    String id = "img" + Integer.valueOf(imageNum).toString();
+                    
+                    imgs.add(new Pair<String, String>(id, src));
                     
                     image.removeAttr("width");
                     image.removeAttr("height");
                     image.removeAttr("src");
                     image.removeAttr("id");
                     
-                    String id = "img" + Integer.valueOf(imageNum).toString();
                     image.attributes().put("id", id);
                     image.attributes().put("src", Commons.IMAGE_STUB);
-                    image.attributes().put("onLoad", "getWidth(\"" + id + "\",\"" + src + "\");");
+                    
+                    imageNum++;
                 }
                 else
                     image.remove();
-                
-                imageNum++;
             }
             
-            post.Html = element.html();
+            post.Html = Utils.getImagesStub(imgs, 0) + element.html();
 
             Elements rating = content.getElementsByTag("em");
             if(!rating.isEmpty())
