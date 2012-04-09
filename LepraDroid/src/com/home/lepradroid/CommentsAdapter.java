@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.Html;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -40,20 +39,10 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
 {   
     public class ImageResizer
     {
-        public String getImageUrl(String src, int num) 
+        public int getWidth(int level) 
         {
-            try
-            {
-                Comment comment = (Comment)comments.get(num);
-                int width = Utils.getWidthForWebView(commentLevelIndicatorLength * comment.Level);
-                return "http://src.sencha.io/" + Integer.valueOf(width).toString() + "/" + src;
-            }
-            catch (Throwable e)
-            {
-                Log.e(Utils.getString(R.string.app_name), Log.getStackTraceString(e));
-            }
-            
-            return Commons.IMAGE_STUB; 
+            Comment comment = (Comment)comments.get(level);
+            return Utils.getWidthForWebView(commentLevelIndicatorLength * comment.Level);
         }
     }
     

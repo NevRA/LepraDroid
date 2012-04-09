@@ -381,6 +381,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
     public void reload()
     {
-        updateAdapter(true);
+        if(progress.getVisibility() != View.VISIBLE)
+            updateAdapter(true);
     }
 }

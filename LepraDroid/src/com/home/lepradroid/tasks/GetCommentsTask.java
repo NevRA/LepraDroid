@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -343,28 +344,31 @@ public class GetCommentsTask extends BaseTask
         
         Elements images = element.getElementsByTag("img");
         int imageNum = 0;
+        List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
         for (Element image : images)
         {
             String src = image.attr("src");
             if(isImagesEnabled && !TextUtils.isEmpty(src))
             {
+                String id = "img" + Integer.valueOf(imageNum).toString();
+                
+                imgs.add(new Pair<String, String>(id, src));
+                
                 image.removeAttr("width");
                 image.removeAttr("height");
                 image.removeAttr("src");
                 image.removeAttr("id");
                 
-                String id = "img" + Integer.valueOf(imageNum).toString();
                 image.attributes().put("id", id);
                 image.attributes().put("src", Commons.IMAGE_STUB);
-                image.attributes().put("onLoad", "getWidth(\"" + id + "\",\"" + src + "\", " + Integer.valueOf(commentsCout).toString() + ");");
+                
+                imageNum++;
             }
             else
                 image.remove();
-            
-            imageNum++;
         }
         
-        comment.Html = element.html();
+        comment.Html = Utils.getImagesStub(imgs, commentsCout) + element.html();
 
         Elements author = content.getElementsByClass("p");
         if(!author.isEmpty())

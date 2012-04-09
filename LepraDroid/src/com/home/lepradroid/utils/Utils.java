@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
@@ -27,6 +28,7 @@ import android.text.Html;
 import android.text.Selection;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -418,5 +420,22 @@ public class Utils
                 dialog.cancel();
             }
         }).show();
+    }
+    
+    public static String getImagesStub(List<Pair<String, String>> imgs, int level)
+    {
+        String stub = "";
+        if(!imgs.isEmpty())
+        {
+            stub = "<script type='text/javascript'>function getUrl(id, src){return \"http://src.sencha.io/data.setDataUrl-\" + id + \"/\" + getWidth(" + Integer.valueOf(level).toString() + ") + \"/\" + src} window.addEventListener(\"load\", function () {";
+            for(Pair<String, String> img : imgs)
+            {
+                stub += "var " + img.first + " = document.createElement(\"script\");" + img.first + ".setAttribute(\"src\", getUrl(\"" + img.first + "\",\"" + img.second +"\"));" + img.first + ".setAttribute(\"type\",\"text/javascript\");document.head.appendChild(" + img.first + ");";
+            } 
+            
+            stub += "}, false);function setDataUrl(id, dataUrl) {document.getElementById(id).src = dataUrl;};</script>";
+        }
+        
+        return stub;
     }
 }

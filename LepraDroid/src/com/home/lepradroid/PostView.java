@@ -34,9 +34,9 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     
     public class ImageResizer
     {
-        public String getImageUrl(String src) 
+        public int getWidth(int level) 
         {
-            return "http://src.sencha.io/" + Integer.valueOf(Utils.getWidthForWebView()).toString() + "/" + src;
+            return Utils.getWidthForWebView();
         }
     }
 
