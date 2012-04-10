@@ -51,10 +51,8 @@ public class Commons
     
     public static final String IMAGE_STUB       = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII%3D";
     
-    public static final String WEBVIEW_POST_HEADER   
-                                                = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><script type=\"text/javascript\">function getWidth(level){return ImageResizer.getWidth(level)}</script>";
-    public static final String WEBVIEW_COMMENT_HEADER
-                                                = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><script type=\"text/javascript\">function getWidth(level){return ImageResizer.getWidth(level)}</script>";
+    public static final String WEBVIEW_HEADER   
+                                                = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><script type=\"text/javascript\">function getData(src, id, level){return ImagesWorker.getData(src, id, level)}</script>";
     
     public enum RateType
     {

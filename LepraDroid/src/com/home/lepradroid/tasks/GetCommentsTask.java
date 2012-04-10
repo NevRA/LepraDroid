@@ -361,6 +361,7 @@ public class GetCommentsTask extends BaseTask
                 
                 image.attributes().put("id", id);
                 image.attributes().put("src", Commons.IMAGE_STUB);
+                image.attributes().put("onLoad", "saveImage(\"" + src + "\", \"" + id + "\", " + Integer.valueOf(commentsCout).toString() + ", this.src);");
                 
                 imageNum++;
             }

@@ -1,6 +1,10 @@
 package com.home.lepradroid.utils;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -427,15 +431,65 @@ public class Utils
         String stub = "";
         if(!imgs.isEmpty())
         {
-            stub = "<script type='text/javascript'>function getUrl(id, src){return \"http://src.sencha.io/data.setDataUrl-\" + id + \"/\" + getWidth(" + Integer.valueOf(level).toString() + ") + \"/\" + src} window.addEventListener(\"load\", function () {";
+            stub = "<script type='text/javascript'>function getDataFromCache(id, src){return getData(src, id, " + Integer.valueOf(level).toString() + ");} window.addEventListener(\"load\", function () {";
             for(Pair<String, String> img : imgs)
             {
-                stub += "var " + img.first + " = document.createElement(\"script\");" + img.first + ".setAttribute(\"src\", getUrl(\"" + img.first + "\",\"" + img.second +"\"));" + img.first + ".setAttribute(\"type\",\"text/javascript\");document.head.appendChild(" + img.first + ");";
+                stub += "setDataUrl(\"" + img.first + "\", getDataFromCache(\"" + img.first + "\",\"" + img.second +"\"));";
             } 
             
             stub += "}, false);function setDataUrl(id, dataUrl) {document.getElementById(id).src = dataUrl;};</script>";
         }
         
         return stub;
+    }
+    
+    public static void writeStringToFileCache(String fileName, String data) throws IOException
+    {
+        FileWriter fileWriter = null;
+        try
+        {
+            FileCache fileCache = new FileCache(LepraDroidApplication.getInstance());
+            File file = fileCache.getFile(fileName);
+            fileWriter = new FileWriter(file); 
+            fileWriter.write(data);
+        }
+        finally
+        {
+            if(fileWriter != null)
+                fileWriter.close();
+        }
+    }
+    
+    public static String readStringFromFileCache(String fileName) throws IOException
+    {
+        FileReader fileReader = null;
+        
+        try
+        {
+            FileCache fileCache = new FileCache(LepraDroidApplication.getInstance());
+            File file = fileCache.getFile(fileName);
+            StringBuilder text = new StringBuilder();
+            fileReader = new FileReader(file);
+            BufferedReader br = new BufferedReader(fileReader);
+            String line;
+
+            while ((line = br.readLine()) != null)
+            {
+                if(text.length() != 0)
+                    text.append('\n');
+                text.append(line);
+            }
+
+            return text.toString();
+        }
+        catch (Exception e) 
+        {
+            return "";
+        }
+        finally
+        {
+            if(fileReader != null)
+                fileReader.close();
+        }
     }
 }

@@ -218,8 +218,6 @@ public class GetPostsTask extends BaseTask
                         
                         String id = "img" + Integer.valueOf(imageNum).toString();
                         
-                        imgs.add(new Pair<String, String>(id, src));
-                        
                         image.removeAttr("width");
                         image.removeAttr("height");
                         image.removeAttr("src");
@@ -227,6 +225,7 @@ public class GetPostsTask extends BaseTask
                         
                         image.attributes().put("id", id);
                         image.attributes().put("src", Commons.IMAGE_STUB);
+                        imgs.add(new Pair<String, String>(id, src));
                         
                         imageNum++;
                     }

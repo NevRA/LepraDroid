@@ -3,6 +3,7 @@ package com.home.lepradroid;
 import java.util.UUID;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -32,11 +33,31 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     private Button  minus;
     private WebView webView;
     
-    public class ImageResizer
+    public class ImagesWorker
     {
-        public int getWidth(int level) 
+        public String getData(String src, String id, int level) 
         {
-            return Utils.getWidthForWebView();
+            try
+            {
+                String url = "http://src.sencha.io/data/" + Utils.getWidthForWebView() + "/" + src;
+                
+                String cachedData = Utils.readStringFromFileCache(url);
+                if(!TextUtils.isEmpty(cachedData))
+                    return cachedData;
+
+                String data = ServerWorker.Instance().getContent(url);
+                if(!TextUtils.isEmpty(data))
+                {
+                    Utils.writeStringToFileCache(url, data);
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                // TODO: handle exception
+            }
+            
+            return Commons.IMAGE_STUB;
         }
     }
 
@@ -88,10 +109,10 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         if(post.PlusVoted)
             plus.setEnabled(false);
 
-        String header = Commons.WEBVIEW_POST_HEADER;
+        String header = Commons.WEBVIEW_HEADER;
         webView.loadDataWithBaseURL("", header + post.Html, "text/html", "UTF-8", null );
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new ImageResizer(), "ImageResizer");
+        webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
         Utils.setWebViewFontSize(getContext(), webView);
         webView.setWebViewClient(new LinksCatcher());
         minus.setOnClickListener(new OnClickListener()

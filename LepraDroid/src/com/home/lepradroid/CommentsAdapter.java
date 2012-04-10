@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -29,6 +30,7 @@ import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ExitListener;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
+import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -37,12 +39,31 @@ import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
 {   
-    public class ImageResizer
+    public class ImagesWorker
     {
-        public int getWidth(int level) 
+        public String getData(String src, String id, int level) 
         {
-            Comment comment = (Comment)comments.get(level);
-            return Utils.getWidthForWebView(commentLevelIndicatorLength * comment.Level);
+            try
+            {
+                Comment comment = (Comment)comments.get(level);
+                int width =  Utils.getWidthForWebView(commentLevelIndicatorLength * comment.Level);
+                
+                String url = "http://src.sencha.io/data/" + width + "/" + src;
+                
+                String cachedData = Utils.readStringFromFileCache(url);
+                if(!TextUtils.isEmpty(cachedData))
+                    return cachedData;
+
+                String data = ServerWorker.Instance().getContent(url);
+                Utils.writeStringToFileCache(url, data);
+                return data;
+            }
+            catch (Exception e)
+            {
+                // TODO: handle exception
+            }
+            
+            return Commons.IMAGE_STUB;
         }
     }
     
@@ -258,9 +279,9 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             webSettings.setDefaultFontSize(13);
             webSettings.setJavaScriptEnabled(true);
             Utils.setWebViewFontSize(getContext(), webView);
-            String header = Commons.WEBVIEW_COMMENT_HEADER;
+            String header = Commons.WEBVIEW_HEADER;
             webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
-            webView.addJavascriptInterface(new ImageResizer(), "ImageResizer");
+            webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
             
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.Signature));
