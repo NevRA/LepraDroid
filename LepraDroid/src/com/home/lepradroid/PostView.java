@@ -78,11 +78,6 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
         init();
     }
-    
-    public void reload()
-    {
-       init();
-    }
 
     private void init()
     {

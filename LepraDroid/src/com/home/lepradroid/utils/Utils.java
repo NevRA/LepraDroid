@@ -437,7 +437,13 @@ public class Utils
                 stub += "setDataUrl(\"" + img.first + "\", getDataFromCache(\"" + img.first + "\",\"" + img.second +"\"));";
             } 
             
-            stub += "}, false);function setDataUrl(id, dataUrl) {document.getElementById(id).src = dataUrl;};</script>";
+            stub += "}, false);";
+            stub += "window.addEventListener(\"resize\", updateOrientation, false); function updateOrientation() {";
+            for(Pair<String, String> img : imgs)
+            {
+                stub += "setDataUrl(\"" + img.first + "\", getDataFromCache(\"" + img.first + "\",\"" + img.second +"\"));";
+            }
+            stub += "};function setDataUrl(id, dataUrl) {document.getElementById(id).src = dataUrl;};</script>";
         }
         
         return stub;

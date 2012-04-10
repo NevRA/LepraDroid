@@ -378,10 +378,4 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     public void OnAuthorRateUpdate(String userId, boolean successful)
     {  
     }
-
-    public void reload()
-    {
-        if(progress.getVisibility() != View.VISIBLE)
-            updateAdapter(true);
-    }
 }
