@@ -45,7 +45,6 @@ import com.home.lepradroid.objects.Author;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
 import com.home.lepradroid.settings.SettingsWorker;
-import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
 
 public class ServerWorker
@@ -104,20 +103,16 @@ public class ServerWorker
         SettingsWorker.Instance().clearUserInfo();
     }
     
-    public HttpEntity getContentEntity(String url) throws Exception
+    public HttpEntity getContentEntity(String url, boolean addCookie) throws Exception
     {
         final HttpGet httpGet = new HttpGet(url);
         httpGet.addHeader("Accept-Encoding", "gzip");
 
-        try
+        if(addCookie)
         {
             final Pair<String, String> cookies = SettingsWorker.Instance().loadCookie();
             if(cookies != null)
                 httpGet.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
-        }
-        catch (Exception e)
-        {
-            Logger.e(e);
         }
 
         final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
@@ -135,15 +130,25 @@ public class ServerWorker
 
         return response.getEntity();
     }
+    
+    public InputStream getContentStream(String url, boolean addCookies) throws Exception
+    {
+        return getContentEntity(url, addCookies).getContent();
+    }
 
     public InputStream getContentStream(String url) throws Exception
     {
-        return getContentEntity(url).getContent();
+        return getContentStream(url, true);
+    }
+    
+    public String getContent(String url, boolean addCookies) throws Exception
+    {
+        return EntityUtils.toString(getContentEntity(url, addCookies), "UTF-8");
     }
 
     public String getContent(String url) throws Exception
     {
-        return EntityUtils.toString(getContentEntity(url), "UTF-8");
+        return getContent(url, true);
     }
     
 

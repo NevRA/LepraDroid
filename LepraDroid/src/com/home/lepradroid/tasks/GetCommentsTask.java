@@ -361,7 +361,6 @@ public class GetCommentsTask extends BaseTask
                 
                 image.attributes().put("id", id);
                 image.attributes().put("src", Commons.IMAGE_STUB);
-                image.attributes().put("onLoad", "saveImage(\"" + src + "\", \"" + id + "\", " + Integer.valueOf(commentsCout).toString() + ", this.src);");
                 
                 imageNum++;
             }
@@ -369,7 +368,7 @@ public class GetCommentsTask extends BaseTask
                 image.remove();
         }
         
-        comment.Html = Utils.getImagesStub(imgs, commentsCout) + element.html();
+        comment.Html = Utils.getImagesStub(imgs, comment.Level) + element.html();
 
         Elements author = content.getElementsByClass("p");
         if(!author.isEmpty())

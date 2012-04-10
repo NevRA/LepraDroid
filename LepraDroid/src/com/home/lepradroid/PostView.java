@@ -45,14 +45,14 @@ public class PostView extends BaseView implements ItemRateUpdateListener
                 if(!TextUtils.isEmpty(cachedData))
                     return cachedData;
 
-                String data = ServerWorker.Instance().getContent(url);
+                String data = ServerWorker.Instance().getContent(url, false);
                 if(!TextUtils.isEmpty(data))
                 {
                     Utils.writeStringToFileCache(url, data);
                     return data;
                 }
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
                 // TODO: handle exception
             }

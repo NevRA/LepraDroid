@@ -45,20 +45,21 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         {
             try
             {
-                Comment comment = (Comment)comments.get(level);
-                int width =  Utils.getWidthForWebView(commentLevelIndicatorLength * comment.Level);
-                
+                int width =  Utils.getWidthForWebView(commentLevelIndicatorLength * level);
                 String url = "http://src.sencha.io/data/" + width + "/" + src;
                 
                 String cachedData = Utils.readStringFromFileCache(url);
                 if(!TextUtils.isEmpty(cachedData))
                     return cachedData;
 
-                String data = ServerWorker.Instance().getContent(url);
-                Utils.writeStringToFileCache(url, data);
-                return data;
+                String data = ServerWorker.Instance().getContent(url, false);
+                if(!TextUtils.isEmpty(data))
+                {
+                    Utils.writeStringToFileCache(url, data);
+                    return data;
+                }
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
                 // TODO: handle exception
             }
