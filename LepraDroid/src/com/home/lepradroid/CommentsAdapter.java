@@ -11,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.Html;
-import android.text.TextUtils;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,7 +29,6 @@ import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ExitListener;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
-import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -39,35 +37,6 @@ import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
 {   
-    public class ImagesWorker
-    {
-        public String getData(String src, String id, int level) 
-        {
-            try
-            {
-                int width =  Utils.getWidthForWebView(commentLevelIndicatorLength * level);
-                String url = "http://src.sencha.io/data/" + width + "/" + src;
-                
-                String cachedData = Utils.readStringFromFileCache(url);
-                if(!TextUtils.isEmpty(cachedData))
-                    return cachedData;
-
-                String data = ServerWorker.Instance().getContent(url, false);
-                if(!TextUtils.isEmpty(data))
-                {
-                    Utils.writeStringToFileCache(url, data);
-                    return data;
-                }
-            }
-            catch (Throwable t)
-            {
-                // TODO: handle exception
-            }
-            
-            return Commons.IMAGE_STUB;
-        }
-    }
-    
     //private UUID postId;
     private UUID groupId;
     private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());

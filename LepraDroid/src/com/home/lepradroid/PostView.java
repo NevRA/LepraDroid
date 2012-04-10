@@ -3,7 +3,6 @@ package com.home.lepradroid;
 import java.util.UUID;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -32,34 +31,6 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     private Button  plus;
     private Button  minus;
     private WebView webView;
-    
-    public class ImagesWorker
-    {
-        public String getData(String src, String id, int level) 
-        {
-            try
-            {
-                String url = "http://src.sencha.io/data/" + Utils.getWidthForWebView() + "/" + src;
-                
-                String cachedData = Utils.readStringFromFileCache(url);
-                if(!TextUtils.isEmpty(cachedData))
-                    return cachedData;
-
-                String data = ServerWorker.Instance().getContent(url, false);
-                if(!TextUtils.isEmpty(data))
-                {
-                    Utils.writeStringToFileCache(url, data);
-                    return data;
-                }
-            }
-            catch (Throwable t)
-            {
-                // TODO: handle exception
-            }
-            
-            return Commons.IMAGE_STUB;
-        }
-    }
 
     public PostView(Context context, UUID groupId, UUID postId)
     {

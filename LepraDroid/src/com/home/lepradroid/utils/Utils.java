@@ -57,6 +57,8 @@ import com.home.lepradroid.tasks.TaskWrapper;
 
 public class Utils
 {
+    private static int commentLevelIndicatorLength = 0;
+    
     public static class GzipDecompressingEntity extends HttpEntityWrapper
     {
         public GzipDecompressingEntity(final HttpEntity entity)
@@ -431,13 +433,13 @@ public class Utils
         String stub = "";
         if(!imgs.isEmpty())
         {
-            stub = "<script type='text/javascript'>function getDataFromCache(id, src){return getData(src, id, " + Integer.valueOf(level).toString() + ");}";
+            stub = "<script type='text/javascript'>";
             stub += "window.addEventListener(\"resize\", updateOrientation, false); function updateOrientation() {";
             for(Pair<String, String> img : imgs)
             {
-                stub += "setDataUrl(\"" + img.first + "\", getDataFromCache(\"" + img.first + "\",\"" + img.second +"\"));";
+                stub += "document.getElementById(\"" + img.first + "\").src = getData(\"" + img.second + "\", \"null\", " + Integer.valueOf(level).toString() + ");";
             }
-            stub += "};function setDataUrl(id, dataUrl) {document.getElementById(id).src = dataUrl;};</script>";
+            stub += "};</script>";
         }
         
         return stub;
@@ -491,5 +493,13 @@ public class Utils
             if(fileReader != null)
                 fileReader.close();
         }
+    }
+    
+    public static int getCommentLevelIndicatorLength()
+    {
+        if(commentLevelIndicatorLength == 0)
+            commentLevelIndicatorLength = LepraDroidApplication.getInstance().getResources().getDimensionPixelSize(R.dimen.comment_level_padding_left);
+        
+        return commentLevelIndicatorLength;
     }
 }
