@@ -431,13 +431,7 @@ public class Utils
         String stub = "";
         if(!imgs.isEmpty())
         {
-            stub = "<script type='text/javascript'>function getDataFromCache(id, src){return getData(src, id, " + Integer.valueOf(level).toString() + ");} window.addEventListener(\"load\", function () {";
-            for(Pair<String, String> img : imgs)
-            {
-                stub += "setDataUrl(\"" + img.first + "\", getDataFromCache(\"" + img.first + "\",\"" + img.second +"\"));";
-            } 
-            
-            stub += "}, false);";
+            stub = "<script type='text/javascript'>function getDataFromCache(id, src){return getData(src, id, " + Integer.valueOf(level).toString() + ");}";
             stub += "window.addEventListener(\"resize\", updateOrientation, false); function updateOrientation() {";
             for(Pair<String, String> img : imgs)
             {
