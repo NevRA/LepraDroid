@@ -434,12 +434,21 @@ public class Utils
         if(!imgs.isEmpty())
         {
             stub = "<script type='text/javascript'>";
-            stub += "window.addEventListener(\"resize\", updateOrientation, false); function updateOrientation() {";
+            stub += "window.addEventListener(\"resize\", updateOrientation, false);";
+            stub += "function updateOrientation()";
+            stub += "{";
             for(Pair<String, String> img : imgs)
             {
-                stub += "document.getElementById(\"" + img.first + "\").src = getData(\"" + img.second + "\", \"null\", " + Integer.valueOf(level).toString() + ");";
+                stub += "getSrcData(\"" + img.first + "\", \"" + img.second + "\", " + Integer.valueOf(level).toString() + ");";
             }
-            stub += "};</script>";
+            stub += "};";
+            stub += "function getSrcData(id, origSrc, level)";
+            stub += "{";
+            stub += "   var img = document.getElementById(id);";
+            stub += "   var newSrc = getData(origSrc, level);";
+            stub += "   if(img.src.indexOf(newSrc) == -1) img.src = newSrc;";
+            stub += "};";
+            stub += "</script>";
         }
         
         return stub;

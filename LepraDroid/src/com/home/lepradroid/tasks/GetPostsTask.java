@@ -225,6 +225,7 @@ public class GetPostsTask extends BaseTask
                         
                         image.attributes().put("id", id);
                         image.attributes().put("src", Commons.IMAGE_STUB);
+                        image.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(0).toString() + ");");
                         imgs.add(new Pair<String, String>(id, src));
                         
                         imageNum++;

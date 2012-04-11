@@ -1,34 +1,52 @@
 package com.home.lepradroid;
 
-import com.home.lepradroid.commons.Commons;
+import android.text.TextUtils;
+
+import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Utils;
 
 public class ImagesWorker
 {
-    public String getData(String src, String id, int level) 
+    public String getData(String src, final int level) 
     {
+        final String sencha = "http://src.sencha.io/";
+        final String srcWithSize = Utils.getWidthForWebView(Utils.getCommentLevelIndicatorLength() * level) + "/" + src;;
+        final String url = sencha + srcWithSize;        
         try
-        {
-            return "http://src.sencha.io/" + Utils.getWidthForWebView(Utils.getCommentLevelIndicatorLength() * level) + "/" + src;
-            
-            /*String url = "http://src.sencha.io/data/" + width + "/" + src;
-            
+        {                
             String cachedData = Utils.readStringFromFileCache(url);
             if(!TextUtils.isEmpty(cachedData))
-                return cachedData;
-
-            String data = ServerWorker.Instance().getContent(url, false);
-            if(!TextUtils.isEmpty(data))
             {
-                Utils.writeStringToFileCache(url, data);
-                return data;
-            }*/
+                return cachedData;
+            }
+            else
+            {
+                new Thread(new Runnable()
+                {
+                    public void run()
+                    {
+                        try
+                        {
+                            String urlForData = sencha + "data/" + srcWithSize;
+                            String data = ServerWorker.Instance().getContent(urlForData, false);
+                            if(!TextUtils.isEmpty(data))
+                            {
+                                Utils.writeStringToFileCache(url, data);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                }).start();
+            }
         }
         catch (Throwable t)
         {
             // TODO: handle exception
         }
         
-        return Commons.IMAGE_STUB;
+        return url;
     }
 }

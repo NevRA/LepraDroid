@@ -351,9 +351,7 @@ public class GetCommentsTask extends BaseTask
             if(isImagesEnabled && !TextUtils.isEmpty(src))
             {
                 String id = "img" + Integer.valueOf(imageNum).toString();
-                
-                imgs.add(new Pair<String, String>(id, src));
-                
+                                
                 image.removeAttr("width");
                 image.removeAttr("height");
                 image.removeAttr("src");
@@ -361,6 +359,8 @@ public class GetCommentsTask extends BaseTask
                 
                 image.attributes().put("id", id);
                 image.attributes().put("src", Commons.IMAGE_STUB);
+                image.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(comment.Level).toString() + ");");
+                imgs.add(new Pair<String, String>(id, src));
                 
                 imageNum++;
             }
