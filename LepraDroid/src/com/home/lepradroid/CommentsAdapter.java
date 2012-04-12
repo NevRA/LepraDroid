@@ -35,7 +35,7 @@ import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
 {   
-    //private UUID postId;
+    private UUID postId;
     private UUID groupId;
     private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());
     private GestureDetector     gestureDetector;
@@ -43,13 +43,62 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     private int                 commentLevelIndicatorLength
                                                     = 0;
     private LayoutInflater      aInflater           = null;
+    
+    private void OnLongClick()
+    {
+        final Comment item = (Comment)getItem(commentPos);
+        List<String> actions = new ArrayList<String>(0);
+        actions.add(Utils.getString(R.string.CommentAction_Author));
+        actions.add(Utils.getString(R.string.CommentAction_Reply));
+        if(     !item.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()) &&
+                !groupId.equals(Commons.INBOX_POSTS_ID))
+        {
+            if(!item.PlusVoted)
+                actions.add(Utils.getString(R.string.CommentAction_Like));
+            if(!item.MinusVoted)
+                actions.add(Utils.getString(R.string.CommentAction_Dislike));
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Выберите действие");
+        builder.setItems(actions.toArray(new String[actions.size()]), new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog, int pos) 
+            {
+                switch (pos)
+                {
+                case 0:
+                    Intent intent = new Intent(getContext(), AuthorScreen.class);
+                    intent.putExtra("username", item.Author);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    LepraDroidApplication.getInstance().startActivity(intent); 
+                    break;
+                case 1:
+                    Utils.addComment(getContext(), groupId, postId, item.Id);
+                    break;
+                case 2:
+                    if(!item.PlusVoted)
+                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.PLUS), "");
+                    else 
+                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
+                    break;
+                case 3:
+                    new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
+                    break;
+                default:
+                    break;
+                }
+            }
+        });
+        builder.create().show();
+    }
       
     public CommentsAdapter(Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
     {
         super(context, textViewResourceId, comments);
         this.comments = comments;
-        //this.postId = postId;
+        this.postId = postId;
         this.groupId = groupId;
         
         aInflater = LayoutInflater.from(getContext());
@@ -62,51 +111,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     @Override
                     public void onLongPress(MotionEvent e)
                     {
-                        final Comment item = (Comment)getItem(commentPos);
-                        List<String> actions = new ArrayList<String>(0);
-                        actions.add(Utils.getString(R.string.CommentAction_Author));
-                        actions.add(Utils.getString(R.string.CommentAction_Reply));
-                        if(     !item.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()) &&
-                                !groupId.equals(Commons.INBOX_POSTS_ID))
-                        {
-                            if(!item.PlusVoted)
-                                actions.add(Utils.getString(R.string.CommentAction_Like));
-                            if(!item.MinusVoted)
-                                actions.add(Utils.getString(R.string.CommentAction_Dislike));
-                        }
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setTitle("Выберите действие");
-                        builder.setItems(actions.toArray(new String[actions.size()]), new DialogInterface.OnClickListener() 
-                        {
-                            public void onClick(DialogInterface dialog, int pos) 
-                            {
-                                switch (pos)
-                                {
-                                case 0:
-                                    Intent intent = new Intent(getContext(), AuthorScreen.class);
-                                    intent.putExtra("username", item.Author);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    LepraDroidApplication.getInstance().startActivity(intent); 
-                                    break;
-                                case 1:
-                                    Utils.addComment(getContext(), groupId, postId, item.Id);
-                                    break;
-                                case 2:
-                                    if(!item.PlusVoted)
-                                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.PLUS), "");
-                                    else 
-                                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
-                                    break;
-                                case 3:
-                                    new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
-                                    break;
-                                default:
-                                    break;
-                                }
-                            }
-                        });
-                        builder.create().show();
+                        OnLongClick();
                     }
 
                     @Override
@@ -222,6 +227,17 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 textOnly.setVisibility(View.VISIBLE);
                 textOnly.setVisibility(View.VISIBLE);
                 textOnly.setText(Html.fromHtml(comment.Html));
+                textOnly.setOnLongClickListener(new View.OnLongClickListener()
+                {
+                    @Override
+                    public boolean onLongClick(View v)
+                    {
+                        commentPos = position;
+                        OnLongClick();
+                        return false;
+                    }
+                });
+                
                 Utils.setTextViewFontSize(getContext(), textOnly);
             }
             
