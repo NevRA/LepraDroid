@@ -20,8 +20,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.home.lepradroid.commons.Commons;
@@ -42,18 +40,15 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());
     private GestureDetector     gestureDetector;
     private int                 commentPos          = -1;
-    private boolean             navigationTurnedOn  = true;
-    private ListView            listView            = null;
     private int                 commentLevelIndicatorLength
                                                     = 0;
     private LayoutInflater      aInflater           = null;
       
-    public CommentsAdapter(ListView parentListView, Context context, final UUID groupId, final UUID postId, int textViewResourceId,
+    public CommentsAdapter(Context context, final UUID groupId, final UUID postId, int textViewResourceId,
             ArrayList<BaseItem> comments)
     {
         super(context, textViewResourceId, comments);
         this.comments = comments;
-        this.listView = parentListView;
         //this.postId = postId;
         this.groupId = groupId;
         
@@ -117,31 +112,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     @Override
                     public boolean onDoubleTap(MotionEvent e)
                     {
-                        if(!navigationTurnedOn ) return false;
-                        
-                        SettingsWorker.Instance().saveCommentClickTipDisabled(true);
-                        
-                        BaseItem item = getItem(commentPos);
-                        if(item == null) return false;
-                        
-                        Comment comment = (Comment)item;
-                        comment.IsExpand = !comment.IsExpand;
-                        
-                        int visiblePosition = listView.getFirstVisiblePosition();
-                        View v = listView.getChildAt(commentPos - visiblePosition);
-                        if(v == null) return false;
-
-                        RelativeLayout webViewLayout = (RelativeLayout)v.findViewById(R.id.main);
-                        ViewGroup.LayoutParams params = webViewLayout.getLayoutParams();
-
-                        RelativeLayout authorLayout = (RelativeLayout)v.findViewById(R.id.authorLayout);
-                        authorLayout.setPadding(authorLayout.getPaddingLeft(), comment.IsExpand ? 0 : getContext().getResources().getDimensionPixelSize(R.dimen.comment_author_layout_padding_top), authorLayout.getPaddingRight(), authorLayout.getPaddingBottom());
-                        
-                        params.height = comment.IsExpand ? ViewGroup.LayoutParams.FILL_PARENT : 
-                           getContext().getResources().getDimensionPixelSize(R.dimen.comment_webview_height);
-                        
-                        webViewLayout.setLayoutParams(params);
-                        
                         return false;
                     }
 
@@ -152,16 +122,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     }
                 });
         gestureDetector.setIsLongpressEnabled(true);
-    }
-    
-    public void OnExit()
-    {
-        listView = null;
-    }
-    
-    public void setNavigationMode(boolean navigationTurnedOn)
-    {
-        this.navigationTurnedOn = navigationTurnedOn;
     }
 
     public int getCount() 
@@ -230,28 +190,40 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 root.setPadding(root.getPaddingLeft() + (effectiveLevel * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
                 content.setPadding(content.getPaddingLeft() * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
             }
-
-            RelativeLayout webViewLayout = (RelativeLayout)convertView.findViewById(R.id.main);
-            ViewGroup.LayoutParams params = webViewLayout.getLayoutParams();
-            if(!navigationTurnedOn || comment.IsExpand)
-            {
-                RelativeLayout authorLayout = (RelativeLayout)convertView.findViewById(R.id.authorLayout);
-                authorLayout.setPadding(authorLayout.getPaddingLeft(), 0, authorLayout.getPaddingRight(), authorLayout.getPaddingBottom());
-                
-                params.height = ViewGroup.LayoutParams.FILL_PARENT; 
-                webViewLayout.setLayoutParams(params);
-            }
             
-            WebView webView = (WebView)convertView.findViewById(R.id.text);
-            webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-            webView.setWebViewClient(new LinksCatcher());
-            WebSettings webSettings = webView.getSettings();
-            webSettings.setDefaultFontSize(13);
-            webSettings.setJavaScriptEnabled(true);
-            Utils.setWebViewFontSize(getContext(), webView);
-            String header = Commons.WEBVIEW_HEADER;
-            webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
-            webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
+            if(!comment.IsOnlyText)
+            {
+                WebView webView = (WebView)convertView.findViewById(R.id.text);
+                webView.setBackgroundColor(0x00000000);
+                webView.setVisibility(View.VISIBLE);
+                webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+                webView.setWebViewClient(new LinksCatcher());
+                WebSettings webSettings = webView.getSettings();
+                webSettings.setDefaultFontSize(13);
+                webSettings.setJavaScriptEnabled(true);
+                Utils.setWebViewFontSize(getContext(), webView);
+                String header = Commons.WEBVIEW_HEADER;
+                webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
+                webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
+                
+                webView.setOnTouchListener(new View.OnTouchListener() 
+                {
+                    @Override
+                    public boolean onTouch(View arg0, MotionEvent event)
+                    {
+                        commentPos = position;
+                        return gestureDetector.onTouchEvent(event);
+                    }
+                });
+            }
+            else
+            {
+                TextView textOnly = (TextView)convertView.findViewById(R.id.textOnly);
+                textOnly.setVisibility(View.VISIBLE);
+                textOnly.setVisibility(View.VISIBLE);
+                textOnly.setText(Html.fromHtml(comment.Html));
+                Utils.setTextViewFontSize(getContext(), textOnly);
+            }
             
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.Signature));
@@ -264,21 +236,10 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 Utils.setTextViewFontSize(getContext(), rating);
             }
             else
-                rating.setVisibility(View.GONE);
-
-            webView.setOnTouchListener(new View.OnTouchListener() 
-            {
-                @Override
-                public boolean onTouch(View arg0, MotionEvent event)
-                {
-                    commentPos = position;
-                    return gestureDetector.onTouchEvent(event);
-                }
-            });
+                rating.setVisibility(View.GONE);   
             
             if(comment.IsNew)
             {
-                webView.setBackgroundColor(0x00000000);
                 root.setBackgroundColor(Color.parseColor("#FFE6E6E6"));
                 content.setBackgroundColor(Color.parseColor("#FFE6E6E6"));
             }
@@ -289,5 +250,11 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         }
 
         return convertView;
+    }
+
+    @Override
+    public void OnExit()
+    {
+        // TODO Auto-generated method stub
     }
 }

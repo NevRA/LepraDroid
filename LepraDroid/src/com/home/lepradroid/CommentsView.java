@@ -74,8 +74,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     {
         this.navigationTurnedOn = navigationTurnedOn;
         buttons.setVisibility(navigationTurnedOn ? View.VISIBLE : View.GONE);
-        adapter.setNavigationMode(navigationTurnedOn);
-        adapter.notifyDataSetChanged();
     }
 
     private void init()
@@ -111,7 +109,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         TextView tooManyComments = (TextView) contentView
                 .findViewById(R.id.too_many_comments);
 
-        adapter = new CommentsAdapter(list, context, groupId, post.Id,
+        adapter = new CommentsAdapter(context, groupId, post.Id,
                 R.layout.comments_row_view, new ArrayList<BaseItem>());
         list.setAdapter(adapter);
 

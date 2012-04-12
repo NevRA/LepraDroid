@@ -9,4 +9,5 @@ public class Comment extends BaseItem
     public boolean  IsNew               = false;
     public boolean  IsPostAuthor        = false;
     public boolean  IsExpand            = false;
+    public boolean  IsOnlyText          = false;
 }

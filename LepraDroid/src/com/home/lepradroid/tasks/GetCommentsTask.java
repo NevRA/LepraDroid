@@ -369,6 +369,11 @@ public class GetCommentsTask extends BaseTask
         }
         
         comment.Html = Utils.getImagesStub(imgs, comment.Level) + element.html();
+        if(     imgs.isEmpty() && 
+                !Utils.isContainExtraTagsForWebView(comment.Html))
+        {
+            comment.IsOnlyText = true;
+        }
 
         Elements author = content.getElementsByClass("p");
         if(!author.isEmpty())

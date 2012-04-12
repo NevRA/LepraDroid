@@ -511,4 +511,12 @@ public class Utils
         
         return commentLevelIndicatorLength;
     }
+    
+    public static boolean isContainExtraTagsForWebView(String text)
+    {
+        if(text.contains("a href"))
+            return true;
+             
+        return false;
+    }
 }
