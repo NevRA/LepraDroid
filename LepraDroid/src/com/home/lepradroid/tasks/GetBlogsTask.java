@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 
 import android.util.Pair;
 
+import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.BlogsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -18,6 +19,7 @@ import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Blog;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
 
 public class GetBlogsTask extends BaseTask
 {
@@ -31,16 +33,19 @@ public class GetBlogsTask extends BaseTask
     
     private boolean refresh = true;
     private int page = 0;
+    private boolean isNormalTextSize = true;
     
     public GetBlogsTask()
     {
         refresh = true;
+        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
     }
     
     public GetBlogsTask(int page)
     {       
         this.refresh = false;
         this.page = page;
+        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
     }
 
     static
@@ -165,7 +170,7 @@ public class GetBlogsTask extends BaseTask
 
                     Elements images = logo.getElementsByTag("img");
                     if (!images.isEmpty())
-                        blog.ImageUrl = "http://src.sencha.io/80/80/" + images.first().attr("src");
+                        blog.ImageUrl = "http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + images.first().attr("src");
                 }
 
                 Elements title = content.getElementsByTag("h5");

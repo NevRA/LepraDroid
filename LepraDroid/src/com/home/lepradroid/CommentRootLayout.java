@@ -1,5 +1,7 @@
 package com.home.lepradroid;
 
+import com.home.lepradroid.utils.Utils;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -28,7 +30,7 @@ public class CommentRootLayout extends RelativeLayout
     protected void onDraw(Canvas canvas)
     {
         if(level > 0)
-            canvas.drawRect(new Rect(0, 0, getResources().getDimensionPixelSize(R.dimen.comment_level_padding_left), getHeight()), paintLevel);
+            canvas.drawRect(new Rect(0, 0, Utils.getCommentLevelIndicatorLength(), getHeight()), paintLevel);
 
         super.onDraw(canvas);
     }

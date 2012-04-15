@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="5dip"
+    android:padding="@dimen/standard_padding"
     android:minHeight="60dip" >
     
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/main"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent" >
 	    <ImageView
@@ -14,21 +17,19 @@
 	        android:layout_width="60dip"
 	        android:layout_height="60dip"
 	        android:adjustViewBounds="true"
-	        android:paddingRight="5dip"
 	        android:visibility="gone"
-	        android:layout_centerVertical="true"
+	        android:scaleType="center"
 	        android:src="@drawable/ic_launcher" />
-	    
 	    <TextView
 	        android:id="@+id/text"
 	        android:textSize="12sp"
-	        android:layout_toRightOf="@+id/image"
+	        android:paddingLeft="@dimen/standard_padding"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
+	        android:gravity="left|center_vertical"
 	        android:textStyle="bold"
-	        android:layout_centerVertical="true"
 	        android:maxLines="4"/>
-    </RelativeLayout>
+    </LinearLayout>
     
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_below="@+id/main"
@@ -39,7 +40,7 @@
 	        android:id="@+id/author"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
-	        android:paddingTop="5dip"
+	        android:paddingTop="@dimen/standard_padding"
 	        android:textSize="9sp"
 	        android:ellipsize="end"
 	        android:textColor="@android:color/secondary_text_light"
@@ -63,11 +64,12 @@
 		        android:id="@+id/rating"
 		        android:paddingTop="2dip"
 		        android:background="@drawable/ic_badge"
-		        android:paddingLeft="6dip"
-		        android:paddingRight="6dip"
+		        android:paddingLeft="@dimen/standard_padding"
+		        android:paddingRight="@dimen/standard_padding"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentRight="true"
+		        android:layout_alignParentBottom="true"
 		        android:gravity="center_horizontal"
 		        android:textSize="8sp"
 		        android:textStyle="bold"

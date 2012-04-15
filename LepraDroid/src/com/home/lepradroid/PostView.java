@@ -58,29 +58,19 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
         webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-
-        LinearLayout buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
-        if(     groupId.equals(Commons.INBOX_POSTS_ID) ||
-                post.voteDisabled ||
-                post.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()))
+        webView.setWebViewClient(new LinksCatcher());
+        if(!Utils.isNormalFontSize(context))
         {
-            buttons.setVisibility(View.GONE);
+            webView.getSettings().setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
+            Utils.setWebViewFontSize(context, webView);
         }
-
-        plus = (Button) contentView.findViewById(R.id.plus);
-        minus = (Button) contentView.findViewById(R.id.minus);
-
-        if(post.MinusVoted)
-            minus.setEnabled(false);
-        if(post.PlusVoted)
-            plus.setEnabled(false);
-
-        String header = Commons.WEBVIEW_HEADER;
-        webView.loadDataWithBaseURL("", header + post.Html, "text/html", "UTF-8", null );
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
-        Utils.setWebViewFontSize(getContext(), webView);
-        webView.setWebViewClient(new LinksCatcher());
+        webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + post.Html, "text/html", "UTF-8", null );
+        
+        plus = (Button) contentView.findViewById(R.id.plus);
+        minus = (Button) contentView.findViewById(R.id.minus);
+        
         minus.setOnClickListener(new OnClickListener()
         {
             @Override
@@ -100,6 +90,19 @@ public class PostView extends BaseView implements ItemRateUpdateListener
                 plus.setEnabled(false);
             }
         });
+        
+        LinearLayout buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
+        if(     groupId.equals(Commons.INBOX_POSTS_ID) ||
+                post.voteDisabled ||
+                post.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()))
+        {
+            buttons.setVisibility(View.GONE);
+        }
+
+        if(post.MinusVoted)
+            minus.setEnabled(false);
+        if(post.PlusVoted)
+            plus.setEnabled(false);
     }
 
     private void rateItem(RateValueType type)

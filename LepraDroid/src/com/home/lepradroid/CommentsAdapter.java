@@ -103,7 +103,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         
         aInflater = LayoutInflater.from(getContext());
         
-        commentLevelIndicatorLength = getContext().getResources().getDimensionPixelSize(R.dimen.comment_level_padding_left);
+        commentLevelIndicatorLength = Utils.getCommentLevelIndicatorLength();
         
         gestureDetector = new GestureDetector(
                 new GestureDetector.SimpleOnGestureListener()
@@ -204,13 +204,10 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
                 webView.setWebViewClient(new LinksCatcher());
                 WebSettings webSettings = webView.getSettings();
-                webSettings.setDefaultFontSize(13);
+                webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
                 webSettings.setJavaScriptEnabled(true);
-                Utils.setWebViewFontSize(getContext(), webView);
-                String header = Commons.WEBVIEW_HEADER;
-                webView.loadDataWithBaseURL("", header + comment.Html, "text/html", "UTF-8", null);
+                webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + comment.Html, "text/html", "UTF-8", null);
                 webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
-                
                 webView.setOnTouchListener(new View.OnTouchListener() 
                 {
                     @Override
@@ -220,6 +217,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                         return gestureDetector.onTouchEvent(event);
                     }
                 });
+                
+                Utils.setWebViewFontSize(getContext(), webView);
             }
             else
             {

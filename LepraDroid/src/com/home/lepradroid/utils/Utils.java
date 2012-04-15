@@ -507,14 +507,14 @@ public class Utils
     public static int getCommentLevelIndicatorLength()
     {
         if(commentLevelIndicatorLength == 0)
-            commentLevelIndicatorLength = LepraDroidApplication.getInstance().getResources().getDimensionPixelSize(R.dimen.comment_level_padding_left);
+            commentLevelIndicatorLength = LepraDroidApplication.getInstance().getResources().getDimensionPixelSize(R.dimen.standard_padding);
         
         return commentLevelIndicatorLength;
     }
     
     public static boolean isContainExtraTagsForWebView(String text)
     {
-        if(text.contains("a href"))
+        if(text.contains("href"))
             return true;
              
         return false;

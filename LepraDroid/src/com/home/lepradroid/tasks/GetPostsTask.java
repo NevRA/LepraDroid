@@ -35,6 +35,7 @@ public class GetPostsTask extends BaseTask
     private boolean isCustomBlogPosts = false;
     private int page = 0;
     private boolean isImagesEnabled = true;
+    private boolean isNormalTextSize = true;
     
     static final Class<?>[] argsClassesOnPostsUpdateBegin = new Class[2];
     static final Class<?>[] argsClassesOnPostsUpdate = new Class[2];
@@ -72,6 +73,7 @@ public class GetPostsTask extends BaseTask
         this.url = url;
         isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
         isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
+        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
     }
     
     public GetPostsTask(UUID groupId, String url, int page, boolean refresh)
@@ -82,6 +84,7 @@ public class GetPostsTask extends BaseTask
         this.page = page;
         isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
         isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
+        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
     }
     
     @SuppressWarnings("unchecked")
@@ -214,7 +217,7 @@ public class GetPostsTask extends BaseTask
                     if(isImagesEnabled && !TextUtils.isEmpty(src))
                     {
                         if(TextUtils.isEmpty(post.ImageUrl))
-                            post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
+                            post.ImageUrl = "http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + image.attr("src");
                         
                         String id = "img" + Integer.valueOf(imageNum).toString();
                         

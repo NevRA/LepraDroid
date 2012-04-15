@@ -1,6 +1,5 @@
 package com.home.lepradroid.settings;
 
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
@@ -184,7 +183,7 @@ public class SettingsWorker
         return sp.getString(name, "");
     }
     
-    private void saveBoolean(String name, Boolean value)
+    /*private void saveBoolean(String name, Boolean value)
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         Editor e = sp.edit();
@@ -196,5 +195,5 @@ public class SettingsWorker
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         return sp.getBoolean(name, false);
-    }
+    }*/
 }

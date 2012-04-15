@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.home.lepradroid.commons.Commons;
@@ -93,9 +96,35 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         {
             View view = aInflater.inflate(R.layout.post_row_view, parent, false);
             
+            ImageView imageView = (ImageView)view.findViewById(R.id.image);
             TextView textView = (TextView)view.findViewById(R.id.text);
+            
+            if(!TextUtils.isEmpty(post.ImageUrl))
+            {
+                imageView.setVisibility(View.VISIBLE);
+                imageLoader.DisplayImage(post.ImageUrl, imageView);
+            }
+            else
+            {
+                textView.setPadding(0, textView.getPaddingTop(), textView.getPaddingRight(), textView.getPaddingBottom());
+            }
+            
             String text = Utils.html2text(post.Html);
             textView.setText(TextUtils.isEmpty(text) ? "..." : text);
+            if(!Utils.isNormalFontSize(getContext()))
+            {
+                RelativeLayout root = (RelativeLayout)view.findViewById(R.id.root);
+                root.setPadding(root.getPaddingLeft() * 2, root.getPaddingTop(), root.getPaddingRight() * 2, root.getPaddingBottom() * 2);
+                
+                ViewGroup.LayoutParams params = imageView.getLayoutParams();
+                params.width = params.width * 3;
+                params.height = params.height * 3;
+                imageView.setLayoutParams(params);
+                
+                textView.setPadding (textView.getPaddingLeft() * 2, textView.getPaddingTop(), textView.getPaddingRight(), textView.getPaddingBottom());
+                textView.setTypeface(null, Typeface.NORMAL);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimensionPixelSize(R.dimen.comment_font_size));
+            }
             Utils.setTextViewFontSize(getContext(), textView);
             
             TextView authorView = (TextView)view.findViewById(R.id.author);
@@ -112,15 +141,6 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
                 ratingView.setVisibility(View.GONE);
             else
                 ratingView.setText(Utils.getRatingStringFromBaseItem(post));
-            
-            ImageView imageView = (ImageView)view.findViewById(R.id.image);
-            
-            if(!TextUtils.isEmpty(post.ImageUrl))
-            {
-                imageView.setVisibility(View.VISIBLE);
-                
-                imageLoader.DisplayImage(post.ImageUrl, imageView);
-            }
             
             return view;
         }

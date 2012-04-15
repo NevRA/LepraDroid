@@ -3,13 +3,16 @@ package com.home.lepradroid;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.home.lepradroid.objects.BaseItem;
@@ -91,6 +94,17 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
             
             TextView text = (TextView)view.findViewById(R.id.text);
             text.setText(Utils.html2text(blog.Html));
+            
+            if(!Utils.isNormalFontSize(getContext()))
+            {
+                RelativeLayout root = (RelativeLayout)view.findViewById(R.id.root);
+                root.setPadding(root.getPaddingLeft() * 2, root.getPaddingTop(), root.getPaddingRight() * 2, root.getPaddingBottom() * 2);
+                
+                text.setPadding (text.getPaddingLeft() * 2, text.getPaddingTop(), text.getPaddingRight(), text.getPaddingBottom());
+                text.setTypeface(null, Typeface.NORMAL);
+                text.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimensionPixelSize(R.dimen.comment_font_size));
+            }
+            
             Utils.setTextViewFontSize(getContext(), text);
             
             TextView author = (TextView)view.findViewById(R.id.author);

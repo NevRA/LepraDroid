@@ -24,20 +24,32 @@ public class Commons
     public static final String COOKIE_UID       = "lepro.uid";
     
     public static final String PREFS_NAME       = "MyPrefsFile";
-    public static final int EXIT_FROM_LOGON_SCREEN_RESULTCODE 
+    
+    public static final Integer EXIT_FROM_LOGON_SCREEN_RESULTCODE 
                                                 = 0;
-    public static final int EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE 
+    
+    public static final Integer EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE 
                                                 = 1;
     
-    public static final int MAX_COMMENTS_COUNT  = 5000;
+    public static final Integer POST_PREVIEW_NORMAL_SIZE
+                                                = 80;
     
-    public static final int MAX_BLOG_HEADER_LENGTH  
+    public static final Integer POST_PREVIEW_BIG_SIZE
+                                                = 240;
+    
+    public static final Integer WEBVIEW_DEFAULT_FONT_SIZE
+                                                = 13;
+    
+    public static final Integer MAX_COMMENTS_COUNT  
+                                                = 5000;
+    
+    public static final Integer MAX_BLOG_HEADER_LENGTH  
                                                 = 20;
     
-    public static final int MAX_COMMENT_LEVEL  
+    public static final Integer MAX_COMMENT_LEVEL  
                                                 = 10;
     
-    public static final int NOTIFICATION_ID  
+    public static final Integer NOTIFICATION_ID  
                                                 = 31337;
     
     public static final UUID MAIN_POSTS_ID      = UUID.randomUUID();
