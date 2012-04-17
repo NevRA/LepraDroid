@@ -105,6 +105,9 @@ public class GetPostTask extends BaseTask
                         post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
                     
                     String id = "img" + Integer.valueOf(imageNum).toString();
+                    
+                    if(!image.parent().tag().getName().equalsIgnoreCase("a"))
+                        image.wrap("<a href=" + "\"" + src + "\"></a>");
                    
                     image.removeAttr("width");
                     image.removeAttr("height");

@@ -221,6 +221,9 @@ public class GetPostsTask extends BaseTask
                         
                         String id = "img" + Integer.valueOf(imageNum).toString();
                         
+                        if(!image.parent().tag().getName().equalsIgnoreCase("a"))
+                            image.wrap("<a href=" + "\"" + src + "\"></a>");
+                        
                         image.removeAttr("width");
                         image.removeAttr("height");
                         image.removeAttr("src");

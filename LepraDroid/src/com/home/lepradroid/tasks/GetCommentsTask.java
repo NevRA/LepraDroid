@@ -350,8 +350,11 @@ public class GetCommentsTask extends BaseTask
             String src = image.attr("src");
             if(isImagesEnabled && !TextUtils.isEmpty(src))
             {
-                String id = "img" + Integer.valueOf(imageNum).toString();
-                                
+                String id = "img" + Integer.valueOf(imageNum).toString();  
+                
+                if(!image.parent().tag().getName().equalsIgnoreCase("a"))
+                    image.wrap("<a href=" + "\"" + src + "\"></a>");
+                
                 image.removeAttr("width");
                 image.removeAttr("height");
                 image.removeAttr("src");

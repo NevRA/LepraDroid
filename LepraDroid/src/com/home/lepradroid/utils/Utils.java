@@ -44,8 +44,8 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import com.home.lepradroid.LepraDroidApplication;
-import com.home.lepradroid.Main;
 import com.home.lepradroid.R;
+import com.home.lepradroid.StartupActivity;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
@@ -380,7 +380,7 @@ public class Utils
         final NotificationManager notificationManager = 
             (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
-        final Intent intent = new Intent(context, Main.class);
+        final Intent intent = new Intent(context, StartupActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
            
