@@ -125,8 +125,7 @@ public class GetPostTask extends BaseTask
                     image.remove();
             }
             
-            Utils.replaceLepraTags(element);
-            post.Html = Utils.getImagesStub(imgs, 0) + element.html();
+            post.Html = Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element);
 
             Elements rating = content.getElementsByTag("em");
             if(!rating.isEmpty())

@@ -262,14 +262,23 @@ public class Utils
         return (!groupId.equals(Commons.MAIN_POSTS_ID) && !groupId.equals(Commons.MYSTUFF_POSTS_ID) && !groupId.equals(Commons.FAVORITE_POSTS_ID) && !groupId.equals(Commons.INBOX_POSTS_ID));
     }
     
-    public static void replaceLepraTags(Element root)
+    public static String wrapLepraTags(Element root)
     {
         Elements elements = root.getElementsByClass("irony");
         for(Element element : elements)
         {
             String text = element.html();
-            element.html("<font color=\"red\"><i>" + text + "</i></font>");
+            element.before("<font color=\"red\"><i>" + text + "</i></font>");
+            element.remove();
         }
+        
+        elements = root.getElementsByTag("h2");
+        for(Element element : elements)
+        {
+            element.wrap("<font color=\"#3270FF\"></font>");
+        }
+        
+        return root.html().replaceAll("\\r|\\n", "");
     }
     
     public static String replaceBadHtmlTags(String html)
