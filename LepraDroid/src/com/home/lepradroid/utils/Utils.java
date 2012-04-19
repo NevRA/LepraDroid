@@ -15,6 +15,8 @@ import java.util.zip.GZIPInputStream;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -258,6 +260,16 @@ public class Utils
     public static boolean isCustomBlogPosts(UUID groupId)
     {
         return (!groupId.equals(Commons.MAIN_POSTS_ID) && !groupId.equals(Commons.MYSTUFF_POSTS_ID) && !groupId.equals(Commons.FAVORITE_POSTS_ID) && !groupId.equals(Commons.INBOX_POSTS_ID));
+    }
+    
+    public static void replaceLepraTags(Element root)
+    {
+        Elements elements = root.getElementsByClass("irony");
+        for(Element element : elements)
+        {
+            String text = element.html();
+            element.html("<font color=\"red\"><i>" + text + "</i></font>");
+        }
     }
     
     public static String replaceBadHtmlTags(String html)

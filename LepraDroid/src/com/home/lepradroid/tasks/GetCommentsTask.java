@@ -371,6 +371,7 @@ public class GetCommentsTask extends BaseTask
                 image.remove();
         }
         
+        Utils.replaceLepraTags(element);
         comment.Html = Utils.getImagesStub(imgs, comment.Level) + element.html();
         if(     imgs.isEmpty() && 
                 !Utils.isContainExtraTagsForWebView(comment.Html))
