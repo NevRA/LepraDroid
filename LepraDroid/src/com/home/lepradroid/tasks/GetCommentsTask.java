@@ -43,6 +43,7 @@ public class GetCommentsTask extends BaseTask
     private Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
     private String userName = "";
     private boolean isImagesEnabled = true;
+    private boolean isCommentWtfLoaded = false;
     
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
@@ -89,6 +90,7 @@ public class GetCommentsTask extends BaseTask
         this.groupId = groupId;
         this.postId = postId;
         isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
+        isCommentWtfLoaded = !TextUtils.isEmpty(SettingsWorker.Instance().loadCommentWtf());
     }
     
     @SuppressWarnings("unchecked")
@@ -162,6 +164,37 @@ public class GetCommentsTask extends BaseTask
         return len;
     }
     
+    private String getCommentWtf(FileInputStream stream) throws Exception
+    {  
+        int len;
+        byte[] chars = new byte[BUFFER_SIZE];
+        String header = "";
+        while((len = readBytesToBuff_WithoutNonLatinCharsAtTheEnd(stream, chars)) > 0)
+        {
+            String str = new String(chars, 0, len, "UTF-8"); 
+            header += str;
+            int pos = header.indexOf("comments-form");
+            if(pos > 0)
+            {
+                header = header.substring(pos - 50);
+                Element commentsForm = Jsoup.parse(header).getElementById("comments-form");
+                if(commentsForm != null)
+                {
+                    Elements wtf = commentsForm.getElementsByAttributeValue("name", "wtf");
+                    if(!wtf.isEmpty())
+                        SettingsWorker.Instance().saveCommentWtf(wtf.attr("value"));
+                    else
+                        continue;
+                    
+                    isCommentWtfLoaded = true;
+                    return str;
+                }
+            }
+        }
+                        
+        throw new Exception("Не могу найти заголовок страницы"); // TODO from resources
+    }
+    
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
@@ -211,10 +244,12 @@ public class GetCommentsTask extends BaseTask
                 
                 String pageA = null, pageB = null;
                 int start = -1;
-                int end = -1;
-                String header = "";
-                
+                int end = -1;                
                 fileStream = new FileInputStream(file);
+                
+                if(!isCommentWtfLoaded)
+                    pageA = getCommentWtf(fileStream);
+                                
                 while(true)
                 {
                     if(isCancelled()) break;
@@ -232,37 +267,13 @@ public class GetCommentsTask extends BaseTask
                     else if(pageA == null)
                     {
                         pageA = new String(chars, 0, len, "UTF-8");
-                        if(TextUtils.isEmpty(post.commentsWtf))
-                            header += pageA;
                         continue;
                     }
                     else
                     {
-                        
                         pageB = new String(chars, 0, len, "UTF-8");
-                        if(TextUtils.isEmpty(post.commentsWtf))
-                            header += pageB;
                     }
-                    
-                    if(TextUtils.isEmpty(post.commentsWtf) && !TextUtils.isEmpty(header))
-                    {
-                        Element content = Jsoup.parse(header);
-                        Element commentsForm = content.getElementById("comments-form");
-                        if(commentsForm != null)
-                        {
-                            Elements wtf = commentsForm.getElementsByAttributeValue("name", "wtf");
-                            if(!wtf.isEmpty())
-                                post.commentsWtf = wtf.attr("value");
-                            else
-                                continue;
-                            
-                            header = null;
-                        }
-                    }
-                    
-                    if(TextUtils.isEmpty(post.commentsWtf))
-                        continue;
-               
+
                     while(true)
                     {
                         if(isCancelled()) break;

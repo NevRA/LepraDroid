@@ -223,7 +223,7 @@ public class Utils
             {
                 final String value = input.getText().toString(); 
                 
-                new TaskWrapper(null, new PostCommentTask(post.Id, post.commentsWtf, comment != null ? comment.Pid : "", post.Pid, comment != null ? comment.Level + 1 : 0, value), null);
+                new TaskWrapper(null, new PostCommentTask(post.Id, SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.Pid : "", post.Pid, comment != null ? comment.Level + 1 : 0, value), null);
             }
         }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
         {

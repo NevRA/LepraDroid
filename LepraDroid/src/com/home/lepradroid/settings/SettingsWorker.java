@@ -15,6 +15,7 @@ public class SettingsWorker
     private static final String UNREAD_COUNTER = "unread_counter_pref";
     private static final String COOKIES        = "cookies_pref";
     private static final String USER_NAME      = "username_pref";
+    private static final String COMMENT_WTF    = "commentwtf_pref";
     private static final String VOTE_WTF       = "votewtf_pref";
     private static final String VOTE_WEIGHT    = "voteweight_pref";
     private static final String VOTE_KARMA_WTF = "votekarmawtf_pref";
@@ -61,8 +62,19 @@ public class SettingsWorker
         saveInt(UNREAD_COUNTER, 0);
         saveString(VERSION, "");
         saveString(USER_NAME, "");
+        saveString(COMMENT_WTF, "");
         saveString(VOTE_WTF, "");
         saveString(VOTE_KARMA_WTF, "");
+    }
+    
+    public String loadCommentWtf()
+    {
+        return loadString(COMMENT_WTF);
+    }
+    
+    public void saveCommentWtf(String comment_wtf)
+    {
+        saveString(COMMENT_WTF, comment_wtf);
     }
     
     public String loadVoteWtf()
