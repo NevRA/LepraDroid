@@ -36,15 +36,15 @@ public class GetCommentsTask extends BaseTask
 {
     final private int BUFFER_SIZE = 4 * 1024;
     
-    private UUID groupId;
-    private UUID postId;
-    private int commentsCout = 0;
-    private String postAuthor = "";
-    private Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
-    private String userName = "";
-    private boolean isImagesEnabled = true;
-    private boolean isCommentWtfLoaded = false;
+    private UUID    groupId;
+    private UUID    postId;
+    private int     commentsCout        = 0;
+    private String  postAuthor          = "";
+    private String  userName            = "";
+    private boolean isImagesEnabled     = true;
+    private boolean isCommentWtfLoaded  = false;
     
+    static final Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[2];

@@ -57,18 +57,23 @@ public class UpdateWidgetService extends Service
                 remoteViews.setOnClickPendingIntent(R.id.widget, pendIntent);
                 appWidgetManager.updateAppWidget(widgetId, remoteViews);
                 
-                if(Utils.isNotifyOnUnreadOnlyOnce(this.getApplicationContext()))
-                {
-                    if(prevCounter == 0 && newCounter > 0)
-                        Utils.pushNotification(this.getApplicationContext());
-                }
+                if(newCounter == 0)
+                    Utils.clearNotification(this.getApplicationContext());
                 else
                 {
-                    if(prevCounter < newCounter)
-                        Utils.pushNotification(this.getApplicationContext());
+                    if(Utils.isNotifyOnUnreadOnlyOnce(this.getApplicationContext()))
+                    {
+                        if(prevCounter == 0 && newCounter > 0)
+                            Utils.pushNotification(this.getApplicationContext());
+                    }
+                    else
+                    {
+                        if(prevCounter < newCounter)
+                            Utils.pushNotification(this.getApplicationContext());
+                    } 
                 }
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
                 // TODO
             }            

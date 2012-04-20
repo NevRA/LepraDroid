@@ -399,6 +399,14 @@ public class Utils
         return (int) ((float)displaymetrics.widthPixels * (float)(152f / (float)displaymetrics.densityDpi));
     }
     
+    public static void clearNotification(Context context)
+    {
+        final NotificationManager notificationManager = 
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        
+        notificationManager.cancel(Commons.NOTIFICATION_ID);
+    }
+    
     public static void pushNotification(Context context)
     {
         if(!isNotificationsEnabled(context)) return;
