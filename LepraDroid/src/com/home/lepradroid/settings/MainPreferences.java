@@ -9,6 +9,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.text.TextUtils;
 
 import com.home.lepradroid.AuthorScreen;
 import com.home.lepradroid.R;
@@ -27,6 +28,9 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
     private void updatePreferences()
     {
         final ListPreference mainFilter = (ListPreference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_MainFilterId));
+        String threshold = SettingsWorker.Instance().loadMainThreshold();
+        if(!TextUtils.isEmpty(threshold))
+            mainFilter.setValue(threshold);
         mainFilter.setSummary(mainFilter.getEntry());
         
         final Preference author = (Preference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_AuthorId));
@@ -80,11 +84,13 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
     {
         if(key.equals(Utils.getString(R.string.MainSettings_MainFilterId)))
         {
-            updatePreferences();
-            
             String value = sharedPreferences.getString(Utils.getString(R.string.MainSettings_MainFilterId), "1");
-            SettingsWorker.Instance().saveMainThreshold(Integer.valueOf(value));
-            new PostMainThresholdTask().execute();
+            if(!value.equals(SettingsWorker.Instance().loadMainThreshold()))
+            {
+                SettingsWorker.Instance().saveMainThreshold(value);
+                updatePreferences();
+                new PostMainThresholdTask().execute();
+            }
         }
     }
 }

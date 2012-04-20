@@ -20,7 +20,7 @@ public class SettingsWorker
     private static final String VOTE_WEIGHT    = "voteweight_pref";
     private static final String VOTE_KARMA_WTF = "votekarmawtf_pref";
     private static final String VERSION        = "version_pref";
-    private static final String MAIN_THRESHOLD  = "main_threshold_pref";
+    private static final String MAIN_THRESHOLD = "threshold_pref";
 
     private SettingsWorker() 
     {
@@ -58,8 +58,8 @@ public class SettingsWorker
     public void clearUserInfo() throws Exception
     {
         saveInt(VOTE_WEIGHT, 0);
-        saveInt(MAIN_THRESHOLD, 1);
         saveInt(UNREAD_COUNTER, 0);
+        saveString(MAIN_THRESHOLD, "");
         saveString(VERSION, "");
         saveString(USER_NAME, "");
         saveString(COMMENT_WTF, "");
@@ -97,14 +97,14 @@ public class SettingsWorker
         saveString(VOTE_KARMA_WTF, vote_karma_wtf);
     }
     
-    public Integer loadMainThreshold()
+    public String loadMainThreshold()
     {
-        return loadInt(MAIN_THRESHOLD);
+        return loadString(MAIN_THRESHOLD);
     }
     
-    public void saveMainThreshold(Integer threshold)
+    public void saveMainThreshold(String threshold)
     {
-        saveInt(MAIN_THRESHOLD, threshold);
+        saveString(MAIN_THRESHOLD, threshold);
     }
     
     public Integer loadUnreadCounter()

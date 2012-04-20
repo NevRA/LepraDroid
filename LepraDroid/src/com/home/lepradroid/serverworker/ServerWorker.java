@@ -221,9 +221,9 @@ public class ServerWorker
         return postRequest(url, body);
     }
     
-    public void postMainTresholdRequest(int value) throws Exception
+    public void postMainTresholdRequest(String value) throws Exception
     {
-        postRequest(Commons.THRESHOLD_URL, String.format("showonindex=%s&selected_threshold=all", Integer.toString(value)));
+        postRequest(Commons.THRESHOLD_URL, String.format("showonindex=%s&selected_threshold=all", value));
     }
 
     public String postCommentRequest(String wtf, String replyTo, String pid, String comment) throws Exception

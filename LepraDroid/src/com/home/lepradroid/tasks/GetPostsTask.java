@@ -176,7 +176,7 @@ public class GetPostsTask extends BaseTask
                     Element content = Jsoup.parse(header);
                     
                     Element filter = content.getElementById("js-showonindex"); 
-                    SettingsWorker.Instance().saveMainThreshold(Integer.valueOf(filter.attr("value"))); 
+                    SettingsWorker.Instance().saveMainThreshold(filter.attr("value")); 
                     
                     Element vote = content.getElementById("content_left_inner");
                     Element script = vote.getElementsByTag("script").first();
