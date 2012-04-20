@@ -164,7 +164,7 @@ public class GetCommentsTask extends BaseTask
         return len;
     }
     
-    private String getCommentWtf(FileInputStream stream) throws Exception
+    private String getCommentWtfAndReturnFirstPageAfterIt(FileInputStream stream) throws Exception
     {  
         int len;
         byte[] chars = new byte[BUFFER_SIZE];
@@ -248,7 +248,7 @@ public class GetCommentsTask extends BaseTask
                 fileStream = new FileInputStream(file);
                 
                 if(!isCommentWtfLoaded)
-                    pageA = getCommentWtf(fileStream);
+                    pageA = getCommentWtfAndReturnFirstPageAfterIt(fileStream);
                                 
                 while(true)
                 {
