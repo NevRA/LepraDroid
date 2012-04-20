@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -224,7 +225,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             {
                 TextView textOnly = (TextView)convertView.findViewById(R.id.textOnly);
                 textOnly.setVisibility(View.VISIBLE);
-                textOnly.setVisibility(View.VISIBLE);
+                textOnly.setMovementMethod(LinkMovementMethod.getInstance());
                 textOnly.setText(Html.fromHtml(comment.Html));
                 textOnly.setOnLongClickListener(new View.OnLongClickListener()
                 {

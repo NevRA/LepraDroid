@@ -545,7 +545,7 @@ public class Utils
     
     public static boolean isContainExtraTagsForWebView(String text)
     {
-        if(text.contains("href"))
+        if(text.contains("leprosorium.ru"))
             return true;
              
         return false;
