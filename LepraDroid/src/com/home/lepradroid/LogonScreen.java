@@ -145,6 +145,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
     {
         captchaImage.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
+        captcha.setText("");
         
         if(dw == null) return;
         

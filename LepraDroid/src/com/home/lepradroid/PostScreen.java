@@ -144,6 +144,8 @@ public class PostScreen extends BaseActivity
     {
         post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
         if(post == null) {finish(); return;}
+        
+        navigationTurnedOn = post.NewComments > 0;
 
         postView = new PostView(this, groupId, postId);
         postView.setTag(Utils.getString(R.string.Post_Tab));

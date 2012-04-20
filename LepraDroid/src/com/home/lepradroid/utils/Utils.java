@@ -272,10 +272,20 @@ public class Utils
             element.remove();
         }
         
+        elements = root.getElementsByClass("moderator");
+        for(Element element : elements)
+        {
+            String text = element.html();
+            element.before("<font color=\"grey\"><i>" + text + "</i></font>");
+            element.remove();
+        }
+        
         elements = root.getElementsByTag("h2");
         for(Element element : elements)
         {
-            element.wrap("<font color=\"#3270FF\"></font>");
+            String text = element.html();
+            element.before("<h2><font color=\"#3270FF\">" + text + "</font></h2>");
+            element.remove();
         }
         
         return root.html().replaceAll("\\r|\\n", "");

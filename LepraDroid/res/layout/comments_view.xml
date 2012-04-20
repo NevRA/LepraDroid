@@ -33,7 +33,6 @@
     <LinearLayout 
         android:id="@+id/buttons"
         android:orientation="horizontal"
-        android:visibility="gone"
         android:layout_marginTop="5dip"
         android:layout_alignParentBottom="true"
         android:gravity="center_horizontal|center_vertical"
