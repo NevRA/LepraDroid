@@ -43,7 +43,7 @@ public class BlogScreen extends BaseActivity
             post = ServerWorker.Instance().getPostById(groupId, id);
             if(post == null) finish(); // TODO message
 
-            postsScreen = new PostsScreen(this, id, post.Url, title);
+            postsScreen = new PostsScreen(this, id, post.getUrl(), title);
             postsScreen.setTag(title);
             
             pages.add(postsScreen);
@@ -57,7 +57,7 @@ public class BlogScreen extends BaseActivity
             titleIndicator.setViewPager(pager);
             titleIndicator.setCurrentItem(0);
             
-            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.getUrl()), Utils.getString(R.string.Posts_Loading_In_Progress)));
         }
         catch (Exception e)
         {
@@ -72,7 +72,7 @@ public class BlogScreen extends BaseActivity
         switch (item.getItemId())
         {
         case MENU_RELOAD:
-            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.Url), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            pushNewTask(new TaskWrapper(null, new GetPostsTask(id, post.getUrl()), Utils.getString(R.string.Posts_Loading_In_Progress)));
             return true;
         }
         return false;

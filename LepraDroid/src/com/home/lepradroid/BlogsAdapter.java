@@ -93,7 +93,7 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
             View view = aInflater.inflate(R.layout.blog_row_view, parent, false);
             
             TextView text = (TextView)view.findViewById(R.id.text);
-            text.setText(Utils.html2text(blog.Html));
+            text.setText(Utils.html2text(blog.getHtml()));
             
             if(!Utils.isNormalFontSize(getContext()))
             {
@@ -108,20 +108,20 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
             Utils.setTextViewFontSize(getContext(), text);
             
             TextView author = (TextView)view.findViewById(R.id.author);
-            author.setText(Html.fromHtml(blog.Signature));
+            author.setText(Html.fromHtml(blog.getSignature()));
             Utils.setTextViewFontSize(getContext(), author);
 
             TextView stat = (TextView)view.findViewById(R.id.stat);
-            stat.setText(Html.fromHtml(blog.Stat));
+            stat.setText(Html.fromHtml(blog.getStat()));
             Utils.setTextViewFontSize(getContext(), stat);
             
             ImageView image = (ImageView)view.findViewById(R.id.image);
             
-            if(!TextUtils.isEmpty(blog.ImageUrl))
+            if(!TextUtils.isEmpty(blog.getImageUrl()))
             {
                 image.setVisibility(View.VISIBLE);
                 
-                imageLoader.DisplayImage(blog.ImageUrl, image);
+                imageLoader.DisplayImage(blog.getImageUrl(), image);
             }
             
             return view;

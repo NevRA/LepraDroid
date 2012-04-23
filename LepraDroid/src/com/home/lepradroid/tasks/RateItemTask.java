@@ -132,7 +132,7 @@ public class RateItemTask extends BaseTask
         this.type = RateType.POST;
         this.wtf = SettingsWorker.Instance().loadVoteWtf();
         this.valueType = valueType;
-        this.id = ((Post)ServerWorker.Instance().getPostById(groupId, postId)).Pid;
+        this.id = ((Post)ServerWorker.Instance().getPostById(groupId, postId)).getPid();
     }
     
     public RateItemTask(UUID groupId, UUID postId, UUID commentId, RateValueType valueType)
@@ -142,7 +142,7 @@ public class RateItemTask extends BaseTask
         this.type = RateType.COMMENT;
         this.wtf = SettingsWorker.Instance().loadVoteWtf();
         this.valueType = valueType;
-        this.id = ((Post)ServerWorker.Instance().getPostById(groupId, postId)).Pid;
+        this.id = ((Post)ServerWorker.Instance().getPostById(groupId, postId)).getPid();
         this.commentId = commentId;
     }
 
@@ -170,7 +170,7 @@ public class RateItemTask extends BaseTask
                 break;
             case COMMENT:
                 Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
-                response = ServerWorker.Instance().rateItemRequest(type, wtf, comment.Pid, id,
+                response = ServerWorker.Instance().rateItemRequest(type, wtf, comment.getPid(), id,
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
@@ -196,17 +196,17 @@ public class RateItemTask extends BaseTask
                 {
                 case POST:
                     item = ServerWorker.Instance().getPostById(groupId, postId);
-                    item.Rating = (groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId
-                            .equals(Commons.MYSTUFF_POSTS_ID)) ? item.Rating
-                            : Integer.valueOf(response);
+                    item.setRating((groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId
+                            .equals(Commons.MYSTUFF_POSTS_ID)) ? item.getRating()
+                            : Short.valueOf(response));
                     break;
                 case COMMENT:
                     item = ServerWorker.Instance().getComment(groupId, postId, commentId);
-                    item.Rating = Integer.valueOf(response);
+                    item.setRating(Short.valueOf(response));
                     break;
                 case KARMA:
                     item = ServerWorker.Instance().getAuthorById(id);
-                    Throwable res = new GetAuthorTask(((Author)item).UserName, true).execute().get();
+                    Throwable res = new GetAuthorTask(((Author)item).getUserName(), true).execute().get();
                     if(res != null)
                         throw res;
                     break;
@@ -217,18 +217,18 @@ public class RateItemTask extends BaseTask
                 switch (valueType)
                 {
                 case MINUS:
-                    item.PlusVoted = false;
-                    item.MinusVoted = true;
+                    item.setPlusVoted(false);
+                    item.setMinusVoted(true);
                     break;
                 case PLUS:
-                    item.PlusVoted = true;
-                    item.MinusVoted = false;
+                    item.setPlusVoted(true);
+                    item.setMinusVoted(false);
                     break;
                 default:
                     break;
                 }
                 
-                notifyOnRate(true, item.Rating);
+                notifyOnRate(true, item.getRating());
             }
             else
                 notifyOnRate(false, 0);

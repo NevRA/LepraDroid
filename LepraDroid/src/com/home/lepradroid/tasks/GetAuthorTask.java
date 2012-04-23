@@ -103,19 +103,19 @@ public class GetAuthorTask extends BaseTask
                 data = new Author();
 
 
-            data.UserName = userName;
+            data.setUserName(userName);
             final Element userPic = document.getElementsByClass("userpic").first();
             final Elements images = userPic.getElementsByTag("img");
             if(!images.isEmpty())
             {
-                data.ImageUrl = images.first().attr("src");
+                data.setImageUrl(images.first().attr("src"));
             }
             
             final Element userInfo = document.getElementsByClass("userbasicinfo").first();
-            data.Id = userInfo.getElementsByClass("vote").first().attr("uid");
-            data.Name = userInfo.getElementsByTag("h3").first().text();
+            data.setId(userInfo.getElementsByClass("vote").first().attr("uid"));
+            data.setName(userInfo.getElementsByTag("h3").first().text());
             
-            data.Ego = document.getElementsByClass("userego").first().text();
+            data.setEgo(document.getElementsByClass("userego").first().text());
             
             Element vote = null;
             if(SettingsWorker.Instance().loadUserName().equals(userName))
@@ -135,8 +135,8 @@ public class GetAuthorTask extends BaseTask
                 Element vote1 = userInfo.getElementsByClass("vote1").first();
                 Element vote2 = userInfo.getElementsByClass("vote2").first();
 
-                data.MinusVoted = vote1.getElementsByTag("a").last().attr("class").equals("minus voted") && vote2.getElementsByTag("a").last().attr("class").equals("minus voted");
-                data.PlusVoted  = vote1.getElementsByTag("a").first().attr("class").equals("plus voted") && vote2.getElementsByTag("a").first().attr("class").equals("plus voted");
+                data.setMinusVoted(vote1.getElementsByTag("a").last().attr("class").equals("minus voted") && vote2.getElementsByTag("a").last().attr("class").equals("minus voted"));
+                data.setPlusVoted(vote1.getElementsByTag("a").first().attr("class").equals("plus voted") && vote2.getElementsByTag("a").first().attr("class").equals("plus voted"));
                 if (TextUtils.isEmpty(SettingsWorker.Instance().loadVoteKarmaWtf()))
                 {
                     Element script = userInfo.getElementsByTag("script").first();
@@ -148,7 +148,7 @@ public class GetAuthorTask extends BaseTask
                 }
             }
             
-            data.Rating = Integer.valueOf(vote.getElementsByTag("em").text());
+            data.setRating(Short.valueOf(vote.getElementsByTag("em").text()));
 
             ServerWorker.Instance().addNewAuthor(data);
 

@@ -109,7 +109,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         TextView tooManyComments = (TextView) contentView
                 .findViewById(R.id.too_many_comments);
 
-        adapter = new CommentsAdapter(context, groupId, post.Id,
+        adapter = new CommentsAdapter(context, groupId, post.getId(),
                 R.layout.comments_row_view, new ArrayList<BaseItem>());
         list.setAdapter(adapter);
 
@@ -143,7 +143,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         
         list.setFadingEdgeLength(0);
 
-        if (post.TotalComments > Commons.MAX_COMMENTS_COUNT)
+        if (post.getTotalComments() > Commons.MAX_COMMENTS_COUNT)
         {
             progress.setVisibility(View.GONE);
             buttons.setVisibility(View.GONE);
@@ -249,7 +249,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             for (int pos = newComments.size() - 1; pos >= 0; pos--)
             {
                 final Comment comment = (Comment) newComments.get(pos);
-                if (TextUtils.isEmpty(comment.ParentPid)
+                if (TextUtils.isEmpty(comment.getParentPid())
                         && (!receivedLastElements || !shownLastElements || newComments
                                 .isEmpty()))
                 {
@@ -354,7 +354,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         if(comment != null)
         {
             int visiblePosition = list.getFirstVisiblePosition();
-            View v = list.getChildAt(comment.Num - visiblePosition);
+            View v = list.getChildAt(comment.getNum() - visiblePosition);
             TextView rating = (TextView) v.findViewById(R.id.rating);
             rating.setText(Utils.getRatingStringFromBaseItem(comment));
             Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show(); 

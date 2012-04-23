@@ -90,7 +90,7 @@ public class GetPostTask extends BaseTask
             Element element = content.getElementsByClass("dt").first();
 
             Post post = new Post();
-            post.Id = postId;
+            post.setId(postId);
             
             
             Elements images = element.getElementsByTag("img");
@@ -101,8 +101,8 @@ public class GetPostTask extends BaseTask
                 String src = image.attr("src");
                 if(isImagesEnabled && !TextUtils.isEmpty(src))
                 {
-                    if(TextUtils.isEmpty(post.ImageUrl))
-                        post.ImageUrl = "http://src.sencha.io/80/80/" + image.attr("src");
+                    if(TextUtils.isEmpty(post.getImageUrl()))
+                        post.setImageUrl("http://src.sencha.io/80/80/" + image.attr("src"));
                     
                     String id = "img" + Integer.valueOf(imageNum).toString();
                     
@@ -125,23 +125,23 @@ public class GetPostTask extends BaseTask
                     image.remove();
             }
             
-            post.Html = Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element);
+            post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
 
             Elements rating = content.getElementsByTag("em");
             if(!rating.isEmpty())
-                post.Rating = Integer.valueOf(rating.first().text());
+                post.setRating(Short.valueOf(rating.first().text()));
             else
-                post.voteDisabled = true;
+                post.setVoteDisabled(true);
             
-            post.PlusVoted = postHtml.contains("class=\"plus voted\"");
-            post.MinusVoted = postHtml.contains("class=\"minus voted\"");
+            post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
+            post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
 
-            post.Url = url;
-            post.Pid = post.Url.split("comments/")[1];
+            post.setUrl(url);
+            post.setPid(url.split("comments/")[1]);
 
             Elements author = content.getElementsByClass("p");
-            post.Author = author.first().getElementsByTag("a").get(1).text();
-            post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
+            post.setAuthor(author.first().getElementsByTag("a").get(1).text());
+            post.setSignature(author.first().text().split("\\|")[0].replace(post.getAuthor(), "<b>" + post.getAuthor() + "</b>"));
 
             ServerWorker.Instance().addNewPost(groupId, post);
             

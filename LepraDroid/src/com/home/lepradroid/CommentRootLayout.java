@@ -1,13 +1,13 @@
 package com.home.lepradroid;
 
-import com.home.lepradroid.utils.Utils;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
+
+import com.home.lepradroid.utils.Utils;
 
 public class CommentRootLayout extends RelativeLayout
 {

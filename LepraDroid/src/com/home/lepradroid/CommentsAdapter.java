@@ -51,12 +51,12 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         List<String> actions = new ArrayList<String>(0);
         actions.add(Utils.getString(R.string.CommentAction_Author));
         actions.add(Utils.getString(R.string.CommentAction_Reply));
-        if(     !item.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()) &&
+        if(     !item.getAuthor().equalsIgnoreCase(SettingsWorker.Instance().loadUserName()) &&
                 !groupId.equals(Commons.INBOX_POSTS_ID))
         {
-            if(!item.PlusVoted)
+            if(!item.isPlusVoted())
                 actions.add(Utils.getString(R.string.CommentAction_Like));
-            if(!item.MinusVoted)
+            if(!item.isMinusVoted())
                 actions.add(Utils.getString(R.string.CommentAction_Dislike));
         }
 
@@ -70,21 +70,21 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 {
                 case 0:
                     Intent intent = new Intent(getContext(), AuthorScreen.class);
-                    intent.putExtra("username", item.Author);
+                    intent.putExtra("username", item.getAuthor());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     LepraDroidApplication.getInstance().startActivity(intent); 
                     break;
                 case 1:
-                    Utils.addComment(getContext(), groupId, postId, item.Id);
+                    Utils.addComment(getContext(), groupId, postId, item.getId());
                     break;
                 case 2:
-                    if(!item.PlusVoted)
-                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.PLUS), "");
+                    if(!item.isPlusVoted())
+                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.getId(), RateValueType.PLUS), "");
                     else 
-                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
+                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.getId(), RateValueType.MINUS), "");
                     break;
                 case 3:
-                    new TaskWrapper(null, new RateItemTask(groupId, postId, item.Id, RateValueType.MINUS), "");
+                    new TaskWrapper(null, new RateItemTask(groupId, postId, item.getId(), RateValueType.MINUS), "");
                     break;
                 default:
                     break;
@@ -188,7 +188,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             
             FrameLayout root = (FrameLayout)convertView.findViewById(R.id.root);
             CommentRootLayout content = (CommentRootLayout)convertView.findViewById(R.id.content);
-            int effectiveLevel = Math.min(Commons.MAX_COMMENT_LEVEL, comment.Level);
+            int effectiveLevel = Math.min(Commons.MAX_COMMENT_LEVEL, comment.getLevel());
             content.setLevel(effectiveLevel);
             
             if(effectiveLevel > 0)
@@ -197,7 +197,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 content.setPadding(content.getPaddingLeft() * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
             }
             
-            if(!comment.IsOnlyText)
+            if(!comment.isOnlyText())
             {
                 WebView webView = (WebView)convertView.findViewById(R.id.text);
                 webView.setBackgroundColor(0x00000000);
@@ -207,7 +207,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 WebSettings webSettings = webView.getSettings();
                 webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
                 webSettings.setJavaScriptEnabled(true);
-                webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + comment.Html, "text/html", "UTF-8", null);
+                webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + comment.getHtml(), "text/html", "UTF-8", null);
                 webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
                 webView.setOnTouchListener(new View.OnTouchListener() 
                 {
@@ -226,7 +226,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 TextView textOnly = (TextView)convertView.findViewById(R.id.textOnly);
                 textOnly.setVisibility(View.VISIBLE);
                 textOnly.setMovementMethod(LinkMovementMethod.getInstance());
-                textOnly.setText(Html.fromHtml(comment.Html));
+                textOnly.setText(Html.fromHtml(comment.getHtml()));
                 textOnly.setOnLongClickListener(new View.OnLongClickListener()
                 {
                     @Override
@@ -242,7 +242,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             }
             
             TextView author = (TextView)convertView.findViewById(R.id.author);
-            author.setText(Html.fromHtml(comment.Signature));
+            author.setText(Html.fromHtml(comment.getSignature()));
             Utils.setTextViewFontSize(getContext(), author);
             
             TextView rating = (TextView)convertView.findViewById(R.id.rating);
@@ -254,7 +254,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             else
                 rating.setVisibility(View.GONE);   
             
-            if(comment.IsNew)
+            if(comment.isNew())
             {
                 root.setBackgroundColor(Color.parseColor("#FFE6E6E6"));
                 content.setBackgroundColor(Color.parseColor("#FFE6E6E6"));

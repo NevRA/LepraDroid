@@ -185,20 +185,20 @@ public class Utils
     public static Spanned getRatingStringFromBaseItem(BaseItem item)
     {
         final Integer voteWeight = SettingsWorker.Instance().loadVoteWeight();
-        if(!item.PlusVoted && !item.MinusVoted)
-            return Html.fromHtml(Integer.toString(item.Rating));
-        else if(item.PlusVoted)
-            return Html.fromHtml(Integer.toString(item.Rating - voteWeight) + " + <font color='green'>" + voteWeight.toString() + "</font>");
+        if(!item.isPlusVoted() && !item.isMinusVoted())
+            return Html.fromHtml(Integer.toString(item.getRating()));
+        else if(item.isPlusVoted())
+            return Html.fromHtml(Integer.toString(item.getRating() - voteWeight) + " + <font color='green'>" + voteWeight.toString() + "</font>");
         else
-            return Html.fromHtml(Integer.toString(item.Rating + voteWeight) + " - <font color='red'>" + voteWeight.toString() + "</font>");
+            return Html.fromHtml(Integer.toString(item.getRating() + voteWeight) + " - <font color='red'>" + voteWeight.toString() + "</font>");
     }
     
     public static Spanned getCommentsStringFromPost(Post post)
     {
-        if(post.TotalComments != -1 && post.NewComments != -1)
-            return Html.fromHtml(post.TotalComments.toString() + " " + Utils.getString(R.string.Total_Comments) + " / " + "<b>" + post.NewComments + " " + Utils.getString(R.string.New_Comments) + "</b>");
-        if(post.TotalComments != -1)
-            return Html.fromHtml(post.TotalComments.toString() + " " + Utils.getString(R.string.Total_Comments));
+        if(post.getTotalComments() != -1 && post.getNewComments() != -1)
+            return Html.fromHtml(post.getTotalComments() + " " + Utils.getString(R.string.Total_Comments) + " / " + "<b>" + post.getNewComments() + " " + Utils.getString(R.string.New_Comments) + "</b>");
+        if(post.getTotalComments() != -1)
+            return Html.fromHtml(post.getTotalComments() + " " + Utils.getString(R.string.Total_Comments));
         else
             return Html.fromHtml(Utils.getString(R.string.No_Comments));
     }
@@ -209,7 +209,7 @@ public class Utils
         final Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
         
         final EditText input = new EditText(context);
-        final String text = comment != null ? comment.Author + ": " : "";
+        final String text = comment != null ? comment.getAuthor() + ": " : "";
         
         input.setText(text);
         Selection.setSelection(input.getText(), text.length());
@@ -223,7 +223,7 @@ public class Utils
             {
                 final String value = input.getText().toString(); 
                 
-                new TaskWrapper(null, new PostCommentTask(post.Id, SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.Pid : "", post.Pid, comment != null ? comment.Level + 1 : 0, value), null);
+                new TaskWrapper(null, new PostCommentTask(post.getId(), SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.getPid() : "", post.getPid(), (short)(comment != null ? comment.getLevel() + 1 : 0), value), null);
             }
         }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
         {

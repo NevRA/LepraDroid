@@ -38,7 +38,7 @@ public class GetCommentsTask extends BaseTask
     
     private UUID    groupId;
     private UUID    postId;
-    private int     commentsCout        = 0;
+    private short   commentsCout        = 0;
     private String  postAuthor          = "";
     private String  userName            = "";
     private boolean isImagesEnabled     = true;
@@ -214,7 +214,7 @@ public class GetCommentsTask extends BaseTask
                 return null; // TODO message
             
             userName = SettingsWorker.Instance().loadUserName();
-            postAuthor = post.Author;
+            postAuthor = post.getAuthor();
             
             final String pref = "<div id=\"XXXXXXXX\" ";
             final String postTree = "class=\"post tree";
@@ -223,8 +223,8 @@ public class GetCommentsTask extends BaseTask
             {
                 // TODO CHANGE TO NORMAL PARSING
                 
-                stream = new BufferedInputStream(ServerWorker.Instance().getContentStream(post.Url), BUFFER_SIZE);
-                file = new FileCache(LepraDroidApplication.getInstance()).getFile(post.Id.toString() + ".comments");
+                stream = new BufferedInputStream(ServerWorker.Instance().getContentStream(post.getUrl()), BUFFER_SIZE);
+                file = new FileCache(LepraDroidApplication.getInstance()).getFile(post.getId().toString() + ".comments");
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] chars = new byte[BUFFER_SIZE];
                 int len = 0;
@@ -240,7 +240,7 @@ public class GetCommentsTask extends BaseTask
                 
                 fos.close();
                 
-                post.NewComments = -1;
+                post.setNewComments((short)-1);
                 
                 String pageA = null, pageB = null;
                 int start = -1;
@@ -344,14 +344,14 @@ public class GetCommentsTask extends BaseTask
         Element root = content.getElementsByTag("div").first();
 
         Comment comment = new Comment();
-        comment.Pid = root.id();
+        comment.setPid(root.id());
         
         Matcher level = patternLevel.matcher(root.className());
         if(level.find())
-            comment.Level = Integer.valueOf(level.group(1));
+            comment.setLevel(Short.valueOf(level.group(1)));
         
         if(element.parent().attr("class").contains("new"))
-            comment.IsNew = true;
+            comment.setNew(true);
         
         Elements images = element.getElementsByTag("img");
         int imageNum = 0;
@@ -373,7 +373,7 @@ public class GetCommentsTask extends BaseTask
                 
                 image.attributes().put("id", id);
                 image.attributes().put("src", Commons.IMAGE_STUB);
-                image.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(comment.Level).toString() + ");");
+                image.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(comment.getLevel()).toString() + ");");
                 imgs.add(new Pair<String, String>(id, src));
                 
                 imageNum++;
@@ -382,42 +382,43 @@ public class GetCommentsTask extends BaseTask
                 image.remove();
         }
         
-        comment.Html = Utils.getImagesStub(imgs, comment.Level) + Utils.wrapLepraTags(element);
+        comment.setHtml(Utils.getImagesStub(imgs, comment.getLevel()) + Utils.wrapLepraTags(element));
         if(     imgs.isEmpty() && 
-                !Utils.isContainExtraTagsForWebView(comment.Html))
+                !Utils.isContainExtraTagsForWebView(comment.getHtml()))
         {
-            comment.IsOnlyText = true;
+            comment.setOnlyText(true);
         }
 
-        Elements author = content.getElementsByClass("p");
-        if(!author.isEmpty())
+        Elements authorElement = content.getElementsByClass("p");
+        if(!authorElement.isEmpty())
         {
-            Elements a = author.first().getElementsByTag("a");
-            comment.Url = Commons.SITE_URL + a.first().attr("href");
+            Elements a = authorElement.first().getElementsByTag("a");
+            comment.setUrl(Commons.SITE_URL + a.first().attr("href"));
             
-            comment.Author = a.get(1).text();
-            if(postAuthor.equals(comment.Author))
-               comment.IsPostAuthor = true;
+            String author = a.get(1).text();
+            if(postAuthor.equals(author))
+               comment.setPostAuthor(true);
             
             String color = "black";
-            if(comment.IsPostAuthor)
+            if(comment.isPostAuthor())
                 color = "red";
-            else if (comment.Author.equals(userName))
+            else if (author.equals(userName))
                 color = "#3270FF";
             
-            comment.Signature = author.first().text().split("\\|")[0].replace(comment.Author, "<b>" + "<font color=\"" + color + "\">" + comment.Author + "</font>" + "</b>");
+            comment.setAuthor(author);
+            comment.setSignature(authorElement.first().text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>"));
         }
         
         Elements vote = content.getElementsByClass("vote");
         if(!vote.isEmpty())
         {
             Elements rating = vote.first().getElementsByTag("em");
-            comment.Rating = Integer.valueOf(rating.first().text());
+            comment.setRating(Short.valueOf(rating.first().text()));
         }
         
-        comment.PlusVoted = html.contains("class=\"plus voted\"");
-        comment.MinusVoted = html.contains("class=\"minus voted\"");
-        comment.Num = commentsCout;
+        comment.setPlusVoted(html.contains("class=\"plus voted\""));
+        comment.setMinusVoted(html.contains("class=\"minus voted\""));
+        comment.setNum(commentsCout);
                      
         ServerWorker.Instance().addNewComment(groupId, postId, comment);
         

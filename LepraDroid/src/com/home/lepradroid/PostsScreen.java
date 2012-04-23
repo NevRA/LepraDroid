@@ -74,7 +74,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
                     BaseItem item = (BaseItem)obj;
                     Intent intent = new Intent(LepraDroidApplication.getInstance(), PostScreen.class);
                     intent.putExtra("groupId", groupId.toString());
-                    intent.putExtra("id", item.Id.toString());
+                    intent.putExtra("id", item.getId().toString());
                     intent.putExtra("parentTitle", parentTitle.length() > Commons.MAX_BLOG_HEADER_LENGTH ? parentTitle.substring(0, Commons.MAX_BLOG_HEADER_LENGTH - 1) + "..." : parentTitle);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     LepraDroidApplication.getInstance().startActivity(intent); 

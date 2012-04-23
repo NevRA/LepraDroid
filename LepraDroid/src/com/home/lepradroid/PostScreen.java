@@ -121,7 +121,7 @@ public class PostScreen extends BaseActivity
                 pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, postId), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             case PROFILE_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
                 break;
             default:
                 break;
@@ -148,7 +148,7 @@ public class PostScreen extends BaseActivity
         post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
         if(post == null) {finish(); return;}
         
-        navigationTurnedOn = post.NewComments > 0;
+        navigationTurnedOn = post.getNewComments() > 0;
 
         postView = new PostView(this, groupId, postId);
         postView.setTag(Utils.getString(R.string.Post_Tab));
@@ -157,7 +157,7 @@ public class PostScreen extends BaseActivity
         commentsView.setTag(Utils.getString(R.string.Comments_Tab));
         commentsView.setNavigationMode(navigationTurnedOn);
         
-        if(     post.TotalComments <= Commons.MAX_COMMENTS_COUNT &&
+        if(     post.getTotalComments() <= Commons.MAX_COMMENTS_COUNT &&
                 Utils.isCommentsLoadingWithPost(this))
         {
             pushNewTask(new TaskWrapper(null, new GetCommentsTask(
@@ -165,7 +165,7 @@ public class PostScreen extends BaseActivity
                         .getString(R.string.Posts_Loading_In_Progress)));
         }
         
-        authorView = new AuthorView(this, post.Author);
+        authorView = new AuthorView(this, post.getAuthor());
         authorView.setTag(Utils.getString(R.string.Author_Tab));
         
         pages.add(postView);
@@ -192,7 +192,7 @@ public class PostScreen extends BaseActivity
                         case COMMENTS_TAB_NUM:
                             if(!authorInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.Author), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
                                 authorInit = true;
                                 
                                 if(!Utils.isCommentsLoadingWithPost(PostScreen.this))

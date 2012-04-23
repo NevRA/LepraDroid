@@ -99,17 +99,17 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
             ImageView imageView = (ImageView)view.findViewById(R.id.image);
             TextView textView = (TextView)view.findViewById(R.id.text);
             
-            if(!TextUtils.isEmpty(post.ImageUrl))
+            if(!TextUtils.isEmpty(post.getImageUrl()))
             {
                 imageView.setVisibility(View.VISIBLE);
-                imageLoader.DisplayImage(post.ImageUrl, imageView);
+                imageLoader.DisplayImage(post.getImageUrl(), imageView);
             }
             else
             {
                 textView.setPadding(0, textView.getPaddingTop(), textView.getPaddingRight(), textView.getPaddingBottom());
             }
             
-            String text = Utils.html2text(post.Html);
+            String text = Utils.html2text(post.getHtml());
             textView.setText(TextUtils.isEmpty(text) ? "..." : text);
             if(!Utils.isNormalFontSize(getContext()))
             {
@@ -128,7 +128,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
             Utils.setTextViewFontSize(getContext(), textView);
             
             TextView authorView = (TextView)view.findViewById(R.id.author);
-            authorView.setText(Html.fromHtml(post.Signature));
+            authorView.setText(Html.fromHtml(post.getSignature()));
             Utils.setTextViewFontSize(getContext(), authorView);
             
             TextView commentsView = (TextView)view.findViewById(R.id.comments);
@@ -137,7 +137,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
             
             TextView ratingView = (TextView)view.findViewById(R.id.rating);
             Utils.setTextViewFontSize(getContext(), ratingView);
-            if(groupId.equals(Commons.INBOX_POSTS_ID) || post.voteDisabled)
+            if(groupId.equals(Commons.INBOX_POSTS_ID) || post.isVoteDisabled())
                 ratingView.setVisibility(View.GONE);
             else
                 ratingView.setText(Utils.getRatingStringFromBaseItem(post));

@@ -259,7 +259,7 @@ public class ServerWorker
             if(items != null)
                 for(BaseItem item : items)
                 {
-                    if(item.Id.equals(id))
+                    if(item.getId().equals(id))
                         return item;
                 }
         }
@@ -313,7 +313,7 @@ public class ServerWorker
 
             for(BaseItem item : items)
             {
-                if(item.Id.equals(commentId))
+                if(item.getId().equals(commentId))
                     return item;
             }
         }
@@ -335,7 +335,7 @@ public class ServerWorker
             {
                 for(int pos = prevCommentNewPosition - 1; pos >= 0 && prevCommentNewPosition < comments.size(); --pos)
                 {
-                    if(((Comment)comments.get(pos)).IsNew)
+                    if(((Comment)comments.get(pos)).isNew())
                         return pos;
                 }
             }
@@ -358,7 +358,7 @@ public class ServerWorker
             {
                 for(int pos = prevCommentNewPosition + 1; pos < comments.size(); ++pos)
                 {
-                    if(((Comment)comments.get(pos)).IsNew)
+                    if(((Comment)comments.get(pos)).isNew())
                         return pos;
                 }
             }
@@ -403,7 +403,7 @@ public class ServerWorker
             Comment comment = (Comment)item;
             ArrayList<BaseItem> comments = this.comments.get(id);
 
-            if(TextUtils.isEmpty(comment.ParentPid))
+            if(TextUtils.isEmpty(comment.getParentPid()))
             {
                 comments.add(item);
                 return comments.size() - 1;
@@ -413,7 +413,7 @@ public class ServerWorker
                 for(int pos = 0; pos < comments.size(); ++pos)
                 {
                     Comment parentComment = (Comment)comments.get(pos);
-                    if(parentComment.Pid.equals(comment.ParentPid))
+                    if(parentComment.getPid().equals(comment.getParentPid()))
                     {
                         comments.add(pos + 1, item);
                         return pos + 1;
@@ -447,7 +447,7 @@ public class ServerWorker
             {
                 int pos = 0;
                 for(; pos < oldPosts.size(); ++pos)
-                    if(oldPosts.get(pos).Url.equals(post.Url))
+                    if(oldPosts.get(pos).getUrl().equals(post.getUrl()))
                         break;
                 if(pos == oldPosts.size())
                     oldPosts.add(post);
@@ -506,15 +506,15 @@ public class ServerWorker
         write.lock();
         try
         {
-            if(authors.containsKey(author.Id))
+            if(authors.containsKey(author.getId()))
             {
-                Author orig = authors.get(author.Id);
-                orig.Rating = author.Rating;
-                orig.PlusVoted = author.PlusVoted;
-                orig.MinusVoted = author.MinusVoted;
+                Author orig = authors.get(author.getId());
+                orig.setRating(author.getRating());
+                orig.setPlusVoted(author.isPlusVoted());
+                orig.setMinusVoted(author.isMinusVoted());
             }
             else
-                authors.put(author.Id, author);
+                authors.put(author.getId(), author);
         }
         finally
         {
@@ -542,7 +542,7 @@ public class ServerWorker
         {
             for (Entry<String, Author> a : authors.entrySet())
             {
-                if (a.getValue().UserName.equals(name)) return a.getValue();
+                if (a.getValue().getUserName().equals(name)) return a.getValue();
             }
         }
         finally

@@ -66,7 +66,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         }
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
-        webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + post.Html, "text/html", "UTF-8", null );
+        webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + post.getHtml(), "text/html", "UTF-8", null );
         
         plus = (Button) contentView.findViewById(R.id.plus);
         minus = (Button) contentView.findViewById(R.id.minus);
@@ -93,15 +93,15 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         
         LinearLayout buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
         if(     groupId.equals(Commons.INBOX_POSTS_ID) ||
-                post.voteDisabled ||
-                post.Author.equalsIgnoreCase(SettingsWorker.Instance().loadUserName()))
+                post.isVoteDisabled() ||
+                post.getAuthor().equalsIgnoreCase(SettingsWorker.Instance().loadUserName()))
         {
             buttons.setVisibility(View.GONE);
         }
 
-        if(post.MinusVoted)
+        if(post.isMinusVoted())
             minus.setEnabled(false);
-        if(post.PlusVoted)
+        if(post.isPlusVoted())
             plus.setEnabled(false);
     }
 
@@ -131,12 +131,12 @@ public class PostView extends BaseView implements ItemRateUpdateListener
                Toast.makeText(context, Utils.getString(R.string.Rated_Item) + " " + Integer.toString(newRating), Toast.LENGTH_LONG).show();
        }
 
-       if(post.MinusVoted)
+       if(post.isMinusVoted())
            minus.setEnabled(false);
        else
            minus.setEnabled(true);
 
-       if(post.PlusVoted)
+       if(post.isPlusVoted())
            plus.setEnabled(false);
        else
            plus.setEnabled(true);

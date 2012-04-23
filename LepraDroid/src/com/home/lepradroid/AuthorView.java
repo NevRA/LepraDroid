@@ -98,18 +98,18 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         if (data == null)
             return;
         
-        userId = data.Id;
-        name.setText(Html.fromHtml("<b>" + data.Name + " (" + data.UserName + ")" + "</b>"));
-        ego.setText(data.Ego);
-        rating.setText(data.Rating.toString());
-        imageLoader.DisplayImage(data.ImageUrl, userPic, R.drawable.ic_user);
+        userId = data.getId();
+        name.setText(Html.fromHtml("<b>" + data.getName() + " (" + data.getUserName() + ")" + "</b>"));
+        ego.setText(data.getEgo());
+        rating.setText(Short.toString(data.getRating()));
+        imageLoader.DisplayImage(data.getImageUrl(), userPic, R.drawable.ic_user);
 
         minus.setEnabled(true);
         plus.setEnabled(true);
 
-        if (data.MinusVoted)
+        if (data.isMinusVoted())
             minus.setEnabled(false);
-        if (data.PlusVoted)
+        if (data.isPlusVoted())
             plus.setEnabled(false);
 
         minus.setOnClickListener(new OnClickListener()
@@ -117,7 +117,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
             @Override
             public void onClick(View v)
             {
-                rateItem(Commons.RateValueType.MINUS, data.Id);
+                rateItem(Commons.RateValueType.MINUS, data.getId());
                 minus.setEnabled(false);
                 plus.setEnabled(true);
             }
@@ -128,7 +128,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
             @Override
             public void onClick(View v)
             {
-                rateItem(Commons.RateValueType.PLUS, data.Id);
+                rateItem(Commons.RateValueType.PLUS, data.getId());
                 minus.setEnabled(true);
                 plus.setEnabled(false);
             }
@@ -157,12 +157,12 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         }
         
         Author author = ServerWorker.Instance().getAuthorByName(userName);
-        if (author.MinusVoted)
+        if (author.isMinusVoted())
             minus.setEnabled(false);
         else
             minus.setEnabled(true);
 
-        if (author.PlusVoted)
+        if (author.isPlusVoted())
             plus.setEnabled(false);
         else
             plus.setEnabled(true);

@@ -65,8 +65,8 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener
                     BaseItem item = (BaseItem)obj;
                     Intent intent = new Intent(LepraDroidApplication.getInstance(), BlogScreen.class);
                     intent.putExtra("groupId", Commons.BLOGS_POSTS_ID.toString());
-                    intent.putExtra("id", item.Id.toString());
-                    String title = Utils.html2text(item.Html);
+                    intent.putExtra("id", item.getId().toString());
+                    String title = Utils.html2text(item.getHtml());
                     intent.putExtra("title", title.length() > Commons.MAX_BLOG_HEADER_LENGTH ? title.substring(0, Commons.MAX_BLOG_HEADER_LENGTH - 1) + "..." : title);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     LepraDroidApplication.getInstance().startActivity(intent); 

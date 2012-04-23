@@ -216,8 +216,8 @@ public class GetPostsTask extends BaseTask
                     String src = image.attr("src");
                     if(isImagesEnabled && !TextUtils.isEmpty(src))
                     {
-                        if(TextUtils.isEmpty(post.ImageUrl))
-                            post.ImageUrl = "http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + image.attr("src");
+                        if(TextUtils.isEmpty(post.getImageUrl()))
+                            post.setImageUrl("http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + image.attr("src"));
                         
                         String id = "img" + Integer.valueOf(imageNum).toString();
                         
@@ -240,16 +240,16 @@ public class GetPostsTask extends BaseTask
                         image.remove();
                 }
                   
-                post.Html = Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element);
+                post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
 
                 Elements rating = content.getElementsByTag("em");
                 if(!rating.isEmpty())
-                    post.Rating = Integer.valueOf(rating.first().text());
+                    post.setRating(Short.valueOf(rating.first().text()));
                 else
-                    post.voteDisabled = true;
+                    post.setVoteDisabled(true);
                 
-                post.PlusVoted = postHtml.contains("class=\"plus voted\"");
-                post.MinusVoted = postHtml.contains("class=\"minus voted\"");
+                post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
+                post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
                 
                 Elements author = content.getElementsByClass("p");
                 if(!author.isEmpty())
@@ -258,28 +258,28 @@ public class GetPostsTask extends BaseTask
                     Elements a = span.first().getElementsByTag("a");
                     String url = a.first().attr("href");
                     if(url.contains("http"))
-                        post.Url = url;
+                        post.setUrl(url);
                     else
-                        post.Url = Commons.SITE_URL + url;
+                        post.setUrl(Commons.SITE_URL + url);
                     
                     if(groupId.equals(Commons.INBOX_POSTS_ID))
-                        post.Pid = post.Url.split("inbox/")[1];
+                        post.setPid(post.getUrl().split("inbox/")[1]);
                     else
-                        post.Pid = post.Url.split("comments/")[1];
+                        post.setPid(post.getUrl().split("comments/")[1]);
                     
                     if(a.size() == 2)
                     {
-                        post.TotalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
-                        post.NewComments = Integer.valueOf(a.get(1).text().split(" ")[0]);
+                        post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
+                        post.setNewComments(Short.valueOf(a.get(1).text().split(" ")[0]));
                     }
                     else
                     {
                         if(!a.get(0).text().equals("комментировать"))
-                            post.TotalComments = Integer.valueOf(a.get(0).text().split(" ")[0]);
+                            post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
                     }
                     
-                    post.Author = author.first().getElementsByTag("a").first().text();
-                    post.Signature = author.first().text().split("\\|")[0].replace(post.Author, "<b>" + post.Author + "</b>");
+                    post.setAuthor(author.first().getElementsByTag("a").first().text());
+                    post.setSignature(author.first().text().split("\\|")[0].replace(post.getAuthor(), "<b>" + post.getAuthor() + "</b>"));
                 }
                 
                 if(isCancelled()) break;

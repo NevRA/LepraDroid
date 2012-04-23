@@ -166,22 +166,22 @@ public class GetBlogsTask extends BaseTask
 
                     Elements url = logo.getElementsByTag("a");
                     if (!url.isEmpty())
-                        blog.Url = url.attr("href");
+                        blog.setUrl(url.attr("href"));
 
                     Elements images = logo.getElementsByTag("img");
                     if (!images.isEmpty())
-                        blog.ImageUrl = "http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + images.first().attr("src");
+                        blog.setImageUrl("http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + images.first().attr("src"));
                 }
 
                 Elements title = content.getElementsByTag("h5");
                 if (!title.isEmpty())
-                    blog.Html = title.first().html();
+                    blog.setHtml(title.first().html());
 
                 Elements author = content.getElementsByClass("jj_creator");
                 if (!author.isEmpty())
                 {
-                    blog.Author = author.first().getElementsByTag("a").first().text();
-                    blog.Signature = author.first().text();
+                    blog.setAuthor(author.first().getElementsByTag("a").first().text());
+                    blog.setSignature(author.first().text());
                 }
 
                 Elements stat = content.getElementsByClass("jj_stat_table");
@@ -190,7 +190,7 @@ public class GetBlogsTask extends BaseTask
                     Elements div = stat.first().getElementsByTag("div");
                     if (div.size() >= 3)
                     {
-                        blog.Stat = "<b>" + div.get(0).text() + "</b>" + " постов / " + "<b>" + div.get(1).text() + "</b>" + " комментариев / " + "<b>" + div.get(2).text() + "</b>" + " подписчиков";
+                        blog.setStat("<b>" + div.get(0).text() + "</b>" + " постов / " + "<b>" + div.get(1).text() + "</b>" + " комментариев / " + "<b>" + div.get(2).text() + "</b>" + " подписчиков");
                     }
                 }
                 
@@ -249,23 +249,23 @@ public class GetBlogsTask extends BaseTask
 
             Elements url = div.getElementsByTag("a");
             if (!url.isEmpty())
-                blog.Url = url.attr("href");
+                blog.setUrl(url.attr("href"));
 
             Elements images = div.getElementsByTag("img");
             if (!images.isEmpty())
-                blog.ImageUrl = "http://src.sencha.io/80/80/"
-                        + images.first().attr("src");
+                blog.setImageUrl("http://src.sencha.io/80/80/"
+                        + images.first().attr("src"));
 
             Elements title = div.getElementsByTag("h5");
             if (!title.isEmpty())
-                blog.Html = title.first().html();
+                blog.setHtml(title.first().html());
 
             Elements author = div.getElementsByClass("creator");
             if (!author.isEmpty())
-                blog.Signature = "создатель - "
-                        + author.first().getElementsByTag("a").first().text();
+                blog.setSignature("создатель - "
+                        + author.first().getElementsByTag("a").first().text());
 
-            blog.Stat = "<b>Лепро-Навигация</b>";
+            blog.setStat("<b>Лепро-Навигация</b>");
             
             items.add(blog);
         }
