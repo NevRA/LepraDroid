@@ -1,7 +1,5 @@
 package com.home.lepradroid.objects;
 
-import java.io.UnsupportedEncodingException;
-
 public class Author extends RateItem
 {
     private byte[]   id                  = null;
@@ -12,16 +10,8 @@ public class Author extends RateItem
     
     public String getId()
     {
-        try
-        {
-            if(id == null) return "";
-            return new String(id, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(id == null) return "";
+        return new String(id);
     }
     
     public void setId(String id)
@@ -31,16 +21,8 @@ public class Author extends RateItem
     
     public String getName()
     {
-        try
-        {
-            if(name == null) return "";
-            return new String(name, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(name == null) return "";
+        return new String(name);
     }
     
     public void setName(String name)
@@ -50,16 +32,8 @@ public class Author extends RateItem
     
     public String getImageUrl()
     {
-        try
-        {
-            if(imageUrl == null) return "";
-            return new String(imageUrl, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(imageUrl == null) return "";
+        return new String(imageUrl);
     }
     
     public void setImageUrl(String imageUrl)
@@ -69,16 +43,8 @@ public class Author extends RateItem
     
     public String getEgo()
     {
-        try
-        {
-            if(ego == null) return "";
-            return new String(ego, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(ego == null) return "";
+        return new String(ego);
     }
     
     public void setEgo(String ego)
@@ -88,16 +54,8 @@ public class Author extends RateItem
     
     public String getUserName()
     {
-        try
-        {
-            if(userName == null) return "";
-            return new String(userName, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(userName == null) return "";
+        return new String(userName);
     }
     
     public void setUserName(String userName)

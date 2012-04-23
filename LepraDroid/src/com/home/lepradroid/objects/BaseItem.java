@@ -1,6 +1,5 @@
 package com.home.lepradroid.objects;
 
-import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 public class BaseItem extends RateItem
@@ -29,30 +28,14 @@ public class BaseItem extends RateItem
     
     public String getHtml()
     {
-        try
-        {
-            if(html == null) return "";
-            return new String(html, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(html == null) return "";
+        return new String(html);
     }
     
     public String getUrl()
     {
-        try
-        {
-            if(url == null) return "";
-            return new String(url, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(url == null) return "";
+        return new String(url);
     }
     
     public void setUrl(String url)
@@ -62,16 +45,8 @@ public class BaseItem extends RateItem
     
     public String getImageUrl()
     {
-        try
-        {
-            if(imageUrl == null) return "";
-            return new String(imageUrl, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(imageUrl == null) return "";
+        return new String(imageUrl);
     }
     
     public void setImageUrl(String imageUrl)
@@ -81,16 +56,8 @@ public class BaseItem extends RateItem
     
     public String getAuthor()
     {
-        try
-        {
-            if(author == null) return "";
-            return new String(author, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(author == null) return "";
+        return new String(author);
     }
     
     public void setAuthor(String author)
@@ -100,16 +67,8 @@ public class BaseItem extends RateItem
     
     public String getSignature()
     {
-        try
-        {
-            if(signature == null) return "";
-            return new String(signature, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(signature == null) return "";
+        return new String(signature);
     }
     
     public void setSignature(String signaturehor)

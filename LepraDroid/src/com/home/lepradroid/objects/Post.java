@@ -1,6 +1,5 @@
 package com.home.lepradroid.objects;
 
-import java.io.UnsupportedEncodingException;
 
 public class Post extends BaseItem
 {
@@ -21,16 +20,8 @@ public class Post extends BaseItem
     
     public String getPid()
     {
-        try
-        {
-            if(pid == null) return "";
-            return new String(pid, "UTF-8");
-        }
-        catch (UnsupportedEncodingException e)
-        {
-        }
-        
-        return "";
+        if(pid == null) return "";
+        return new String(pid);
     }
     
     public void setPid(String pid)
