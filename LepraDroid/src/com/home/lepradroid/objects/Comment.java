@@ -1,5 +1,7 @@
 package com.home.lepradroid.objects;
 
+import com.home.lepradroid.commons.Commons;
+
 
 public class Comment extends BaseItem
 {
@@ -40,7 +42,7 @@ public class Comment extends BaseItem
 
     public void setLevel(short level)
     {
-        this.level = level;
+        this.level = (short) Math.min(Commons.MAX_COMMENT_LEVEL, level);
     }
 
     public short getNum()

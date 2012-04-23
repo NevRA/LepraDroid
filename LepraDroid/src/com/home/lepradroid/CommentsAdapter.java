@@ -186,14 +186,16 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         {
             convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
             
+            short level = comment.getLevel();
+            
             FrameLayout root = (FrameLayout)convertView.findViewById(R.id.root);
             CommentRootLayout content = (CommentRootLayout)convertView.findViewById(R.id.content);
-            int effectiveLevel = Math.min(Commons.MAX_COMMENT_LEVEL, comment.getLevel());
-            content.setLevel(effectiveLevel);
             
-            if(effectiveLevel > 0)
+            content.setLevel(level);
+            
+            if(level > 0)
             {
-                root.setPadding(root.getPaddingLeft() + (effectiveLevel * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
+                root.setPadding(root.getPaddingLeft() + (level * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
                 content.setPadding(content.getPaddingLeft() * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
             }
             
