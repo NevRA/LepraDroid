@@ -92,5 +92,10 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
                 new PostMainThresholdTask().execute();
             }
         }
+        else if(key.equals(Utils.getString(R.string.MainSettings_FontSizeId)))
+        {
+            String value = sharedPreferences.getString(Utils.getString(R.string.MainSettings_FontSizeId), "normal");
+            Utils.setIsNormalFontSize(value.equals("normal"));
+        }
     }
 }

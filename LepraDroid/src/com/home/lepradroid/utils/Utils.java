@@ -87,6 +87,11 @@ public class Utils
         }
     }
     
+    public static void setIsNormalFontSize(boolean isNormalFontSize)
+    {
+        Utils.isNormalFontSize = isNormalFontSize;
+    }
+    
     public static String getString(Context context, int resourseId)
     {
         return context.getResources().getString(resourseId);
