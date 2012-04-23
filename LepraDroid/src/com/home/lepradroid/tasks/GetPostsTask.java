@@ -14,7 +14,6 @@ import org.jsoup.select.Elements;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -72,8 +71,8 @@ public class GetPostsTask extends BaseTask
         this.groupId = groupId;
         this.url = url;
         isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
-        isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
-        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
+        isImagesEnabled = Utils.isImagesEnabled();
+        isNormalTextSize = Utils.isNormalFontSize();
     }
     
     public GetPostsTask(UUID groupId, String url, int page, boolean refresh)
@@ -83,8 +82,8 @@ public class GetPostsTask extends BaseTask
         this.refresh = refresh;
         this.page = page;
         isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
-        isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
-        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
+        isImagesEnabled = Utils.isImagesEnabled();
+        isNormalTextSize = Utils.isNormalFontSize();
     }
     
     @SuppressWarnings("unchecked")
@@ -241,6 +240,7 @@ public class GetPostsTask extends BaseTask
                 }
                   
                 post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
+                post.setText(Utils.html2text(post.getHtml()));
 
                 Elements rating = content.getElementsByTag("em");
                 if(!rating.isEmpty())

@@ -59,7 +59,8 @@ import com.home.lepradroid.tasks.TaskWrapper;
 
 public class Utils
 {
-    private static int commentLevelIndicatorLength = 0;
+    private static int      commentLevelIndicatorLength = 0;
+    private static Boolean  isNormalFontSize            = null;
     
     public static class GzipDecompressingEntity extends HttpEntityWrapper
     {
@@ -315,7 +316,7 @@ public class Utils
     public static int getNotificationDefaults(Context context)
     {
         int ret = 0;
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(prefs.getBoolean(Utils.getString(R.string.WidgetSettings_NotifyVibrateId), true))
             ret |= Notification.DEFAULT_VIBRATE;
        
@@ -324,38 +325,43 @@ public class Utils
     
     public static boolean isCommentsLoadingWithPost(Context context)
     {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(Utils.getString(R.string.MainSettings_LoadCommentsOnPostId), true);
     }
     
     public static boolean isNotifyOnUnreadOnlyOnce(Context context)
     {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(Utils.getString(R.string.WidgetSettings_NotifyOnlyOnFirstId), true);
     }
     
     public static boolean isNotificationsEnabled(Context context)
     {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(Utils.getString(R.string.WidgetSettings_NotifyId), true);
     }
     
     public static Uri getNotificationSound(Context context)
     {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        final String strRingtonePreference = prefs.getString(Utils.getString(R.string.WidgetSettings_NotifySoundId), "DEFAULT_SOUND");        
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String strRingtonePreference = prefs.getString(Utils.getString(R.string.WidgetSettings_NotifySoundId), "DEFAULT_SOUND");        
         return Uri.parse(strRingtonePreference);
     }
     
-    public static boolean isNormalFontSize(Context context)
+    public static boolean isNormalFontSize()
     {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(Utils.getString(R.string.MainSettings_FontSizeId), "normal").equals("normal");        
+        if(isNormalFontSize == null)
+        {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
+            isNormalFontSize = prefs.getString(Utils.getString(R.string.MainSettings_FontSizeId), "normal").equals("normal"); 
+        }
+          
+        return isNormalFontSize;
     }
     
-    public static void setTextViewFontSize(Context context, TextView view)
+    public static void setTextViewFontSize(TextView view)
     {
-        if(!isNormalFontSize(context))
+        if(!isNormalFontSize())
         {
             view.setTextSize(view.getTextSize() * 1.5f);
         }
@@ -363,15 +369,15 @@ public class Utils
     
     public static void setWebViewFontSize(Context context, WebView view)
     {
-        if(!isNormalFontSize(context))
+        if(!isNormalFontSize())
         {
             view.getSettings().setTextSize(TextSize.LARGER);
         }
     }
     
-    public static boolean isImagesEnabled(Context context)
+    public static boolean isImagesEnabled()
     {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         return prefs.getBoolean(Utils.getString(R.string.MainSettings_ImagesId), true);        
     }
     

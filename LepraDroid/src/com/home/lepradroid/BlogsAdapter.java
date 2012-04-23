@@ -23,14 +23,16 @@ import com.home.lepradroid.utils.Utils;
 class BlogsAdapter extends ArrayAdapter<BaseItem>
 {
     private ArrayList<BaseItem> posts = new ArrayList<BaseItem>();
-    public ImageLoader          imageLoader;
+    private ImageLoader         imageLoader;
+    private LayoutInflater      aInflater;
             
     public BlogsAdapter(Context context, int textViewResourceId,
             ArrayList<BaseItem> posts)
     {
         super(context, textViewResourceId, posts);
         this.posts = posts;
-        imageLoader=new ImageLoader(LepraDroidApplication.getInstance());
+        imageLoader = new ImageLoader(LepraDroidApplication.getInstance());
+        aInflater = LayoutInflater.from(getContext());
     }
 
     public int getCount() 
@@ -86,7 +88,6 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
     public View getView(int position, View convertView, ViewGroup parent) 
     {
         Blog blog = (Blog)getItem(position);
-        LayoutInflater aInflater=LayoutInflater.from(getContext());
         
         if(blog != null)
         {
@@ -95,7 +96,7 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
             TextView text = (TextView)view.findViewById(R.id.text);
             text.setText(Utils.html2text(blog.getHtml()));
             
-            if(!Utils.isNormalFontSize(getContext()))
+            if(!Utils.isNormalFontSize())
             {
                 RelativeLayout root = (RelativeLayout)view.findViewById(R.id.root);
                 root.setPadding(root.getPaddingLeft() * 2, root.getPaddingTop(), root.getPaddingRight() * 2, root.getPaddingBottom() * 2);
@@ -105,15 +106,15 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
                 text.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimensionPixelSize(R.dimen.comment_font_size));
             }
             
-            Utils.setTextViewFontSize(getContext(), text);
+            Utils.setTextViewFontSize(text);
             
             TextView author = (TextView)view.findViewById(R.id.author);
             author.setText(Html.fromHtml(blog.getSignature()));
-            Utils.setTextViewFontSize(getContext(), author);
+            Utils.setTextViewFontSize(author);
 
             TextView stat = (TextView)view.findViewById(R.id.stat);
             stat.setText(Html.fromHtml(blog.getStat()));
-            Utils.setTextViewFontSize(getContext(), stat);
+            Utils.setTextViewFontSize(stat);
             
             ImageView image = (ImageView)view.findViewById(R.id.image);
             

@@ -89,7 +89,7 @@ public class GetCommentsTask extends BaseTask
     {
         this.groupId = groupId;
         this.postId = postId;
-        isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
+        isImagesEnabled = Utils.isImagesEnabled();
         isCommentWtfLoaded = !TextUtils.isEmpty(SettingsWorker.Instance().loadCommentWtf());
     }
     

@@ -111,8 +111,9 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
         adapter = new CommentsAdapter(context, groupId, post.getId(),
                 R.layout.comments_row_view, new ArrayList<BaseItem>());
+        
+        list.setScrollingCacheEnabled(false);
         list.setAdapter(adapter);
-
         list.setOnScrollListener(new OnScrollListener()
         {
             public void onScrollStateChanged(AbsListView arg0, int arg1)

@@ -71,9 +71,9 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         plus = (Button) contentView.findViewById(R.id.plus);
         minus = (Button) contentView.findViewById(R.id.minus);
         
-        Utils.setTextViewFontSize(getContext(), name);
-        Utils.setTextViewFontSize(getContext(), ego);
-        Utils.setTextViewFontSize(getContext(), rating);
+        Utils.setTextViewFontSize(name);
+        Utils.setTextViewFontSize(ego);
+        Utils.setTextViewFontSize(rating);
     }
 
     @Override

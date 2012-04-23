@@ -10,7 +10,6 @@ import org.jsoup.select.Elements;
 
 import android.util.Pair;
 
-import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.BlogsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -38,14 +37,14 @@ public class GetBlogsTask extends BaseTask
     public GetBlogsTask()
     {
         refresh = true;
-        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
+        isNormalTextSize = Utils.isNormalFontSize();
     }
     
     public GetBlogsTask(int page)
     {       
         this.refresh = false;
         this.page = page;
-        isNormalTextSize = Utils.isNormalFontSize(LepraDroidApplication.getInstance());
+        isNormalTextSize = Utils.isNormalFontSize();
     }
 
     static

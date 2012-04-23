@@ -238,18 +238,18 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     }
                 });
                 
-                Utils.setTextViewFontSize(getContext(), textOnly);
+                Utils.setTextViewFontSize(textOnly);
             }
             
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.getSignature()));
-            Utils.setTextViewFontSize(getContext(), author);
+            Utils.setTextViewFontSize(author);
             
             TextView rating = (TextView)convertView.findViewById(R.id.rating);
             if(!groupId.equals(Commons.INBOX_POSTS_ID))
             {
                 rating.setText(Utils.getRatingStringFromBaseItem(comment));
-                Utils.setTextViewFontSize(getContext(), rating);
+                Utils.setTextViewFontSize(rating);
             }
             else
                 rating.setVisibility(View.GONE);   

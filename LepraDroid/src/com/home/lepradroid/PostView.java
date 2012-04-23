@@ -59,7 +59,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setWebViewClient(new LinksCatcher());
-        if(!Utils.isNormalFontSize(context))
+        if(!Utils.isNormalFontSize())
         {
             webView.getSettings().setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
             Utils.setWebViewFontSize(context, webView);

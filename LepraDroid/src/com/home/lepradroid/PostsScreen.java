@@ -62,6 +62,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
         list = (ListView) contentView.findViewById(R.id.list);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
         adapter = new PostsAdapter(context, groupId, R.layout.post_row_view, new ArrayList<BaseItem>());
+        list.setScrollingCacheEnabled(false);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {

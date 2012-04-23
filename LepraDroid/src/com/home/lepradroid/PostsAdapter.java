@@ -1,6 +1,8 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import android.content.Context;
@@ -25,8 +27,9 @@ import com.home.lepradroid.utils.Utils;
 class PostsAdapter extends ArrayAdapter<BaseItem>
 {
     private UUID                groupId;
-    private ArrayList<BaseItem> posts               = new ArrayList<BaseItem>();
-    public ImageLoader          imageLoader;
+    private List<BaseItem>      posts           = Collections.synchronizedList(new ArrayList<BaseItem>());
+    private LayoutInflater      aInflater;
+    private ImageLoader         imageLoader;
             
     public PostsAdapter(Context context, UUID groupId, int textViewResourceId,
             ArrayList<BaseItem> posts)
@@ -35,6 +38,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         this.posts = posts;
         this.groupId = groupId;
         imageLoader = new ImageLoader(LepraDroidApplication.getInstance());
+        aInflater = LayoutInflater.from(getContext());
     }
 
     public int getCount() 
@@ -59,45 +63,35 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
     
     public void addProgressElement()
     {
-        synchronized(posts)
-        {
-            if(!posts.isEmpty() && posts.get(posts.size() - 1) != null)
-                posts.add(null);   
-        }
+        if(!posts.isEmpty() && posts.get(posts.size() - 1) != null)
+            posts.add(null);   
     }
     
     public boolean isContainProgressElement()
     {
-        synchronized(posts)
-        {
-            if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
-                return true;
-            else
-                return false;
-        }
+        if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
+            return true;
+        else
+            return false;
     }
     
     public void removeProgressElement()
     {
-        synchronized(posts)
-        {
-            if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
-                posts.remove(null);
-        }
+        if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
+            posts.remove(null);
     }
     
     @Override
     public View getView(int position, View convertView, ViewGroup parent) 
     {
         Post post = (Post)getItem(position);
-        LayoutInflater aInflater=LayoutInflater.from(getContext());
         
         if(post != null)
         {
-            View view = aInflater.inflate(R.layout.post_row_view, parent, false);
+            convertView = aInflater.inflate(R.layout.post_row_view, parent, false);
             
-            ImageView imageView = (ImageView)view.findViewById(R.id.image);
-            TextView textView = (TextView)view.findViewById(R.id.text);
+            ImageView imageView = (ImageView)convertView.findViewById(R.id.image);
+            TextView textView = (TextView)convertView.findViewById(R.id.text);
             
             if(!TextUtils.isEmpty(post.getImageUrl()))
             {
@@ -109,11 +103,11 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
                 textView.setPadding(0, textView.getPaddingTop(), textView.getPaddingRight(), textView.getPaddingBottom());
             }
             
-            String text = Utils.html2text(post.getHtml());
+            String text = post.getText();
             textView.setText(TextUtils.isEmpty(text) ? "..." : text);
-            if(!Utils.isNormalFontSize(getContext()))
+            if(!Utils.isNormalFontSize())
             {
-                RelativeLayout root = (RelativeLayout)view.findViewById(R.id.root);
+                RelativeLayout root = (RelativeLayout)convertView.findViewById(R.id.root);
                 root.setPadding(root.getPaddingLeft() * 2, root.getPaddingTop(), root.getPaddingRight() * 2, root.getPaddingBottom() * 2);
                 
                 ViewGroup.LayoutParams params = imageView.getLayoutParams();
@@ -125,24 +119,24 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
                 textView.setTypeface(null, Typeface.NORMAL);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimensionPixelSize(R.dimen.comment_font_size));
             }
-            Utils.setTextViewFontSize(getContext(), textView);
+            Utils.setTextViewFontSize(textView);
             
-            TextView authorView = (TextView)view.findViewById(R.id.author);
+            TextView authorView = (TextView)convertView.findViewById(R.id.author);
             authorView.setText(Html.fromHtml(post.getSignature()));
-            Utils.setTextViewFontSize(getContext(), authorView);
+            Utils.setTextViewFontSize(authorView);
             
-            TextView commentsView = (TextView)view.findViewById(R.id.comments);
+            TextView commentsView = (TextView)convertView.findViewById(R.id.comments);
             commentsView.setText(Utils.getCommentsStringFromPost(post));
-            Utils.setTextViewFontSize(getContext(), commentsView);
+            Utils.setTextViewFontSize(commentsView);
             
-            TextView ratingView = (TextView)view.findViewById(R.id.rating);
-            Utils.setTextViewFontSize(getContext(), ratingView);
+            TextView ratingView = (TextView)convertView.findViewById(R.id.rating);
+            Utils.setTextViewFontSize(ratingView);
             if(groupId.equals(Commons.INBOX_POSTS_ID) || post.isVoteDisabled())
                 ratingView.setVisibility(View.GONE);
             else
                 ratingView.setText(Utils.getRatingStringFromBaseItem(post));
             
-            return view;
+            return convertView;
         }
         else
         {

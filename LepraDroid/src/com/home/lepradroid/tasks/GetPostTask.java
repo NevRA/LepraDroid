@@ -12,7 +12,6 @@ import org.jsoup.select.Elements;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -50,7 +49,7 @@ public class GetPostTask extends BaseTask
         this.groupId = groupId;
         this.postId = postId;
         this.url = url;
-        isImagesEnabled = Utils.isImagesEnabled(LepraDroidApplication.getInstance());
+        isImagesEnabled = Utils.isImagesEnabled();
     }
     
     @SuppressWarnings("unchecked")

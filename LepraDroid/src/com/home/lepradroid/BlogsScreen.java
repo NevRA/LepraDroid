@@ -53,6 +53,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener
         list = (ListView) contentView.findViewById(R.id.list);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
         adapter = new BlogsAdapter(context, R.layout.post_row_view, new ArrayList<BaseItem>());
+        list.setScrollingCacheEnabled(false);
         list.setAdapter(adapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {

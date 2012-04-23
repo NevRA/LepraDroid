@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -49,17 +48,15 @@ import com.home.lepradroid.utils.Utils;
 
 public class ServerWorker
 {
-    private String loginCode = "";
+    private String loginCode                        = "";
     private static volatile ServerWorker instance;
     private ClientConnectionManager connectionManager;
     private HttpParams connectionParameters;
-    private Map<UUID, ArrayList<BaseItem>> posts = new HashMap<UUID, ArrayList<BaseItem>>();
-    private Map<String, Author> authors = new HashMap<String, Author>();
-    private Map<UUID, Integer> postsPagesCount = new HashMap<UUID, Integer>();
-    private ReentrantReadWriteLock readWriteLock =  new ReentrantReadWriteLock();
-    private final Lock read  = readWriteLock.readLock();
-    private final Lock write = readWriteLock.writeLock();
-    private Map<UUID, ArrayList<BaseItem>> comments = new HashMap<UUID, ArrayList<BaseItem>>();
+    
+    private Map<UUID, ArrayList<BaseItem>> posts    = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
+    private Map<String, Author> authors             = Collections.synchronizedMap(new HashMap<String, Author>());
+    private Map<UUID, Integer> postsPagesCount      = Collections.synchronizedMap(new HashMap<UUID, Integer>());
+    private Map<UUID, ArrayList<BaseItem>> comments = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
 
     private ServerWorker()
     {
@@ -252,46 +249,30 @@ public class ServerWorker
 
     public BaseItem getPostById(UUID groupId, UUID id)
     {
-        read.lock();
-        try
-        {
-            ArrayList<BaseItem> items = posts.get(groupId);
-            if(items != null)
-                for(BaseItem item : items)
-                {
-                    if(item.getId().equals(id))
-                        return item;
-                }
-        }
-        finally
-        {
-            read.unlock();
-        }
+        ArrayList<BaseItem> items = posts.get(groupId);
+        if(items != null)
+            for(BaseItem item : items)
+            {
+                if(item.getId().equals(id))
+                    return item;
+            }
 
         return null;
     }
 
     public ArrayList<BaseItem> getPostsById(UUID groupId, boolean clone)
     {
-        write.lock();
-        try
+        ArrayList<BaseItem> items = posts.get(groupId);
+        if(items == null)
         {
-            ArrayList<BaseItem> items = posts.get(groupId);
-            if(items == null)
-            {
-                items = new ArrayList<BaseItem>(0);
+            items = new ArrayList<BaseItem>(0);
 
-                posts.put(groupId, items);
-            }
-            if(clone)
-                return cloneList(items);
-            else
-                return items;
+            posts.put(groupId, items);
         }
-        finally
-        {
-            write.unlock();
-        }
+        if(clone)
+            return cloneList(items);
+        else
+            return items;
     }
 
     public static ArrayList<BaseItem> cloneList(ArrayList<BaseItem> list)
@@ -306,20 +287,12 @@ public class ServerWorker
 
     public BaseItem getComment(UUID groupId, UUID postId, UUID commentId)
     {
-        read.lock();
-        try
-        {
-            ArrayList<BaseItem> items = getComments(groupId, postId);
+        ArrayList<BaseItem> items = getComments(groupId, postId);
 
-            for(BaseItem item : items)
-            {
-                if(item.getId().equals(commentId))
-                    return item;
-            }
-        }
-        finally
+        for(BaseItem item : items)
         {
-            read.unlock();
+            if(item.getId().equals(commentId))
+                return item;
         }
 
         return null;
@@ -327,22 +300,14 @@ public class ServerWorker
 
     public int getPrevNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
     {
-        read.lock();
-        try
+        ArrayList<BaseItem> comments = this.comments.get(postId);
+        if(comments != null)
         {
-            ArrayList<BaseItem> comments = this.comments.get(postId);
-            if(comments != null)
+            for(int pos = prevCommentNewPosition - 1; pos >= 0 && prevCommentNewPosition < comments.size(); --pos)
             {
-                for(int pos = prevCommentNewPosition - 1; pos >= 0 && prevCommentNewPosition < comments.size(); --pos)
-                {
-                    if(((Comment)comments.get(pos)).isNew())
-                        return pos;
-                }
+                if(((Comment)comments.get(pos)).isNew())
+                    return pos;
             }
-        }
-        finally
-        {
-            read.unlock();
         }
 
         return -1;
@@ -350,22 +315,14 @@ public class ServerWorker
 
     public int getNextNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
     {
-        read.lock();
-        try
+        ArrayList<BaseItem> comments = this.comments.get(postId);
+        if(comments != null)
         {
-            ArrayList<BaseItem> comments = this.comments.get(postId);
-            if(comments != null)
+            for(int pos = prevCommentNewPosition + 1; pos < comments.size(); ++pos)
             {
-                for(int pos = prevCommentNewPosition + 1; pos < comments.size(); ++pos)
-                {
-                    if(((Comment)comments.get(pos)).isNew())
-                        return pos;
-                }
+                if(((Comment)comments.get(pos)).isNew())
+                    return pos;
             }
-        }
-        finally
-        {
-            read.unlock();
         }
 
         return -1;
@@ -373,17 +330,9 @@ public class ServerWorker
 
     public ArrayList<BaseItem> getComments(UUID groupId, UUID postId)
     {
-        read.lock();
-        try
+        if(comments.containsKey(postId))
         {
-            if(comments.containsKey(postId))
-            {
-                return cloneList(comments.get(postId));
-            }
-        }
-        finally
-        {
-            read.unlock();
+            return cloneList(comments.get(postId));
         }
 
         return new ArrayList<BaseItem>();
@@ -391,39 +340,31 @@ public class ServerWorker
 
     public int addNewComment(UUID groupId, UUID id, BaseItem item)
     {
-        write.lock();
-        try
+        if(!comments.containsKey(id))
         {
-            if(!comments.containsKey(id))
-            {
-                ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
-                comments.put(id, targetList);
-            }
+            ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
+            comments.put(id, targetList);
+        }
 
-            Comment comment = (Comment)item;
-            ArrayList<BaseItem> comments = this.comments.get(id);
+        Comment comment = (Comment)item;
+        ArrayList<BaseItem> comments = this.comments.get(id);
 
-            if(TextUtils.isEmpty(comment.getParentPid()))
+        if(TextUtils.isEmpty(comment.getParentPid()))
+        {
+            comments.add(item);
+            return comments.size() - 1;
+        }
+        else
+        {
+            for(int pos = 0; pos < comments.size(); ++pos)
             {
-                comments.add(item);
-                return comments.size() - 1;
-            }
-            else
-            {
-                for(int pos = 0; pos < comments.size(); ++pos)
+                Comment parentComment = (Comment)comments.get(pos);
+                if(parentComment.getPid().equals(comment.getParentPid()))
                 {
-                    Comment parentComment = (Comment)comments.get(pos);
-                    if(parentComment.getPid().equals(comment.getParentPid()))
-                    {
-                        comments.add(pos + 1, item);
-                        return pos + 1;
-                    }
+                    comments.add(pos + 1, item);
+                    return pos + 1;
                 }
             }
-        }
-        finally
-        {
-            write.unlock();
         }
 
         return -1;
@@ -439,115 +380,59 @@ public class ServerWorker
 
     public void addNewPosts(UUID groupId, ArrayList<BaseItem> newPosts)
     {
-        write.lock();
-        try
+        ArrayList<BaseItem> oldPosts = getPostsById(groupId, false);
+        for(BaseItem post : newPosts)
         {
-            ArrayList<BaseItem> oldPosts = getPostsById(groupId, false);
-            for(BaseItem post : newPosts)
-            {
-                int pos = 0;
-                for(; pos < oldPosts.size(); ++pos)
-                    if(oldPosts.get(pos).getUrl().equals(post.getUrl()))
-                        break;
-                if(pos == oldPosts.size())
-                    oldPosts.add(post);
-            }
-        }
-        finally
-        {
-            write.unlock();
+            int pos = 0;
+            for(; pos < oldPosts.size(); ++pos)
+                if(oldPosts.get(pos).getUrl().equals(post.getUrl()))
+                    break;
+            if(pos == oldPosts.size())
+                oldPosts.add(post);
         }
     }
     
     public void addPostPagesCount(UUID groupId, Integer cout)
     {
-        write.lock();
-        try
-        {
-            postsPagesCount.put(groupId, cout);
-        }
-        finally
-        {
-            write.unlock();
-        }
+        postsPagesCount.put(groupId, cout);
     }
     
     public Integer getPostPagesCount(UUID groupId)
     {
-        read.lock();
-        try
-        {
-            if(postsPagesCount.containsKey(groupId))
-                return postsPagesCount.get(groupId);
-            else
-                return 0;
-        }
-        finally
-        {
-            read.unlock();
-        }
+        if(postsPagesCount.containsKey(groupId))
+            return postsPagesCount.get(groupId);
+        else
+            return 0;
     }
 
     public void addNewPost(UUID groupId, BaseItem post)
     {
-        write.lock();
-        try
-        {
-            getPostsById(groupId, false).add(post);
-        }
-        finally
-        {
-            write.unlock();
-        }
+        getPostsById(groupId, false).add(post);
     }
 
     public void addNewAuthor(Author author)
     {
-        write.lock();
-        try
+        if(authors.containsKey(author.getId()))
         {
-            if(authors.containsKey(author.getId()))
-            {
-                Author orig = authors.get(author.getId());
-                orig.setRating(author.getRating());
-                orig.setPlusVoted(author.isPlusVoted());
-                orig.setMinusVoted(author.isMinusVoted());
-            }
-            else
-                authors.put(author.getId(), author);
+            Author orig = authors.get(author.getId());
+            orig.setRating(author.getRating());
+            orig.setPlusVoted(author.isPlusVoted());
+            orig.setMinusVoted(author.isMinusVoted());
         }
-        finally
-        {
-            write.unlock();
-        }
+        else
+            authors.put(author.getId(), author);
     }
 
     public Author getAuthorById(String id)
     {
-        read.lock();
-        try
-        {
-            return authors.get(id);
-        }
-        finally
-        {
-            read.unlock();
-        }
+        return authors.get(id);
     }
 
     public Author getAuthorByName(String name)
     {
-        read.lock();
-        try
+        for (Entry<String, Author> a : authors.entrySet())
         {
-            for (Entry<String, Author> a : authors.entrySet())
-            {
-                if (a.getValue().getUserName().equals(name)) return a.getValue();
-            }
-        }
-        finally
-        {
-            read.unlock();
+            if (a.getValue().getUserName().equals(name)) return a.getValue();
         }
 
         return null;
@@ -555,54 +440,22 @@ public class ServerWorker
 
     public void clearCommentsById(UUID id)
     {
-        write.lock();
-        try
-        {
-            if(comments.containsKey(id))
-                comments.remove(id);
-        }
-        finally
-        {
-            write.unlock();
-        }
+        if(comments.containsKey(id))
+            comments.remove(id);
     }
 
     public void clearPostsById(UUID groupId)
     {
-        write.lock();
-        try
-        {
-            getPostsById(groupId, false).clear();
-        }
-        finally
-        {
-            write.unlock();
-        }
+        getPostsById(groupId, false).clear();
     }
 
     public void clearComments()
     {
-        write.lock();
-        try
-        {
-            comments.clear();
-        }
-        finally
-        {
-            write.unlock();
-        }
+        comments.clear();
     }
 
     public void clearPosts()
     {
-        write.lock();
-        try
-        {
-            posts.clear();
-        }
-        finally
-        {
-            write.unlock();
-        }
+        posts.clear();
     }
 }

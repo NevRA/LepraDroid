@@ -6,6 +6,7 @@ public class BaseItem extends RateItem
 {
     private UUID     id                  = UUID.randomUUID();
     private byte[]   html                = null;
+    private byte[]   text                = null;
     private byte[]   url                 = null;
     private byte[]   imageUrl            = null;
     private byte[]   author              = null;
@@ -30,6 +31,17 @@ public class BaseItem extends RateItem
     {
         if(html == null) return "";
         return new String(html);
+    }
+    
+    public void setText(String text)
+    {
+        this.text = text.getBytes();
+    }
+    
+    public String getText()
+    {
+        if(html == null) return "";
+        return new String(text);
     }
     
     public String getUrl()
