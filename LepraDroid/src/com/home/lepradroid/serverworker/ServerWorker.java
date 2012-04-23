@@ -440,8 +440,7 @@ public class ServerWorker
 
     public void clearCommentsById(UUID id)
     {
-        if(comments.containsKey(id))
-            comments.remove(id);
+        comments.remove(id);
     }
 
     public void clearPostsById(UUID groupId)
