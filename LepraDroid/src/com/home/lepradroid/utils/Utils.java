@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
@@ -567,6 +568,18 @@ public class Utils
         if(text.contains("leprosorium.ru"))
             return true;
              
+        return false;
+    }
+    
+    public static boolean isAlreadyInMyStuff(String pid)
+    {
+        ArrayList<BaseItem> posts = ServerWorker.Instance().getPostsById(Commons.MYSTUFF_POSTS_ID, false);
+        for(BaseItem post : posts)
+        {
+            if(((Post)post).getPid().equals(pid))
+                return true;
+        }
+        
         return false;
     }
 }
