@@ -6,6 +6,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.home.lepradroid.AuthorScreen;
+import com.home.lepradroid.ImagesWorker;
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.StubScreen;
 
@@ -14,13 +15,36 @@ import java.util.regex.Pattern;
 
 public class LinksCatcher extends WebViewClient
 {
-    public static final int LINK_POST = 1;
-    public static final int LINK_COMMENT = 2;
-    public static final int LINK_PROFILE = 3;
+    public static final int LINK_POST           = 1;
+    public static final int LINK_COMMENT        = 2;
+    public static final int LINK_PROFILE        = 3;
 
-    private static final String PATTERN_POST = "http://.*leprosorium.ru/comments/\\d{5,8}(#new)?";
+    private static final String PATTERN_POST    = "http://.*leprosorium.ru/comments/\\d{5,8}(#new)?";
     private static final String PATTERN_COMMENT = "http://.*leprosorium.ru/comments/\\d{5,8}#\\d{5,8}";
     private static final String PATTERN_PROFILE = "http://leprosorium.ru/users/(.*)";
+    
+    private static volatile LinksCatcher instance;
+    
+    private LinksCatcher()
+    {
+        
+    }
+    
+    public static LinksCatcher Instance()
+    {
+        if(instance == null)
+        {
+            synchronized (ImagesWorker.class)
+            {
+                if(instance == null)
+                {
+                    instance = new LinksCatcher();
+                }
+            }
+        }
+        
+        return instance;
+    }
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url)

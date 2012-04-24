@@ -205,12 +205,12 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 webView.setBackgroundColor(0x00000000);
                 webView.setVisibility(View.VISIBLE);
                 webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-                webView.setWebViewClient(new LinksCatcher());
+                webView.setWebViewClient(LinksCatcher.Instance());
                 WebSettings webSettings = webView.getSettings();
                 webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
                 webSettings.setJavaScriptEnabled(true);
                 webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + comment.getHtml(), "text/html", "UTF-8", null);
-                webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
+                webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
                 webView.setOnTouchListener(new View.OnTouchListener() 
                 {
                     @Override

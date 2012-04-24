@@ -7,13 +7,38 @@ import com.home.lepradroid.utils.Utils;
 
 public class ImagesWorker
 {
+    private static volatile ImagesWorker instance;
+    
+    final private String sencha = "http://src.sencha.io/";
+    
+    private ImagesWorker()
+    {
+        
+    }
+    
+    public static ImagesWorker Instance()
+    {
+        if(instance == null)
+        {
+            synchronized (ImagesWorker.class)
+            {
+                if(instance == null)
+                {
+                    instance = new ImagesWorker();
+                }
+            }
+        }
+        
+        return instance;
+    }
+    
     public String getData(String src, final int level) 
     {
-        final String sencha = "http://src.sencha.io/";
         final String srcWithSize = Utils.getWidthForWebView(Utils.getCommentLevelIndicatorLength() * level) + "/" + src;;
-        final String url = sencha + srcWithSize;        
+        final String url = sencha + srcWithSize;   
+        
         try
-        {                
+        {  
             String cachedData = Utils.readStringFromFileCache(url);
             if(!TextUtils.isEmpty(cachedData))
             {

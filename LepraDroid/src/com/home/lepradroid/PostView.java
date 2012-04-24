@@ -58,14 +58,14 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
         webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        webView.setWebViewClient(new LinksCatcher());
+        webView.setWebViewClient(LinksCatcher.Instance());
         if(!Utils.isNormalFontSize())
         {
             webView.getSettings().setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
             Utils.setWebViewFontSize(context, webView);
         }
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new ImagesWorker(), "ImagesWorker");
+        webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
         webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + post.getHtml(), "text/html", "UTF-8", null );
         
         plus = (Button) contentView.findViewById(R.id.plus);
