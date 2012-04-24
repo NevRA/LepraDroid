@@ -43,6 +43,8 @@
     <string name="Added_Comment">Комментарий добавлен</string>
     <string name="No_New_Comments">Новых комментариев больше нет</string>
     <string name="Searching_For_New_Comments">Идет поиск новых комментариев&#8230;</string>
+    <string name="Post_Added_To_Stuff">Пост добавлен в мои вещи</string>
+    <string name="Post_Removed_From_Stuff">Пост удален из моих вещей</string>
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>

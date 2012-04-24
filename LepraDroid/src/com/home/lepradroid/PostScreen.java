@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.StuffOperationType;
+import com.home.lepradroid.interfaces.ChangeMyStuffListener;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.ChangeMyStuffTask;
@@ -22,7 +24,7 @@ import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
 
-public class PostScreen extends BaseActivity
+public class PostScreen extends BaseActivity implements ChangeMyStuffListener
 {
     private UUID            groupId;
     private UUID            postId;
@@ -119,10 +121,10 @@ public class PostScreen extends BaseActivity
         switch (item.getItemId())
         {
         case MENU_ADD_STUFF:
-            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(post.getPid(), StuffOperationType.ADD), null));
+            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(groupId, postId, StuffOperationType.ADD), null));
             break;
         case MENU_DEL_STUFF:
-            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(post.getPid(), StuffOperationType.REMOVE), null));
+            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(groupId, postId, StuffOperationType.REMOVE), null));
             break;
         case MENU_RELOAD:
             switch(pager.getCurrentItem())
@@ -228,5 +230,18 @@ public class PostScreen extends BaseActivity
                     {
                     }
                 });
+    }
+
+    @Override
+    public void OnChangeMyStuff(UUID groupId, UUID postId,
+            StuffOperationType type, boolean successful)
+    {
+        if(!this.groupId.equals(groupId) || !this.postId.equals(postId))
+            return;
+        
+        if(successful)
+        {
+            Toast.makeText(this, Utils.getString(type == StuffOperationType.ADD ? R.string.Post_Added_To_Stuff : R.string.Post_Removed_From_Stuff), Toast.LENGTH_LONG).show();
+        }
     }
 }
