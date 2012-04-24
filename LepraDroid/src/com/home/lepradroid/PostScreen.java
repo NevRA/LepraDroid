@@ -11,8 +11,10 @@ import android.view.MenuItem;
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.commons.Commons.StuffOperationType;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.tasks.ChangeMyStuffTask;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetCommentsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -78,7 +80,10 @@ public class PostScreen extends BaseActivity
         switch(pager.getCurrentItem())
         {
         case POST_TAB_NUM:
-            menu.add(0, MENU_LOGOUT, 0, Utils.getString(R.string.Logout_Menu)).setIcon(R.drawable.ic_logout);
+            if(groupId.equals(Commons.MYSTUFF_POSTS_ID))
+                menu.add(0, MENU_DEL_STUFF, 0, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
+            else
+                menu.add(0, MENU_ADD_STUFF, 0, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff);
             break;
         case COMMENTS_TAB_NUM:
             menu.add(0, MENU_COMMENT_NAVIGATE, 0, navigationTurnedOn ? Utils.getString(R.string.Turn_Off_Navigation) : Utils.getString(R.string.Turn_On_Navigation)).setIcon(navigationTurnedOn ? R.drawable.ic_comment_navigation_off : R.drawable.ic_comment_navigation);
@@ -113,6 +118,12 @@ public class PostScreen extends BaseActivity
         
         switch (item.getItemId())
         {
+        case MENU_ADD_STUFF:
+            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(post.getPid(), StuffOperationType.ADD), null));
+            break;
+        case MENU_DEL_STUFF:
+            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(post.getPid(), StuffOperationType.REMOVE), null));
+            break;
         case MENU_RELOAD:
             switch(pager.getCurrentItem())
             {

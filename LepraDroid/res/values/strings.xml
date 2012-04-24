@@ -31,6 +31,8 @@
     <string name="Turn_Off_Navigation">Отключить навигацию</string>
     <string name="Reload_Menu">Обновить</string>
     <string name="Settings_Menu">Настройки</string>
+    <string name="Add_Stuff_Menu">Добавить в мои вещи</string>
+    <string name="Del_Stuff_Menu">Удалить из моих вещей</string>
     <string name="Logout_Menu">Завершить сессию</string>
     <string name="Logout_Menu_Confirm">Вы действительно хотите завершить сессию?</string>
     <string name="Yes_Please">Да, пожалуйста</string>

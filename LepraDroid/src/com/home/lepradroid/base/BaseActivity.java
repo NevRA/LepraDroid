@@ -32,6 +32,10 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
                                                 = 3;
     protected static final int MENU_SETTINGS  
                                                 = 4;
+    protected static final int MENU_ADD_STUFF  
+                                                = 5;
+    protected static final int MENU_DEL_STUFF  
+                                                = 6;
     
     private ArrayList<TaskWrapper> tasks = new ArrayList<TaskWrapper>();
     

@@ -40,6 +40,7 @@ import android.util.Pair;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.RateType;
 import com.home.lepradroid.commons.Commons.RateValueType;
+import com.home.lepradroid.commons.Commons.StuffOperationType;
 import com.home.lepradroid.objects.Author;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
@@ -216,6 +217,11 @@ public class ServerWorker
         }
 
         return postRequest(url, body);
+    }
+    
+    public void postChangeMyStuff(String wtf, String pid, StuffOperationType type) throws Exception
+    {
+        postRequest(Commons.MYCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), pid, wtf));
     }
     
     public void postMainTresholdRequest(String value) throws Exception

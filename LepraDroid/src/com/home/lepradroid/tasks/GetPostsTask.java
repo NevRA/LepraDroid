@@ -177,13 +177,24 @@ public class GetPostsTask extends BaseTask
                     Element filter = content.getElementById("js-showonindex"); 
                     SettingsWorker.Instance().saveMainThreshold(filter.attr("value")); 
                     
-                    Element vote = content.getElementById("content_left_inner");
-                    Element script = vote.getElementsByTag("script").first();
+                    if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
+                    {
+                        Element vote = content.getElementById("content_left_inner");
+                        Element script = vote.getElementsByTag("script").first();
+                        
+                        Pattern pattern = Pattern.compile("wtf_vote = '(.+)'");
+                        Matcher matcher = pattern.matcher(script.data());
+                        if(matcher.find())
+                            SettingsWorker.Instance().saveVoteWtf(matcher.group(1));
+                    }
                     
-                    Pattern pattern = Pattern.compile("wtf_vote = '(.+)'");
-                    Matcher matcher = pattern.matcher(script.data());
-                    if(matcher.find())
-                        SettingsWorker.Instance().saveVoteWtf(matcher.group(1));
+                    if(TextUtils.isEmpty(SettingsWorker.Instance().loadStuffWtf()))
+                    {
+                        Pattern pattern = Pattern.compile("mythingsHandler.wtf = '(.+)'");
+                        Matcher matcher = pattern.matcher(content.html());
+                        if(matcher.find())
+                            SettingsWorker.Instance().saveStuffWtf(matcher.group(1));
+                    }
                 }
                 
                 if(end == -1)

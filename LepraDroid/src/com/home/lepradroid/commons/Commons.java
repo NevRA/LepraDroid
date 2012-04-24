@@ -17,6 +17,7 @@ public class Commons
     public static final String KARMA_VOTE_URL   = SITE_URL + "karma/";
     public static final String LEPROPANEL_URL   = SITE_URL + "/api/lepropanel";
     public static final String THRESHOLD_URL    = SITE_URL + "/threshold/";
+    public static final String MYCTL_URL        = SITE_URL + "/myctl";
 
     public static final String APP_TAG          = "LepraDroid";
     
@@ -77,5 +78,11 @@ public class Commons
     {
         MINUS,
         PLUS
+    }
+    
+    public enum StuffOperationType
+    {
+        ADD,
+        REMOVE
     }
 }
