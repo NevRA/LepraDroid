@@ -82,19 +82,26 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener
         switch(pager.getCurrentItem())
         {
         case POST_TAB_NUM:
-            if(Utils.isAlreadyInMyStuff(post.getPid()))
-                menu.add(0, MENU_DEL_STUFF, 0, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
-            else
-                menu.add(0, MENU_ADD_STUFF, 0, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff);
+            if(!groupId.equals(Commons.INBOX_POSTS_ID))
+            {
+                if(Utils.isAlreadyInMyStuff(post.getPid()))
+                    menu.add(0, MENU_DEL_STUFF, 0, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
+                else
+                    menu.add(0, MENU_ADD_STUFF, 0, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff); 
+            }
+            
             break;
         case COMMENTS_TAB_NUM:
             menu.add(0, MENU_COMMENT_NAVIGATE, 0, navigationTurnedOn ? Utils.getString(R.string.Turn_Off_Navigation) : Utils.getString(R.string.Turn_On_Navigation)).setIcon(navigationTurnedOn ? R.drawable.ic_comment_navigation_off : R.drawable.ic_comment_navigation);
             menu.add(0, MENU_RELOAD, 1, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
             menu.add(0, MENU_ADD_COMMENT, 2, Utils.getString(R.string.Comment_Menu)).setIcon(R.drawable.ic_add_comment);
-            if(Utils.isAlreadyInMyStuff(post.getPid()))
-                menu.add(0, MENU_DEL_STUFF, 3, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
-            else
-                menu.add(0, MENU_ADD_STUFF, 3, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff);
+            if(!groupId.equals(Commons.INBOX_POSTS_ID))
+            {
+                if(Utils.isAlreadyInMyStuff(post.getPid()))
+                    menu.add(0, MENU_DEL_STUFF, 3, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
+                else
+                    menu.add(0, MENU_ADD_STUFF, 3, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff);
+            }
             break;
         default:
             menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
