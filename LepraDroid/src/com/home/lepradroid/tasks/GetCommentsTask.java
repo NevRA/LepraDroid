@@ -350,7 +350,7 @@ public class GetCommentsTask extends BaseTask
         if(level.find())
             comment.setLevel(Short.valueOf(level.group(1)));
         
-        if(element.parent().attr("class").contains("new"))
+        if(root.attr("class").contains("new"))
             comment.setNew(true);
         
         Elements images = element.getElementsByTag("img");
@@ -389,10 +389,10 @@ public class GetCommentsTask extends BaseTask
             comment.setOnlyText(true);
         }
 
-        Elements authorElement = content.getElementsByClass("p");
-        if(!authorElement.isEmpty())
+        Element authorElement = content.getElementsByClass("p").first();
+        if(authorElement != null)
         {
-            Elements a = authorElement.first().getElementsByTag("a");
+            Elements a = authorElement.getElementsByTag("a");
             comment.setUrl(Commons.SITE_URL + a.first().attr("href"));
             
             String author = a.get(1).text();
@@ -406,18 +406,20 @@ public class GetCommentsTask extends BaseTask
                 color = "#3270FF";
             
             comment.setAuthor(author);
-            comment.setSignature(authorElement.first().text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>"));
+            comment.setSignature(authorElement.text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>"));
         }
         
-        Elements vote = content.getElementsByClass("vote");
-        if(!vote.isEmpty())
+        Element vote = content.getElementsByClass("vote").first();
+        if(vote != null)
         {
-            Elements rating = vote.first().getElementsByTag("em");
-            comment.setRating(Short.valueOf(rating.first().text()));
+            String voteBody = vote.html();
+            comment.setPlusVoted(voteBody.contains("class=\"plus voted\""));
+            comment.setMinusVoted(voteBody.contains("class=\"minus voted\""));
+            
+            Element rating = vote.getElementsByTag("em").first();
+            comment.setRating(Short.valueOf(rating.text()));
         }
         
-        comment.setPlusVoted(html.contains("class=\"plus voted\""));
-        comment.setMinusVoted(html.contains("class=\"minus voted\""));
         comment.setNum(commentsCout);
                      
         ServerWorker.Instance().addNewComment(groupId, postId, comment);
