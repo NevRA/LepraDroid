@@ -17,6 +17,7 @@ public class SettingsWorker
     private static final String USER_NAME      = "username_pref";
     private static final String COMMENT_WTF    = "commentwtf_pref";
     private static final String STUFF_WTF      = "stuff_pref";
+    private static final String FAV_WTF        = "fav_pref";
     private static final String VOTE_WTF       = "votewtf_pref";
     private static final String VOTE_WEIGHT    = "voteweight_pref";
     private static final String VOTE_KARMA_WTF = "votekarmawtf_pref";
@@ -66,7 +67,18 @@ public class SettingsWorker
         saveString(COMMENT_WTF, "");
         saveString(VOTE_WTF, "");
         saveString(STUFF_WTF, "");
+        saveString(FAV_WTF, "");
         saveString(VOTE_KARMA_WTF, "");
+    }
+    
+    public String loadFavWtf()
+    {
+        return loadString(FAV_WTF);
+    }
+    
+    public void saveFavWtf(String fav_wtf)
+    {
+        saveString(FAV_WTF, fav_wtf);
     }
     
     public String loadStuffWtf()

@@ -219,6 +219,11 @@ public class ServerWorker
         return postRequest(url, body);
     }
     
+    public void postChangeFavs(String wtf, String pid, StuffOperationType type) throws Exception
+    {
+        postRequest(Commons.FAVSCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), pid, wtf));
+    }
+    
     public void postChangeMyStuff(String wtf, String pid, StuffOperationType type) throws Exception
     {
         postRequest(Commons.MYCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), pid, wtf));

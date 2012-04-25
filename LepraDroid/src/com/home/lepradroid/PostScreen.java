@@ -13,9 +13,11 @@ import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.StuffOperationType;
+import com.home.lepradroid.interfaces.ChangeFavListener;
 import com.home.lepradroid.interfaces.ChangeMyStuffListener;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.tasks.ChangeFavTask;
 import com.home.lepradroid.tasks.ChangeMyStuffTask;
 import com.home.lepradroid.tasks.GetAuthorTask;
 import com.home.lepradroid.tasks.GetCommentsTask;
@@ -24,7 +26,7 @@ import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
 
-public class PostScreen extends BaseActivity implements ChangeMyStuffListener
+public class PostScreen extends BaseActivity implements ChangeMyStuffListener, ChangeFavListener
 {
     private UUID            groupId;
     private UUID            postId;
@@ -82,26 +84,22 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener
         switch(pager.getCurrentItem())
         {
         case POST_TAB_NUM:
+            if(Utils.isAlreadyInStuff(Commons.MYSTUFF_POSTS_ID, post.getPid()))
+                menu.add(0, MENU_DEL_STUFF, 0, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
+            else
+                menu.add(0, MENU_ADD_STUFF, 0, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff); 
             if(!groupId.equals(Commons.INBOX_POSTS_ID))
             {
-                if(Utils.isAlreadyInMyStuff(post.getPid()))
-                    menu.add(0, MENU_DEL_STUFF, 0, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
+                if(Utils.isAlreadyInStuff(Commons.FAVORITE_POSTS_ID, post.getPid()))
+                    menu.add(0, MENU_DEL_FAV, 0, Utils.getString(R.string.Del_Fav_Menu)).setIcon(R.drawable.ic_del_fav);
                 else
-                    menu.add(0, MENU_ADD_STUFF, 0, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff); 
+                    menu.add(0, MENU_ADD_FAV, 0, Utils.getString(R.string.Add_Fav_Menu)).setIcon(R.drawable.ic_add_fav); 
             }
-            
             break;
         case COMMENTS_TAB_NUM:
             menu.add(0, MENU_COMMENT_NAVIGATE, 0, navigationTurnedOn ? Utils.getString(R.string.Turn_Off_Navigation) : Utils.getString(R.string.Turn_On_Navigation)).setIcon(navigationTurnedOn ? R.drawable.ic_comment_navigation_off : R.drawable.ic_comment_navigation);
             menu.add(0, MENU_RELOAD, 1, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
             menu.add(0, MENU_ADD_COMMENT, 2, Utils.getString(R.string.Comment_Menu)).setIcon(R.drawable.ic_add_comment);
-            /*if(!groupId.equals(Commons.INBOX_POSTS_ID))
-            {
-                if(Utils.isAlreadyInMyStuff(post.getPid()))
-                    menu.add(0, MENU_DEL_STUFF, 3, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
-                else
-                    menu.add(0, MENU_ADD_STUFF, 3, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff);
-            }*/
             break;
         default:
             menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
@@ -136,6 +134,12 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener
             break;
         case MENU_DEL_STUFF:
             pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(groupId, postId, StuffOperationType.REMOVE), null));
+            break;
+        case MENU_ADD_FAV:
+            pushNewTask(new TaskWrapper(null, new ChangeFavTask(groupId, postId, StuffOperationType.ADD), null));
+            break;
+        case MENU_DEL_FAV:
+            pushNewTask(new TaskWrapper(null, new ChangeFavTask(groupId, postId, StuffOperationType.REMOVE), null));
             break;
         case MENU_RELOAD:
             switch(pager.getCurrentItem())
@@ -254,6 +258,21 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener
         {
             Toast.makeText(this, Utils.getString(type == StuffOperationType.ADD ? R.string.Post_Added_To_Stuff : R.string.Post_Removed_From_Stuff), Toast.LENGTH_LONG).show();
             if(groupId.equals(Commons.MYSTUFF_POSTS_ID))
+                finish();
+        }
+    }
+
+    @Override
+    public void OnChangeFav(UUID groupId, UUID postId, StuffOperationType type,
+            boolean successful)
+    {
+        if(!this.groupId.equals(groupId) || !this.postId.equals(postId))
+            return;
+        
+        if(successful)
+        {
+            Toast.makeText(this, Utils.getString(type == StuffOperationType.ADD ? R.string.Post_Added_To_Fav : R.string.Post_Removed_From_Fav), Toast.LENGTH_LONG).show();
+            if(groupId.equals(Commons.FAVORITE_POSTS_ID))
                 finish();
         }
     }

@@ -571,9 +571,9 @@ public class Utils
         return false;
     }
     
-    public static boolean isAlreadyInMyStuff(String pid)
+    public static boolean isAlreadyInStuff(UUID stuffId, String pid)
     {
-        ArrayList<BaseItem> posts = ServerWorker.Instance().getPostsById(Commons.MYSTUFF_POSTS_ID, false);
+        ArrayList<BaseItem> posts = ServerWorker.Instance().getPostsById(stuffId, false);
         for(BaseItem post : posts)
         {
             if(((Post)post).getPid().equals(pid))

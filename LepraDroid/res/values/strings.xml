@@ -33,6 +33,8 @@
     <string name="Settings_Menu">Настройки</string>
     <string name="Add_Stuff_Menu">Добавить в мои вещи</string>
     <string name="Del_Stuff_Menu">Удалить из моих вещей</string>
+    <string name="Add_Fav_Menu">Добавить в избранное</string>
+    <string name="Del_Fav_Menu">Удалить из избранного</string>
     <string name="Logout_Menu">Завершить сессию</string>
     <string name="Logout_Menu_Confirm">Вы действительно хотите завершить сессию?</string>
     <string name="Yes_Please">Да, пожалуйста</string>
@@ -45,6 +47,8 @@
     <string name="Searching_For_New_Comments">Идет поиск новых комментариев&#8230;</string>
     <string name="Post_Added_To_Stuff">Пост добавлен в мои вещи</string>
     <string name="Post_Removed_From_Stuff">Пост удален из моих вещей</string>
+    <string name="Post_Added_To_Fav">Пост добавлен в избранное</string>
+    <string name="Post_Removed_From_Fav">Пост удален из избранного</string>
     <string name="Rated_Item">Ваш голос учтен, новый рейтинг</string>
     <string name="Rated_Item_Without_New_Rating">Ваш голос учтен</string>
     <string name="Too_Many_Comments">Извините, слишком много комментариев, сейчас допустимый лимит не более %d</string>

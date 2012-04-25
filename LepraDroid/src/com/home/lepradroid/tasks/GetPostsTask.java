@@ -168,32 +168,47 @@ public class GetPostsTask extends BaseTask
                 }
                 
                 if(     num == 0 && 
-                        groupId.equals(Commons.MAIN_POSTS_ID) &&
                         page == 0)
                 {
-                    String header = html.substring(0, start);
-                    Element content = Jsoup.parse(header);
-                    
-                    Element filter = content.getElementById("js-showonindex"); 
-                    SettingsWorker.Instance().saveMainThreshold(filter.attr("value")); 
-                    
-                    if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
+                    if(groupId.equals(Commons.MAIN_POSTS_ID))
                     {
-                        Element vote = content.getElementById("content_left_inner");
-                        Element script = vote.getElementsByTag("script").first();
+                        String header = html.substring(0, start);
+                        Element content = Jsoup.parse(header);
                         
-                        Pattern pattern = Pattern.compile("wtf_vote = '(.+)'");
-                        Matcher matcher = pattern.matcher(script.data());
-                        if(matcher.find())
-                            SettingsWorker.Instance().saveVoteWtf(matcher.group(1));
+                        Element filter = content.getElementById("js-showonindex"); 
+                        SettingsWorker.Instance().saveMainThreshold(filter.attr("value")); 
+                        
+                        if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
+                        {
+                            Element vote = content.getElementById("content_left_inner");
+                            Element script = vote.getElementsByTag("script").first();
+                            
+                            Pattern pattern = Pattern.compile("wtf_vote = '(.+)'");
+                            Matcher matcher = pattern.matcher(script.data());
+                            if(matcher.find())
+                                SettingsWorker.Instance().saveVoteWtf(matcher.group(1));
+                        }
+                        
+                        if(TextUtils.isEmpty(SettingsWorker.Instance().loadStuffWtf()))
+                        {
+                            Pattern pattern = Pattern.compile("mythingsHandler.wtf = '(.+)'");
+                            Matcher matcher = pattern.matcher(content.html());
+                            if(matcher.find())
+                                SettingsWorker.Instance().saveStuffWtf(matcher.group(1));
+                        }
                     }
-                    
-                    if(TextUtils.isEmpty(SettingsWorker.Instance().loadStuffWtf()))
+                    else if(groupId.equals(Commons.MYSTUFF_POSTS_ID))
                     {
-                        Pattern pattern = Pattern.compile("mythingsHandler.wtf = '(.+)'");
-                        Matcher matcher = pattern.matcher(content.html());
-                        if(matcher.find())
-                            SettingsWorker.Instance().saveStuffWtf(matcher.group(1));
+                        if(TextUtils.isEmpty(SettingsWorker.Instance().loadFavWtf()))
+                        {
+                            String header = html.substring(0, start);
+                            Element content = Jsoup.parse(header);
+                            
+                            Element fav = content.getElementsByAttributeValue("name", "fav").first();
+                            Element wtf = fav.getElementsByAttributeValue("name", "wtf").first();
+
+                            SettingsWorker.Instance().saveFavWtf(wtf.attr("value"));
+                        }
                     }
                 }
                 
