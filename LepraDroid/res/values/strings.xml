@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">LepraDroid</string>
-    <string name="app_title">LepraDroid by R</string>
+    <string name="app_name_by_r">LepraDroid by R</string>
     <string name="Author_Name">R</string>
     <string name="login_label">Логин:</string>
     <string name="password_label">Пароль:</string>
