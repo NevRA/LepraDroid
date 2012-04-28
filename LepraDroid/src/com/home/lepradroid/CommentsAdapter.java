@@ -147,8 +147,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     
     public void updateData(ArrayList<BaseItem> comments)
     {
-        boolean containProgressElement = false;
-        containProgressElement = isContainProgressElement();
+        boolean containProgressElement = isContainProgressElement();
         
         this.comments.clear();
         this.comments.addAll(comments);
@@ -165,10 +164,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     
     public boolean isContainProgressElement()
     {
-        if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
-            return true;
-        else
-            return false;
+        return !comments.isEmpty() && comments.get(comments.size() - 1) == null;
     }
     
     public void removeProgressElement()
@@ -264,7 +260,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         }
         else
         {
-            convertView = (View) aInflater.inflate(R.layout.footer_view, null);
+            convertView = aInflater.inflate(R.layout.footer_view, null);
         }
 
         return convertView;

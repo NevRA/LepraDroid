@@ -39,9 +39,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     private ProgressBar     progress;
     private CommentsAdapter adapter;
     private LinearLayout    buttons;
-    private Button          up;
-    private Button          down;
-    private boolean         receivedLastElements 
+    private boolean         receivedLastElements
                                     = false;
     private boolean         shownLastElements 
                                     = false;
@@ -85,8 +83,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         list = (ListView) contentView.findViewById(R.id.list);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
         buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
-        up = (Button) contentView.findViewById(R.id.up);
-        down = (Button) contentView.findViewById(R.id.down);
+        Button up = (Button) contentView.findViewById(R.id.up);
+        Button down = (Button) contentView.findViewById(R.id.down);
 
         up.setOnClickListener(new OnClickListener()
         {
@@ -106,11 +104,9 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             }
         });
 
-        TextView tooManyComments = (TextView) contentView
-                .findViewById(R.id.too_many_comments);
+        TextView tooManyComments = (TextView) contentView.findViewById(R.id.too_many_comments);
 
-        adapter = new CommentsAdapter(context, groupId, post.getId(),
-                R.layout.comments_row_view, new ArrayList<BaseItem>());
+        adapter = new CommentsAdapter(context, groupId, post.getId(), R.layout.comments_row_view, new ArrayList<BaseItem>());
         
         list.setScrollingCacheEnabled(false);
         list.setAdapter(adapter);
@@ -201,11 +197,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
                 waitingNextRecord = true;
             }
         }
-    }
-
-    public boolean isReceivedLastElement()
-    {
-        return receivedLastElements;
     }
 
     @Override

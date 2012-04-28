@@ -35,10 +35,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     private PostView        postView;
     private CommentsView    commentsView;
     private AuthorView      authorView;
-    private TitlePageIndicator 
-                            titleIndicator;
     private Post            post;
-    private TabsPageAdapter tabsAdapter;
     private ViewPager       pager;
     private ArrayList<BaseView> 
                             pages               = new ArrayList<BaseView>();
@@ -199,13 +196,13 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         pages.add(postView);
         pages.add(commentsView);
         pages.add(authorView);
-        
-        tabsAdapter = new TabsPageAdapter(this, pages);
+
+        TabsPageAdapter tabsAdapter = new TabsPageAdapter(this, pages);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(tabsAdapter);
         pager.setCurrentItem(0);
 
-        titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
+        TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
         titleIndicator.setViewPager(pager);
         titleIndicator.setCurrentItem(0);
         
@@ -215,28 +212,25 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
                     @Override
                     public void onPageSelected(int position)
                     {
-                        switch(position)
+                        switch (position)
                         {
-                        case COMMENTS_TAB_NUM:
-                            if(!authorInit)
-                            {
-                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
-                                authorInit = true;
-                                
-                                if(!Utils.isCommentsLoadingWithPost(PostScreen.this))
+                            case COMMENTS_TAB_NUM:
+                                if (!authorInit)
                                 {
-                                    pushNewTask(new TaskWrapper(null, new GetCommentsTask(
-                                            groupId, postId), Utils
-                                                .getString(R.string.Posts_Loading_In_Progress)));
+                                    pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                    authorInit = true;
+
+                                    if (!Utils.isCommentsLoadingWithPost(PostScreen.this))
+                                    {
+                                        pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, postId), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                    }
                                 }
-                            }
-                            break;
+                                break;
                         }
                     }
 
                     @Override
-                    public void onPageScrolled(int position,
-                            float positionOffset, int positionOffsetPixels)
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
                     {
                     }
 

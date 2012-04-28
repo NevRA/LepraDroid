@@ -38,7 +38,7 @@ public class GetCommentsTask extends BaseTask
     
     private UUID    groupId;
     private UUID    postId;
-    private short   commentsCout        = 0;
+    private short   commentsCount       = 0;
     private String  postAuthor          = "";
     private String  userName            = "";
     private boolean isImagesEnabled     = true;
@@ -242,7 +242,7 @@ public class GetCommentsTask extends BaseTask
                 
                 post.setNewComments((short)-1);
                 
-                String pageA = null, pageB = null;
+                String pageA = null, pageB;
                 int start = -1;
                 int end = -1;                
                 fileStream = new FileInputStream(file);
@@ -420,18 +420,18 @@ public class GetCommentsTask extends BaseTask
             comment.setRating(Short.valueOf(rating.text()));
         }
         
-        comment.setNum(commentsCout);
+        comment.setNum(commentsCount);
                      
         ServerWorker.Instance().addNewComment(groupId, postId, comment);
         
-        commentsCout ++;
+        commentsCount++;
         
-        if(commentsCout == 50)
+        if(commentsCount == 50)
         {
             notifyAboutFirstCommentsUpdate();
         }
-        else if(commentsCout != 0 && 
-                commentsCout % 100 == 0)
+        else if(commentsCount != 0 &&
+                commentsCount % 100 == 0)
         {
             notifyAboutCommentsUpdate();
         }
