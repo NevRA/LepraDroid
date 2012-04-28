@@ -23,7 +23,7 @@
 	        <meta-data android:name="android.appwidget.provider"
 	                android:resource="@xml/widget_provider" />
 		</receiver>
-		<service android:name=".UpdateWidgetService"></service>
+		<service android:name=".UpdateWidgetService"/>
         <activity 
             android:name=".StartupActivity"
             android:label="@string/app_name" 
