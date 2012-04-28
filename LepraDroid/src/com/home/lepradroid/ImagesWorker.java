@@ -34,7 +34,7 @@ public class ImagesWorker
     
     public String getData(String src, final int level) 
     {
-        final String srcWithSize = Utils.getWidthForWebView(Utils.getCommentLevelIndicatorLength() * level) + "/" + src;;
+        final String srcWithSize = Utils.getWidthForWebView(Utils.getCommentLevelIndicatorLength() * level) + "/" + src;
         final String url = sencha + srcWithSize;   
         
         try

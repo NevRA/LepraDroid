@@ -39,7 +39,6 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
 
     public PostsAdapter adapter;
     
-    
     public PostsScreen(final Context context, final UUID groupId, final String url, String parentTitle)
     {                                                                            
         super(context);
@@ -192,7 +191,6 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     @Override
     public void OnCommentsUpdateBegin(UUID groupId, UUID postId)
     {
-        if(!this.groupId.equals(groupId)) return;
     }
 
     @Override
@@ -223,6 +221,5 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
             boolean successful)
     {
-        if(!this.groupId.equals(groupId)) return;
     }
 }

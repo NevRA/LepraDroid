@@ -197,7 +197,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         pages.add(commentsView);
         pages.add(authorView);
 
-        TabsPageAdapter tabsAdapter = new TabsPageAdapter(this, pages);
+        TabsPageAdapter tabsAdapter = new TabsPageAdapter(pages);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(tabsAdapter);
         pager.setCurrentItem(0);

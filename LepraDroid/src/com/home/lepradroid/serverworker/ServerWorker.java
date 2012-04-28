@@ -1,20 +1,20 @@
 package com.home.lepradroid.serverworker;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import android.text.TextUtils;
+import android.util.Pair;
+import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.commons.Commons.RateType;
+import com.home.lepradroid.commons.Commons.RateValueType;
+import com.home.lepradroid.commons.Commons.StuffOperationType;
+import com.home.lepradroid.objects.Author;
+import com.home.lepradroid.objects.BaseItem;
+import com.home.lepradroid.objects.Comment;
+import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.utils.Utils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -34,18 +34,11 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import android.text.TextUtils;
-import android.util.Pair;
-
-import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.commons.Commons.RateType;
-import com.home.lepradroid.commons.Commons.RateValueType;
-import com.home.lepradroid.commons.Commons.StuffOperationType;
-import com.home.lepradroid.objects.Author;
-import com.home.lepradroid.objects.BaseItem;
-import com.home.lepradroid.objects.Comment;
-import com.home.lepradroid.settings.SettingsWorker;
-import com.home.lepradroid.utils.Utils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class ServerWorker
 {
@@ -150,7 +143,7 @@ public class ServerWorker
     }
     
 
-    public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws ClientProtocolException, IOException
+    public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws IOException
     {
         HttpPost httpGet = new HttpPost(url);
         String str = String.format("user=%s&pass=%s&captcha=%s&logincode=%s&save=1", URLEncoder.encode(login), URLEncoder.encode(password), captcha, loginCode);
@@ -165,7 +158,7 @@ public class ServerWorker
         return new Pair<String, Header[]>(EntityUtils.toString(response.getEntity(), "UTF-8"), response.getAllHeaders());
     }
 
-    public byte[] getImage(String url) throws ClientProtocolException, IOException
+    public byte[] getImage(String url) throws IOException
     {
         HttpGet httpGet = new HttpGet(url);
 
@@ -296,9 +289,9 @@ public class ServerWorker
         return clonedList;
     }
 
-    public BaseItem getComment(UUID groupId, UUID postId, UUID commentId)
+    public BaseItem getComment(UUID postId, UUID commentId)
     {
-        ArrayList<BaseItem> items = getComments(groupId, postId);
+        ArrayList<BaseItem> items = getComments(postId);
 
         for(BaseItem item : items)
         {
@@ -309,7 +302,7 @@ public class ServerWorker
         return null;
     }
 
-    public int getPrevNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
+    public int getPrevNewCommentPosition(UUID postId, int prevCommentNewPosition)
     {
         ArrayList<BaseItem> comments = this.comments.get(postId);
         if(comments != null)
@@ -324,7 +317,7 @@ public class ServerWorker
         return -1;
     }
 
-    public int getNextNewCommentPosition(UUID groupId, UUID postId, int prevCommentNewPosition)
+    public int getNextNewCommentPosition(UUID postId, int prevCommentNewPosition)
     {
         ArrayList<BaseItem> comments = this.comments.get(postId);
         if(comments != null)
@@ -339,7 +332,7 @@ public class ServerWorker
         return -1;
     }
 
-    public ArrayList<BaseItem> getComments(UUID groupId, UUID postId)
+    public ArrayList<BaseItem> getComments(UUID postId)
     {
         if(comments.containsKey(postId))
         {
@@ -349,7 +342,7 @@ public class ServerWorker
         return new ArrayList<BaseItem>();
     }
 
-    public int addNewComment(UUID groupId, UUID id, BaseItem item)
+    public int addNewComment(UUID id, BaseItem item)
     {
         if(!comments.containsKey(id))
         {
@@ -381,13 +374,13 @@ public class ServerWorker
         return -1;
     }
 
-    public void addNewComments(UUID groupId, UUID id, ArrayList<BaseItem> items)
+    /*public void addNewComments(UUID id, ArrayList<BaseItem> items)
     {
         for(BaseItem item : items)
         {
-            addNewComment(groupId, id, item);
+            addNewComment(id, item);
         }
-    }
+    }*/
 
     public void addNewPosts(UUID groupId, ArrayList<BaseItem> newPosts)
     {

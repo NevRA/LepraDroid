@@ -159,8 +159,7 @@ public class GetPostsTask extends BaseTask
                 int start = html.indexOf(postOrd, currentPos);
                 int end = html.indexOf(postOrd, start + 300);
                 
-                if(     start == -1 && 
-                        html.indexOf("<title>Лепрозорий: вход</title>") != -1)
+                if(     start == -1 && html.contains("<title>Лепрозорий: вход</title>"))
                 {
                     new LogoutTask().execute();
                     cancel(false);
@@ -320,7 +319,7 @@ public class GetPostsTask extends BaseTask
                     items.clear();
                 }
             }
-            while (lastElement == false); 
+            while (!lastElement);
             
             if(!isCancelled())
             {

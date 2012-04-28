@@ -20,21 +20,20 @@ public abstract class BaseTask extends WorkerTask<Void, Pair<UpdateListener, Pai
     
     @Override
     protected void onProgressUpdate(Pair<UpdateListener, Pair<Method, Object[]>>... listeners) 
-    {       
-        for(int i = 0; i < listeners.length; ++i )
+    {
+        for (Pair<UpdateListener, Pair<Method, Object[]>> pairs : listeners)
         {
-            Pair<UpdateListener, Pair<Method, Object[]>> pairs = listeners[i];
             UpdateListener listener = pairs.first;
             Pair<Method, Object[]> pair = pairs.second;
-            
+
             try
             {
                 pair.first.invoke(listener, pair.second);
-            } 
+            }
             catch (Throwable t)
             {
-               Logger.e(t);
-            } 
+                Logger.e(t);
+            }
         }
     }
     

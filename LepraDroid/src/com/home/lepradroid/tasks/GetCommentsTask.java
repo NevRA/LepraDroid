@@ -316,7 +316,10 @@ public class GetCommentsTask extends BaseTask
                 if(fileStream != null)
                     fileStream.close();
                 if(file != null)
-                    file.delete();
+                    if(!file.delete())
+                    {
+                        //TODO
+                    }
             }
         }
         catch (Throwable t)
@@ -422,7 +425,7 @@ public class GetCommentsTask extends BaseTask
         
         comment.setNum(commentsCount);
                      
-        ServerWorker.Instance().addNewComment(groupId, postId, comment);
+        ServerWorker.Instance().addNewComment(postId, comment);
         
         commentsCount++;
         

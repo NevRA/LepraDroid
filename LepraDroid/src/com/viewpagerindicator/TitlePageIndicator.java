@@ -102,7 +102,6 @@ public class TitlePageIndicator extends View implements PageIndicator {
     private boolean mBoldText;
     private int mColorText;
     private int mColorSelected;
-    private Path mPath;
     private final Paint mPaintFooterLine = new Paint();
     private IndicatorStyle mFooterIndicatorStyle;
     private final Paint mPaintFooterIndicator = new Paint();
@@ -433,20 +432,20 @@ public class TitlePageIndicator extends View implements PageIndicator {
         }
 
         //Draw the footer line
-        mPath = new Path();
-        mPath.moveTo(0, height - mFooterLineHeight / 2f);
-        mPath.lineTo(width, height - mFooterLineHeight / 2f);
-        mPath.close();
-        canvas.drawPath(mPath, mPaintFooterLine);
+        Path path = new Path();
+        path.moveTo(0, height - mFooterLineHeight / 2f);
+        path.lineTo(width, height - mFooterLineHeight / 2f);
+        path.close();
+        canvas.drawPath(path, mPaintFooterLine);
 
         switch (mFooterIndicatorStyle) {
             case Triangle:
-                mPath = new Path();
-                mPath.moveTo(halfWidth, height - mFooterLineHeight - mFooterIndicatorHeight);
-                mPath.lineTo(halfWidth + mFooterIndicatorHeight, height - mFooterLineHeight);
-                mPath.lineTo(halfWidth - mFooterIndicatorHeight, height - mFooterLineHeight);
-                mPath.close();
-                canvas.drawPath(mPath, mPaintFooterIndicator);
+                path = new Path();
+                path.moveTo(halfWidth, height - mFooterLineHeight - mFooterIndicatorHeight);
+                path.lineTo(halfWidth + mFooterIndicatorHeight, height - mFooterLineHeight);
+                path.lineTo(halfWidth - mFooterIndicatorHeight, height - mFooterLineHeight);
+                path.close();
+                canvas.drawPath(path, mPaintFooterIndicator);
                 break;
 
             case Underline:
@@ -455,15 +454,15 @@ public class TitlePageIndicator extends View implements PageIndicator {
                 }
 
                 RectF underlineBounds = bounds.get(page);
-                mPath = new Path();
-                mPath.moveTo(underlineBounds.left  - mFooterIndicatorUnderlinePadding, height - mFooterLineHeight);
-                mPath.lineTo(underlineBounds.right + mFooterIndicatorUnderlinePadding, height - mFooterLineHeight);
-                mPath.lineTo(underlineBounds.right + mFooterIndicatorUnderlinePadding, height - mFooterLineHeight - mFooterIndicatorHeight);
-                mPath.lineTo(underlineBounds.left  - mFooterIndicatorUnderlinePadding, height - mFooterLineHeight - mFooterIndicatorHeight);
-                mPath.close();
+                path = new Path();
+                path.moveTo(underlineBounds.left - mFooterIndicatorUnderlinePadding, height - mFooterLineHeight);
+                path.lineTo(underlineBounds.right + mFooterIndicatorUnderlinePadding, height - mFooterLineHeight);
+                path.lineTo(underlineBounds.right + mFooterIndicatorUnderlinePadding, height - mFooterLineHeight - mFooterIndicatorHeight);
+                path.lineTo(underlineBounds.left - mFooterIndicatorUnderlinePadding, height - mFooterLineHeight - mFooterIndicatorHeight);
+                path.close();
 
                 mPaintFooterIndicator.setAlpha((int)(0xFF * selectedPercent));
-                canvas.drawPath(mPath, mPaintFooterIndicator);
+                canvas.drawPath(path, mPaintFooterIndicator);
                 mPaintFooterIndicator.setAlpha(0xFF);
                 break;
         }
@@ -595,7 +594,6 @@ public class TitlePageIndicator extends View implements PageIndicator {
      * Calculate views bounds and scroll them according to the current index
      *
      * @param paint
-     * @param currentIndex
      * @return
      */
     private ArrayList<RectF> calculateAllBounds(Paint paint) {

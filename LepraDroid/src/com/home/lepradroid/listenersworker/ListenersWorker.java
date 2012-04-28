@@ -8,7 +8,7 @@ import com.home.lepradroid.interfaces.UpdateListener;
 public class ListenersWorker
 {
     private static volatile ListenersWorker instance;
-    private List<UpdateListener> listeners = new ArrayList<UpdateListener>();
+    private final List<UpdateListener> listeners = new ArrayList<UpdateListener>();
     
     private ListenersWorker() 
     {
@@ -50,14 +50,14 @@ public class ListenersWorker
     public <T> List<T> getListeners(Class<T> type)
     {
         List<T> listenersToReturn = new ArrayList<T>();
-        
+
         synchronized(listeners)
         {
             for(UpdateListener listener : listeners)
             {
                 if( type.isAssignableFrom(listener.getClass()) )
                 {
-                    listenersToReturn.add((T)listener); 
+                    listenersToReturn.add((T)listener);
                 }
             }
         }

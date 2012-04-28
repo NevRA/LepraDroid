@@ -15,7 +15,6 @@ public class Commons
     public static final String BLOGS_URL        = SITE_URL + "underground/";
     public static final String ITEM_VOTE_URL    = SITE_URL + "rate/";
     public static final String KARMA_VOTE_URL   = SITE_URL + "karma/";
-    public static final String LEPROPANEL_URL   = SITE_URL + "/api/lepropanel";
     public static final String THRESHOLD_URL    = SITE_URL + "/threshold/";
     public static final String MYCTL_URL        = SITE_URL + "/myctl";
     public static final String FAVSCTL_URL      = SITE_URL + "/favsctl";
@@ -24,10 +23,8 @@ public class Commons
     
     public static final String COOKIE_SID       = "lepro.sid";
     public static final String COOKIE_UID       = "lepro.uid";
-    
-    public static final String PREFS_NAME       = "MyPrefsFile";
-    
-    public static final Integer EXIT_FROM_LOGON_SCREEN_RESULTCODE 
+
+    public static final Integer EXIT_FROM_LOGON_SCREEN_RESULTCODE
                                                 = 0;
     
     public static final Integer EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE 
@@ -60,8 +57,6 @@ public class Commons
     public static final UUID FAVORITE_POSTS_ID  = UUID.randomUUID();
     public static final UUID INBOX_POSTS_ID     = UUID.randomUUID();
     public static final UUID OTHER_POSTS_ID     = UUID.randomUUID();
-
-    public static final String DELIMETER        = " / ";
     
     public static final String IMAGE_STUB       = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAMSURBVBhXY/j//z8ABf4C/qc1gYQAAAAASUVORK5CYII%3D";
     

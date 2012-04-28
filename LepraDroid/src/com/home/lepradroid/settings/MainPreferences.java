@@ -33,7 +33,7 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
             mainFilter.setValue(threshold);
         mainFilter.setSummary(mainFilter.getEntry());
         
-        final Preference author = (Preference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_AuthorId));
+        final Preference author = getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_AuthorId));
         author.setOnPreferenceClickListener(new OnPreferenceClickListener() 
         {
             public boolean onPreferenceClick(Preference preference) 
@@ -46,7 +46,7 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
             }
         });
         
-        final Preference history = (Preference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_HistoryId));
+        final Preference history = getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_HistoryId));
         history.setOnPreferenceClickListener(new OnPreferenceClickListener() 
         {
             public boolean onPreferenceClick(Preference preference) 
@@ -57,12 +57,12 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
             }
         });
         
-        final Preference version = (Preference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_VersionId));
+        final Preference version = getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_VersionId));
         try
         {
             version.setSummary(getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
         }
-        catch (NameNotFoundException e)
+        catch (NameNotFoundException ignored)
         {
         }
     }

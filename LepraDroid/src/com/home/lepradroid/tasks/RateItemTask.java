@@ -71,7 +71,7 @@ public class RateItemTask extends BaseTask
     }
     
     @SuppressWarnings("unchecked")
-    public void notifyOnAuthorRateUpdate(String userId, boolean successful)
+    public void notifyOnAuthorRateUpdate(boolean successful)
     {
         final List<ItemRateUpdateListener> listeners = ListenersWorker
                 .Instance().getListeners(ItemRateUpdateListener.class);
@@ -169,13 +169,13 @@ public class RateItemTask extends BaseTask
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
             case COMMENT:
-                Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
+                Comment comment = (Comment)ServerWorker.Instance().getComment(postId, commentId);
                 response = ServerWorker.Instance().rateItemRequest(type, wtf, comment.getPid(), id,
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
             case KARMA:
-                response = ServerWorker.Instance()
+                /*response = */ServerWorker.Instance()
                         .rateItemRequest(type, wtf, id, "", valueType,
                                 valueType == RateValueType.MINUS ? "3" : "1");
                 response = ServerWorker.Instance()
@@ -201,7 +201,7 @@ public class RateItemTask extends BaseTask
                             : Short.valueOf(response));
                     break;
                 case COMMENT:
-                    item = ServerWorker.Instance().getComment(groupId, postId, commentId);
+                    item = ServerWorker.Instance().getComment(postId, commentId);
                     item.setRating(Short.valueOf(response));
                     break;
                 case KARMA:
@@ -246,7 +246,7 @@ public class RateItemTask extends BaseTask
     private void notifyOnRate(boolean successful, int newRating)
     {
         if(type == RateType.KARMA) 
-            notifyOnAuthorRateUpdate(id, successful);
+            notifyOnAuthorRateUpdate(successful);
         if(type == RateType.POST)
             notifyOnPostRateUpdate(successful, newRating);
         else

@@ -112,7 +112,10 @@ public class Utils
               os.write(bytes, 0, count);
             }
         }
-        catch(Exception ex){}
+        catch(Exception ex)
+        {
+            //TODO
+        }
     }
     
     public static String getString(int resourseId)
@@ -213,7 +216,7 @@ public class Utils
     public static void addComment(final Context context, final UUID groupId, final UUID postId, final UUID commentId)
     {
         final Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
-        final Comment comment = (Comment)ServerWorker.Instance().getComment(groupId, postId, commentId);
+        final Comment comment = (Comment)ServerWorker.Instance().getComment(postId, commentId);
         
         final EditText input = new EditText(context);
         final String text = comment != null ? comment.getAuthor() + ": " : "";
@@ -373,7 +376,7 @@ public class Utils
         }
     }
     
-    public static void setWebViewFontSize(Context context, WebView view)
+    public static void setWebViewFontSize(WebView view)
     {
         if(!isNormalFontSize())
         {
@@ -400,17 +403,9 @@ public class Utils
         DisplayMetrics displaymetrics = new DisplayMetrics();
         ((WindowManager) LepraDroidApplication.getInstance().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displaymetrics);
         
-        return (int) ((float)(displaymetrics.widthPixels - padding) * (float)(152f / (float)displaymetrics.densityDpi));
+        return (int) ((float)(displaymetrics.widthPixels - padding) * 152f / (float)displaymetrics.densityDpi);
     }
-    
-    public static int getWidthForWebView()
-    {
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        ((WindowManager) LepraDroidApplication.getInstance().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displaymetrics);
-        
-        return (int) ((float)displaymetrics.widthPixels * (float)(152f / (float)displaymetrics.densityDpi));
-    }
-    
+
     public static void clearNotification(Context context)
     {
         final NotificationManager notificationManager = 
@@ -565,10 +560,7 @@ public class Utils
     
     public static boolean isContainExtraTagsForWebView(String text)
     {
-        if(text.contains("leprosorium.ru"))
-            return true;
-             
-        return false;
+        return text.contains("leprosorium.ru");
     }
     
     public static boolean isAlreadyInStuff(UUID stuffId, String pid)

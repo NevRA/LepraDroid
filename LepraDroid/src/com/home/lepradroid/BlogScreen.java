@@ -18,14 +18,9 @@ import com.viewpagerindicator.TitlePageIndicator;
 
 public class BlogScreen extends BaseActivity
 {
-    private UUID groupId;
     private UUID id;
-    private String title;
     private PostsScreen postsScreen;
     private BaseItem post;
-    private TitlePageIndicator titleIndicator;
-    private TabsPageAdapter tabsAdapter;
-    private ViewPager pager;
     private ArrayList<BaseView> pages = new ArrayList<BaseView>();
     
     @Override
@@ -36,9 +31,9 @@ public class BlogScreen extends BaseActivity
 
         try
         {
-            groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
             id = UUID.fromString(getIntent().getExtras().getString("id"));
-            title = getIntent().getExtras().getString("title");
+            UUID groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
+            String title = getIntent().getExtras().getString("title");
             
             post = ServerWorker.Instance().getPostById(groupId, id);
             if(post == null) finish(); // TODO message
@@ -47,13 +42,13 @@ public class BlogScreen extends BaseActivity
             postsScreen.setTag(title);
             
             pages.add(postsScreen);
-            
-            tabsAdapter = new TabsPageAdapter(this, pages);
-            pager = (ViewPager) findViewById(R.id.pager);
+
+            TabsPageAdapter tabsAdapter = new TabsPageAdapter(pages);
+            ViewPager pager = (ViewPager) findViewById(R.id.pager);
             pager.setAdapter(tabsAdapter);
             pager.setCurrentItem(0);
 
-            titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
+            TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
             titleIndicator.setViewPager(pager);
             titleIndicator.setCurrentItem(0);
             

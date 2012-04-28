@@ -30,7 +30,6 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     private Post    post;
     private Button  plus;
     private Button  minus;
-    private WebView webView;
 
     public PostView(Context context, UUID groupId, UUID postId)
     {
@@ -56,17 +55,17 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         if(post == null)
             return; // TODO some message
 
-        webView = (WebView) contentView.findViewById(R.id.webview);
+        WebView webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setWebViewClient(LinksCatcher.Instance());
         if(!Utils.isNormalFontSize())
         {
             webView.getSettings().setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
-            Utils.setWebViewFontSize(context, webView);
+            Utils.setWebViewFontSize(webView);
         }
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
-        webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + post.getHtml(), "text/html", "UTF-8", null );
+        webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + post.getHtml(), "text/html", "UTF-8", null);
         
         plus = (Button) contentView.findViewById(R.id.plus);
         minus = (Button) contentView.findViewById(R.id.minus);
@@ -151,6 +150,5 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
             boolean successful)
     {
-        if(!this.groupId.equals(groupId) || !this.id.equals(postId)) return;
     }
 }

@@ -153,8 +153,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
     private void goToPrevNewComment()
     {
-        int prevPosition = ServerWorker.Instance().getPrevNewCommentPosition(
-                groupId, postId, list.getFirstVisiblePosition());
+        int prevPosition = ServerWorker.Instance().getPrevNewCommentPosition(postId, list.getFirstVisiblePosition());
         if (prevPosition != -1)
         {
             list.setSelection(prevPosition);
@@ -167,7 +166,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         waitingNextRecord = false;
 
         final int nextPosition = ServerWorker.Instance()
-                .getNextNewCommentPosition(groupId, postId,
+                .getNextNewCommentPosition(postId,
                         list.getFirstVisiblePosition());
         if (nextPosition != -1
                 && list.getLastVisiblePosition() != list.getCount() - 1)
@@ -248,15 +247,14 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
                     continue;
                 }
 
-                index = ServerWorker.Instance().addNewComment(groupId, postId,
+                index = ServerWorker.Instance().addNewComment(postId,
                         newComments.get(pos));
                 newComments.remove(pos);
 
                 addedOwnerComment = true;
             }
 
-            ArrayList<BaseItem> comments = ServerWorker.Instance().getComments(
-                    groupId, postId);
+            ArrayList<BaseItem> comments = ServerWorker.Instance().getComments(postId);
 
             if (comments.size() != adapter.getCount() || forceUpdate)
             {
@@ -327,7 +325,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             return;
         
         if(     waitingNextRecord &&
-                ServerWorker.Instance().getNextNewCommentPosition(groupId, postId, list.getFirstVisiblePosition()) != -1)
+                ServerWorker.Instance().getNextNewCommentPosition(postId, list.getFirstVisiblePosition()) != -1)
         {
             updateAdapter();
             goToNextNewComment();
@@ -342,7 +340,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     
     private void updateCommentRating(UUID groupId, UUID postId, UUID commentId)
     {
-        Comment comment = (Comment) ServerWorker.Instance().getComment(groupId, postId, commentId);
+        Comment comment = (Comment) ServerWorker.Instance().getComment(postId, commentId);
         if(comment != null)
         {
             int visiblePosition = list.getFirstVisiblePosition();

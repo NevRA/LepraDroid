@@ -81,9 +81,11 @@ public class TaskWrapper implements ProgressTracker
         return task;
     }
     
+    @Override
     protected void finalize() throws Throwable
     {
         onComplete(null);
+        super.finalize();
     }
     
     public void onComplete(Throwable t)
@@ -94,7 +96,7 @@ public class TaskWrapper implements ProgressTracker
             {
                 progressDialog.cancel(); // if activity already closed   
             }
-            catch(Exception e){}
+            catch(Exception ignored){}
             
             progressDialog = null;
         }

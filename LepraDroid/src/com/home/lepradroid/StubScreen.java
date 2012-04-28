@@ -16,7 +16,6 @@ import com.home.lepradroid.utils.LinksCatcher;
 
 public class StubScreen extends BaseActivity implements PostUpdateListener
 {
-    private String url;
     private Integer linkType;
     private UUID postId = UUID.randomUUID();
 
@@ -26,7 +25,7 @@ public class StubScreen extends BaseActivity implements PostUpdateListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stub_view);
 
-        url = getIntent().getExtras().getString("url");
+        String url = getIntent().getExtras().getString("url");
         linkType = getIntent().getExtras().getInt("type");
 
         if (url != null && linkType != null && linkType == LinksCatcher.LINK_POST)

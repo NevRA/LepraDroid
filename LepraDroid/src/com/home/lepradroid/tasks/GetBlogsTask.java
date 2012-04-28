@@ -122,7 +122,7 @@ public class GetBlogsTask extends BaseTask
             
             notifyAboutBlogsUpdateBegin();
             
-            final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL + "subscribers/" + Integer.valueOf(page + 1));
+            final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL + "subscribers/" + page + 1);
 
             if(refresh)
                 getSubBlogs(html, items);
@@ -206,7 +206,7 @@ public class GetBlogsTask extends BaseTask
                     items.clear();
                 }
             }
-            while (lastElement == false);
+            while (!lastElement);
             
             if(!isCancelled()) 
             {

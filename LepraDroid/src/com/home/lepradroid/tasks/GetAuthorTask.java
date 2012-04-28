@@ -89,7 +89,7 @@ public class GetAuthorTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... params)
     {
-        Author data = null;
+        Author data;
         try
         {
             if(!withoutBeginNotify)
@@ -117,7 +117,7 @@ public class GetAuthorTask extends BaseTask
             
             data.setEgo(document.getElementsByClass("userego").first().text());
             
-            Element vote = null;
+            Element vote;
             if(SettingsWorker.Instance().loadUserName().equals(userName))
             {
                 vote = document.getElementById("uservote");

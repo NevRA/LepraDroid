@@ -1,38 +1,36 @@
 package com.home.lepradroid;
 
-import java.util.List;
-
-import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.view.View;
-
+import android.view.ViewGroup;
 import com.home.lepradroid.base.BaseView;
 import com.viewpagerindicator.TitleProvider;
+
+import java.util.List;
 
 public class TabsPageAdapter extends PagerAdapter implements TitleProvider
 {
     private List<BaseView> pages;
 
-    public TabsPageAdapter(Context context, List<BaseView> pages)
+    public TabsPageAdapter(List<BaseView> pages)
     {
         this.pages = pages;
     }
 
     @Override
-    public Object instantiateItem(View pCollection, int pPosition)
+    public Object instantiateItem(ViewGroup pCollection, int pPosition)
     {
         View view = pages.get(pPosition).contentView;
-        ((ViewPager) pCollection).addView(view, 0);
+        pCollection.addView(view, 0);
         
         return view;
     }
 
     @Override
-    public void destroyItem(View pCollection, int pPosition, Object pView)
+    public void destroyItem(ViewGroup pCollection, int pPosition, Object pView)
     {
-        ((ViewPager) pCollection).removeView((View)pView);
+        pCollection.removeView((View)pView);
     }
 
     @Override
@@ -48,11 +46,6 @@ public class TabsPageAdapter extends PagerAdapter implements TitleProvider
     }
 
     @Override
-    public void finishUpdate(View pView)
-    {
-    }
-
-    @Override
     public void restoreState(Parcelable pParcelable, ClassLoader pLoader)
     {
     }
@@ -61,11 +54,6 @@ public class TabsPageAdapter extends PagerAdapter implements TitleProvider
     public Parcelable saveState()
     {
         return null;
-    }
-
-    @Override
-    public void startUpdate(View pView)
-    {
     }
 
     /**

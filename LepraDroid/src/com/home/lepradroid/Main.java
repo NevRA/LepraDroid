@@ -180,7 +180,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
         pages.add(favoritePosts);
         pages.add(profile);
 
-        TabsPageAdapter tabsAdapter = new TabsPageAdapter(this, pages);
+        TabsPageAdapter tabsAdapter = new TabsPageAdapter(pages);
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(tabsAdapter);
         pager.setCurrentItem(0);

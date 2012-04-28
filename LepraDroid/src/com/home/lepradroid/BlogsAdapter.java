@@ -1,6 +1,8 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -22,7 +24,7 @@ import com.home.lepradroid.utils.Utils;
 
 class BlogsAdapter extends ArrayAdapter<BaseItem>
 {
-    private ArrayList<BaseItem> posts = new ArrayList<BaseItem>();
+    private List<BaseItem>      posts  = Collections.synchronizedList(new ArrayList<BaseItem>());
     private ImageLoader         imageLoader;
     private LayoutInflater      aInflater;
             
@@ -57,31 +59,15 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
     
     public void addProgressElement()
     {
-        synchronized(posts)
-        {
-            if(!posts.isEmpty() && posts.get(posts.size() - 1) != null)
-                posts.add(null);   
-        }
+
+        if(!posts.isEmpty() && posts.get(posts.size() - 1) != null)
+            posts.add(null);
     }
-    
-    public boolean isContainProgressElement()
-    {
-        synchronized(posts)
-        {
-            if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
-                return true;
-            else
-                return false;
-        }
-    }
-    
+
     public void removeProgressElement()
     {
-        synchronized(posts)
-        {
-            if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
-                posts.remove(null);
-        }
+        if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
+            posts.remove(null);
     }
     
     @Override
@@ -129,7 +115,7 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
         }
         else
         {
-            return (View) aInflater.inflate(R.layout.footer_view, null);
+            return aInflater.inflate(R.layout.footer_view, null);
         }
     }
 }

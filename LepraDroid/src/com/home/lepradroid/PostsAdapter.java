@@ -66,15 +66,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         if(!posts.isEmpty() && posts.get(posts.size() - 1) != null)
             posts.add(null);   
     }
-    
-    public boolean isContainProgressElement()
-    {
-        if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
-            return true;
-        else
-            return false;
-    }
-    
+
     public void removeProgressElement()
     {
         if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
@@ -140,7 +132,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
         }
         else
         {
-            return (View) aInflater.inflate(R.layout.footer_view, null);
+            return aInflater.inflate(R.layout.footer_view, null);
         }
     }
 }

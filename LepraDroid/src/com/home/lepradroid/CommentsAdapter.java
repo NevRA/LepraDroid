@@ -217,7 +217,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     }
                 });
                 
-                Utils.setWebViewFontSize(getContext(), webView);
+                Utils.setWebViewFontSize(webView);
             }
             else
             {

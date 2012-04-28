@@ -41,12 +41,10 @@ public class StartupActivity extends Activity
         {
             final String ourAppPackageName = getPackageName();
             RunningTaskInfo taskInfo;
-            final int size = tasksInfo.size();
-            for (int i = 0; i < size; i++)
+            for (RunningTaskInfo aTasksInfo : tasksInfo)
             {
-                taskInfo = tasksInfo.get(i);
-                if (ourAppPackageName.equals(taskInfo.baseActivity
-                        .getPackageName()))
+                taskInfo = aTasksInfo;
+                if (ourAppPackageName.equals(taskInfo.baseActivity.getPackageName()))
                 {
                     return taskInfo.numActivities == 1;
                 }
