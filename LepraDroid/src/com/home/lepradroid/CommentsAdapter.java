@@ -197,7 +197,12 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             
             if(!comment.isOnlyText())
             {
-                WebView webView = (WebView)convertView.findViewById(R.id.text);
+                FrameLayout webContainer = (FrameLayout) convertView.findViewById(R.id.web_container);
+                webContainer.setVisibility(View.VISIBLE);
+                WebView webView = new WebView(getContext());
+                webContainer.addView(webView);
+                //webView.setVerticalFadingEdgeEnabled(true);
+                //webView.setFadingEdgeLength(Utils.getStandardPedding());
                 webView.setBackgroundColor(0x00000000);
                 webView.setVisibility(View.VISIBLE);
                 webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
