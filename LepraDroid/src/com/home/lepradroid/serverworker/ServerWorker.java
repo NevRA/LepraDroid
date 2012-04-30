@@ -42,15 +42,15 @@ import java.util.Map.Entry;
 
 public class ServerWorker
 {
-    private String loginCode                        = "";
-    private static volatile ServerWorker instance;
-    private ClientConnectionManager connectionManager;
-    private HttpParams connectionParameters;
+    private String                                  loginCode               = "";
+    private static volatile ServerWorker            instance;
+    private ClientConnectionManager                 connectionManager;
+    private HttpParams                              connectionParameters;
     
-    private Map<UUID, ArrayList<BaseItem>> posts    = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
-    private Map<String, Author> authors             = Collections.synchronizedMap(new HashMap<String, Author>());
-    private Map<UUID, Integer> postsPagesCount      = Collections.synchronizedMap(new HashMap<UUID, Integer>());
-    private Map<UUID, ArrayList<BaseItem>> comments = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
+    private final Map<UUID, ArrayList<BaseItem>>    posts                   = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
+    private final Map<String, Author>               authors                 = Collections.synchronizedMap(new HashMap<String, Author>());
+    private final Map<UUID, Integer>                postsPagesCount         = Collections.synchronizedMap(new HashMap<UUID, Integer>());
+    private final Map<UUID, ArrayList<BaseItem>>    comments                = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
 
     private ServerWorker()
     {
@@ -96,7 +96,7 @@ public class ServerWorker
     
     public HttpEntity getContentEntity(String url, boolean addCookie) throws Exception
     {
-        final HttpGet httpGet = new HttpGet(url);
+        HttpGet httpGet = new HttpGet(url);
         httpGet.addHeader("Accept-Encoding", "gzip");
 
         if(addCookie)
@@ -106,8 +106,8 @@ public class ServerWorker
                 httpGet.addHeader("Cookie", Commons.COOKIE_SID + "=" + cookies.first + ";" + Commons.COOKIE_UID + "=" +cookies.second + ";");
         }
 
-        final HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
-        final HttpResponse response = client.execute(httpGet);
+        HttpClient client = new DefaultHttpClient(connectionManager, connectionParameters);
+        HttpResponse response = client.execute(httpGet);
         
         Header[] contentEncodings = response.getHeaders("Content-Encoding");
         if(contentEncodings != null)
@@ -255,11 +255,16 @@ public class ServerWorker
     {
         ArrayList<BaseItem> items = posts.get(groupId);
         if(items != null)
-            for(BaseItem item : items)
+        {
+            synchronized (items)
             {
-                if(item.getId().equals(id))
-                    return item;
+                for(BaseItem item : items)
+                {
+                    if(item.getId().equals(id))
+                        return item;
+                }
             }
+        }
 
         return null;
     }
@@ -281,12 +286,15 @@ public class ServerWorker
 
     public static ArrayList<BaseItem> cloneList(ArrayList<BaseItem> list)
     {
-        ArrayList<BaseItem> clonedList = new ArrayList<BaseItem>(list.size());
-        for (BaseItem item : list)
+        synchronized (list)
         {
-            clonedList.add(item);
+            ArrayList<BaseItem> clonedList = new ArrayList<BaseItem>(list.size());
+            for (BaseItem item : list)
+            {
+                clonedList.add(item);
+            }
+            return clonedList;
         }
-        return clonedList;
     }
 
     public BaseItem getComment(UUID postId, UUID commentId)
@@ -307,10 +315,13 @@ public class ServerWorker
         ArrayList<BaseItem> comments = this.comments.get(postId);
         if(comments != null)
         {
-            for(int pos = prevCommentNewPosition - 1; pos >= 0 && prevCommentNewPosition < comments.size(); --pos)
+            synchronized (comments)
             {
-                if(((Comment)comments.get(pos)).isNew())
-                    return pos;
+                for(int pos = prevCommentNewPosition - 1; pos >= 0 && prevCommentNewPosition < comments.size(); --pos)
+                {
+                    if(((Comment)comments.get(pos)).isNew())
+                        return pos;
+                }
             }
         }
 
@@ -322,10 +333,13 @@ public class ServerWorker
         ArrayList<BaseItem> comments = this.comments.get(postId);
         if(comments != null)
         {
-            for(int pos = prevCommentNewPosition + 1; pos < comments.size(); ++pos)
+            synchronized (comments)
             {
-                if(((Comment)comments.get(pos)).isNew())
-                    return pos;
+                for(int pos = prevCommentNewPosition + 1; pos < comments.size(); ++pos)
+                {
+                    if(((Comment)comments.get(pos)).isNew())
+                        return pos;
+                }
             }
         }
 
@@ -360,13 +374,16 @@ public class ServerWorker
         }
         else
         {
-            for(int pos = 0; pos < comments.size(); ++pos)
+            synchronized (comments)
             {
-                Comment parentComment = (Comment)comments.get(pos);
-                if(parentComment.getPid().equals(comment.getParentPid()))
+                for(int pos = 0; pos < comments.size(); ++pos)
                 {
-                    comments.add(pos + 1, item);
-                    return pos + 1;
+                    Comment parentComment = (Comment)comments.get(pos);
+                    if(parentComment.getPid().equals(comment.getParentPid()))
+                    {
+                        comments.add(pos + 1, item);
+                        return pos + 1;
+                    }
                 }
             }
         }
@@ -387,12 +404,15 @@ public class ServerWorker
         ArrayList<BaseItem> oldPosts = getPostsById(groupId, false);
         for(BaseItem post : newPosts)
         {
-            int pos = 0;
-            for(; pos < oldPosts.size(); ++pos)
-                if(oldPosts.get(pos).getUrl().equals(post.getUrl()))
-                    break;
-            if(pos == oldPosts.size())
-                oldPosts.add(post);
+            synchronized (oldPosts)
+            {
+                int pos = 0;
+                for(; pos < oldPosts.size(); ++pos)
+                    if(oldPosts.get(pos).getUrl().equals(post.getUrl()))
+                        break;
+                if(pos == oldPosts.size())
+                    oldPosts.add(post);
+            }
         }
     }
     
@@ -434,9 +454,12 @@ public class ServerWorker
 
     public Author getAuthorByName(String name)
     {
-        for (Entry<String, Author> a : authors.entrySet())
+        synchronized (authors)
         {
-            if (a.getValue().getUserName().equals(name)) return a.getValue();
+            for (Entry<String, Author> a : authors.entrySet())
+            {
+                if (a.getValue().getUserName().equals(name)) return a.getValue();
+            }
         }
 
         return null;

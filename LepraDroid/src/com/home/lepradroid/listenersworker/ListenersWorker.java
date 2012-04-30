@@ -1,14 +1,15 @@
 package com.home.lepradroid.listenersworker;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.home.lepradroid.interfaces.UpdateListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ListenersWorker
 {
     private static volatile ListenersWorker instance;
-    private final List<UpdateListener> listeners = new ArrayList<UpdateListener>();
+    private final List<UpdateListener> listeners = Collections.synchronizedList(new ArrayList<UpdateListener>());
     
     private ListenersWorker() 
     {
@@ -32,18 +33,12 @@ public class ListenersWorker
     
     public void registerListener(UpdateListener listener)
     {
-        synchronized(listeners)
-        {
-            listeners.add(listener);
-        }
+        listeners.add(listener);
     }
     
     public void unregisterListener(UpdateListener listener)
     {
-        synchronized(listeners)
-        {
-            listeners.remove(listener);
-        }
+        listeners.remove(listener);
     }
     
     @SuppressWarnings("unchecked")

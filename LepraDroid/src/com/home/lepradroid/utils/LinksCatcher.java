@@ -87,10 +87,17 @@ public class LinksCatcher extends WebViewClient
         }
         else
         {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse(url));
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            LepraDroidApplication.getInstance().startActivity(intent);
+            try
+            {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(url));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                LepraDroidApplication.getInstance().startActivity(intent);
+            }
+            catch(Exception ignore)
+            {
+                //TODO
+            }
         }
         return true;
     }
