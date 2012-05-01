@@ -88,5 +88,4 @@ public class PostCommentTask extends BaseTask
         }
         return e;
     }
-
 }

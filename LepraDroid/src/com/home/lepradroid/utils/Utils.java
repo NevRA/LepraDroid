@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
+import com.home.lepradroid.tasks.PostInboxTask;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.jsoup.Jsoup;
@@ -211,6 +212,39 @@ public class Utils
             return Html.fromHtml(post.getTotalComments() + " " + Utils.getString(R.string.Total_Comments));
         else
             return Html.fromHtml(Utils.getString(R.string.No_Comments));
+    }
+
+    public static void addInbox(final Context context, final String userName)
+    {
+        final EditText input = new EditText(context);
+
+        new AlertDialog.Builder(context)
+                .setTitle(Utils.getString(R.string.Add_Inbox_Title))
+                .setView(input)
+                .setPositiveButton(Utils.getString(R.string.yarrr_label), new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int whichButton)
+                    {
+                        final String value = input.getText().toString();
+
+                        new TaskWrapper(null, new PostInboxTask(userName, value), null);
+                    }
+                }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener()
+        {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+            }
+        }).show();
+
+        input.postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                final InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(input, 0);
+            }
+        },200);
     }
     
     public static void addComment(final Context context, final UUID groupId, final UUID postId, final UUID commentId)

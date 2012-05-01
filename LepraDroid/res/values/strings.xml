@@ -27,6 +27,7 @@
     <string name="New_Comments">новых</string>
     <string name="Comment_Menu">Комментировать</string>
     <string name="Add_Comment_Title">Добавить комментарий?</string>
+    <string name="Add_Inbox_Title">Написать в инбокс?</string>
     <string name="Turn_On_Navigation">Навигация по новым</string>
     <string name="Turn_Off_Navigation">Отключить навигацию</string>
     <string name="Reload_Menu">Обновить</string>
@@ -35,6 +36,7 @@
     <string name="Del_Stuff_Menu">Удалить из моих вещей</string>
     <string name="Add_Fav_Menu">Добавить в избранное</string>
     <string name="Del_Fav_Menu">Удалить из избранного</string>
+    <string name="Inbox_Menu">Написать в инбокс</string>
     <string name="Logout_Menu">Завершить сессию</string>
     <string name="Logout_Menu_Confirm">Вы действительно хотите завершить сессию?</string>
     <string name="Yes_Please">Да, пожалуйста</string>

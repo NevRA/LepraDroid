@@ -227,6 +227,11 @@ public class ServerWorker
         postRequest(Commons.THRESHOLD_URL, String.format("showonindex=%s&selected_threshold=all", value));
     }
 
+    public String postInboxRequest(String wtf, String userName, String message) throws Exception
+    {
+        return postRequest(Commons.ADD_INBOX_URL, String.format("run=01&wtf=%s&whom=%s&comment=%s", wtf, userName, URLEncoder.encode(message)));
+    }
+
     public String postCommentRequest(String wtf, String replyTo, String pid, String comment) throws Exception
     {
         return postRequest(Commons.POST_COMMENT_URL, String.format("wtf=%s&step=1&i=0&replyto=%s&pid=%s&iframe=0&file=&comment=%s", wtf, replyTo, pid, URLEncoder.encode(comment)));

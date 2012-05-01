@@ -98,9 +98,9 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
             menu.add(0, MENU_RELOAD, 1, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
             menu.add(0, MENU_ADD_COMMENT, 2, Utils.getString(R.string.Comment_Menu)).setIcon(R.drawable.ic_add_comment);
             break;
-        default:
+        case PROFILE_TAB_NUM:
             menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
-            menu.add(0, MENU_LOGOUT, 1, Utils.getString(R.string.Logout_Menu)).setIcon(R.drawable.ic_logout);
+            menu.add(0, MENU_INBOX, 1, Utils.getString(R.string.Inbox_Menu)).setIcon(R.drawable.ic_inbox);
             break;
         }
         
@@ -151,18 +151,26 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
             default:
                 break;
             }
-            return true;
+            break;
         case MENU_ADD_COMMENT:
             addComment();
-            return true; 
+            break;
+        case MENU_INBOX:
+            inbox();
+            break;
         case MENU_COMMENT_NAVIGATE:
             navigationTurnedOn = !navigationTurnedOn;
             commentsView.setNavigationMode(navigationTurnedOn);
-            return true;
+            break;
         }
         return false;
     }
-    
+
+    private void inbox()
+    {
+        Utils.addInbox(this, post.getAuthor());
+    }
+
     private void addComment()
     {
         Utils.addComment(this, groupId, postId, null);
