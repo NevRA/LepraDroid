@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.home.lepradroid.base.BaseActivity;
@@ -47,6 +48,16 @@ public class AuthorScreen extends BaseActivity
         
         pushNewTask(new TaskWrapper(null, new GetAuthorTask(username), Utils.getString(R.string.Posts_Loading_In_Progress)));
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu)
+    {
+        menu.clear();
+        menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
+        menu.add(0, MENU_INBOX, 1, Utils.getString(R.string.Inbox_Menu)).setIcon(R.drawable.ic_inbox);
+
+        return true;
+    }
     
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -56,6 +67,9 @@ public class AuthorScreen extends BaseActivity
         {
         case MENU_RELOAD:
             pushNewTask(new TaskWrapper(null, new GetAuthorTask(username), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            break;
+        case MENU_INBOX:
+            Utils.addInbox(this, username);
             break;
         }
         return false;

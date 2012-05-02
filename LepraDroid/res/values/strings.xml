@@ -45,6 +45,7 @@
     <string name="Comments_Tab">Комментарии</string>
     <string name="Author_Tab">Автор</string>
     <string name="Added_Comment">Комментарий добавлен</string>
+    <string name="Created_Inbox">Создан новый инбокс</string>
     <string name="No_New_Comments">Новых комментариев больше нет</string>
     <string name="Searching_For_New_Comments">Идет поиск новых комментариев&#8230;</string>
     <string name="Post_Added_To_Stuff">Пост добавлен в мои вещи</string>
@@ -64,7 +65,7 @@
 	<string name ="WidgetSettings_NotifyCategoryName">Непрочитанные сообщения</string>
 	<string name ="MainSettings_MainFilterId">mainfilter_pref</string>
 	<string name ="MainSettings_MainFilterName">Показывать на заглавной</string>
-	<string name ="MainSettings_MainFilterSummary"></string>
+	<string name ="MainSettings_MainFilterSummary"/>
 	<string name ="MainSettings_ImagesId">images_pref</string>
 	<string name ="MainSettings_ImagesName">Картинки</string>
 	<string name ="MainSettings_ImagesSummary">Загружать картинки в постах и комментариях</string>
@@ -88,13 +89,13 @@
 	<string name ="MainSettings_AuthorSummary">Роман Абдульманов (R)\nroman.abdulmanov@gmail.com\nНажмите, чтобы увидеть профиль</string>
 	<string name ="MainSettings_HistoryId">history_pref</string>
 	<string name ="MainSettings_HistoryName">История изменений</string>
-	<string name ="MainSettings_HistorySummary"></string>
+	<string name ="MainSettings_HistorySummary"/>
 	<string name ="MainSettings_VersionId">version_pref</string>
 	<string name ="MainSettings_VersionName">Версия</string>
-	<string name ="MainSettings_VersionSummary"></string>
+	<string name ="MainSettings_VersionSummary"/>
 	<string name ="MainSettings_WidgetId">widget_pref</string>
 	<string name ="MainSettings_WidgetName">Настройки</string>
-	<string name ="MainSettings_WidgetSummary"></string>
+	<string name ="MainSettings_WidgetSummary"/>
 	<string name ="MainSettings_LoadCommentsOnPostId">load_comments_on_post_pref</string>
 	<string name ="MainSettings_LoadCommentsOnPostName">Пост c комментариями</string>
 	<string name ="MainSettings_LoadCommentsOnPostSummary">Если не отмечено, то комментарии будут загружаться только при переходе на них, до перехода пост будет считаться непрочитанным</string>
