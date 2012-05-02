@@ -8,6 +8,7 @@ import android.widget.*;
 
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.interfaces.AddedInboxUpdateListener;
 import com.home.lepradroid.interfaces.AuthorUpdateListener;
 import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -21,7 +22,7 @@ import com.home.lepradroid.utils.Utils;
 import java.util.UUID;
 
 public class AuthorView extends BaseView implements AuthorUpdateListener,
-        ItemRateUpdateListener
+        ItemRateUpdateListener, AddedInboxUpdateListener
 {
     private Context context;
     private String userName;
@@ -189,5 +190,14 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
             boolean successful)
     { 
+    }
+
+    @Override
+    public void OnAddedInboxUpdate(String userName, boolean successful)
+    {
+        if(!this.userName.equals(userName)) return;
+
+        if(successful)
+            Toast.makeText(context, Utils.getString(R.string.Created_Inbox), Toast.LENGTH_LONG).show();
     }
 }

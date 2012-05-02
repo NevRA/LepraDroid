@@ -22,7 +22,7 @@ import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
-public class PostView extends BaseView implements ItemRateUpdateListener 
+public class PostView extends BaseView implements ItemRateUpdateListener
 {
     private Context context;
     private UUID    groupId;
