@@ -10,7 +10,7 @@
     </string-array>
     <string-array name="mainFilter">
         <item>Заглавная</item>
-        <item>Загланая и подсайты</item>
+        <item>Заглавная и подсайты</item>
         <item>Подсайты</item>
     </string-array>
     <string-array name="mainFilterValues">
