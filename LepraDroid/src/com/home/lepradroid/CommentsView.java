@@ -280,7 +280,9 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         list.setVisibility(View.VISIBLE);
         if(navigationTurnedOn)
             buttons.setVisibility(View.VISIBLE);
-        commentsProgress.setVisibility(View.VISIBLE);
+
+        if(Utils.isCommentsLoadingIndicatorEnabled(LepraDroidApplication.getInstance()))
+            commentsProgress.setVisibility(View.VISIBLE);
 
         commentsProgress.setMax(totalCount);
         commentsProgress.setProgress(count);

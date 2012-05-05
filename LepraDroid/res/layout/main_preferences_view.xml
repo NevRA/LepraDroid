@@ -29,6 +29,11 @@
 			android:title="@string/MainSettings_LoadCommentsOnPostName"
 			android:summary="@string/MainSettings_LoadCommentsOnPostSummary"
 			android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:key="@string/MainSettings_CommentsIndicatorId"
+            android:title="@string/MainSettings_CommentsIndicatorName"
+            android:summary="@string/MainSettings_CommentsIndicatorSummary"
+            android:defaultValue="true"/>
     </PreferenceCategory>
 	<PreferenceCategory 
         android:title="@string/MainSettings_WidgetCategoryName"

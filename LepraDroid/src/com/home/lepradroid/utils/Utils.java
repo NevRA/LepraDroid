@@ -377,6 +377,12 @@ public class Utils
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(Utils.getString(R.string.WidgetSettings_NotifyOnlyOnFirstId), true);
     }
+
+    public static boolean isCommentsLoadingIndicatorEnabled(Context context)
+    {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(Utils.getString(R.string.MainSettings_CommentsIndicatorId), true);
+    }
     
     public static boolean isNotificationsEnabled(Context context)
     {
@@ -387,7 +393,7 @@ public class Utils
     public static Uri getNotificationSound(Context context)
     {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String strRingtonePreference = prefs.getString(Utils.getString(R.string.WidgetSettings_NotifySoundId), "DEFAULT_SOUND");        
+        String strRingtonePreference = prefs.getString(Utils.getString(R.string.WidgetSettings_NotifySoundId), "content://settings/system/notification_sound");
         return Uri.parse(strRingtonePreference);
     }
     
