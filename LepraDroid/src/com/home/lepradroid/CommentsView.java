@@ -37,6 +37,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     private UUID            postId;
     private ListView        list;
     private ProgressBar     progress;
+    private ProgressBar     commentsProgress;
     private CommentsAdapter adapter;
     private LinearLayout    buttons;
     private boolean         receivedLastElements
@@ -81,6 +82,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             return;
 
         list = (ListView) contentView.findViewById(R.id.list);
+        commentsProgress = (ProgressBar) contentView.findViewById(R.id.commentsLoadingProgress);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
         buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
         Button up = (Button) contentView.findViewById(R.id.up);
@@ -216,6 +218,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         receivedLastElements = false;
         shownLastElements = false;
 
+        commentsProgress.setVisibility(View.GONE);
         progress.setVisibility(View.VISIBLE);
         progress.setIndeterminate(true);
         list.setVisibility(View.GONE);
@@ -223,7 +226,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
         updateAdapter();
     }
-    
     
     private void updateAdapter()
     {
@@ -268,22 +270,22 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     }
 
     @Override
-    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId)
+    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId, int count, int totalCount)
     {
         if (!this.postId.equals(postId))
             return;
 
-        if (progress.getVisibility() == View.VISIBLE)
-        {
-            progress.setVisibility(View.GONE);
-            progress.setIndeterminate(false);
-            list.setVisibility(View.VISIBLE);
-            if(navigationTurnedOn)
-                buttons.setVisibility(View.VISIBLE);
-        }
+        progress.setVisibility(View.GONE);
+        progress.setIndeterminate(false);
+        list.setVisibility(View.VISIBLE);
+        if(navigationTurnedOn)
+            buttons.setVisibility(View.VISIBLE);
+        commentsProgress.setVisibility(View.VISIBLE);
+
+        commentsProgress.setMax(totalCount);
+        commentsProgress.setProgress(count);
 
         updateAdapter();
-
     }
 
     @Override
@@ -293,10 +295,19 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             return;
 
         receivedLastElements = true;
+
+        progress.setVisibility(View.GONE);
+        progress.setIndeterminate(false);
+        list.setVisibility(View.VISIBLE);
+        if(navigationTurnedOn)
+            buttons.setVisibility(View.VISIBLE);
+        commentsProgress.setVisibility(View.GONE);
+
         if (adapter.isEmpty() || waitingNextRecord)
         {
             shownLastElements = true;
-            OnCommentsUpdateFirstEntries(groupId, postId);
+
+            updateAdapter();
 
             if (waitingNextRecord)
                 goToNextNewComment();
@@ -319,10 +330,12 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     }
 
     @Override
-    public void OnCommentsUpdate(UUID groupId, UUID postId)
+    public void OnCommentsUpdate(UUID groupId, UUID postId, int count)
     {
         if (!this.postId.equals(postId))
             return;
+
+        commentsProgress.setProgress(count);
         
         if(     waitingNextRecord &&
                 ServerWorker.Instance().getNextNewCommentPosition(postId, list.getFirstVisiblePosition()) != -1)
@@ -338,7 +351,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
     {
     }
     
-    private void updateCommentRating(UUID groupId, UUID postId, UUID commentId)
+    private void updateCommentRating(UUID postId, UUID commentId)
     {
         Comment comment = (Comment) ServerWorker.Instance().getComment(postId, commentId);
         if(comment != null)
@@ -359,7 +372,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             return;
         
         if(successful)
-            updateCommentRating(groupId, postId, commentId);
+            updateCommentRating(postId, commentId);
     }
 
     @Override

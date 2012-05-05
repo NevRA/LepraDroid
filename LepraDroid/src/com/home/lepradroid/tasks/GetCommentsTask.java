@@ -43,12 +43,14 @@ public class GetCommentsTask extends BaseTask
     private String  userName            = "";
     private boolean isImagesEnabled     = true;
     private boolean isCommentWtfLoaded  = false;
+    private int     totalBytesReaded    = 0;
+    private int     totalBytesParsed    = 0;
     
     static final Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
-    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[2];
+    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[4];
     static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[2];
-    static final Class<?>[] argsClassesOnCommentsUpdate = new Class[2];
+    static final Class<?>[] argsClassesOnCommentsUpdate = new Class[3];
     static Method methodOnCommentsUpdateFinished;
     static Method methodOnCommentsUpdateFirstEtries;
     static Method methodOnCommentsUpdateBegin;
@@ -63,6 +65,8 @@ public class GetCommentsTask extends BaseTask
             
             argsClassesOnCommentsUpdateFirstEtries[0] = UUID.class;
             argsClassesOnCommentsUpdateFirstEtries[1] = UUID.class;
+            argsClassesOnCommentsUpdateFirstEtries[2] = int.class;
+            argsClassesOnCommentsUpdateFirstEtries[3] = int.class;
             methodOnCommentsUpdateFirstEtries = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFirstEntries", argsClassesOnCommentsUpdateFirstEtries); 
             
             argsClassesOnCommentsUpdateBegin[0] = UUID.class;
@@ -71,6 +75,7 @@ public class GetCommentsTask extends BaseTask
             
             argsClassesOnCommentsUpdate[0] = UUID.class;
             argsClassesOnCommentsUpdate[1] = UUID.class;
+            argsClassesOnCommentsUpdate[2] = int.class;
             methodOnCommentsUpdate = CommentsUpdateListener.class.getMethod("OnCommentsUpdate", argsClassesOnCommentsUpdate); 
         }
         catch (Throwable t) 
@@ -111,9 +116,11 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutFirstCommentsUpdate()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[2];
+        final Object args[] = new Object[4];
         args[0] = groupId;
         args[1] = postId;
+        args[2] = totalBytesParsed;
+        args[3] = totalBytesReaded;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -139,9 +146,10 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutCommentsUpdate()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[2];
+        final Object args[] = new Object[3];
         args[0] = groupId;
         args[1] = postId;
+        args[2] = totalBytesParsed;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -236,6 +244,7 @@ public class GetCommentsTask extends BaseTask
                     fos.write(chars, 0, len);
                     
                     len = stream.read(chars, 0, BUFFER_SIZE);
+                    totalBytesReaded += len;
                 }
                 
                 fos.close();
@@ -261,6 +270,8 @@ public class GetCommentsTask extends BaseTask
                         
                         break;
                     }
+
+                    totalBytesParsed += len;
                     
                     if(len == 0)
                         continue;

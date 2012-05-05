@@ -2,6 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
+    <ProgressBar
+        android:id="@+id/commentsLoadingProgress"
+        android:layout_width="fill_parent"
+        android:layout_height="3dip"
+        android:layout_marginLeft="-2dip"
+        android:layout_marginRight="-2dip"
+        android:progressDrawable="@drawable/greenprogress"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        android:indeterminateOnly="false"
+        style="@android:style/Widget.ProgressBar.Horizontal"/>
     
     <ProgressBar
         android:id="@+id/progress"
@@ -27,6 +38,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fastScrollEnabled="true"
+        android:layout_below="@+id/commentsLoadingProgress"
         android:layout_above="@+id/buttons" >
     </ListView>
     

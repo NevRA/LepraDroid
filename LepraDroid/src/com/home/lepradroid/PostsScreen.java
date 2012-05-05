@@ -194,7 +194,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     }
 
     @Override
-    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId)
+    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId, int count, int totalCount)
     {
         if(!this.groupId.equals(groupId)) return;
         updateAdapter();
@@ -208,7 +208,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     }
 
     @Override
-    public void OnCommentsUpdate(UUID groupId, UUID postId)
+    public void OnCommentsUpdate(UUID groupId, UUID postId, int count)
     {
     }
 
