@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -42,6 +43,17 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("username", Utils.getString(R.string.Author_Name));
                 startActivity(intent);
+                return true;
+            }
+        });
+
+        final Preference market = getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_GooglePlayId));
+        market.setOnPreferenceClickListener(new OnPreferenceClickListener()
+        {
+            public boolean onPreferenceClick(Preference preference)
+            {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName()));
+                startActivity(browserIntent);
                 return true;
             }
         });

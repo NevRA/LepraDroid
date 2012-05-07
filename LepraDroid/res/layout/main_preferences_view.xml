@@ -66,6 +66,10 @@
             android:key="@string/MainSettings_AuthorId"
 			android:title="@string/MainSettings_AuthorName"
 			android:summary="@string/MainSettings_AuthorSummary"/>
+        <Preference
+            android:key="@string/MainSettings_GooglePlayId"
+            android:title="@string/MainSettings_GooglePlayName"
+            android:summary="@string/MainSettings_GooglePlaySummary"/>
         <Preference 
             android:key="@string/MainSettings_HistoryId"
 			android:title="@string/MainSettings_HistoryName"

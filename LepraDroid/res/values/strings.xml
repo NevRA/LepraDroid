@@ -98,6 +98,9 @@
 	<string name ="MainSettings_HistoryId">history_pref</string>
 	<string name ="MainSettings_HistoryName">История изменений</string>
 	<string name ="MainSettings_HistorySummary"/>
+    <string name ="MainSettings_GooglePlayId">google_play_pref</string>
+    <string name ="MainSettings_GooglePlayName">Ссылка на Google Play</string>
+    <string name ="MainSettings_GooglePlaySummary">Если вам нравится приложение, поставьте ему звездочек, и мне будет очень приятно</string>
 	<string name ="MainSettings_VersionId">version_pref</string>
 	<string name ="MainSettings_VersionName">Версия</string>
 	<string name ="MainSettings_VersionSummary"/>
