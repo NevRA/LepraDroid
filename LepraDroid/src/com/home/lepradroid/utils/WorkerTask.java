@@ -157,7 +157,7 @@ public abstract class WorkerTask<Params, Progress, Result> {
          */
         RUNNING,
         /**
-         * Indicates that {@link AsyncTask#onPostExecute} has finished.
+         * Indicates that {@link android.os.AsyncTask#onPostExecute} has finished.
          */
         FINISHED,
     }
@@ -357,7 +357,7 @@ public abstract class WorkerTask<Params, Progress, Result> {
      * @return This instance of AsyncTask.
      *
      * @throws IllegalStateException If {@link #getStatus()} returns either
-     *         {@link AsyncTask.Status#RUNNING} or {@link AsyncTask.Status#FINISHED}.
+     *         {@link android.os.AsyncTask.Status#RUNNING} or {@link android.os.AsyncTask.Status#FINISHED}.
      */
     public final WorkerTask<Params, Progress, Result> execute(Params... params) {
         if (mStatus != Status.PENDING) {

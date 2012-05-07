@@ -50,6 +50,11 @@
     <PreferenceCategory
         android:title="@string/MainSettings_CacheCategoryName"
         android:key="@string/MainSettings_CacheCategoryId">
+        <CheckBoxPreference
+            android:key="@string/MainSettings_ClearCacheOnExitId"
+            android:title="@string/MainSettings_ClearCacheOnExitName"
+            android:summary="@string/MainSettings_ClearCacheOnExitSummary"
+            android:defaultValue="true"/>
         <com.home.lepradroid.settings.CachePreference
             android:key="@string/MainSettings_CacheId"
             android:title="@string/MainSettings_CacheName"/>

@@ -8,8 +8,8 @@
     <string name="captcha_label">Шесть букв с картинки:</string>
     <string name="yarrr_label">YARRR!</string>
     <string name="Error">Упс, ошибка!</string>
-    <string name="Loading">Загружается...</string>
-    <string name="Cleaning">Очищается...</string>
+    <string name="Loading">Загружается&#8230;</string>
+    <string name="Cleaning">Очищается&#8230;</string>
     <string name="Captcha_Loading_In_Progress">Загружается капча&#8230;</string>
     <string name="Posts_Loading_In_Progress">Загружаем посты&#8230;</string>
     <string name="Blogs_Loading_In_Progress">Загружаем блоги&#8230;</string>
@@ -75,6 +75,9 @@
 	<string name ="MainSettings_FontSizeId">font_size_pref</string>
 	<string name ="MainSettings_FontSizeName">Размер шрифта</string>
 	<string name ="MainSettings_FontSizeSummary">Выберите размер шрифта, подходящий для вашего устройства</string>
+    <string name ="MainSettings_ClearCacheOnExitId">clear_cache_on_exit_pref</string>
+    <string name ="MainSettings_ClearCacheOnExitName">Очищать при выходе</string>
+    <string name ="MainSettings_ClearCacheOnExitSummary">Кэш будет очищаться при завершении сессии</string>
     <string name ="MainSettings_CacheId">cache_pref</string>
     <string name ="MainSettings_CacheName">Очистить</string>
     <string name ="WidgetSettings_NotifyId">notify_pref</string>

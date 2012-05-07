@@ -423,6 +423,12 @@ public class Utils
             view.getSettings().setTextSize(TextSize.LARGER);
         }
     }
+
+    public static boolean isClearCacheOnExit()
+    {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
+        return prefs.getBoolean(Utils.getString(R.string.MainSettings_ClearCacheOnExitId), true);
+    }
     
     public static boolean isImagesEnabled()
     {
