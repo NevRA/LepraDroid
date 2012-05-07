@@ -8,7 +8,8 @@
     <string name="captcha_label">Шесть букв с картинки:</string>
     <string name="yarrr_label">YARRR!</string>
     <string name="Error">Упс, ошибка!</string>
-    <string name="Loading">Загружается</string>
+    <string name="Loading">Загружается...</string>
+    <string name="Cleaning">Очищается...</string>
     <string name="Captcha_Loading_In_Progress">Загружается капча&#8230;</string>
     <string name="Posts_Loading_In_Progress">Загружаем посты&#8230;</string>
     <string name="Blogs_Loading_In_Progress">Загружаем блоги&#8230;</string>
@@ -61,6 +62,8 @@
 	<string name ="MainSettings_AboutCategoryName">О программе</string>
     <string name ="MainSettings_GeneralCategoryId">general_category_pref</string>
 	<string name ="MainSettings_GeneralCategoryName">Основные</string>
+    <string name ="MainSettings_CacheCategoryId">cache_category_pref</string>
+    <string name ="MainSettings_CacheCategoryName">Внешний кэш</string>
 	<string name ="WidgetSettings_NotifyCategoryId">notify_category_pref</string>
 	<string name ="WidgetSettings_NotifyCategoryName">Непрочитанные сообщения</string>
 	<string name ="MainSettings_MainFilterId">mainfilter_pref</string>
@@ -72,7 +75,9 @@
 	<string name ="MainSettings_FontSizeId">font_size_pref</string>
 	<string name ="MainSettings_FontSizeName">Размер шрифта</string>
 	<string name ="MainSettings_FontSizeSummary">Выберите размер шрифта, подходящий для вашего устройства</string>
-	<string name ="WidgetSettings_NotifyId">notify_pref</string>
+    <string name ="MainSettings_CacheId">cache_pref</string>
+    <string name ="MainSettings_CacheName">Очистить</string>
+    <string name ="WidgetSettings_NotifyId">notify_pref</string>
 	<string name ="WidgetSettings_NotifyName">Уведомления</string>
 	<string name ="WidgetSettings_NotifySummary">Виджет будет генерировать уведомления о непрочитанных сообщениях</string>
 	<string name ="WidgetSettings_NotifySoundId">notify_sound_pref</string>

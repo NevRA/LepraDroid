@@ -46,8 +46,15 @@
                 android:targetPackage="com.home.lepradroid"
                 android:targetClass="com.home.lepradroid.settings.WidgetPreferences"/>
 		</PreferenceScreen>
-	</PreferenceCategory>  
-  	<PreferenceCategory 
+	</PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/MainSettings_CacheCategoryName"
+        android:key="@string/MainSettings_CacheCategoryId">
+        <com.home.lepradroid.settings.CachePreference
+            android:key="@string/MainSettings_CacheId"
+            android:title="@string/MainSettings_CacheName"/>
+    </PreferenceCategory>
+    <PreferenceCategory
       	android:title="@string/MainSettings_AboutCategoryName"
        	android:key="@string/MainSettings_AboutCategoryId"> 
         <Preference 

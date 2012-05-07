@@ -617,4 +617,27 @@ public class Utils
 
         return false;
     }
+
+    public static long dirSize(File dir)
+    {
+        if(dir == null || !dir.exists()) return 0;
+
+        long result = 0;
+        for (File file : dir.listFiles())
+        {
+            if(file.isDirectory())
+            {
+                result += dirSize(file);
+            } else
+            {
+                result += file.length();
+            }
+        }
+        return result;
+    }
+
+    public static double convertBytesToMb(long bytes)
+    {
+        return bytes / 1024d / 1024d;
+    }
 }

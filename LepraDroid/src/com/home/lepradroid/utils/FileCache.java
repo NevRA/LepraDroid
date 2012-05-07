@@ -43,4 +43,14 @@ public class FileCache
         for (File f : files)
             f.delete();
     }
+
+    public double getSizeInMegabytes()
+    {
+        long size = Utils.dirSize(cacheDir);
+
+        double sizeInMb = Utils.convertBytesToMb(size);
+        double result = Math.round(sizeInMb * 100) / 100d;
+
+        return result;
+    }
 }
