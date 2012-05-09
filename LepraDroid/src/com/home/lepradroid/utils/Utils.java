@@ -449,7 +449,7 @@ public class Utils
         DisplayMetrics displaymetrics = new DisplayMetrics();
         ((WindowManager) LepraDroidApplication.getInstance().getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(displaymetrics);
         
-        return (int) ((float)(displaymetrics.widthPixels - padding) * 152f / (float)displaymetrics.densityDpi);
+        return (int) ((float)(displaymetrics.widthPixels - padding) * 154f / (float)displaymetrics.densityDpi);
     }
 
     public static void clearNotification(Context context)
