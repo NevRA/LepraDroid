@@ -11,15 +11,12 @@ import com.home.lepradroid.utils.FileCache;
 public class CachePreference extends Preference
 {
     private CalculateCacheSizeTask calculateCacheSizeTask;
-    private final FileCache cache;
 
     public CachePreference(Context context, AttributeSet attrs)
     {
         super(context, attrs);
 
-        cache = new FileCache(LepraDroidApplication.getInstance());
-
-        updateCacheSize();
+        updateCacheSize(false);
     }
 
     @Override
@@ -29,44 +26,62 @@ public class CachePreference extends Preference
         super.onPrepareForRemoval();
     }
 
-    private void updateCacheSize()
+    private void updateCacheSize(boolean clearCache)
     {
         if(calculateCacheSizeTask != null)
             calculateCacheSizeTask.cancel(true);
-        calculateCacheSizeTask = new CalculateCacheSizeTask();
+        calculateCacheSizeTask = new CalculateCacheSizeTask(clearCache);
         calculateCacheSizeTask.execute();
     }
 
     @Override
     protected void onClick()
     {
-        setSummary(getContext().getString(R.string.Cleaning));
-
-        cache.clear();
-
-        updateCacheSize();
+        updateCacheSize(true);
 
         super.onClick();
     }
 
     private class CalculateCacheSizeTask extends AsyncTask<Void, Long, Double>
     {
+        private boolean clearCache;
+        public CalculateCacheSizeTask(boolean clearCache)
+        {
+             this.clearCache = clearCache;
+        }
+
         @Override
         protected void onPreExecute()
         {
-            setSummary(getContext().getString(R.string.Loading));
+            if(!isCancelled())
+            {
+                setSummary(getContext().getString(clearCache ? R.string.Cleaning : R.string.Loading));
+            }
         }
 
         @Override
         protected void onPostExecute(Double result)
         {
-            String summary = result + " MB";
-            setSummary(summary);
+            if(!isCancelled())
+            {
+                String summary = result + " MB";
+                setSummary(summary);
+            }
         }
 
         @Override
         protected Double doInBackground(Void... arg0)
         {
+            FileCache cache = new FileCache(LepraDroidApplication.getInstance());
+
+            if(clearCache)
+            {
+                cache.clear();
+            }
+
+            if(isCancelled())
+                return 0.0;
+
             return cache.getSizeInMegabytes();
         }
     }
