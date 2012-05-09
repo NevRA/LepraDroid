@@ -276,10 +276,13 @@ public class GetPostsTask extends BaseTask
                 post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
                 post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
                 
-                Elements author = content.getElementsByClass("p");
-                if(!author.isEmpty())
+                Element author = content.getElementsByClass("p").first();
+                if(author != null)
                 {
-                    Elements span = author.first().getElementsByTag("span");
+                    Element star = author.getElementsByClass("stars").first();
+                    if(star != null)
+                        post.setGolden(true);
+                    Elements span = author.getElementsByTag("span");
                     Elements a = span.first().getElementsByTag("a");
                     String url = a.first().attr("href");
                     if(url.contains("http"))
@@ -303,8 +306,8 @@ public class GetPostsTask extends BaseTask
                             post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
                     }
                     
-                    post.setAuthor(author.first().getElementsByTag("a").first().text());
-                    post.setSignature(author.first().text().split("\\|")[0].replace(post.getAuthor(), "<b>" + post.getAuthor() + "</b>"));
+                    post.setAuthor(author.getElementsByTag("a").first().text());
+                    post.setSignature(author.text().split("\\|")[0].replace(post.getAuthor(), "<b>" + post.getAuthor() + "</b>"));
                 }
                 
                 if(isCancelled()) break;

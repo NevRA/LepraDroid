@@ -120,6 +120,12 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
             TextView commentsView = (TextView)convertView.findViewById(R.id.comments);
             commentsView.setText(Utils.getCommentsStringFromPost(post));
             Utils.setTextViewFontSize(commentsView);
+
+            if(post.isGolden())
+            {
+                ImageView stars = (ImageView)convertView.findViewById(R.id.stars);
+                stars.setVisibility(View.VISIBLE);
+            }
             
             TextView ratingView = (TextView)convertView.findViewById(R.id.rating);
             Utils.setTextViewFontSize(ratingView);

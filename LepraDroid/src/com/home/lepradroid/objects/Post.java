@@ -6,6 +6,7 @@ public class Post extends BaseItem
     private short    totalComments       = -1;
     private short    newComments         = -1;
     private byte[]   pid                 = null;
+    private boolean  golden              = false;
     private boolean  voteDisabled        = false;
     
     public short getTotalComments()
@@ -47,5 +48,15 @@ public class Post extends BaseItem
     public void setVoteDisabled(boolean voteDisabled)
     {
         this.voteDisabled = voteDisabled;
+    }
+
+    public boolean isGolden()
+    {
+        return golden;
+    }
+
+    public void setGolden(boolean golden)
+    {
+        this.golden = golden;
     }
 }
