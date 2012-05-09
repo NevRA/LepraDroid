@@ -4,10 +4,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:padding="@dimen/standard_padding"
-    android:minHeight="60dip" >
-    
+    android:minHeight="67dip" >
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/main"
+        android:paddingBottom="7dip"
         android:orientation="horizontal"
         android:gravity="center_vertical"
 	    android:layout_width="fill_parent"
@@ -30,17 +30,16 @@
 	        android:textStyle="bold"
 	        android:maxLines="4"/>
     </LinearLayout>
-    
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_below="@+id/main"
 	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent" 
+	    android:layout_height="fill_parent"
 	    android:layout_alignParentBottom="true">
 	    <TextView
 	        android:id="@+id/author"
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
-	        android:paddingTop="@dimen/standard_padding"
 	        android:textSize="9sp"
 	        android:ellipsize="end"
 	        android:textColor="@android:color/secondary_text_light"
@@ -49,7 +48,7 @@
 	        android:id="@+id/stat"
 	        android:layout_below="@+id/author"
 		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent" 
+		    android:layout_height="fill_parent"
 		    android:layout_alignParentBottom="true">
 		    <TextView
 		        android:id="@+id/comments"
