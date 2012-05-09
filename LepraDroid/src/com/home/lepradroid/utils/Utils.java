@@ -328,7 +328,7 @@ public class Utils
         for(Element element : elements)
         {
             String text = element.html();
-            element.before("<h2><font color=\"#3270FF\">" + text + "</font></h2>");
+            element.before("<font size=+1 color=\"#3270FF\">" + text + "</font>");
             element.remove();
         }
         
