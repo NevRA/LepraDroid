@@ -145,7 +145,7 @@ public class GetPostsTask extends BaseTask
             notifyAboutPostsUpdateBegin();
             
             String html = ServerWorker.Instance().getContent(url + ((groupId.equals(Commons.MAIN_POSTS_ID) || isCustomBlogPosts ) ? "pages/" + Integer.toString(page + 1) : ""));
-            final String postOrd = "<div class=\"post ord";
+            final String postOrd = "<div class=\"post ";
             int currentPos = 0;
 
             boolean lastElement = false;
