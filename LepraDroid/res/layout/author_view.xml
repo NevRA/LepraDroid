@@ -26,9 +26,17 @@
 			    android:layout_centerHorizontal="true"
 			    android:layout_marginBottom="5dip"
 			    android:layout_marginTop="5dip" />
+            <TextView
+                android:id="@+id/userego"
+                android:gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dip" />
 		    <ImageView
 		        android:id="@+id/image"
-		        android:layout_below="@+id/name"
+		        android:layout_below="@+id/userego"
 		        android:layout_width="200dip"
 		        android:layout_height="200dip"
 		        android:src="@drawable/ic_user"
@@ -45,25 +53,17 @@
 		        android:layout_height="wrap_content"
 		        android:gravity="center_horizontal"
 		        android:layout_centerHorizontal="true"
-		        android:layout_marginBottom="5dip" 
+		        android:layout_marginBottom="10dip"
 		        android:textSize="11sp"
 		        android:textStyle="bold"
 		        android:textColor="@android:color/secondary_text_light"/>
-		    <TextView
-			    android:id="@+id/userego"
-			    android:gravity="center_horizontal"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_below="@+id/rating"
-			    android:layout_centerHorizontal="true"
-			    android:layout_marginBottom="5dip" />
             <LinearLayout
                 android:id="@+id/userstory_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone"
-                android:layout_below="@+id/userego">
+                android:layout_below="@+id/rating">
                 <TextView
                     android:id="@+id/line"
                     android:layout_width="fill_parent"
@@ -74,7 +74,7 @@
                     android:text="Большой рассказ о себе"
                     android:gravity="center"
                     android:layout_marginBottom="10dip"
-                    android:background="#ffE0E4E0" />
+                    android:background="#18000000" />
                 <WebView xmlns:android="http://schemas.android.com/apk/res/android"
                     android:padding="@dimen/standard_padding"
                     android:id="@+id/userstory"
