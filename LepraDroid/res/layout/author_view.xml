@@ -73,8 +73,12 @@
                     android:textStyle="bold"
                     android:text="Большой рассказ о себе"
                     android:gravity="center"
-                    android:layout_marginBottom="10dip"
                     android:background="#18000000" />
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginBottom="10dip"
+                    android:background="#FF234BFF" />
                 <WebView xmlns:android="http://schemas.android.com/apk/res/android"
                     android:padding="@dimen/standard_padding"
                     android:id="@+id/userstory"
