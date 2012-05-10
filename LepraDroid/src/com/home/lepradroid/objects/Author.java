@@ -7,6 +7,7 @@ public class Author extends RateItem
     private byte[]   imageUrl            = null;
     private byte[]   ego                 = null;
     private byte[]   userName            = null;
+    private byte[]   userStory           = null;
     
     public String getId()
     {
@@ -61,5 +62,16 @@ public class Author extends RateItem
     public void setUserName(String userName)
     {
         this.userName = userName.getBytes();
+    }
+
+    public String getUserStory()
+    {
+        if(userStory == null) return "";
+        return new String(userStory);
+    }
+
+    public void setUserStory(String userStory)
+    {
+        this.userStory = userStory.getBytes();
     }
 }

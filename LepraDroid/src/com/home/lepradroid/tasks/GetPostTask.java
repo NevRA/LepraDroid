@@ -91,7 +91,6 @@ public class GetPostTask extends BaseTask
             Post post = new Post();
             post.setId(postId);
             
-            
             Elements images = element.getElementsByTag("img");
             int imageNum = 0;
             List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();

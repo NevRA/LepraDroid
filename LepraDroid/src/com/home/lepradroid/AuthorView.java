@@ -2,8 +2,11 @@ package com.home.lepradroid;
 
 import android.content.Context;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.*;
 
 import com.home.lepradroid.base.BaseView;
@@ -17,6 +20,7 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.utils.ImageLoader;
+import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
 import java.util.UUID;
@@ -30,7 +34,10 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     private RelativeLayout contentLayout;
     private TextView name;
     private TextView ego;
+    private WebView userStory;
+    private LinearLayout userStoryLayout;
     private TextView rating;
+    private TextView line;
     private ImageView userPic;
     private ProgressBar progress;
     private ImageLoader imageLoader;
@@ -66,15 +73,20 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         name = (TextView) contentView.findViewById(R.id.name);
         ego = (TextView) contentView.findViewById(R.id.userego);
         rating = (TextView) contentView.findViewById(R.id.rating);
+        line = (TextView) contentView.findViewById(R.id.line);
         userPic = (ImageView) contentView.findViewById(R.id.image);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
+        userStory = (WebView) contentView.findViewById(R.id.userstory);
+        userStoryLayout = (LinearLayout) contentView.findViewById(R.id.userstory_layout);
         buttonsLayout = (LinearLayout) contentView.findViewById(R.id.buttons);
         plus = (Button) contentView.findViewById(R.id.plus);
         minus = (Button) contentView.findViewById(R.id.minus);
         
         Utils.setTextViewFontSize(name);
         Utils.setTextViewFontSize(ego);
+        Utils.setTextViewFontSize(line);
         Utils.setTextViewFontSize(rating);
+        Utils.setWebViewFontSize(userStory);
     }
 
     @Override
@@ -104,6 +116,20 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         ego.setText(data.getEgo());
         rating.setText(Short.toString(data.getRating()));
         imageLoader.DisplayImage(data.getImageUrl(), userPic, R.drawable.ic_user);
+
+        if(!TextUtils.isEmpty(data.getUserStory()))
+        {
+            userStoryLayout.setVisibility(View.VISIBLE);
+            userStory.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+            userStory.setWebViewClient(LinksCatcher.Instance());
+            WebSettings webSettings = userStory.getSettings();
+            webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setNeedInitialFocus(false);
+            userStory.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\"><center>" + data.getUserStory() + "</center></body>", "text/html", "UTF-8", null);
+            userStory.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
+            Utils.setWebViewFontSize(userStory);
+        }
 
         minus.setEnabled(true);
         plus.setEnabled(true);

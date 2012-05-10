@@ -1,11 +1,13 @@
 package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.text.TextUtils;
+import com.home.lepradroid.utils.Utils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -45,18 +47,21 @@ public class GetAuthorTask extends BaseTask
         }        
     }
     
-    private String userName;
-    private boolean withoutBeginNotify = false;
+    private String  userName;
+    private boolean withoutBeginNotify  = false;
+    private boolean isImagesEnabled     = true;
     
     public GetAuthorTask(String userName, boolean withoutBeginNotify)
     {
         this.withoutBeginNotify = withoutBeginNotify;
         this.userName = userName;
+        this.isImagesEnabled = Utils.isImagesEnabled();
     }
     
     public GetAuthorTask(String userName)
     {
         this.userName = userName;
+        this.isImagesEnabled = Utils.isImagesEnabled();
     }
     
     @SuppressWarnings("unchecked")
@@ -105,17 +110,52 @@ public class GetAuthorTask extends BaseTask
 
             data.setUserName(userName);
             final Element userPic = document.getElementsByClass("userpic").first();
-            final Elements images = userPic.getElementsByTag("img");
-            if(!images.isEmpty())
+            final Element image = userPic.getElementsByTag("img").first();
+            if(image != null)
             {
-                data.setImageUrl(images.first().attr("src"));
+                data.setImageUrl(image.attr("src"));
             }
             
             final Element userInfo = document.getElementsByClass("userbasicinfo").first();
             data.setId(userInfo.getElementsByClass("vote").first().attr("uid"));
             data.setName(userInfo.getElementsByTag("h3").first().text());
-            
+
             data.setEgo(document.getElementsByClass("userego").first().text());
+
+            Element userStory = document.getElementsByClass("userstory").first();
+            if(userStory != null)
+            {
+                Elements images = userStory.getElementsByTag("img");
+                int imageNum = 0;
+                List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
+                for (Element img : images)
+                {
+                    String src = img.attr("src");
+                    if(isImagesEnabled && !TextUtils.isEmpty(src))
+                    {
+                        String id = "img" + Integer.valueOf(imageNum).toString();
+
+                        if(!img.parent().tag().getName().equalsIgnoreCase("a"))
+                            img.wrap("<a href=" + "\"" + src + "\"></a>");
+
+                        img.removeAttr("width");
+                        img.removeAttr("height");
+                        img.removeAttr("src");
+                        img.removeAttr("id");
+
+                        img.attributes().put("id", id);
+                        img.attributes().put("src", Commons.IMAGE_STUB);
+                        img.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(0).toString() + ");");
+                        imgs.add(new Pair<String, String>(id, src));
+
+                        imageNum++;
+                    }
+                    else
+                        img.remove();
+                }
+
+                data.setUserStory(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(userStory));
+            }
             
             Element vote;
             if(SettingsWorker.Instance().loadUserName().equals(userName))
