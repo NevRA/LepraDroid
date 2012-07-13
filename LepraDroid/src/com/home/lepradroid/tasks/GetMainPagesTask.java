@@ -33,8 +33,8 @@ public class GetMainPagesTask extends BaseTask
                 tasks.get(0).get();
             }
             
-            tasks.add((BaseTask) new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL).execute());
-            tasks.add((BaseTask) new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL).execute());
+            tasks.add((BaseTask) new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL, Commons.PostsType.MAIN).execute());
+            tasks.add((BaseTask) new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, Commons.PostsType.MY).execute());
             //tasks.add((BaseTask) new GetBlogsTask().execute());
             //tasks.add((BaseTask) new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, true).execute());
             for (BaseTask asyncTask : tasks)

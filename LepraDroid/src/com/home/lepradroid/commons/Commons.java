@@ -10,6 +10,7 @@ public class Commons
     public static final String MY_STUFF_URL     = SITE_URL + "my/";
     public static final String FAVORITES_URL    = MY_STUFF_URL + "favourites/";
     public static final String INBOX_URL        = MY_STUFF_URL + "inbox/";
+    public static final String AUTHOR_POSTS_URL = SITE_URL + "users/%s/posts/";
     public static final String POST_COMMENT_URL        
                                                 = SITE_URL + "commctl/";    
     public static final String BLOGS_URL        = SITE_URL + "underground/";
@@ -81,5 +82,13 @@ public class Commons
     {
         ADD,
         REMOVE
+    }
+
+    public enum PostsType
+    {
+        MAIN,
+        MY,
+        CUSTOM,
+        USER
     }
 }

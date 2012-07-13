@@ -31,6 +31,8 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     private ListView    list;
     private ProgressBar progress;
     private UUID        groupId;
+    private Commons.PostsType
+                        type;
     private Context     context;
     private String      parentTitle;
     private String      url;
@@ -39,7 +41,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
 
     public PostsAdapter adapter;
     
-    public PostsScreen(final Context context, final UUID groupId, final String url, String parentTitle)
+    public PostsScreen(final Context context, final UUID groupId, final String url, Commons.PostsType type, String parentTitle)
     {                                                                            
         super(context);
         
@@ -47,6 +49,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
         this.groupId = groupId;
         this.parentTitle = parentTitle;
         this.url = url;
+        this.type = type;
         
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -99,7 +102,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
                     {
                         BaseActivity activity = (BaseActivity) context;
                         activity.popAllTasksLikeThis(GetPostsTask.class);
-                        activity.pushNewTask(new TaskWrapper(null, new GetPostsTask(groupId, url, page + 1, false), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                        activity.pushNewTask(new TaskWrapper(null, new GetPostsTask(groupId, url, type, page + 1, false), Utils.getString(R.string.Posts_Loading_In_Progress)));
                         adapter.addProgressElement();
                         adapter.notifyDataSetChanged();
                         lastPageLoadedSuccessful = false;

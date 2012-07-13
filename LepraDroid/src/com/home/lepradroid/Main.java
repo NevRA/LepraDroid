@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ import com.viewpagerindicator.TitlePageIndicator;
 
 public class Main extends BaseActivity implements LoginListener, LogoutListener, ThresholdUpdateListener
 {
-    private AuthorView  profile;
+    private AuthorView profileView;
     private TitlePageIndicator titleIndicator;
     private ViewPager pager;
     private boolean blogsInit                   = false;
@@ -35,8 +36,11 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
     //private boolean myStuffInit                 = false;
     private boolean inboxInit                   = false;
     private boolean profileInit                 = false;
+    private boolean postsInit                   = false;
     
     private ArrayList<BaseView> pages           = new ArrayList<BaseView>();
+
+    private UUID authorPostsGroupId             = UUID.randomUUID();
     
     public static final int MAIN_TAB_NUM        = 0;
     public static final int BLOGS_TAB_NUM       = 3;
@@ -44,7 +48,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
     public static final int MYSTUFF_TAB_NUM     = 1;
     public static final int INBOX_TAB_NUM       = 2;
     public static final int PROFILE_TAB_NUM     = 5;
-    
+    public static final int POSTS_TAB_NUM       = 6;
     
     
 	@Override
@@ -121,29 +125,23 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
             if(currentItem == MAIN_TAB_NUM)
             {
                 popAllTasksLikeThis(GetPostsTask.class);
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                reloadMain();
             }
             else if(currentItem == BLOGS_TAB_NUM)
             {
                 popAllTasksLikeThis(GetBlogsTask.class);
-                pushNewTask(new TaskWrapper(null, new GetBlogsTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                reloadBlogs();
             }
             else if(currentItem == FAVORITE_TAB_NUM)
-            {
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-            }
+                reloadFavorite();
             else if(currentItem == MYSTUFF_TAB_NUM)
-            {
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-            }
+                reloadMyStuff();
             else if(currentItem == INBOX_TAB_NUM)
-            {
-                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
-            }
+                reloadInbox();
             else if(currentItem == PROFILE_TAB_NUM)
-            {
-                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
-            }
+                reloadAuthor();
+            else if(currentItem == POSTS_TAB_NUM)
+                reloadPosts();
             break;
         case MENU_SETTINGS:
             Intent intent = new Intent(this, MainPreferences.class);
@@ -152,33 +150,62 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
         }
         return false;
     }
-    
+
+    private void reloadMain()
+    {
+        pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL, Commons.PostsType.MAIN), Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
+    private void reloadFavorite()
+    {
+        pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, Commons.PostsType.MY), Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
+    private void reloadMyStuff()
+    {
+        pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, Commons.PostsType.MY), Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
+    private void reloadAuthor()
+    {
+        pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
     private void createTabs()
     {
-        PostsScreen mainPosts = new PostsScreen(this, Commons.MAIN_POSTS_ID, Commons.SITE_URL, Utils.getString(R.string.Posts_Tab));
-        mainPosts.setTag(Utils.getString(R.string.Posts_Tab));
+        PostsScreen mainPostsView = new PostsScreen(this, Commons.MAIN_POSTS_ID, Commons.SITE_URL, Commons.PostsType.MAIN, Utils.getString(R.string.Posts_Tab));
+        mainPostsView.setTag(Utils.getString(R.string.Main_Tab));
 
-        BlogsScreen blogsPosts = new BlogsScreen(this);
-        blogsPosts.setTag(Utils.getString(R.string.Blogs_Tab));
+        BlogsScreen blogsPostsView = new BlogsScreen(this);
+        blogsPostsView.setTag(Utils.getString(R.string.Blogs_Tab));
 
-        PostsScreen favoritePosts = new PostsScreen(this, Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, Utils.getString(R.string.Favorites_Tab));
-        favoritePosts.setTag(Utils.getString(R.string.Favorites_Tab));
+        PostsScreen favoritePostsView = new PostsScreen(this, Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, Commons.PostsType.MY, Utils.getString(R.string.Favorites_Tab));
+        favoritePostsView.setTag(Utils.getString(R.string.Favorites_Tab));
 
-        PostsScreen myStuffPosts = new PostsScreen(this, Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, Utils.getString(R.string.MyStuff_Tab));
-        myStuffPosts.setTag(Utils.getString(R.string.MyStuff_Tab));
+        PostsScreen myStuffPostsView = new PostsScreen(this, Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, Commons.PostsType.MY, Utils.getString(R.string.MyStuff_Tab));
+        myStuffPostsView.setTag(Utils.getString(R.string.MyStuff_Tab));
 
-        PostsScreen inboxPosts = new PostsScreen(this, Commons.INBOX_POSTS_ID, Commons.INBOX_URL, Utils.getString(R.string.Inbox_Tab));
-        inboxPosts.setTag(Utils.getString(R.string.Inbox_Tab));
+        PostsScreen inboxPostsView = new PostsScreen(this, Commons.INBOX_POSTS_ID, Commons.INBOX_URL, Commons.PostsType.MY, Utils.getString(R.string.Inbox_Tab));
+        inboxPostsView.setTag(Utils.getString(R.string.Inbox_Tab));
         
-        profile = new AuthorView(this, SettingsWorker.Instance().loadUserName());
-        profile.setTag(Utils.getString(R.string.Profile_Tab));
+        profileView = new AuthorView(this, SettingsWorker.Instance().loadUserName());
+        profileView.setTag(Utils.getString(R.string.Profile_Tab));
+
+        PostsScreen authorPostsView = new PostsScreen(
+                this,
+                authorPostsGroupId,
+                String.format(Commons.AUTHOR_POSTS_URL, SettingsWorker.Instance().loadUserName()),
+                Commons.PostsType.USER,
+                Utils.getString(R.string.AuthorPosts_Tab));
+        authorPostsView.setTag(Utils.getString(R.string.Posts_Tab));
         
-        pages.add(mainPosts);
-        pages.add(myStuffPosts);
-        pages.add(inboxPosts);
-        pages.add(blogsPosts);
-        pages.add(favoritePosts);
-        pages.add(profile);
+        pages.add(mainPostsView);
+        pages.add(myStuffPostsView);
+        pages.add(inboxPostsView);
+        pages.add(blogsPostsView);
+        pages.add(favoritePostsView);
+        pages.add(profileView);
+        pages.add(authorPostsView);
 
         TabsPageAdapter tabsAdapter = new TabsPageAdapter(pages);
         pager = (ViewPager) findViewById(R.id.pager);
@@ -200,29 +227,36 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
                         case BLOGS_TAB_NUM:
                             if(!favoriteInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                reloadFavorite();
                                 favoriteInit = true;
                             }
                             break;
                         case FAVORITE_TAB_NUM:
                             if(!profileInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetAuthorTask(SettingsWorker.Instance().loadUserName()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                reloadAuthor();
                                 profileInit = true;
                             }
                             break;
                         case MYSTUFF_TAB_NUM:
                             if(!inboxInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                reloadInbox();
                                 inboxInit = true;
                             }
                             break;
                         case INBOX_TAB_NUM:
                             if(!blogsInit)
                             {
-                                pushNewTask(new TaskWrapper(null, new GetBlogsTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                reloadBlogs();
                                 blogsInit = true;
+                            }
+                            break;
+                        case POSTS_TAB_NUM:
+                            if(!postsInit)
+                            {
+                                reloadPosts();
+                                postsInit = true;
                             }
                             break;
                         }
@@ -241,11 +275,31 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
                 });
     }
 
+    private void reloadBlogs()
+    {
+        pushNewTask(new TaskWrapper(null, new GetBlogsTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
+    private void reloadInbox()
+    {
+        pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL, Commons.PostsType.MY), Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
+    private void reloadPosts()
+    {
+        pushNewTask(new TaskWrapper(null,
+                new GetPostsTask(
+                        authorPostsGroupId,
+                        String.format(Commons.AUTHOR_POSTS_URL, SettingsWorker.Instance().loadUserName()),
+                        Commons.PostsType.USER),
+                Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
     public void OnLogin(boolean successful)
     {
         if(successful)
         {
-            profile.setUserName(SettingsWorker.Instance().loadUserName());
+            profileView.setUserName(SettingsWorker.Instance().loadUserName());
             pushNewTask(new TaskWrapper(null, new GetMainPagesTask(), Utils.getString(R.string.Posts_Loading_In_Progress)));
             
             new UpdateBadgeCounterTask().execute();
@@ -299,7 +353,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
         if(successful)
         {
             popAllTasksLikeThis(GetPostsTask.class);
-            pushNewTask(new TaskWrapper(null, new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL), Utils.getString(R.string.Posts_Loading_In_Progress)));
+            reloadMain();
         }
     }
 }

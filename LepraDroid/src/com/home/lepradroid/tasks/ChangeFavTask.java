@@ -75,7 +75,7 @@ public class ChangeFavTask extends BaseTask
         try
         {
             ServerWorker.Instance().postChangeFavs(SettingsWorker.Instance().loadFavWtf(), pid, type);
-            new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL).execute();
+            new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, Commons.PostsType.MY).execute();
             notifyAboutChangeFav(true);
         }
         catch (Exception e)

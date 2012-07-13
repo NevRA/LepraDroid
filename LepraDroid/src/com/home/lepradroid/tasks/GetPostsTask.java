@@ -29,9 +29,9 @@ public class GetPostsTask extends BaseTask
 {
     private UUID groupId;
     private String url;
+    private Commons.PostsType type;
     private boolean refresh = true;
     private boolean receivedPosts = false;
-    private boolean isCustomBlogPosts = false;
     private int page = 0;
     private boolean isImagesEnabled = true;
     private boolean isNormalTextSize = true;
@@ -66,22 +66,22 @@ public class GetPostsTask extends BaseTask
         }        
     }
     
-    public GetPostsTask(UUID groupId, String url)
+    public GetPostsTask(UUID groupId, String url, Commons.PostsType type)
     {
         this.groupId = groupId;
         this.url = url;
-        isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
+        this.type = type;
         isImagesEnabled = Utils.isImagesEnabled();
         isNormalTextSize = Utils.isNormalFontSize();
     }
     
-    public GetPostsTask(UUID groupId, String url, int page, boolean refresh)
+    public GetPostsTask(UUID groupId, String url, Commons.PostsType type, int page, boolean refresh)
     {       
         this.groupId = groupId;
         this.url = url;
         this.refresh = refresh;
         this.page = page;
-        isCustomBlogPosts = Utils.isCustomBlogPosts(groupId);
+        this.type = type;
         isImagesEnabled = Utils.isImagesEnabled();
         isNormalTextSize = Utils.isNormalFontSize();
     }
@@ -144,7 +144,7 @@ public class GetPostsTask extends BaseTask
             
             notifyAboutPostsUpdateBegin();
             
-            String html = ServerWorker.Instance().getContent(url + ((groupId.equals(Commons.MAIN_POSTS_ID) || isCustomBlogPosts ) ? "pages/" + Integer.toString(page + 1) : ""));
+            String html = ServerWorker.Instance().getContent(url + getPageNum());
             final String postOrd = "<div class=\"post ";
             int currentPos = 0;
 
@@ -222,7 +222,12 @@ public class GetPostsTask extends BaseTask
                 String postHtml = Utils.replaceBadHtmlTags(html.substring(start, end));
                 Element content = Jsoup.parse(postHtml);
                 
-                if(page == 0 && lastElement && (groupId.equals(Commons.MAIN_POSTS_ID) || isCustomBlogPosts))
+                if(     page == 0 &&
+                        lastElement &&
+                        (   type == Commons.PostsType.MAIN ||
+                            type == Commons.PostsType.CUSTOM ||
+                            type == Commons.PostsType.USER
+                        ) )
                 {
                     Element element = content.getElementById("total_pages");
                     ServerWorker.Instance().addPostPagesCount(groupId, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
@@ -346,5 +351,15 @@ public class GetPostsTask extends BaseTask
         }
         
         return e;
+    }
+
+    private String getPageNum()
+    {
+        if(type == Commons.PostsType.MAIN || type == Commons.PostsType.CUSTOM )
+            return "pages/" + Integer.toString(page + 1);
+        if(type == Commons.PostsType.USER)
+            return Integer.toString(page + 1);
+
+        return "";
     }
 }

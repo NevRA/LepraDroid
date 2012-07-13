@@ -17,11 +17,7 @@ import com.home.lepradroid.interfaces.ChangeFavListener;
 import com.home.lepradroid.interfaces.ChangeMyStuffListener;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
-import com.home.lepradroid.tasks.ChangeFavTask;
-import com.home.lepradroid.tasks.ChangeMyStuffTask;
-import com.home.lepradroid.tasks.GetAuthorTask;
-import com.home.lepradroid.tasks.GetCommentsTask;
-import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.tasks.*;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -31,6 +27,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     private UUID            groupId;
     private UUID            postId;
     //private String          parentTitle;
+    private UUID            authorPostsGroupId  = UUID.randomUUID();
 
     private PostView        postView;
     private CommentsView    commentsView;
@@ -41,6 +38,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
                             pages               = new ArrayList<BaseView>();
     
     private boolean         authorInit          = false;
+    private boolean         postsInit           = false;
     
     private boolean         navigationTurnedOn
                                                 = false;
@@ -48,6 +46,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     public static final int POST_TAB_NUM        = 0;
     public static final int COMMENTS_TAB_NUM    = 1;
     public static final int PROFILE_TAB_NUM     = 2;
+    public static final int POSTS_TAB_NUM       = 3;
     
     @Override
     protected void onDestroy()
@@ -102,6 +101,9 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
             menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
             menu.add(0, MENU_INBOX, 1, Utils.getString(R.string.Inbox_Menu)).setIcon(R.drawable.ic_inbox);
             break;
+        case POSTS_TAB_NUM:
+            menu.add(0, MENU_RELOAD, 0, Utils.getString(R.string.Reload_Menu)).setIcon(R.drawable.ic_reload);
+            break;
         }
         
         return true;
@@ -143,10 +145,13 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
             {
             case COMMENTS_TAB_NUM:
                 popAllTasksLikeThis(GetCommentsTask.class);
-                pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, postId), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                reloadComments();
                 break;
             case PROFILE_TAB_NUM:
-                pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                reloadAuthor();
+                break;
+            case POSTS_TAB_NUM:
+                reloadPosts();
                 break;
             default:
                 break;
@@ -193,17 +198,24 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         if(     post.getTotalComments() <= Commons.MAX_COMMENTS_COUNT &&
                 Utils.isCommentsLoadingWithPost(this))
         {
-            pushNewTask(new TaskWrapper(null, new GetCommentsTask(
-                    groupId, postId), Utils
-                        .getString(R.string.Posts_Loading_In_Progress)));
+            reloadComments();
         }
         
         authorView = new AuthorView(this, post.getAuthor());
         authorView.setTag(Utils.getString(R.string.Author_Tab));
+
+        PostsScreen authorPostsView = new PostsScreen(
+                this,
+                authorPostsGroupId,
+                String.format(Commons.AUTHOR_POSTS_URL, post.getAuthor()),
+                Commons.PostsType.USER,
+                Utils.getString(R.string.AuthorPosts_Tab));
+        authorPostsView.setTag(Utils.getString(R.string.AuthorPosts_Tab));
         
         pages.add(postView);
         pages.add(commentsView);
         pages.add(authorView);
+        pages.add(authorPostsView);
 
         TabsPageAdapter tabsAdapter = new TabsPageAdapter(pages);
         pager = (ViewPager) findViewById(R.id.pager);
@@ -225,13 +237,20 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
                             case COMMENTS_TAB_NUM:
                                 if (!authorInit)
                                 {
-                                    pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                    reloadAuthor();
                                     authorInit = true;
 
                                     if (!Utils.isCommentsLoadingWithPost(PostScreen.this))
                                     {
-                                        pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, postId), Utils.getString(R.string.Posts_Loading_In_Progress)));
+                                        reloadComments();
                                     }
+                                }
+                                break;
+                            case POSTS_TAB_NUM:
+                                if (!postsInit)
+                                {
+                                    reloadPosts();
+                                    postsInit = true;
                                 }
                                 break;
                         }
@@ -247,6 +266,26 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
                     {
                     }
                 });
+    }
+
+    private void reloadPosts()
+    {
+        pushNewTask(new TaskWrapper(null,
+                new GetPostsTask(
+                        authorPostsGroupId,
+                        String.format(Commons.AUTHOR_POSTS_URL, post.getAuthor()),
+                        Commons.PostsType.USER),
+                Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
+    private void reloadAuthor()
+    {
+        pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+    }
+
+    private void reloadComments()
+    {
+        pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, postId), Utils.getString(R.string.Posts_Loading_In_Progress)));
     }
 
     @Override
