@@ -149,16 +149,8 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
         if(!this.groupId.equals(groupId)) return;
         
         this.lastPageLoadedSuccessful = successful;
-        
-        if(successful)
-        {
-            OnPostsUpdate(groupId, page);
-        }
-        else
-        {
-            adapter.removeProgressElement();
-            adapter.notifyDataSetChanged();
-        }
+
+        OnPostsUpdate(groupId, page);
     } 
 
     @Override
@@ -169,11 +161,8 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     
     private void updateAdapter()
     {
-        synchronized (this)
-        {
-            adapter.updateData(ServerWorker.Instance().getPostsById(groupId, true));
-            adapter.notifyDataSetChanged();
-        }
+        adapter.updateData(ServerWorker.Instance().getPostsById(groupId, true));
+        adapter.notifyDataSetChanged();
     }
 
     @Override

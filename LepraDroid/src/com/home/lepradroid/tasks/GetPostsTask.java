@@ -31,7 +31,6 @@ public class GetPostsTask extends BaseTask
     private String url;
     private Commons.PostsType type;
     private boolean refresh = true;
-    private boolean receivedPosts = false;
     private int page = 0;
     private boolean isImagesEnabled = true;
     private boolean isNormalTextSize = true;
@@ -158,11 +157,14 @@ public class GetPostsTask extends BaseTask
                 
                 int start = html.indexOf(postOrd, currentPos);
                 int end = html.indexOf(postOrd, start + 300);
-                
-                if(     start == -1 && html.contains("<title>Лепрозорий: вход</title>"))
+
+                if(start == -1)
                 {
-                    new LogoutTask().execute();
-                    cancel(false);
+                    if(html.contains("<title>Лепрозорий: вход</title>"))
+                    {
+                        new LogoutTask().execute();
+                        cancel(false);
+                    }
                     break;
                 }
                 
@@ -213,8 +215,8 @@ public class GetPostsTask extends BaseTask
                 
                 if(end == -1)
                 {
-                    end = html.length();
                     lastElement = true;
+                    end = html.length();
                 }
                 
                 currentPos = end;
@@ -318,9 +320,8 @@ public class GetPostsTask extends BaseTask
                 if(isCancelled()) break;
                 
                 items.add(post);
-                if(num%5 == 0 || lastElement)
+                if(num % 5 == 0 || lastElement)
                 {
-                    receivedPosts = true;
                     ServerWorker.Instance().addNewPosts(groupId, items);
                     notifyAboutPostsUpdate();
                     
@@ -330,15 +331,7 @@ public class GetPostsTask extends BaseTask
             while (!lastElement);
             
             if(!isCancelled())
-            {
-                if(!items.isEmpty())
-                {
-                    ServerWorker.Instance().addNewPosts(groupId, items);
-                    notifyAboutPostsUpdateFinished(true);
-                }
-                else
-                    notifyAboutPostsUpdateFinished(receivedPosts);
-            }
+                notifyAboutPostsUpdateFinished(true);
         }
         catch (Throwable t)
         {

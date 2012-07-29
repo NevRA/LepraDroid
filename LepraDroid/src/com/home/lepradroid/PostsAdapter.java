@@ -58,19 +58,14 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
     
     public void updateData(ArrayList<BaseItem> posts)
     {
-        this.posts = posts;
+        this.posts.clear();
+        this.posts.addAll(posts);
     }
     
     public void addProgressElement()
     {
         if(!posts.isEmpty() && posts.get(posts.size() - 1) != null)
             posts.add(null);   
-    }
-
-    public void removeProgressElement()
-    {
-        if(!posts.isEmpty() && posts.get(posts.size() - 1) == null)
-            posts.remove(null);
     }
     
     @Override
