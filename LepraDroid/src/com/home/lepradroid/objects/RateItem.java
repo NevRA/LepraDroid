@@ -2,16 +2,16 @@ package com.home.lepradroid.objects;
 
 public class RateItem
 {
-    private short    rating              = 0;
+    private int      rating              = 0;
     private boolean  plusVoted           = false;
     private boolean  minusVoted          = false;
     
-    public short getRating()
+    public int getRating()
     {
         return rating;
     }
     
-    public void setRating(short rating)
+    public void setRating(int rating)
     {
         this.rating = rating;
     }

@@ -114,7 +114,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
         userId = data.getId();
         name.setText(Html.fromHtml("<b>" + data.getName() + " (" + data.getUserName() + ")" + "</b>"));
         ego.setText(data.getEgo());
-        rating.setText(Short.toString(data.getRating()));
+        rating.setText(Integer.toString(data.getRating()));
         imageLoader.DisplayImage(data.getImageUrl(), userPic, R.drawable.ic_user);
 
         if(!TextUtils.isEmpty(data.getUserStory()))

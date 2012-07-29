@@ -274,7 +274,7 @@ public class GetPostsTask extends BaseTask
 
                 Elements rating = content.getElementsByTag("em");
                 if(!rating.isEmpty())
-                    post.setRating(Short.valueOf(rating.first().text()));
+                    post.setRating(Integer.valueOf(rating.first().text()));
                 else
                     post.setVoteDisabled(true);
                 
