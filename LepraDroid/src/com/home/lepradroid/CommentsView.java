@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
-import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.AddedCommentUpdateListener;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
 import com.home.lepradroid.interfaces.ItemRateUpdateListener;
@@ -106,8 +105,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             }
         });
 
-        TextView tooManyComments = (TextView) contentView.findViewById(R.id.too_many_comments);
-
         adapter = new CommentsAdapter(context, groupId, post.getId(), R.layout.comments_row_view, new ArrayList<BaseItem>());
         
         list.setScrollingCacheEnabled(false);
@@ -141,16 +138,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         });
         
         list.setFadingEdgeLength(0);
-
-        if (post.getTotalComments() > Commons.MAX_COMMENTS_COUNT)
-        {
-            progress.setVisibility(View.GONE);
-            buttons.setVisibility(View.GONE);
-            tooManyComments.setVisibility(View.VISIBLE);
-            tooManyComments.setText(String.format(
-                    Utils.getString(R.string.Too_Many_Comments),
-                    Commons.MAX_COMMENTS_COUNT));
-        }
     }
 
     private void goToPrevNewComment()
@@ -158,7 +145,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         int prevPosition = ServerWorker.Instance().getPrevNewCommentPosition(postId, list.getFirstVisiblePosition());
         if (prevPosition != -1)
         {
-            list.setSelection(prevPosition);
+            selectItem(prevPosition);
             waitingNextRecord = false;
         }
     }
@@ -176,14 +163,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             if(nextPosition >= list.getCount())
                 updateAdapter();
             
-            list.post(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    list.setSelection(nextPosition);
-                }
-            });         
+            selectItem(nextPosition);
         }
         else
         {
@@ -232,6 +212,20 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         updateAdapter(false);
     }
 
+    private void selectItem(final int item)
+    {
+        if(item >= 0)
+            list.post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    list.setSelection(item);
+                }
+            });
+    }
+
+
     private void updateAdapter(boolean forceUpdate)
     {
         synchronized (this)
@@ -265,12 +259,12 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             }
 
             if (addedOwnerComment)
-                list.setSelection(index);
+                selectItem(index);
         }
     }
 
     @Override
-    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId, int count, int totalCount)
+    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId, int count, int totalCount, int commentToSelect)
     {
         if (!this.postId.equals(postId))
             return;
@@ -288,10 +282,11 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
         commentsProgress.setProgress(count);
 
         updateAdapter();
+        selectItem(commentToSelect);
     }
 
     @Override
-    public void OnCommentsUpdateFinished(UUID groupId, UUID postId)
+    public void OnCommentsUpdateFinished(UUID groupId, UUID postId, int commentToSelect)
     {
         if (!this.postId.equals(postId))
             return;
@@ -314,6 +309,8 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             if (waitingNextRecord)
                 goToNextNewComment();
         }
+
+        selectItem(commentToSelect);
     }
 
     @Override

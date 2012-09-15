@@ -41,9 +41,6 @@ public class Commons
     public static final Integer WEBVIEW_DEFAULT_FONT_SIZE
                                                 = 13;
     
-    public static final Integer MAX_COMMENTS_COUNT  
-                                                = 5000;
-    
     public static final Integer MAX_BLOG_HEADER_LENGTH  
                                                 = 20;
     

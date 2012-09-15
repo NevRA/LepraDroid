@@ -76,7 +76,7 @@ public class GetPostTask extends BaseTask
             String html = ServerWorker.Instance().getContent(url);
             String postOrd = "<div class=\"post ord";
             String postOrdGolden = "<div class=\"post golden ord";
-            String endStr = "<div id=\"content\"";
+            String endStr = groupId.equals(Commons.INBOX_POSTS_ID) ? "<div id=\"inbox_comments\"" : "<div id=\"content\"";
 
             int start = html.indexOf(postOrd, 0);
             if (start == -1)
@@ -135,7 +135,7 @@ public class GetPostTask extends BaseTask
             post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
 
             post.setUrl(url);
-            post.setPid(url.split("comments/")[1]);
+            post.setPid(url.split(groupId.equals(Commons.INBOX_POSTS_ID) ? "inbox/" : "comments/")[1]);
 
             Elements author = content.getElementsByClass("p");
             post.setAuthor(author.first().getElementsByTag("a").get(1).text());

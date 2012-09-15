@@ -27,7 +27,6 @@
 			android:dependency="@string/WidgetSettings_NotifyId"
 			android:key="@string/WidgetSettings_NotifyVibrateId"
 			android:title="@string/WidgetSettings_NotifyVibrateName"
-			android:summary="@string/WidgetSettings_NotifyVibrateSummary"
 			android:defaultValue="true"/>
 	</PreferenceCategory>  
 </PreferenceScreen>

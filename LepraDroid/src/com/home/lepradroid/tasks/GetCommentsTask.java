@@ -38,6 +38,8 @@ public class GetCommentsTask extends BaseTask
     
     private UUID    groupId;
     private UUID    postId;
+    private String  commentToSelectId   = null;
+    private int     commentToSelect     = -1;
     private short   commentsCount       = 0;
     private String  postAuthor          = "";
     private String  userName            = "";
@@ -47,8 +49,8 @@ public class GetCommentsTask extends BaseTask
     private int     totalBytesParsed    = 0;
     
     static final Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
-    static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
-    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[4];
+    static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[3];
+    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[5];
     static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdate = new Class[3];
     static Method methodOnCommentsUpdateFinished;
@@ -61,12 +63,14 @@ public class GetCommentsTask extends BaseTask
         {
             argsClassesOnCommentsUpdateFinished[0] = UUID.class;
             argsClassesOnCommentsUpdateFinished[1] = UUID.class;
+            argsClassesOnCommentsUpdateFinished[2] = int.class;
             methodOnCommentsUpdateFinished = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFinished", argsClassesOnCommentsUpdateFinished);
             
             argsClassesOnCommentsUpdateFirstEtries[0] = UUID.class;
             argsClassesOnCommentsUpdateFirstEtries[1] = UUID.class;
             argsClassesOnCommentsUpdateFirstEtries[2] = int.class;
             argsClassesOnCommentsUpdateFirstEtries[3] = int.class;
+            argsClassesOnCommentsUpdateFirstEtries[4] = int.class;
             methodOnCommentsUpdateFirstEtries = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFirstEntries", argsClassesOnCommentsUpdateFirstEtries); 
             
             argsClassesOnCommentsUpdateBegin[0] = UUID.class;
@@ -88,6 +92,15 @@ public class GetCommentsTask extends BaseTask
     public void finish()
     {
         super.finish();
+    }
+
+    public GetCommentsTask(UUID groupId, UUID postId, String commentToSelectId)
+    {
+        this.groupId = groupId;
+        this.postId = postId;
+        this.commentToSelectId = commentToSelectId;
+        isImagesEnabled = Utils.isImagesEnabled();
+        isCommentWtfLoaded = !TextUtils.isEmpty(SettingsWorker.Instance().loadCommentWtf());
     }
     
     public GetCommentsTask(UUID groupId, UUID postId)
@@ -116,11 +129,12 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutFirstCommentsUpdate()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[4];
+        final Object args[] = new Object[5];
         args[0] = groupId;
         args[1] = postId;
         args[2] = totalBytesParsed;
         args[3] = totalBytesReaded;
+        args[4] = commentToSelect;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -132,9 +146,10 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutCommentsUpdateFinished()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[2];
+        final Object args[] = new Object[3];
         args[0] = groupId;
         args[1] = postId;
+        args[2] = commentToSelect;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -358,7 +373,12 @@ public class GetCommentsTask extends BaseTask
         Element root = content.getElementsByTag("div").first();
 
         Comment comment = new Comment();
-        comment.setPid(root.id());
+
+        String commentId = root.id();
+        comment.setPid(commentId);
+
+        if(commentId.equals(commentToSelectId))
+            commentToSelect = commentsCount;
         
         Matcher level = patternLevel.matcher(root.className());
         if(level.find())
@@ -439,15 +459,29 @@ public class GetCommentsTask extends BaseTask
         ServerWorker.Instance().addNewComment(postId, comment);
         
         commentsCount++;
-        
-        if(commentsCount == 50)
+
+        if(commentToSelectId != null)
         {
-            notifyAboutFirstCommentsUpdate();
+            if(     commentToSelect != -1 &&
+                    commentsCount >= 50 + commentToSelect)
+            {
+                notifyAboutFirstCommentsUpdate();
+
+                commentToSelectId = null;
+                commentToSelect = -1;
+            }
         }
-        else if(commentsCount != 0 &&
-                commentsCount % 100 == 0)
+        else
         {
-            notifyAboutCommentsUpdate();
+            if(commentsCount == 50)
+            {
+                notifyAboutFirstCommentsUpdate();
+            }
+            else if(commentsCount != 0 &&
+                    commentsCount % 100 == 0)
+            {
+                notifyAboutCommentsUpdate();
+            }
         }
     }
 }

@@ -10,16 +10,6 @@
     	android:layout_height="wrap_content" 
     	android:indeterminate="true" 
     	android:layout_centerInParent="true"/>
-    
-    <TextView
-	    android:id="@+id/too_many_comments"
-	    android:visibility="gone"
-	    android:textStyle="bold"
-	    android:gravity="center_horizontal"
-	    android:layout_centerInParent="true"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="10dip" />
 
     <ListView
         android:id="@+id/list"

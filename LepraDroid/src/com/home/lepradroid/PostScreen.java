@@ -26,6 +26,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
 {
     private UUID            groupId;
     private UUID            postId;
+    private String          commentId;
     //private String          parentTitle;
     private UUID            authorPostsGroupId  = UUID.randomUUID();
 
@@ -36,7 +37,9 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     private ViewPager       pager;
     private ArrayList<BaseView> 
                             pages               = new ArrayList<BaseView>();
-    
+
+    private boolean         postInit            = false;
+    private boolean         commentInit         = false;
     private boolean         authorInit          = false;
     private boolean         postsInit           = false;
     
@@ -116,7 +119,8 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         setContentView(R.layout.post_base_view);
         
         groupId     = UUID.fromString(getIntent().getExtras().getString("groupId"));
-        postId          = UUID.fromString(getIntent().getExtras().getString("id"));
+        postId      = UUID.fromString(getIntent().getExtras().getString("id"));
+        commentId   = getIntent().getExtras().getString("commentId");
         //parentTitle = getIntent().getExtras().getString("parentTitle");
 
         createTabs();
@@ -194,9 +198,9 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         commentsView = new CommentsView(this, groupId, postId);
         commentsView.setTag(Utils.getString(R.string.Comments_Tab));
         commentsView.setNavigationMode(navigationTurnedOn);
-        
-        if(     post.getTotalComments() <= Commons.MAX_COMMENTS_COUNT &&
-                Utils.isCommentsLoadingWithPost(this))
+
+        if(     Utils.isCommentsLoadingWithPost(this) ||
+                commentId != null)
         {
             reloadComments();
         }
@@ -224,7 +228,11 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
 
         TitlePageIndicator titleIndicator = (TitlePageIndicator) findViewById(R.id.indicator);
         titleIndicator.setViewPager(pager);
-        titleIndicator.setCurrentItem(0);
+
+        if(commentId == null)
+            titleIndicator.setCurrentItem(0);
+        else
+            titleIndicator.setCurrentItem(1);
         
         titleIndicator
                 .setOnPageChangeListener(new ViewPager.OnPageChangeListener()
@@ -235,23 +243,15 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
                         switch (position)
                         {
                             case COMMENTS_TAB_NUM:
+                            case PROFILE_TAB_NUM:
+                                if (!commentInit)
+                                    reloadComments();
                                 if (!authorInit)
-                                {
                                     reloadAuthor();
-                                    authorInit = true;
-
-                                    if (!Utils.isCommentsLoadingWithPost(PostScreen.this))
-                                    {
-                                        reloadComments();
-                                    }
-                                }
                                 break;
                             case POSTS_TAB_NUM:
                                 if (!postsInit)
-                                {
                                     reloadPosts();
-                                    postsInit = true;
-                                }
                                 break;
                         }
                     }
@@ -276,16 +276,28 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
                         String.format(Commons.AUTHOR_POSTS_URL, post.getAuthor()),
                         Commons.PostsType.USER),
                 Utils.getString(R.string.Posts_Loading_In_Progress)));
+
+        postsInit = true;
     }
 
     private void reloadAuthor()
     {
-        pushNewTask(new TaskWrapper(null, new GetAuthorTask(post.getAuthor()), Utils.getString(R.string.Posts_Loading_In_Progress)));
+        pushNewTask(new TaskWrapper(null,
+                new GetAuthorTask(post.getAuthor()),
+                Utils.getString(R.string.Posts_Loading_In_Progress)));
+
+        authorInit = true;
     }
 
     private void reloadComments()
     {
-        pushNewTask(new TaskWrapper(null, new GetCommentsTask(groupId, postId), Utils.getString(R.string.Posts_Loading_In_Progress)));
+        pushNewTask(new TaskWrapper(null,
+                commentId == null ?
+                        new GetCommentsTask(groupId, postId) :
+                        new GetCommentsTask(groupId, postId, commentId),
+                Utils.getString(R.string.Posts_Loading_In_Progress)));
+
+        commentInit = true;
     }
 
     @Override
