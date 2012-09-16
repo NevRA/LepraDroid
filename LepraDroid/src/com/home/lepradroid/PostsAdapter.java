@@ -119,6 +119,13 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
             if(post.isGolden())
             {
                 ImageView stars = (ImageView)convertView.findViewById(R.id.stars);
+                stars.setImageResource(R.drawable.ic_stars);
+                stars.setVisibility(View.VISIBLE);
+            }
+            else if(post.isSilver())
+            {
+                ImageView stars = (ImageView)convertView.findViewById(R.id.stars);
+                stars.setImageResource(R.drawable.ic_wasstars);
                 stars.setVisibility(View.VISIBLE);
             }
             

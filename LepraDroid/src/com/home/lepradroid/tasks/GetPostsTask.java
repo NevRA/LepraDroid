@@ -286,9 +286,13 @@ public class GetPostsTask extends BaseTask
                 Element author = content.getElementsByClass("p").first();
                 if(author != null)
                 {
-                    Element star = author.getElementsByClass("stars").first();
-                    if(star != null)
+                    Element golden = author.getElementsByClass("stars").first();
+                    if(golden != null)
                         post.setGolden(true);
+                    Element silver = author.getElementsByClass("wasstars").first();
+                    if(silver != null)
+                        post.setSilver(true);
+
                     Elements span = author.getElementsByTag("span");
                     Elements a = span.first().getElementsByTag("a");
                     String url = a.first().attr("href");
