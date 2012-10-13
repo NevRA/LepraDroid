@@ -212,7 +212,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 webSettings.setJavaScriptEnabled(true);
                 webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\">" + comment.getHtml() + "</body>", "text/html", "UTF-8", null);
                 webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
-                webView.setOnTouchListener(new View.OnTouchListener() 
+                webView.setOnTouchListener(new View.OnTouchListener()
                 {
                     @Override
                     public boolean onTouch(View arg0, MotionEvent event)
@@ -243,6 +243,17 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 
                 Utils.setTextViewFontSize(textOnly);
             }
+
+            root.setOnLongClickListener(new View.OnLongClickListener()
+            {
+                @Override
+                public boolean onLongClick(View v)
+                {
+                    commentPos = position;
+                    OnLongClick();
+                    return false;
+                }
+            });
             
             TextView author = (TextView)convertView.findViewById(R.id.author);
             author.setText(Html.fromHtml(comment.getSignature()));
