@@ -192,11 +192,6 @@ public class Utils
             Logger.e(e);
         }
     }
-
-    public static Spanned getRatingStringFromBaseItem(BaseItem item)
-    {
-         return getRatingStringFromBaseItem(item, SettingsWorker.Instance().loadVoteWeight());
-    }
     
     public static Spanned getRatingStringFromBaseItem(BaseItem item, int voteWeight)
     {

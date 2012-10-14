@@ -46,7 +46,8 @@ public class ServerWorker
     private static volatile ServerWorker            instance;
     private ClientConnectionManager                 connectionManager;
     private HttpParams                              connectionParameters;
-    
+
+    private final Map<UUID, Integer>                blogVoteWeights         = Collections.synchronizedMap(new HashMap<UUID, Integer>());
     private final Map<UUID, ArrayList<BaseItem>>    posts                   = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
     private final Map<String, Author>               authors                 = Collections.synchronizedMap(new HashMap<String, Author>());
     private final Map<UUID, Integer>                postsPagesCount         = Collections.synchronizedMap(new HashMap<UUID, Integer>());
@@ -239,7 +240,12 @@ public class ServerWorker
 
     public String getCommentRating(String postId, String commentId) throws Exception
     {
-        return postRequest(Commons.COMMENT_RATING_URL, String.format("id=%s&type=0&post_id=%s", commentId, postId ));
+        return postRequest(Commons.COMMENT_RATING_URL, String.format("id=%s&type=0&post_id=%s", commentId, postId));
+    }
+
+    public String getPostRating(String postId) throws Exception
+    {
+        return postRequest(Commons.COMMENT_RATING_URL, String.format("id=%s&type=1", postId));
     }
     
     /*public int getNewItemsCount() throws Exception
@@ -304,6 +310,16 @@ public class ServerWorker
             }
             return clonedList;
         }
+    }
+
+    public Integer getBlogVoteWeight(UUID groupId)
+    {
+        return blogVoteWeights.get(groupId);
+    }
+
+    public void addBlogVoteWeight(UUID groupId, int weight)
+    {
+        blogVoteWeights.put(groupId, weight);
     }
 
     public BaseItem getComment(UUID postId, UUID commentId)

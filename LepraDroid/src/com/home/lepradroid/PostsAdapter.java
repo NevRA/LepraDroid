@@ -134,7 +134,7 @@ class PostsAdapter extends ArrayAdapter<BaseItem>
             if(groupId.equals(Commons.INBOX_POSTS_ID) || post.isVoteDisabled())
                 ratingView.setVisibility(View.GONE);
             else
-                ratingView.setText(Utils.getRatingStringFromBaseItem(post));
+                ratingView.setText(Utils.getRatingStringFromBaseItem(post, post.getVoteWeight()));
             
             return convertView;
         }

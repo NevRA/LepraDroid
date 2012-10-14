@@ -18,7 +18,6 @@ import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
-import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
@@ -132,7 +131,6 @@ public class GetPostsTask extends BaseTask
     protected Throwable doInBackground(Void... params)
     {
         long startTime = System.nanoTime();
-        ArrayList<BaseItem> items = new ArrayList<BaseItem>();
                
         try
         {
@@ -300,11 +298,8 @@ public class GetPostsTask extends BaseTask
                         post.setUrl(url);
                     else
                         post.setUrl(Commons.SITE_URL + url);
-                    
-                    if(post.isInbox())
-                        post.setLepraId(post.getUrl().split("inbox/")[1]);
-                    else
-                        post.setLepraId(post.getUrl().split("comments/")[1]);
+
+                    post.setLepraId(post.getUrl().split(post.isInbox() ? "inbox/" : "comments/")[1]);
                     
                     if(a.size() == 2)
                     {
@@ -322,14 +317,27 @@ public class GetPostsTask extends BaseTask
                 }
                 
                 if(isCancelled()) break;
-                
-                items.add(post);
+
+                ServerWorker.Instance().addNewPost(groupId, post);
+
+                if(     !post.isMain() &&
+                        !post.isInbox() &&
+                        (post.isPlusVoted() || post.isMinusVoted()))
+                {
+                    Integer voteWeight = ServerWorker.Instance().getBlogVoteWeight(groupId);
+                    if(voteWeight == null)
+                    {
+                         new SetVoteWeightTask(post.getId())
+                             .execute()
+                                .get();
+                    }
+                    else
+                        post.setVoteWeight(voteWeight);
+                }
+
                 if(num % 5 == 0 || lastElement)
                 {
-                    ServerWorker.Instance().addNewPosts(groupId, items);
                     notifyAboutPostsUpdate();
-                    
-                    items.clear();
                 }
             }
             while (!lastElement);

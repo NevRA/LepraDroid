@@ -23,7 +23,7 @@ public class BaseItem extends RateItem
         this.id = id;
     }
 
-    protected UUID getGroupId()
+    public UUID getGroupId()
     {
         return groupId;
     }

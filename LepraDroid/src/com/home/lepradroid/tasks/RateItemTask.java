@@ -157,6 +157,15 @@ public class RateItemTask extends BaseTask
                 response = ServerWorker.Instance().rateItemRequest(type, wtf, "", post.getLepraId(),
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
+                if(!post.isMain())
+                {
+                    if(post.getVoteWeight() == -1)
+                    {
+                        new SetVoteWeightTask(post.getId())
+                            .execute()
+                                .get();
+                    }
+                }
                 break;
             case COMMENT:
                 Comment comment = (Comment)ServerWorker.Instance().getComment(post.getId(), commentId);

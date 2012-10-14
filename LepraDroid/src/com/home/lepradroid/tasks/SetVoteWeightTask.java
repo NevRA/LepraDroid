@@ -14,6 +14,11 @@ public class SetVoteWeightTask extends BaseTask
     private Post    post;
     private String  commentId;
 
+    public SetVoteWeightTask(UUID postId)
+    {
+        post = (Post)ServerWorker.Instance().getPostById(postId);
+    }
+
     public SetVoteWeightTask(UUID postId, String commentId)
     {
         post = (Post)ServerWorker.Instance().getPostById(postId);
@@ -25,22 +30,42 @@ public class SetVoteWeightTask extends BaseTask
     {
         try
         {
-            String userName = SettingsWorker.Instance().loadUserName();
-
-            JSONArray votes = new JSONObject(ServerWorker.Instance().getCommentRating(post.getLepraId(), commentId))
-                    .getJSONArray("votes");
-
-            for(int index = 0; index < votes.length(); ++index)
+            Integer weight = ServerWorker.Instance().getBlogVoteWeight(post.getGroupId());
+            if(weight == null)
             {
-                JSONObject vote = votes.getJSONObject(index);
-                String voteUserName = vote.getString("login");
-                if(userName.equals(voteUserName))
-                {
-                    post.setVoteWeight(vote.getInt("attitude"));
-                    Logger.d("Vote weigh: " + post.getVoteWeight());
+                JSONArray votes;
 
-                    break;
+                if(commentId != null)
+                {
+                    votes = new JSONObject(ServerWorker.Instance().getCommentRating(post.getLepraId(), commentId))
+                            .getJSONArray("votes");
                 }
+                else
+                {
+                    votes = new JSONObject(ServerWorker.Instance().getPostRating(post.getLepraId()))
+                            .getJSONArray("votes");
+                }
+
+                String userName = SettingsWorker.Instance().loadUserName();
+
+                for(int index = 0; index < votes.length(); ++index)
+                {
+                    JSONObject vote = votes.getJSONObject(index);
+                    String voteUserName = vote.getString("login");
+                    if(userName.equals(voteUserName))
+                    {
+                        weight = vote.getInt("attitude");
+                        ServerWorker.Instance().addBlogVoteWeight(post.getGroupId(),weight);
+
+                        break;
+                    }
+                }
+            }
+
+            if(weight != null)
+            {
+                post.setVoteWeight(weight);
+                Logger.d("Vote weigh: " + post.getVoteWeight());
             }
         }
         catch (Exception e)
