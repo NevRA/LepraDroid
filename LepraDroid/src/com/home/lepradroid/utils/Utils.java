@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
+import com.home.lepradroid.Main;
 import com.home.lepradroid.tasks.PostInboxTask;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.HttpEntityWrapper;
@@ -49,7 +50,6 @@ import android.widget.TextView;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
-import com.home.lepradroid.StartupActivity;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
@@ -303,7 +303,10 @@ public class Utils
     
     public static boolean isCustomBlogPosts(UUID groupId)
     {
-        return (!groupId.equals(Commons.MAIN_POSTS_ID) && !groupId.equals(Commons.MYSTUFF_POSTS_ID) && !groupId.equals(Commons.FAVORITE_POSTS_ID) && !groupId.equals(Commons.INBOX_POSTS_ID));
+        return (!groupId.equals(Commons.MAIN_POSTS_ID) &&
+                !groupId.equals(Commons.MYSTUFF_POSTS_ID) &&
+                !groupId.equals(Commons.FAVORITE_POSTS_ID) &&
+                !groupId.equals(Commons.INBOX_POSTS_ID));
     }
     
     public static String wrapLepraTags(Element root)
@@ -472,7 +475,7 @@ public class Utils
         final NotificationManager notificationManager = 
             (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
-        final Intent intent = new Intent(context, StartupActivity.class);
+        final Intent intent = new Intent(context, Main.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
            

@@ -18,7 +18,6 @@ import com.home.lepradroid.interfaces.ItemRateUpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
-import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Utils;
 
@@ -70,10 +69,6 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
 
     private void init()
     {
-        Post post = (Post) ServerWorker.Instance().getPostById(groupId, postId);
-        if (post == null)
-            return;
-
         list = (ListView) contentView.findViewById(R.id.list);
         commentsProgress = (ProgressBar) contentView.findViewById(R.id.commentsLoadingProgress);
         progress = (ProgressBar) contentView.findViewById(R.id.progress);
@@ -99,7 +94,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
             }
         });
 
-        adapter = new CommentsAdapter(context, groupId, post.getId(), R.layout.comments_row_view, new ArrayList<BaseItem>());
+        adapter = new CommentsAdapter(context, groupId, postId, R.layout.comments_row_view, new ArrayList<BaseItem>());
         
         list.setScrollingCacheEnabled(false);
         list.setAdapter(adapter);

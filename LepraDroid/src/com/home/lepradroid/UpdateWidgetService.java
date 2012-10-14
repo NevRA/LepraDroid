@@ -32,7 +32,7 @@ public class UpdateWidgetService extends Service
                         .getApplicationContext().getPackageName(),
                         R.layout.widget_view);
                 
-                Intent clickIntent = new Intent(getApplicationContext(), StartupActivity.class);
+                Intent clickIntent = new Intent(getApplicationContext(), Main.class);
                 clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
                 clickIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 clickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

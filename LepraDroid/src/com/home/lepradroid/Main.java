@@ -23,6 +23,7 @@ import com.home.lepradroid.tasks.GetMainPagesTask;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.tasks.UpdateBadgeCounterTask;
+import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -49,15 +50,15 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
     public static final int INBOX_TAB_NUM       = 2;
     public static final int PROFILE_TAB_NUM     = 5;
     public static final int POSTS_TAB_NUM       = 6;
-    
-    
+
+
 	@Override
-	protected void onDestroy() 
+	protected void onDestroy()
 	{
 		Utils.clearData();
 		super.onDestroy();
 	}
-	
+
 	private void showHistoryOnStartUp()
 	{
 	    try
@@ -72,7 +73,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
         }
 	    catch (Exception e)
 	    {
-            // TODO
+            Logger.e(e);
         }
 	}
     
@@ -100,7 +101,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
         }
         catch (Exception e)
         {
-            // TODO
+            Logger.e(e);
         }
     }
     
