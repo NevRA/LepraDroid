@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,9 +36,8 @@ import com.home.lepradroid.utils.Utils;
 public class GetCommentsTask extends BaseTask
 {
     final private int BUFFER_SIZE = 4 * 1024;
-    
-    private UUID    groupId;
-    private UUID    postId;
+
+    private Post    post;
     private String  commentToSelectId   = null;
     private int     commentToSelect     = -1;
     private short   commentsCount       = 0;
@@ -49,10 +49,10 @@ public class GetCommentsTask extends BaseTask
     private int     totalBytesParsed    = 0;
     
     static final Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
-    static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[3];
-    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[5];
-    static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[2];
-    static final Class<?>[] argsClassesOnCommentsUpdate = new Class[3];
+    static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
+    static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[4];
+    static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[1];
+    static final Class<?>[] argsClassesOnCommentsUpdate = new Class[2];
     static Method methodOnCommentsUpdateFinished;
     static Method methodOnCommentsUpdateFirstEtries;
     static Method methodOnCommentsUpdateBegin;
@@ -62,24 +62,20 @@ public class GetCommentsTask extends BaseTask
         try
         {
             argsClassesOnCommentsUpdateFinished[0] = UUID.class;
-            argsClassesOnCommentsUpdateFinished[1] = UUID.class;
-            argsClassesOnCommentsUpdateFinished[2] = int.class;
+            argsClassesOnCommentsUpdateFinished[1] = int.class;
             methodOnCommentsUpdateFinished = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFinished", argsClassesOnCommentsUpdateFinished);
             
             argsClassesOnCommentsUpdateFirstEtries[0] = UUID.class;
-            argsClassesOnCommentsUpdateFirstEtries[1] = UUID.class;
+            argsClassesOnCommentsUpdateFirstEtries[1] = int.class;
             argsClassesOnCommentsUpdateFirstEtries[2] = int.class;
             argsClassesOnCommentsUpdateFirstEtries[3] = int.class;
-            argsClassesOnCommentsUpdateFirstEtries[4] = int.class;
             methodOnCommentsUpdateFirstEtries = CommentsUpdateListener.class.getMethod("OnCommentsUpdateFirstEntries", argsClassesOnCommentsUpdateFirstEtries); 
             
             argsClassesOnCommentsUpdateBegin[0] = UUID.class;
-            argsClassesOnCommentsUpdateBegin[1] = UUID.class;
             methodOnCommentsUpdateBegin = CommentsUpdateListener.class.getMethod("OnCommentsUpdateBegin", argsClassesOnCommentsUpdateBegin); 
             
             argsClassesOnCommentsUpdate[0] = UUID.class;
-            argsClassesOnCommentsUpdate[1] = UUID.class;
-            argsClassesOnCommentsUpdate[2] = int.class;
+            argsClassesOnCommentsUpdate[1] = int.class;
             methodOnCommentsUpdate = CommentsUpdateListener.class.getMethod("OnCommentsUpdate", argsClassesOnCommentsUpdate); 
         }
         catch (Throwable t) 
@@ -94,19 +90,17 @@ public class GetCommentsTask extends BaseTask
         super.finish();
     }
 
-    public GetCommentsTask(UUID groupId, UUID postId, String commentToSelectId)
+    public GetCommentsTask(UUID postId, String commentToSelectId)
     {
-        this.groupId = groupId;
-        this.postId = postId;
+        post = (Post)ServerWorker.Instance().getPostById(postId);
         this.commentToSelectId = commentToSelectId;
         isImagesEnabled = Utils.isImagesEnabled();
         isCommentWtfLoaded = !TextUtils.isEmpty(SettingsWorker.Instance().loadCommentWtf());
     }
     
-    public GetCommentsTask(UUID groupId, UUID postId)
+    public GetCommentsTask(UUID postId)
     {
-        this.groupId = groupId;
-        this.postId = postId;
+        post = (Post)ServerWorker.Instance().getPostById(postId);
         isImagesEnabled = Utils.isImagesEnabled();
         isCommentWtfLoaded = !TextUtils.isEmpty(SettingsWorker.Instance().loadCommentWtf());
     }
@@ -115,9 +109,8 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutCommentsUpdateBegin()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[2];
-        args[0] = groupId;
-        args[1] = postId;
+        final Object args[] = new Object[1];
+        args[0] = post.getId();
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -129,12 +122,11 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutFirstCommentsUpdate()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[5];
-        args[0] = groupId;
-        args[1] = postId;
-        args[2] = totalBytesParsed;
-        args[3] = totalBytesReaded;
-        args[4] = commentToSelect;
+        final Object args[] = new Object[4];
+        args[0] = post.getId();
+        args[1] = totalBytesParsed;
+        args[2] = totalBytesReaded;
+        args[3] = commentToSelect;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -146,10 +138,9 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutCommentsUpdateFinished()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[3];
-        args[0] = groupId;
-        args[1] = postId;
-        args[2] = commentToSelect;
+        final Object args[] = new Object[2];
+        args[0] = post.getId();
+        args[1] = commentToSelect;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -161,10 +152,9 @@ public class GetCommentsTask extends BaseTask
     public void notifyAboutCommentsUpdate()
     {
         final List<CommentsUpdateListener> listeners = ListenersWorker.Instance().getListeners(CommentsUpdateListener.class);
-        final Object args[] = new Object[3];
-        args[0] = groupId;
-        args[1] = postId;
-        args[2] = totalBytesParsed;
+        final Object args[] = new Object[2];
+        args[0] = post.getId();
+        args[1] = totalBytesParsed;
         
         for(CommentsUpdateListener listener : listeners)
         {
@@ -229,13 +219,9 @@ public class GetCommentsTask extends BaseTask
         
         try
         {
-            ServerWorker.Instance().clearCommentsById(postId);
+            ServerWorker.Instance().clearCommentsById(post.getId());
             notifyAboutCommentsUpdateBegin();
 
-            Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
-            if(post == null)
-                return null; // TODO message
-            
             userName = SettingsWorker.Instance().loadUserName();
             postAuthor = post.getAuthor();
             
@@ -366,7 +352,7 @@ public class GetCommentsTask extends BaseTask
         return e;
     }
     
-    private void parseRecord(String html)
+    private void parseRecord(String html) throws ExecutionException, InterruptedException
     {
         Element content = Jsoup.parse(Utils.replaceBadHtmlTags(html));
         Element element = content.getElementsByClass("dt").first();
@@ -375,7 +361,7 @@ public class GetCommentsTask extends BaseTask
         Comment comment = new Comment();
 
         String commentId = root.id();
-        comment.setPid(commentId);
+        comment.setLepraId(commentId);
 
         if(commentId.equals(commentToSelectId))
             commentToSelect = commentsCount;
@@ -442,21 +428,34 @@ public class GetCommentsTask extends BaseTask
             comment.setAuthor(author);
             comment.setSignature(authorElement.text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>"));
         }
-        
-        Element vote = content.getElementsByClass("vote").first();
-        if(vote != null)
+
+        if(!post.isInbox())
         {
-            String voteBody = vote.html();
-            comment.setPlusVoted(voteBody.contains("class=\"plus voted\""));
-            comment.setMinusVoted(voteBody.contains("class=\"minus voted\""));
-            
-            Element rating = vote.getElementsByTag("em").first();
-            comment.setRating(Short.valueOf(rating.text()));
+            Element vote = content.getElementsByClass("vote").first();
+            if(vote != null)
+            {
+                String voteBody = vote.html();
+                comment.setPlusVoted(voteBody.contains("class=\"plus voted\""));
+                comment.setMinusVoted(voteBody.contains("class=\"minus voted\""));
+
+                if(     !post.isMain() &&
+                        post.getVoteWeight() == -1 &&
+                            (comment.isPlusVoted() ||
+                             comment.isMinusVoted()))
+                {
+                    new SetVoteWeightTask(post.getId(), commentId)
+                        .execute()
+                            .get();
+                }
+
+                Element rating = vote.getElementsByTag("em").first();
+                comment.setRating(Short.valueOf(rating.text()));
+            }
         }
         
         comment.setNum(commentsCount);
                      
-        ServerWorker.Instance().addNewComment(postId, comment);
+        ServerWorker.Instance().addNewComment(post.getId(), comment);
         
         commentsCount++;
 

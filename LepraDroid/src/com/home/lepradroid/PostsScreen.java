@@ -174,33 +174,32 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     }
 
     @Override
-    public void OnPostRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
+    public void OnPostRateUpdate(UUID postId, int newRating, boolean successful)
+    {
+        updateAdapter();
+    }
+
+    @Override
+    public void OnCommentsUpdateBegin(UUID postId)
+    {
+    }
+
+    @Override
+    public void OnCommentsUpdateFirstEntries(UUID postId, int count, int totalCount, int commentToselect)
     {
         if(!this.groupId.equals(groupId)) return;
         updateAdapter();
     }
 
     @Override
-    public void OnCommentsUpdateBegin(UUID groupId, UUID postId)
-    {
-    }
-
-    @Override
-    public void OnCommentsUpdateFirstEntries(UUID groupId, UUID postId, int count, int totalCount, int commentToselect)
+    public void OnCommentsUpdateFinished(UUID postId, int commentToselect)
     {
         if(!this.groupId.equals(groupId)) return;
         updateAdapter();
     }
 
     @Override
-    public void OnCommentsUpdateFinished(UUID groupId, UUID postId, int commentToselect)
-    {
-        if(!this.groupId.equals(groupId)) return;
-        updateAdapter();
-    }
-
-    @Override
-    public void OnCommentsUpdate(UUID groupId, UUID postId, int count)
+    public void OnCommentsUpdate(UUID postId, int count)
     {
     }
 
@@ -210,7 +209,7 @@ public class PostsScreen extends BaseView implements CommentsUpdateListener, Pos
     }
 
     @Override
-    public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
+    public void OnCommentRateUpdate(UUID postId, UUID commentId,
             boolean successful)
     {
     }

@@ -25,19 +25,16 @@ import com.home.lepradroid.utils.Utils;
 public class PostView extends BaseView implements ItemRateUpdateListener
 {
     private Context context;
-    private UUID    groupId;
-    private UUID    id;
     private Post    post;
     private Button  plus;
     private Button  minus;
 
-    public PostView(Context context, UUID groupId, UUID postId)
+    public PostView(Context context, UUID postId)
     {
         super(context);
 
         this.context = context;
-        this.groupId = groupId;
-        this.id = postId;
+        post = (Post)ServerWorker.Instance().getPostById(postId);
 
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -51,10 +48,6 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
     private void init()
     {
-        post = (Post)ServerWorker.Instance().getPostById(groupId, id);
-        if(post == null)
-            return; // TODO some message
-
         WebView webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setWebViewClient(LinksCatcher.Instance());
@@ -91,7 +84,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         });
         
         LinearLayout buttons = (LinearLayout) contentView.findViewById(R.id.buttons);
-        if(     groupId.equals(Commons.INBOX_POSTS_ID) ||
+        if(     post.isInbox() ||
                 post.isVoteDisabled() ||
                 post.getAuthor().equalsIgnoreCase(SettingsWorker.Instance().loadUserName()))
         {
@@ -106,7 +99,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
 
     private void rateItem(RateValueType type)
     {
-        new RateItemTask(groupId, id, type).execute();
+        new RateItemTask(post.getId(), type).execute();
     }
 
     @Override
@@ -117,14 +110,14 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     }
 
     @Override
-    public void OnPostRateUpdate(UUID groupId, UUID postId, int newRating, boolean successful)
+    public void OnPostRateUpdate(UUID postId, int newRating, boolean successful)
     {
-       if(!this.groupId.equals(groupId) || !this.id.equals(postId)) return;
+       if(!post.getId().equals(postId)) return;
 
        if(successful)
        {
-           if(     groupId.equals(Commons.FAVORITE_POSTS_ID) ||
-                   groupId.equals(Commons.MYSTUFF_POSTS_ID))
+           if(     post.isFavorite() ||
+                   post.isMyStuff())
                Toast.makeText(context, Utils.getString(R.string.Rated_Item_Without_New_Rating), Toast.LENGTH_LONG).show();
            else
                Toast.makeText(context, Utils.getString(R.string.Rated_Item) + " " + Integer.toString(newRating), Toast.LENGTH_LONG).show();
@@ -147,7 +140,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
     }
 
     @Override
-    public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
+    public void OnCommentRateUpdate(UUID postId, UUID commentId,
             boolean successful)
     {
     }

@@ -1,14 +1,23 @@
 package com.home.lepradroid.objects;
 
+import com.home.lepradroid.commons.Commons;
+
+import java.util.UUID;
 
 public class Post extends BaseItem
 {
     private short    totalComments       = -1;
     private short    newComments         = -1;
-    private byte[]   pid                 = null;
+    private int      voteWeight          = -1;
+    private byte[]   lepraId             = null;
     private boolean  golden              = false;
     private boolean  silver              = false;
     private boolean  voteDisabled        = false;
+
+    public Post(UUID groupId)
+    {
+        setGroupId(groupId);
+    }
     
     public short getTotalComments()
     {
@@ -20,15 +29,15 @@ public class Post extends BaseItem
         this.totalComments = totalComments;
     }
     
-    public String getPid()
+    public String getLepraId()
     {
-        if(pid == null) return "";
-        return new String(pid);
+        if(lepraId == null) return "";
+        return new String(lepraId);
     }
     
-    public void setPid(String pid)
+    public void setLepraId(String lepraId)
     {
-        this.pid = pid.getBytes();
+        this.lepraId = lepraId.getBytes();
     }
     
     public short getNewComments()
@@ -69,5 +78,35 @@ public class Post extends BaseItem
     public void setSilver(boolean silver)
     {
         this.silver = silver;
+    }
+
+    public int getVoteWeight()
+    {
+        return voteWeight;
+    }
+
+    public void setVoteWeight(int voteWeight)
+    {
+        this.voteWeight = voteWeight;
+    }
+
+    public boolean isInbox()
+    {
+        return getGroupId().equals(Commons.INBOX_POSTS_ID);
+    }
+
+    public boolean isMyStuff()
+    {
+        return getGroupId().equals(Commons.MYSTUFF_POSTS_ID);
+    }
+
+    public boolean isFavorite()
+    {
+        return getGroupId().equals(Commons.FAVORITE_POSTS_ID);
+    }
+
+    public boolean isMain()
+    {
+        return getGroupId().equals(Commons.MAIN_POSTS_ID);
     }
 }

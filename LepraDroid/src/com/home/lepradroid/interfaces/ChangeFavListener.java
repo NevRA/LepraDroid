@@ -6,5 +6,5 @@ import com.home.lepradroid.commons.Commons.StuffOperationType;
 
 public interface ChangeFavListener extends UpdateListener
 {
-    void OnChangeFav(UUID groupId, UUID postId, StuffOperationType type, boolean successful);
+    void OnChangeFav(UUID postId, StuffOperationType type, boolean successful);
 }

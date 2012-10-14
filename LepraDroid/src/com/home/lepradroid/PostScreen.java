@@ -24,8 +24,6 @@ import com.viewpagerindicator.TitlePageIndicator;
 
 public class PostScreen extends BaseActivity implements ChangeMyStuffListener, ChangeFavListener
 {
-    private UUID            groupId;
-    private UUID            postId;
     private String          commentId;
     //private String          parentTitle;
     private UUID            authorPostsGroupId  = UUID.randomUUID();
@@ -54,7 +52,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     @Override
     protected void onDestroy()
     {
-        ServerWorker.Instance().clearCommentsById(postId);
+        ServerWorker.Instance().clearCommentsById(post.getId());
         
         if(postView != null)
         {
@@ -83,13 +81,13 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         switch(pager.getCurrentItem())
         {
         case POST_TAB_NUM:
-            if(Utils.isAlreadyInStuff(Commons.MYSTUFF_POSTS_ID, post.getPid()))
+            if(Utils.isAlreadyInStuff(Commons.MYSTUFF_POSTS_ID, post.getLepraId()))
                 menu.add(0, MENU_DEL_STUFF, 0, Utils.getString(R.string.Del_Stuff_Menu)).setIcon(R.drawable.ic_del_stuff);
             else
                 menu.add(0, MENU_ADD_STUFF, 0, Utils.getString(R.string.Add_Stuff_Menu)).setIcon(R.drawable.ic_add_stuff); 
-            if(!groupId.equals(Commons.INBOX_POSTS_ID))
+            if(!post.isInbox())
             {
-                if(Utils.isAlreadyInStuff(Commons.FAVORITE_POSTS_ID, post.getPid()))
+                if(Utils.isAlreadyInStuff(Commons.FAVORITE_POSTS_ID, post.getLepraId()))
                     menu.add(0, MENU_DEL_FAV, 0, Utils.getString(R.string.Del_Fav_Menu)).setIcon(R.drawable.ic_del_fav);
                 else
                     menu.add(0, MENU_ADD_FAV, 0, Utils.getString(R.string.Add_Fav_Menu)).setIcon(R.drawable.ic_add_fav); 
@@ -117,11 +115,10 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.post_base_view);
-        
-        groupId     = UUID.fromString(getIntent().getExtras().getString("groupId"));
-        postId      = UUID.fromString(getIntent().getExtras().getString("id"));
+
+        UUID postId      = UUID.fromString(getIntent().getExtras().getString("id"));
         commentId   = getIntent().getExtras().getString("commentId");
-        //parentTitle = getIntent().getExtras().getString("parentTitle");
+        post = (Post)ServerWorker.Instance().getPostById(postId);
 
         createTabs();
     }
@@ -133,16 +130,16 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         switch (item.getItemId())
         {
         case MENU_ADD_STUFF:
-            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(groupId, postId, StuffOperationType.ADD), null));
+            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(post.getId(), StuffOperationType.ADD), null));
             break;
         case MENU_DEL_STUFF:
-            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(groupId, postId, StuffOperationType.REMOVE), null));
+            pushNewTask(new TaskWrapper(null, new ChangeMyStuffTask(post.getId(), StuffOperationType.REMOVE), null));
             break;
         case MENU_ADD_FAV:
-            pushNewTask(new TaskWrapper(null, new ChangeFavTask(groupId, postId, StuffOperationType.ADD), null));
+            pushNewTask(new TaskWrapper(null, new ChangeFavTask(post.getId(), StuffOperationType.ADD), null));
             break;
         case MENU_DEL_FAV:
-            pushNewTask(new TaskWrapper(null, new ChangeFavTask(groupId, postId, StuffOperationType.REMOVE), null));
+            pushNewTask(new TaskWrapper(null, new ChangeFavTask(post.getId(), StuffOperationType.REMOVE), null));
             break;
         case MENU_RELOAD:
             switch(pager.getCurrentItem())
@@ -182,20 +179,20 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
 
     private void addComment()
     {
-        Utils.addComment(this, groupId, postId, null);
+        Utils.addComment(this, post.getId(), null);
     }
     
     private void createTabs()
     {
-        post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
+        post = (Post)ServerWorker.Instance().getPostById(post.getId());
         if(post == null) {finish(); return;}
         
         navigationTurnedOn = post.getNewComments() > 0;
 
-        postView = new PostView(this, groupId, postId);
+        postView = new PostView(this, post.getId());
         postView.setTag(Utils.getString(R.string.Post_Tab));
         
-        commentsView = new CommentsView(this, groupId, postId);
+        commentsView = new CommentsView(this, post.getId());
         commentsView.setTag(Utils.getString(R.string.Comments_Tab));
         commentsView.setNavigationMode(navigationTurnedOn);
 
@@ -293,39 +290,39 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     {
         pushNewTask(new TaskWrapper(null,
                 commentId == null ?
-                        new GetCommentsTask(groupId, postId) :
-                        new GetCommentsTask(groupId, postId, commentId),
+                        new GetCommentsTask(post.getId()) :
+                        new GetCommentsTask(post.getId(), commentId),
                 Utils.getString(R.string.Posts_Loading_In_Progress)));
 
         commentInit = true;
     }
 
     @Override
-    public void OnChangeMyStuff(UUID groupId, UUID postId,
+    public void OnChangeMyStuff(UUID postId,
             StuffOperationType type, boolean successful)
     {
-        if(!this.groupId.equals(groupId) || !this.postId.equals(postId))
+        if(!post.getId().equals(postId))
             return;
         
         if(successful)
         {
             Toast.makeText(this, Utils.getString(type == StuffOperationType.ADD ? R.string.Post_Added_To_Stuff : R.string.Post_Removed_From_Stuff), Toast.LENGTH_LONG).show();
-            if(groupId.equals(Commons.MYSTUFF_POSTS_ID))
+            if(post.isMyStuff())
                 finish();
         }
     }
 
     @Override
-    public void OnChangeFav(UUID groupId, UUID postId, StuffOperationType type,
+    public void OnChangeFav(UUID postId, StuffOperationType type,
             boolean successful)
     {
-        if(!this.groupId.equals(groupId) || !this.postId.equals(postId))
+        if(!post.getId().equals(postId))
             return;
         
         if(successful)
         {
             Toast.makeText(this, Utils.getString(type == StuffOperationType.ADD ? R.string.Post_Added_To_Fav : R.string.Post_Removed_From_Fav), Toast.LENGTH_LONG).show();
-            if(groupId.equals(Commons.FAVORITE_POSTS_ID))
+            if(post.isFavorite())
                 finish();
         }
     }

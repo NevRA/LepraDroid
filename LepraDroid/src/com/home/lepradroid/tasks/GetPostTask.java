@@ -73,10 +73,13 @@ public class GetPostTask extends BaseTask
                
         try
         {
+            Post post = new Post(groupId);
+            post.setId(postId);
+
             String html = ServerWorker.Instance().getContent(url);
             String postOrd = "<div class=\"post ord";
             String postOrdGolden = "<div class=\"post golden ord";
-            String endStr = groupId.equals(Commons.INBOX_POSTS_ID) ? "<div id=\"inbox_comments\"" : "<div id=\"content\"";
+            String endStr = post.isInbox() ? "<div id=\"inbox_comments\"" : "<div id=\"content\"";
 
             int start = html.indexOf(postOrd, 0);
             if (start == -1)
@@ -88,8 +91,7 @@ public class GetPostTask extends BaseTask
 
             Element element = content.getElementsByClass("dt").first();
 
-            Post post = new Post();
-            post.setId(postId);
+
             
             Elements images = element.getElementsByTag("img");
             int imageNum = 0;
@@ -135,7 +137,7 @@ public class GetPostTask extends BaseTask
             post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
 
             post.setUrl(url);
-            post.setPid(url.split(groupId.equals(Commons.INBOX_POSTS_ID) ? "inbox/" : "comments/")[1]);
+            post.setLepraId(url.split(post.isInbox() ? "inbox/" : "comments/")[1]);
 
             Elements author = content.getElementsByClass("p");
             post.setAuthor(author.first().getElementsByTag("a").get(1).text());

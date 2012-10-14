@@ -5,34 +5,34 @@ import com.home.lepradroid.commons.Commons;
 
 public class Comment extends BaseItem
 {
-    private byte[]   parentPid           = null;
-    private byte[]   pid                 = null;
+    private byte[]   parentLepraId       = null;
+    private byte[]   lepraId             = null;
     private short    level               = 0;
     private short    num                 = 0;
     private boolean  isNew               = false;
     private boolean  isPostAuthor        = false;
     private boolean  isOnlyText          = false;
     
-    public String getParentPid()
+    public String getParentLepraId()
     {
-        if(parentPid == null) return "";
-        return new String(parentPid);
+        if(parentLepraId == null) return "";
+        return new String(parentLepraId);
     }
     
-    public void setParentPid(String parentPid)
+    public void setParentLepraId(String parentLepraId)
     {
-        this.parentPid = parentPid.getBytes();
+        this.parentLepraId = parentLepraId.getBytes();
     }
     
-    public String getPid()
+    public String getLepraId()
     {
-        if(pid == null) return "";
-        return new String(pid);
+        if(lepraId == null) return "";
+        return new String(lepraId);
     }
     
-    public void setPid(String pid)
+    public void setLepraId(String lepraId)
     {
-        this.pid = pid.getBytes();
+        this.lepraId = lepraId.getBytes();
     }
 
     public short getLevel()

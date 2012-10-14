@@ -5,6 +5,7 @@ import java.util.UUID;
 public class BaseItem extends RateItem
 {
     private UUID     id                  = UUID.randomUUID();
+    private UUID     groupId             = null;
     private byte[]   html                = null;
     private byte[]   text                = null;
     private byte[]   url                 = null;
@@ -20,6 +21,16 @@ public class BaseItem extends RateItem
     public void setId(UUID id)
     {
         this.id = id;
+    }
+
+    protected UUID getGroupId()
+    {
+        return groupId;
+    }
+
+    public void setGroupId(UUID groupId)
+    {
+        this.groupId = groupId;
     }
     
     public void setHtml(String html)

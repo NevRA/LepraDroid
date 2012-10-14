@@ -192,16 +192,22 @@ public class Utils
             Logger.e(e);
         }
     }
-    
+
     public static Spanned getRatingStringFromBaseItem(BaseItem item)
     {
-        final Integer voteWeight = SettingsWorker.Instance().loadVoteWeight();
+         return getRatingStringFromBaseItem(item, SettingsWorker.Instance().loadVoteWeight());
+    }
+    
+    public static Spanned getRatingStringFromBaseItem(BaseItem item, int voteWeight)
+    {
+        if(voteWeight == -1) voteWeight = SettingsWorker.Instance().loadVoteWeight();
+
         if(!item.isPlusVoted() && !item.isMinusVoted())
             return Html.fromHtml(Integer.toString(item.getRating()));
         else if(item.isPlusVoted())
-            return Html.fromHtml(Integer.toString(item.getRating() - voteWeight) + " + <font color='green'>" + voteWeight.toString() + "</font>");
+            return Html.fromHtml(Integer.toString(item.getRating() - voteWeight) + " + <font color='green'>" + voteWeight + "</font>");
         else
-            return Html.fromHtml(Integer.toString(item.getRating() + voteWeight) + " - <font color='red'>" + voteWeight.toString() + "</font>");
+            return Html.fromHtml(Integer.toString(item.getRating() + voteWeight) + " - <font color='red'>" + voteWeight + "</font>");
     }
     
     public static Spanned getCommentsStringFromPost(Post post)
@@ -247,9 +253,9 @@ public class Utils
         },200);
     }
     
-    public static void addComment(final Context context, final UUID groupId, final UUID postId, final UUID commentId)
+    public static void addComment(final Context context, final UUID postId, final UUID commentId)
     {
-        final Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
+        final Post post = (Post)ServerWorker.Instance().getPostById(postId);
         final Comment comment = (Comment)ServerWorker.Instance().getComment(postId, commentId);
         
         final EditText input = new EditText(context);
@@ -267,7 +273,7 @@ public class Utils
             {
                 final String value = input.getText().toString(); 
                 
-                new TaskWrapper(null, new PostCommentTask(post.getId(), SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.getPid() : "", post.getPid(), (short)(comment != null ? comment.getLevel() + 1 : 0), value), null);
+                new TaskWrapper(null, new PostCommentTask(post.getId(), SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.getLepraId() : "", post.getLepraId(), (short)(comment != null ? comment.getLevel() + 1 : 0), value), null);
             }
         }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
         {
@@ -299,14 +305,6 @@ public class Utils
         }
         
         return true;
-    }
-    
-    public static boolean isCustomBlogPosts(UUID groupId)
-    {
-        return (!groupId.equals(Commons.MAIN_POSTS_ID) &&
-                !groupId.equals(Commons.MYSTUFF_POSTS_ID) &&
-                !groupId.equals(Commons.FAVORITE_POSTS_ID) &&
-                !groupId.equals(Commons.INBOX_POSTS_ID));
     }
     
     public static String wrapLepraTags(Element root)
@@ -619,7 +617,7 @@ public class Utils
         {
             for(BaseItem post : posts)
             {
-                if(((Post)post).getPid().equals(pid))
+                if(((Post)post).getLepraId().equals(pid))
                     return true;
             }
         }

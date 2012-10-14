@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import android.util.Pair;
 
-import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.RateType;
 import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ItemRateUpdateListener;
@@ -23,16 +22,15 @@ import com.home.lepradroid.utils.Utils;
 
 public class RateItemTask extends BaseTask
 {
-    private UUID groupId;
-    private UUID postId;
+    private Post post;
     private UUID commentId;
     private RateType type;
     private String wtf;
-    private String id;
+    private String userId;
     private RateValueType valueType;
 
-    static final Class<?>[] argsClassesOnPostRateUpdate = new Class[4];
-    static final Class<?>[] argsClassesOnCommentRateUpdate = new Class[4];
+    static final Class<?>[] argsClassesOnPostRateUpdate = new Class[3];
+    static final Class<?>[] argsClassesOnCommentRateUpdate = new Class[3];
     static final Class<?>[] argsClassesOnAuthorRateUpdate = new Class[2];
     static Method methodOnPostRateUpdate;
     static Method methodOnCommentRateUpdate;
@@ -43,14 +41,12 @@ public class RateItemTask extends BaseTask
         try
         {
             argsClassesOnPostRateUpdate[0] = UUID.class;
-            argsClassesOnPostRateUpdate[1] = UUID.class;
-            argsClassesOnPostRateUpdate[2] = int.class;
-            argsClassesOnPostRateUpdate[3] = boolean.class;
+            argsClassesOnPostRateUpdate[1] = int.class;
+            argsClassesOnPostRateUpdate[2] = boolean.class;
             
             argsClassesOnCommentRateUpdate[0] = UUID.class;
             argsClassesOnCommentRateUpdate[1] = UUID.class;
-            argsClassesOnCommentRateUpdate[2] = UUID.class;
-            argsClassesOnCommentRateUpdate[3] = boolean.class;
+            argsClassesOnCommentRateUpdate[2] = boolean.class;
             
             argsClassesOnAuthorRateUpdate[0] = String.class;
             argsClassesOnAuthorRateUpdate[1] = boolean.class;
@@ -76,7 +72,7 @@ public class RateItemTask extends BaseTask
         final List<ItemRateUpdateListener> listeners = ListenersWorker
                 .Instance().getListeners(ItemRateUpdateListener.class);
         final Object args[] = new Object[2];
-        args[0] = id;
+        args[0] = userId;
         args[1] = successful;
 
         for (ItemRateUpdateListener listener : listeners)
@@ -92,11 +88,10 @@ public class RateItemTask extends BaseTask
     {
         final List<ItemRateUpdateListener> listeners = ListenersWorker
                 .Instance().getListeners(ItemRateUpdateListener.class);
-        final Object args[] = new Object[4];
-        args[0] = groupId;
-        args[1] = postId;
-        args[2] = newRating;
-        args[3] = successful;
+        final Object args[] = new Object[3];
+        args[0] = post.getId();
+        args[1] = newRating;
+        args[2] = successful;
 
         for (ItemRateUpdateListener listener : listeners)
         {
@@ -111,11 +106,10 @@ public class RateItemTask extends BaseTask
     {
         final List<ItemRateUpdateListener> listeners = ListenersWorker
                 .Instance().getListeners(ItemRateUpdateListener.class);
-        final Object args[] = new Object[4];
-        args[0] = groupId;
-        args[1] = postId;
-        args[2] = commentId;
-        args[3] = successful;
+        final Object args[] = new Object[3];
+        args[0] = post.getId();
+        args[1] = commentId;
+        args[2] = successful;
 
         for (ItemRateUpdateListener listener : listeners)
         {
@@ -125,32 +119,28 @@ public class RateItemTask extends BaseTask
         }
     }
 
-    public RateItemTask(UUID groupId, UUID postId, RateValueType valueType)
+    public RateItemTask(UUID postId, RateValueType valueType)
     {
-        this.groupId = groupId;
-        this.postId = postId;
+        post = (Post)ServerWorker.Instance().getPostById(postId);
         this.type = RateType.POST;
         this.wtf = SettingsWorker.Instance().loadVoteWtf();
         this.valueType = valueType;
-        this.id = ((Post)ServerWorker.Instance().getPostById(groupId, postId)).getPid();
     }
     
-    public RateItemTask(UUID groupId, UUID postId, UUID commentId, RateValueType valueType)
+    public RateItemTask(UUID postId, UUID commentId, RateValueType valueType)
     {
-        this.groupId = groupId;
-        this.postId = postId;
+        post = (Post)ServerWorker.Instance().getPostById(postId);
         this.type = RateType.COMMENT;
         this.wtf = SettingsWorker.Instance().loadVoteWtf();
         this.valueType = valueType;
-        this.id = ((Post)ServerWorker.Instance().getPostById(groupId, postId)).getPid();
         this.commentId = commentId;
     }
 
-    public RateItemTask(String id, RateValueType valueType)
+    public RateItemTask(String userId, RateValueType valueType)
     {
         this.type = RateType.KARMA;
         this.wtf = SettingsWorker.Instance().loadVoteKarmaWtf();
-        this.id = id;
+        this.userId = userId;
         this.valueType = valueType;
     }
 
@@ -164,48 +154,59 @@ public class RateItemTask extends BaseTask
             switch (type)
             {
             case POST:
-                response = ServerWorker.Instance().rateItemRequest(type, wtf, "", id,
+                response = ServerWorker.Instance().rateItemRequest(type, wtf, "", post.getLepraId(),
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 break;
             case COMMENT:
-                Comment comment = (Comment)ServerWorker.Instance().getComment(postId, commentId);
-                response = ServerWorker.Instance().rateItemRequest(type, wtf, comment.getPid(), id,
+                Comment comment = (Comment)ServerWorker.Instance().getComment(post.getId(), commentId);
+                response = ServerWorker.Instance().rateItemRequest(type, wtf, comment.getLepraId(), post.getLepraId(),
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
+                if(!post.isMain())
+                {
+                    if(post.getVoteWeight() == -1)
+                    {
+                        new SetVoteWeightTask(post.getId(), comment.getLepraId())
+                            .execute()
+                                .get();
+                    }
+                }
                 break;
             case KARMA:
                 /*response = */ServerWorker.Instance()
-                        .rateItemRequest(type, wtf, id, "", valueType,
+                        .rateItemRequest(type, wtf, userId, "", valueType,
                                 valueType == RateValueType.MINUS ? "3" : "1");
                 response = ServerWorker.Instance()
-                        .rateItemRequest(type, wtf, id, "", valueType,
+                        .rateItemRequest(type, wtf, userId, "", valueType,
                                 valueType == RateValueType.MINUS ? "4" : "2");
                 break;
             default:
                 break;
             }
 
-            if (Utils.isIntNumber(response)
-                    || groupId.equals(Commons.FAVORITE_POSTS_ID)
-                    || groupId.equals(Commons.MYSTUFF_POSTS_ID))
+            if (    Utils.isIntNumber(response)
+                    || post.isFavorite()
+                    || post.isMyStuff())
             {
                 RateItem item = null;
 
                 switch (type)
                 {
                 case POST:
-                    item = ServerWorker.Instance().getPostById(groupId, postId);
-                    item.setRating((groupId.equals(Commons.FAVORITE_POSTS_ID) || groupId
-                            .equals(Commons.MYSTUFF_POSTS_ID)) ? item.getRating()
-                            : Short.valueOf(response));
+                    item = post;
+                    item.setRating((
+                            post.isFavorite() ||
+                            post.isMyStuff()) ?
+                                item.getRating() :
+                                Short.valueOf(response));
                     break;
                 case COMMENT:
-                    item = ServerWorker.Instance().getComment(postId, commentId);
+                    item = ServerWorker.Instance().getComment(post.getId(), commentId);
                     item.setRating(Short.valueOf(response));
                     break;
                 case KARMA:
-                    item = ServerWorker.Instance().getAuthorById(id);
+                    item = ServerWorker.Instance().getAuthorById(userId);
                     Throwable res = new GetAuthorTask(((Author)item).getUserName(), true).execute().get();
                     if(res != null)
                         throw res;
@@ -249,7 +250,7 @@ public class RateItemTask extends BaseTask
             notifyOnAuthorRateUpdate(successful);
         if(type == RateType.POST)
             notifyOnPostRateUpdate(successful, newRating);
-        else
+        if(type == RateType.COMMENT)
             notifyOnCommentRateUpdate(successful);
     }
 }

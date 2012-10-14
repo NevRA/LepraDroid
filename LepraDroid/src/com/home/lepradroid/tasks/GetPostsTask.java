@@ -235,7 +235,7 @@ public class GetPostsTask extends BaseTask
                     ServerWorker.Instance().addPostPagesCount(groupId, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
                 }
                 
-                Post post = new Post();
+                Post post = new Post(groupId);
                 
                 Element element = content.getElementsByClass("dt").first();
                 Elements images = element.getElementsByTag("img");
@@ -301,10 +301,10 @@ public class GetPostsTask extends BaseTask
                     else
                         post.setUrl(Commons.SITE_URL + url);
                     
-                    if(groupId.equals(Commons.INBOX_POSTS_ID))
-                        post.setPid(post.getUrl().split("inbox/")[1]);
+                    if(post.isInbox())
+                        post.setLepraId(post.getUrl().split("inbox/")[1]);
                     else
-                        post.setPid(post.getUrl().split("comments/")[1]);
+                        post.setLepraId(post.getUrl().split("comments/")[1]);
                     
                     if(a.size() == 2)
                     {

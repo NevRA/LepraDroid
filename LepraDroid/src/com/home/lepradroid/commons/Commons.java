@@ -20,6 +20,9 @@ public class Commons
     public static final String MYCTL_URL        = SITE_URL + "/myctl";
     public static final String FAVSCTL_URL      = SITE_URL + "/favsctl";
     public static final String ADD_INBOX_URL    = SITE_URL + "my/inbox/write/";
+    public static final String COMMENT_RATING_URL
+                                                = SITE_URL + "votesctl/";
+
 
     public static final String APP_TAG          = "LepraDroid";
     

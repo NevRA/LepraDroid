@@ -18,21 +18,18 @@ import com.home.lepradroid.utils.Logger;
 
 public class ChangeFavTask extends BaseTask
 {
-    private String              pid;
+    private Post                post;
     private StuffOperationType  type;
-    private UUID                groupId;
-    private UUID                postId;
     
-    static final Class<?>[] argsClassesOnChangeFav = new Class[4];
+    static final Class<?>[] argsClassesOnChangeFav = new Class[3];
     static Method methodOnChangeFav;
     static
     {
         try
         {
             argsClassesOnChangeFav[0] = UUID.class;
-            argsClassesOnChangeFav[1] = UUID.class;
-            argsClassesOnChangeFav[2] = StuffOperationType.class;
-            argsClassesOnChangeFav[3] = boolean.class;
+            argsClassesOnChangeFav[1] = StuffOperationType.class;
+            argsClassesOnChangeFav[2] = boolean.class;
             methodOnChangeFav = ChangeFavListener.class.getMethod("OnChangeFav", argsClassesOnChangeFav);
         }
         catch (Throwable t)
@@ -41,26 +38,20 @@ public class ChangeFavTask extends BaseTask
         }
     }
     
-    public ChangeFavTask(UUID groupId, UUID postId, StuffOperationType type)
+    public ChangeFavTask(UUID postId, StuffOperationType type)
     {
-        this.groupId = groupId;
-        this.postId = postId;
+        post = (Post)ServerWorker.Instance().getPostById(postId);
         this.type = type;
-        
-        Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
-        if(post != null)
-            this.pid = post.getPid();
     }
 
     @SuppressWarnings("unchecked")
     public void notifyAboutChangeFav(boolean successful)
     {
         final List<ChangeFavListener> listeners = ListenersWorker.Instance().getListeners(ChangeFavListener.class);
-        final Object args[] = new Object[4];
-        args[0] = groupId;
-        args[1] = postId;
-        args[2] = type;
-        args[3] = successful;
+        final Object args[] = new Object[3];
+        args[0] = post.getId();
+        args[1] = type;
+        args[2] = successful;
         
         for(ChangeFavListener listener : listeners)
         {
@@ -74,7 +65,7 @@ public class ChangeFavTask extends BaseTask
     {
         try
         {
-            ServerWorker.Instance().postChangeFavs(SettingsWorker.Instance().loadFavWtf(), pid, type);
+            ServerWorker.Instance().postChangeFavs(SettingsWorker.Instance().loadFavWtf(), post.getLepraId(), type);
             new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, Commons.PostsType.MY).execute();
             notifyAboutChangeFav(true);
         }

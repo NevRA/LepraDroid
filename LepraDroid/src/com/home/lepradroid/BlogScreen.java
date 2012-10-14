@@ -33,11 +33,9 @@ public class BlogScreen extends BaseActivity
         try
         {
             id = UUID.fromString(getIntent().getExtras().getString("id"));
-            UUID groupId = UUID.fromString(getIntent().getExtras().getString("groupId"));
             String title = getIntent().getExtras().getString("title");
             
-            post = ServerWorker.Instance().getPostById(groupId, id);
-            if(post == null) finish(); // TODO message
+            post = ServerWorker.Instance().getPostById(id);
 
             postsScreen = new PostsScreen(this, id, post.getUrl(), Commons.PostsType.CUSTOM, title);
             postsScreen.setTag(title);

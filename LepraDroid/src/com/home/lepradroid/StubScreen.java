@@ -57,7 +57,7 @@ public class StubScreen extends BaseActivity implements PostUpdateListener
                 linkType == LinksCatcher.LINK_COMMENT ||
                 linkType == LinksCatcher.LINK_INBOX)
         {
-            BaseItem post = ServerWorker.Instance().getPostById(groupId, postId);
+            BaseItem post = ServerWorker.Instance().getPostById(postId);
             Intent intent = new Intent(this, PostScreen.class);
             intent.putExtra("groupId", groupId.toString());
             intent.putExtra("id", post.getId().toString());

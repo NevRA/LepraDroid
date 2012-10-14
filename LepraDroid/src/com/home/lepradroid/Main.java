@@ -51,14 +51,6 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
     public static final int PROFILE_TAB_NUM     = 5;
     public static final int POSTS_TAB_NUM       = 6;
 
-
-	@Override
-	protected void onDestroy()
-	{
-		Utils.clearData();
-		super.onDestroy();
-	}
-
 	private void showHistoryOnStartUp()
 	{
 	    try
@@ -76,8 +68,7 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
             Logger.e(e);
         }
 	}
-    
-    /** Called when the activity is first created. */
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {

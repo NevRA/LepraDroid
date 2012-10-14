@@ -18,21 +18,18 @@ import com.home.lepradroid.utils.Logger;
 
 public class ChangeMyStuffTask extends BaseTask
 {
-    private String              pid;
+    private Post                post;
     private StuffOperationType  type;
-    private UUID                groupId;
-    private UUID                postId;
     
-    static final Class<?>[] argsClassesOnChangeMyStuff = new Class[4];
+    static final Class<?>[] argsClassesOnChangeMyStuff = new Class[3];
     static Method methodOnChangeMyStuff;
     static
     {
         try
         {
             argsClassesOnChangeMyStuff[0] = UUID.class;
-            argsClassesOnChangeMyStuff[1] = UUID.class;
-            argsClassesOnChangeMyStuff[2] = StuffOperationType.class;
-            argsClassesOnChangeMyStuff[3] = boolean.class;
+            argsClassesOnChangeMyStuff[1] = StuffOperationType.class;
+            argsClassesOnChangeMyStuff[2] = boolean.class;
             methodOnChangeMyStuff = ChangeMyStuffListener.class.getMethod("OnChangeMyStuff", argsClassesOnChangeMyStuff);
         }
         catch (Throwable t)
@@ -41,26 +38,20 @@ public class ChangeMyStuffTask extends BaseTask
         }
     }
     
-    public ChangeMyStuffTask(UUID groupId, UUID postId, StuffOperationType type)
+    public ChangeMyStuffTask(UUID postId, StuffOperationType type)
     {
-        this.groupId = groupId;
-        this.postId = postId;
         this.type = type;
-        
-        Post post = (Post)ServerWorker.Instance().getPostById(groupId, postId);
-        if(post != null)
-            this.pid = post.getPid();
+        post = (Post)ServerWorker.Instance().getPostById(postId);
     }
 
     @SuppressWarnings("unchecked")
     public void notifyAboutChangeMyStuff(boolean successful)
     {
         final List<ChangeMyStuffListener> listeners = ListenersWorker.Instance().getListeners(ChangeMyStuffListener.class);
-        final Object args[] = new Object[4];
-        args[0] = groupId;
-        args[1] = postId;
-        args[2] = type;
-        args[3] = successful;
+        final Object args[] = new Object[3];
+        args[0] = post.getId();
+        args[1] = type;
+        args[2] = successful;
         
         for(ChangeMyStuffListener listener : listeners)
         {
@@ -74,7 +65,7 @@ public class ChangeMyStuffTask extends BaseTask
     {
         try
         {
-            ServerWorker.Instance().postChangeMyStuff(SettingsWorker.Instance().loadStuffWtf(), pid, type);
+            ServerWorker.Instance().postChangeMyStuff(SettingsWorker.Instance().loadStuffWtf(), post.getLepraId(), type);
             new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, Commons.PostsType.MY).execute();
             notifyAboutChangeMyStuff(true);
         }

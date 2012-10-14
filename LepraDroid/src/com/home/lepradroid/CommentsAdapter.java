@@ -3,7 +3,6 @@ package com.home.lepradroid;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,6 +27,7 @@ import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ExitListener;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Comment;
+import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.tasks.TaskWrapper;
@@ -35,9 +35,8 @@ import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
-{   
-    private UUID postId;
-    private UUID groupId;
+{
+    private Post                post;
     private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());
     private GestureDetector     gestureDetector;
     private int                 commentPos          = -1;
@@ -52,7 +51,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         actions.add(Utils.getString(R.string.CommentAction_Author));
         actions.add(Utils.getString(R.string.CommentAction_Reply));
         if(     !item.getAuthor().equalsIgnoreCase(SettingsWorker.Instance().loadUserName()) &&
-                !groupId.equals(Commons.INBOX_POSTS_ID))
+                !post.isInbox())
         {
             if(!item.isPlusVoted())
                 actions.add(Utils.getString(R.string.CommentAction_Like));
@@ -75,16 +74,16 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                     LepraDroidApplication.getInstance().startActivity(intent); 
                     break;
                 case 1:
-                    Utils.addComment(getContext(), groupId, postId, item.getId());
+                    Utils.addComment(getContext(), post.getId(), item.getId());
                     break;
                 case 2:
                     if(!item.isPlusVoted())
-                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.getId(), RateValueType.PLUS), "");
+                        new TaskWrapper(null, new RateItemTask(post.getId(), item.getId(), RateValueType.PLUS), "");
                     else 
-                        new TaskWrapper(null, new RateItemTask(groupId, postId, item.getId(), RateValueType.MINUS), "");
+                        new TaskWrapper(null, new RateItemTask(post.getId(), item.getId(), RateValueType.MINUS), "");
                     break;
                 case 3:
-                    new TaskWrapper(null, new RateItemTask(groupId, postId, item.getId(), RateValueType.MINUS), "");
+                    new TaskWrapper(null, new RateItemTask(post.getId(), item.getId(), RateValueType.MINUS), "");
                     break;
                 default:
                     break;
@@ -94,13 +93,12 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         builder.create().show();
     }
       
-    public CommentsAdapter(Context context, final UUID groupId, final UUID postId, int textViewResourceId,
+    public CommentsAdapter(Context context, final Post post, int textViewResourceId,
             ArrayList<BaseItem> comments)
     {
         super(context, textViewResourceId, comments);
         this.comments = comments;
-        this.postId = postId;
-        this.groupId = groupId;
+        this.post = post;
         
         aInflater = LayoutInflater.from(getContext());
         
@@ -260,9 +258,9 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             Utils.setTextViewFontSize(author);
             
             TextView rating = (TextView)convertView.findViewById(R.id.rating);
-            if(!groupId.equals(Commons.INBOX_POSTS_ID))
+            if(!post.isInbox())
             {
-                rating.setText(Utils.getRatingStringFromBaseItem(comment));
+                rating.setText(Utils.getRatingStringFromBaseItem(comment, post.getVoteWeight()));
                 Utils.setTextViewFontSize(rating);
             }
             else

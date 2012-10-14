@@ -212,14 +212,14 @@ public class ServerWorker
         return postRequest(url, body);
     }
     
-    public void postChangeFavs(String wtf, String pid, StuffOperationType type) throws Exception
+    public void postChangeFavs(String wtf, String lepraPostId, StuffOperationType type) throws Exception
     {
-        postRequest(Commons.FAVSCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), pid, wtf));
+        postRequest(Commons.FAVSCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), lepraPostId, wtf));
     }
     
-    public void postChangeMyStuff(String wtf, String pid, StuffOperationType type) throws Exception
+    public void postChangeMyStuff(String wtf, String lepraPostId, StuffOperationType type) throws Exception
     {
-        postRequest(Commons.MYCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), pid, wtf));
+        postRequest(Commons.MYCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), lepraPostId, wtf));
     }
     
     public void postMainTresholdRequest(String value) throws Exception
@@ -235,6 +235,11 @@ public class ServerWorker
     public String postCommentRequest(String wtf, String replyTo, String pid, String comment) throws Exception
     {
         return postRequest(Commons.POST_COMMENT_URL, String.format("wtf=%s&step=1&i=0&replyto=%s&pid=%s&iframe=0&file=&comment=%s", wtf, replyTo, pid, URLEncoder.encode(comment)));
+    }
+
+    public String getCommentRating(String postId, String commentId) throws Exception
+    {
+        return postRequest(Commons.COMMENT_RATING_URL, String.format("id=%s&type=0&post_id=%s", commentId, postId ));
     }
     
     /*public int getNewItemsCount() throws Exception
@@ -256,16 +261,15 @@ public class ServerWorker
         this.loginCode = loginCode;
     }
 
-    public BaseItem getPostById(UUID groupId, UUID id)
+    public BaseItem getPostById(UUID postId)
     {
-        ArrayList<BaseItem> items = posts.get(groupId);
-        if(items != null)
+        synchronized (posts)
         {
-            synchronized (items)
+            for(ArrayList<BaseItem> items : posts.values())
             {
                 for(BaseItem item : items)
                 {
-                    if(item.getId().equals(id))
+                    if(item.getId().equals(postId))
                         return item;
                 }
             }
@@ -372,7 +376,7 @@ public class ServerWorker
         Comment comment = (Comment)item;
         ArrayList<BaseItem> comments = this.comments.get(id);
 
-        if(TextUtils.isEmpty(comment.getParentPid()))
+        if(TextUtils.isEmpty(comment.getParentLepraId()))
         {
             comments.add(item);
             return comments.size() - 1;
@@ -384,7 +388,7 @@ public class ServerWorker
                 for(int pos = 0; pos < comments.size(); ++pos)
                 {
                     Comment parentComment = (Comment)comments.get(pos);
-                    if(parentComment.getPid().equals(comment.getParentPid()))
+                    if(parentComment.getLepraId().equals(comment.getParentLepraId()))
                     {
                         comments.add(pos + 1, item);
                         return pos + 1;

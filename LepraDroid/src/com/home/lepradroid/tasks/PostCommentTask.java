@@ -73,8 +73,8 @@ public class PostCommentTask extends BaseTask
             final Comment comment = new Comment();
             comment.setLevel(level);
             comment.setAuthor(json.getString("user_login"));
-            comment.setParentPid(replyTo);
-            comment.setPid(json.getString("comment_id"));
+            comment.setParentLepraId(replyTo);
+            comment.setLepraId(json.getString("comment_id"));
             comment.setHtml(this.comment.replace("\n","<br/>"));
             comment.setSignature((json.getString("gender").equals("m") ? "Написал" : "Написала") + " " +
                     json.getString("rank") + " " + "<b>" + "<font color=\"#3270FF\">" + json.getString("user_login") + "</font>" + "</b>" + "</b>, " + 

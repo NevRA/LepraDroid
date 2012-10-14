@@ -196,7 +196,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     }
 
     @Override
-    public void OnPostRateUpdate(UUID groupId, UUID postId, int newRating,
+    public void OnPostRateUpdate(UUID postId, int newRating,
             boolean successful)
     {
     }
@@ -213,7 +213,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
     }
 
     @Override
-    public void OnCommentRateUpdate(UUID groupId, UUID postId, UUID commentId,
+    public void OnCommentRateUpdate(UUID postId, UUID commentId,
             boolean successful)
     { 
     }
