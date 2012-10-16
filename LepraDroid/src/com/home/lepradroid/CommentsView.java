@@ -1,6 +1,7 @@
 package com.home.lepradroid;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import android.content.Context;
@@ -238,7 +239,7 @@ public class CommentsView extends BaseView implements CommentsUpdateListener,
                 addedOwnerComment = true;
             }
 
-            ArrayList<BaseItem> comments = ServerWorker.Instance().getComments(post.getId());
+            List<BaseItem> comments = ServerWorker.Instance().getComments(post.getId());
 
             if (comments.size() != adapter.getCount() || forceUpdate)
             {

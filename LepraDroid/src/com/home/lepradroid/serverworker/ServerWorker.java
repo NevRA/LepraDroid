@@ -48,10 +48,10 @@ public class ServerWorker
     private HttpParams                              connectionParameters;
 
     private final Map<UUID, Integer>                blogVoteWeights         = Collections.synchronizedMap(new HashMap<UUID, Integer>());
-    private final Map<UUID, ArrayList<BaseItem>>    posts                   = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
+    private final Map<UUID, List<BaseItem>>         blogPosts               = Collections.synchronizedMap(new HashMap<UUID, List<BaseItem>>());
     private final Map<String, Author>               authors                 = Collections.synchronizedMap(new HashMap<String, Author>());
     private final Map<UUID, Integer>                postsPagesCount         = Collections.synchronizedMap(new HashMap<UUID, Integer>());
-    private final Map<UUID, ArrayList<BaseItem>>    comments                = Collections.synchronizedMap(new HashMap<UUID, ArrayList<BaseItem>>());
+    private final Map<UUID, List<BaseItem>>         postComments            = Collections.synchronizedMap(new HashMap<UUID, List<BaseItem>>());
 
     private ServerWorker()
     {
@@ -269,9 +269,9 @@ public class ServerWorker
 
     public BaseItem getPostById(UUID postId)
     {
-        synchronized (posts)
+        synchronized (blogPosts)
         {
-            for(ArrayList<BaseItem> items : posts.values())
+            for(List<BaseItem> items : blogPosts.values())
             {
                 for(BaseItem item : items)
                 {
@@ -284,14 +284,14 @@ public class ServerWorker
         return null;
     }
 
-    public ArrayList<BaseItem> getPostsById(UUID groupId, boolean clone)
+    public List<BaseItem> getPostsById(UUID groupId, boolean clone)
     {
-        ArrayList<BaseItem> items = posts.get(groupId);
+        List<BaseItem> items = blogPosts.get(groupId);
         if(items == null)
         {
-            items = new ArrayList<BaseItem>(0);
+            items = Collections.synchronizedList(new ArrayList<BaseItem>());
 
-            posts.put(groupId, items);
+            blogPosts.put(groupId, items);
         }
         if(clone)
             return cloneList(items);
@@ -299,7 +299,7 @@ public class ServerWorker
             return items;
     }
 
-    public static ArrayList<BaseItem> cloneList(ArrayList<BaseItem> list)
+    public static List<BaseItem> cloneList(List<BaseItem> list)
     {
         synchronized (list)
         {
@@ -324,12 +324,15 @@ public class ServerWorker
 
     public BaseItem getComment(UUID postId, UUID commentId)
     {
-        ArrayList<BaseItem> items = getComments(postId);
+        List<BaseItem> comments = getComments(postId);
 
-        for(BaseItem item : items)
+        synchronized (comments)
         {
-            if(item.getId().equals(commentId))
-                return item;
+            for(BaseItem item : comments)
+            {
+                if(item.getId().equals(commentId))
+                    return item;
+            }
         }
 
         return null;
@@ -337,7 +340,7 @@ public class ServerWorker
 
     public int getPrevNewCommentPosition(UUID postId, int prevCommentNewPosition)
     {
-        ArrayList<BaseItem> comments = this.comments.get(postId);
+        List<BaseItem> comments = postComments.get(postId);
         if(comments != null)
         {
             synchronized (comments)
@@ -355,7 +358,7 @@ public class ServerWorker
 
     public int getNextNewCommentPosition(UUID postId, int prevCommentNewPosition)
     {
-        ArrayList<BaseItem> comments = this.comments.get(postId);
+        List<BaseItem> comments = postComments.get(postId);
         if(comments != null)
         {
             synchronized (comments)
@@ -371,11 +374,11 @@ public class ServerWorker
         return -1;
     }
 
-    public ArrayList<BaseItem> getComments(UUID postId)
+    public List<BaseItem> getComments(UUID postId)
     {
-        if(comments.containsKey(postId))
+        if(postComments.containsKey(postId))
         {
-            return cloneList(comments.get(postId));
+            return cloneList(postComments.get(postId));
         }
 
         return new ArrayList<BaseItem>();
@@ -383,14 +386,13 @@ public class ServerWorker
 
     public int addNewComment(UUID id, BaseItem item)
     {
-        if(!comments.containsKey(id))
-        {
-            ArrayList<BaseItem> targetList = new ArrayList<BaseItem>();
-            comments.put(id, targetList);
-        }
-
         Comment comment = (Comment)item;
-        ArrayList<BaseItem> comments = this.comments.get(id);
+        List<BaseItem> comments;
+
+        if(!postComments.containsKey(id))
+            postComments.put(id, comments = Collections.synchronizedList(new ArrayList<BaseItem>()));
+        else
+            comments = postComments.get(id);
 
         if(TextUtils.isEmpty(comment.getParentLepraId()))
         {
@@ -426,7 +428,7 @@ public class ServerWorker
 
     public void addNewPosts(UUID groupId, ArrayList<BaseItem> newPosts)
     {
-        ArrayList<BaseItem> oldPosts = getPostsById(groupId, false);
+        List<BaseItem> oldPosts = getPostsById(groupId, false);
         for(BaseItem post : newPosts)
         {
             synchronized (oldPosts)
@@ -492,7 +494,7 @@ public class ServerWorker
 
     public void clearCommentsById(UUID id)
     {
-        comments.remove(id);
+        postComments.remove(id);
     }
 
     public void clearPostsById(UUID groupId)
@@ -502,11 +504,11 @@ public class ServerWorker
 
     public void clearComments()
     {
-        comments.clear();
+        postComments.clear();
     }
 
     public void clearPosts()
     {
-        posts.clear();
+        blogPosts.clear();
     }
 }

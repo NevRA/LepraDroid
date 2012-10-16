@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
@@ -607,7 +606,7 @@ public class Utils
     
     public static boolean isAlreadyInStuff(UUID stuffId, String pid)
     {
-        ArrayList<BaseItem> posts = ServerWorker.Instance().getPostsById(stuffId, false);
+        List<BaseItem> posts = ServerWorker.Instance().getPostsById(stuffId, false);
         synchronized (posts)
         {
             for(BaseItem post : posts)

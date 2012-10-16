@@ -143,7 +143,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         return position;
     }
     
-    public void updateData(ArrayList<BaseItem> comments)
+    public void updateData(List<BaseItem> comments)
     {
         boolean containProgressElement = isContainProgressElement();
         

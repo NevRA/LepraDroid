@@ -25,7 +25,6 @@ import com.viewpagerindicator.TitlePageIndicator;
 public class PostScreen extends BaseActivity implements ChangeMyStuffListener, ChangeFavListener
 {
     private String          commentId;
-    //private String          parentTitle;
     private UUID            authorPostsGroupId  = UUID.randomUUID();
 
     private PostView        postView;
@@ -36,7 +35,7 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     private ArrayList<BaseView> 
                             pages               = new ArrayList<BaseView>();
 
-    private boolean         postInit            = false;
+    //private boolean         postInit            = false;
     private boolean         commentInit         = false;
     private boolean         authorInit          = false;
     private boolean         postsInit           = false;
@@ -184,9 +183,6 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     
     private void createTabs()
     {
-        post = (Post)ServerWorker.Instance().getPostById(post.getId());
-        if(post == null) {finish(); return;}
-        
         navigationTurnedOn = post.getNewComments() > 0;
 
         postView = new PostView(this, post.getId());

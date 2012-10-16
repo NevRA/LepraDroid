@@ -52,7 +52,7 @@ class BlogsAdapter extends ArrayAdapter<BaseItem>
         return position;
     }
     
-    public void updateData(ArrayList<BaseItem> posts)
+    public void updateData(List<BaseItem> posts)
     {
         this.posts = posts;
     }
