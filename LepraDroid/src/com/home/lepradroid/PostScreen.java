@@ -18,6 +18,7 @@ import com.home.lepradroid.interfaces.ChangeMyStuffListener;
 import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.*;
+import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -51,7 +52,8 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
     @Override
     protected void onDestroy()
     {
-        ServerWorker.Instance().clearCommentsById(post.getId());
+        if(post != null)
+            ServerWorker.Instance().clearCommentsById(post.getId());
         
         if(postView != null)
         {
@@ -118,8 +120,14 @@ public class PostScreen extends BaseActivity implements ChangeMyStuffListener, C
         UUID postId      = UUID.fromString(getIntent().getExtras().getString("id"));
         commentId   = getIntent().getExtras().getString("commentId");
         post = (Post)ServerWorker.Instance().getPostById(postId);
-
-        createTabs();
+        
+        if(post == null)
+        {
+            Logger.e("Can't retrive post"); // workaround for application restoring after resume 
+            finish();
+        }
+        else
+            createTabs();
     }
     
     public boolean onOptionsItemSelected(MenuItem item)

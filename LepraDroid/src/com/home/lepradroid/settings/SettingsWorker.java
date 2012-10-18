@@ -24,6 +24,7 @@ public class SettingsWorker
     private static final String VOTE_KARMA_WTF = "votekarmawtf_pref";
     private static final String VERSION        = "version_pref";
     private static final String MAIN_THRESHOLD = "threshold_pref";
+    private static final String IS_RUNNING     = "isrunning_pref";
 
     private SettingsWorker() 
     {
@@ -71,6 +72,7 @@ public class SettingsWorker
         saveString(STUFF_WTF, "");
         saveString(FAV_WTF, "");
         saveString(VOTE_KARMA_WTF, "");
+        saveBoolean(IS_RUNNING, false);
     }
 
     public String loadInboxWtf()
@@ -183,6 +185,16 @@ public class SettingsWorker
         saveString(USER_NAME, userName);
     }
     
+    public boolean loadIsAppRunning()
+    {
+        return loadBoolean(IS_RUNNING);
+    }
+    
+    public void saveIsAppRunning(boolean isAppRunning)
+    {
+        saveBoolean(IS_RUNNING, isAppRunning);
+    }
+    
     public void saveCookies(Pair<String, String> auth) throws Exception
     {
         saveString(COOKIES, auth.first + ";" + auth.second);
@@ -209,6 +221,7 @@ public class SettingsWorker
         return sp.getInt(name, 0);
     }
     
+        
     private void saveInt(String name, Integer value)
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
@@ -231,7 +244,7 @@ public class SettingsWorker
         return sp.getString(name, "");
     }
     
-    /*private void saveBoolean(String name, Boolean value)
+    private void saveBoolean(String name, Boolean value)
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         Editor e = sp.edit();
@@ -243,5 +256,5 @@ public class SettingsWorker
     {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(LepraDroidApplication.getInstance());
         return sp.getBoolean(name, false);
-    }*/
+    }
 }

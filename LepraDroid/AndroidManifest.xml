@@ -2,8 +2,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.home.lepradroid"
-    android:versionCode="57"
-    android:versionName="1.0.57"
+    android:versionCode="58"
+    android:versionName="1.0.58"
     android:installLocation="auto">
 
     <uses-sdk android:minSdkVersion="7" />
@@ -26,6 +26,7 @@
         <activity 
             android:name=".Main"
             android:label="@string/app_name" 
+            android:launchMode="singleTop" 
 	        android:configChanges="orientation|keyboardHidden"
 	        android:theme="@style/StyledIndicators">
 	        <intent-filter>
@@ -33,6 +34,7 @@
 	            <category android:name="android.intent.category.LAUNCHER" />
 	        </intent-filter>
 	    </activity>
+	    <activity android:name=".Launcher" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".settings.MainPreferences" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".settings.WidgetPreferences" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".LogonScreen" android:label="@string/app_name_by_r" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation"/>

@@ -6,6 +6,14 @@ import android.util.Log;
 
 public class Logger
 {
+    public static void e(String message)
+    {
+        if(message != null)
+        {
+            Log.e(Commons.APP_TAG, message);
+        }
+    }
+    
     public static void e(Throwable t)
     {
         if(t != null)

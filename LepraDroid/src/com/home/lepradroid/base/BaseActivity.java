@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+
 import com.home.lepradroid.R;
 import com.home.lepradroid.interfaces.LogoutListener;
 import com.home.lepradroid.interfaces.ProgressListener;
@@ -52,7 +53,7 @@ public class BaseActivity extends ActivityGroup implements UpdateListener, Progr
     public void onEndProgress(String message)
     {
     }
-    
+        
     public void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
