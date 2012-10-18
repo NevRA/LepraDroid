@@ -1,6 +1,5 @@
 package com.home.lepradroid;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -39,7 +38,6 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
     private boolean inboxInit                   = false;
     private boolean profileInit                 = false;
     private boolean postsInit                   = false;
-    private UncaughtExceptionHandler ueHandler;
     
     private ArrayList<BaseView> pages           = new ArrayList<BaseView>();
 
@@ -70,20 +68,6 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
             Logger.e(e);
         }
 	}
-	
-	@Override
-	protected void onStop()
-	{
-	    SettingsWorker.Instance().saveIsAppRunning(false);
-	    super.onStop();
-	}
-	
-	@Override
-	protected void onResume()
-	{
-	    super.onResume();
-	    SettingsWorker.Instance().saveIsAppRunning(true);
-	}
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -110,30 +94,6 @@ public class Main extends BaseActivity implements LoginListener, LogoutListener,
         {
             Logger.e(e);
         }
-        
-        setUnhandledExceptionsHandler();
-    }
-    
-    private void setUnhandledExceptionsHandler()
-    {
-        ueHandler = new Thread.UncaughtExceptionHandler() 
-        {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) 
-            {
-                try 
-                {
-                    SettingsWorker.Instance().saveIsAppRunning(false);
-                } 
-                catch (Exception error) 
-                {
-                    Logger.e(error);
-                }
-                Main.this.finish();
-            }
-        };
-
-        Thread.setDefaultUncaughtExceptionHandler(ueHandler);
     }
 
     @Override

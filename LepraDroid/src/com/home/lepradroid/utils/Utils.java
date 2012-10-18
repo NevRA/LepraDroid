@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
-import com.home.lepradroid.Main;
+import com.home.lepradroid.Launcher;
 import com.home.lepradroid.tasks.PostInboxTask;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.HttpEntityWrapper;
@@ -467,7 +467,7 @@ public class Utils
         final NotificationManager notificationManager = 
             (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
-        final Intent intent = new Intent(context, Main.class);
+        final Intent intent = new Intent(context, Launcher.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
            
