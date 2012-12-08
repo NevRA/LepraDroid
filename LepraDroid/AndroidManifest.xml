@@ -2,8 +2,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.home.lepradroid"
-    android:versionCode="59"
-    android:versionName="1.0.59"
+    android:versionCode="60"
+    android:versionName="1.0.60"
     android:installLocation="auto">
 
     <uses-sdk android:minSdkVersion="7" />
