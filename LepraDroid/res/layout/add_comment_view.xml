@@ -6,18 +6,25 @@
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:inputType="text"
-        android:layout_above="@+id/yarrr"
+        android:singleLine="false"
+        android:layout_above="@+id/yarrr_layout"
         android:gravity="top"
         android:id="@+id/comment"/>
-    <Button
-        android:id="@+id/yarrr"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dip"
-        android:background="@drawable/loginbutton_background" />
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/yarrr_layout"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/yarrr"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/loginbutton_background" />
+        </RelativeLayout>
 </RelativeLayout>

@@ -258,6 +258,7 @@ public class Utils
 
         final AlertDialog dialog = builder.create();
         dialog.show();
+        //dialog.getWindow().setLayout(FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.FILL_PARENT);
 
         yarrr.setOnClickListener(new View.OnClickListener()
         {
