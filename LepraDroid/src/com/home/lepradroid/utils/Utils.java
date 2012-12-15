@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
+import android.app.*;
+import android.widget.*;
 import com.home.lepradroid.Launcher;
 import com.home.lepradroid.tasks.PostInboxTask;
 import org.apache.http.HttpEntity;
@@ -20,10 +22,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,9 +41,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings.TextSize;
 import android.webkit.WebView;
-import android.widget.EditText;
-import android.widget.RemoteViews;
-import android.widget.TextView;
 
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
@@ -251,38 +246,41 @@ public class Utils
     {
         final Post post = (Post)ServerWorker.Instance().getPostById(postId);
         final Comment comment = (Comment)ServerWorker.Instance().getComment(postId, commentId);
-        
-        final EditText input = new EditText(context);
         final String text = comment != null ? comment.getAuthor() + ": " : "";
+
+        final RelativeLayout view = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.add_comment_view, null);
+        final EditText commentView = (EditText) view.findViewById(R.id.comment);
+        final Button yarrr = (Button) view.findViewById(R.id.yarrr);
         
-        input.setText(text);
-        Selection.setSelection(input.getText(), text.length());
-        
-        new AlertDialog.Builder(context)
-        .setTitle(Utils.getString(R.string.Add_Comment_Title))
-        .setView(input)
-        .setPositiveButton(Utils.getString(R.string.yarrr_label), new DialogInterface.OnClickListener() 
-        {
-            public void onClick(DialogInterface dialog, int whichButton) 
-            {
-                final String value = input.getText().toString(); 
-                
-                new TaskWrapper(null, new PostCommentTask(post.getId(), SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.getLepraId() : "", post.getLepraId(), (short)(comment != null ? comment.getLevel() + 1 : 0), value), null);
-            }
-        }).setNegativeButton(Utils.getString(android.R.string.cancel), new DialogInterface.OnClickListener() 
-        {
-            public void onClick(DialogInterface dialog, int whichButton) 
-            {
-            }
-        }).show();
-        
-        input.postDelayed(new Runnable() 
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(Utils.getString(R.string.Add_Comment_Title));
+        builder.setView(view);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        yarrr.setOnClickListener(new View.OnClickListener()
         {
             @Override
-            public void run() 
+            public void onClick(View view)
             {
-                final InputMethodManager keyboard = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                keyboard.showSoftInput(input, 0);
+                String value = commentView.getText().toString();
+                new TaskWrapper(null, new PostCommentTask(post.getId(), SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.getLepraId() : "", post.getLepraId(), (short) (comment != null ? comment.getLevel() + 1 : 0), value), null);
+
+                dialog.cancel();
+            }
+        });
+
+        commentView.setText(text);
+        Selection.setSelection(commentView.getText(), text.length());
+        commentView.postDelayed(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                InputMethodManager keyboard = (InputMethodManager)
+                        context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(commentView, 0);
             }
         },200);
     }
