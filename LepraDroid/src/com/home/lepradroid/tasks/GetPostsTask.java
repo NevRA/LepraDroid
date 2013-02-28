@@ -272,9 +272,12 @@ public class GetPostsTask extends BaseTask
                 post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
                 post.setText(Utils.html2text(post.getHtml()));
 
-                Elements rating = content.getElementsByTag("em");
-                if(!rating.isEmpty())
-                    post.setRating(Integer.valueOf(rating.first().text()));
+                Element vote = content.getElementsByClass("vote").first();
+                if(vote != null)
+                {
+                    Element rating = vote.getElementsByTag("em").first();
+                    post.setRating(Integer.valueOf(rating.text()));
+                }
                 else
                     post.setVoteDisabled(true);
                 
