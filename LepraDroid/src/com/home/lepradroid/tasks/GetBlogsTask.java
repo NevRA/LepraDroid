@@ -32,19 +32,16 @@ public class GetBlogsTask extends BaseTask
     
     private boolean refresh = true;
     private int page = 0;
-    private boolean isNormalTextSize = true;
     
     public GetBlogsTask()
     {
         refresh = true;
-        isNormalTextSize = Utils.isNormalFontSize();
     }
     
     public GetBlogsTask(int page)
     {       
         this.refresh = false;
         this.page = page;
-        isNormalTextSize = Utils.isNormalFontSize();
     }
 
     static
@@ -169,7 +166,7 @@ public class GetBlogsTask extends BaseTask
 
                     Elements images = logo.getElementsByTag("img");
                     if (!images.isEmpty())
-                        blog.setImageUrl("http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + images.first().attr("src"));
+                        blog.setImageUrl("http://src.sencha.io/" + Utils.getPostImagePreviewIsPixelsSize() + "/" + Utils.getPostImagePreviewIsPixelsSize() + "/" + images.first().attr("src"));
                 }
 
                 Elements title = content.getElementsByTag("h5");

@@ -35,11 +35,8 @@ public class Commons
     public static final Integer EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE 
                                                 = 1;
     
-    public static final Integer POST_PREVIEW_NORMAL_SIZE
-                                                = 80;
-    
-    public static final Integer POST_PREVIEW_BIG_SIZE
-                                                = 240;
+    public static final Float POST_PREVIEW_ICON_SIZE
+                                                = 59f;
     
     public static final Integer WEBVIEW_DEFAULT_FONT_SIZE
                                                 = 13;

@@ -72,7 +72,6 @@
                 android:src="@drawable/ic_stars" />
 		    <TextView
 		        android:id="@+id/rating"
-		        android:paddingTop="2dip"
 		        android:background="@drawable/ic_badge"
 		        android:paddingLeft="@dimen/standard_padding"
 		        android:paddingRight="@dimen/standard_padding"
@@ -80,7 +79,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentRight="true"
 		        android:layout_alignParentBottom="true"
-		        android:gravity="center_horizontal"
+		        android:gravity="center_horizontal|center_vertical"
 		        android:textSize="8sp"
 		        android:textStyle="bold"
 		        android:textColor="@android:color/secondary_text_light"/>

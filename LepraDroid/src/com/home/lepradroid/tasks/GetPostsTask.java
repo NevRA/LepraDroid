@@ -32,7 +32,6 @@ public class GetPostsTask extends BaseTask
     private boolean refresh = true;
     private int page = 0;
     private boolean isImagesEnabled = true;
-    private boolean isNormalTextSize = true;
     
     static final Class<?>[] argsClassesOnPostsUpdateBegin = new Class[2];
     static final Class<?>[] argsClassesOnPostsUpdate = new Class[2];
@@ -70,7 +69,6 @@ public class GetPostsTask extends BaseTask
         this.url = url;
         this.type = type;
         isImagesEnabled = Utils.isImagesEnabled();
-        isNormalTextSize = Utils.isNormalFontSize();
     }
     
     public GetPostsTask(UUID groupId, String url, Commons.PostsType type, int page, boolean refresh)
@@ -81,7 +79,6 @@ public class GetPostsTask extends BaseTask
         this.page = page;
         this.type = type;
         isImagesEnabled = Utils.isImagesEnabled();
-        isNormalTextSize = Utils.isNormalFontSize();
     }
     
     @SuppressWarnings("unchecked")
@@ -246,7 +243,7 @@ public class GetPostsTask extends BaseTask
                     if(isImagesEnabled && !TextUtils.isEmpty(src))
                     {
                         if(TextUtils.isEmpty(post.getImageUrl()))
-                            post.setImageUrl("http://src.sencha.io/" + (isNormalTextSize ? + Commons.POST_PREVIEW_NORMAL_SIZE + "/"  + Commons.POST_PREVIEW_NORMAL_SIZE : Commons.POST_PREVIEW_BIG_SIZE + "/"  + Commons.POST_PREVIEW_BIG_SIZE) + "/" + image.attr("src"));
+                            post.setImageUrl("http://src.sencha.io/" + Utils.getPostImagePreviewIsPixelsSize() + "/"  + Utils.getPostImagePreviewIsPixelsSize() + "/" + image.attr("src"));
                         
                         String id = "img" + Integer.valueOf(imageNum).toString();
                         

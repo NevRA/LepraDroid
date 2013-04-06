@@ -437,6 +437,22 @@ public class Utils
         
         notificationManager.cancel(Commons.NOTIFICATION_ID);
     }
+
+    public static int getPostImagePreviewIsPixelsSize()
+    {
+        Float size = Commons.POST_PREVIEW_ICON_SIZE;
+        if(!isNormalFontSize())
+        {
+            size = 3 * size;
+        }
+
+        return convertDipToPixels(size);
+    }
+
+    public static int convertDipToPixels(float dips)
+    {
+        return (int) (dips * LepraDroidApplication.getInstance().getResources().getDisplayMetrics().density + 0.5f);
+    }
     
     public static int getWidthForWebView(int padding)
     {
