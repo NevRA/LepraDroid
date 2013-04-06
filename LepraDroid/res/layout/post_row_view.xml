@@ -72,6 +72,7 @@
                 android:src="@drawable/ic_stars" />
 		    <TextView
 		        android:id="@+id/rating"
+                android:paddingTop="1dip"
 		        android:background="@drawable/ic_badge"
 		        android:paddingLeft="@dimen/standard_padding"
 		        android:paddingRight="@dimen/standard_padding"

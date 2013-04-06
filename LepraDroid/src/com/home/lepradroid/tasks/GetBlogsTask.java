@@ -166,7 +166,10 @@ public class GetBlogsTask extends BaseTask
 
                     Elements images = logo.getElementsByTag("img");
                     if (!images.isEmpty())
-                        blog.setImageUrl("http://src.sencha.io/" + Utils.getPostImagePreviewIsPixelsSize() + "/" + Utils.getPostImagePreviewIsPixelsSize() + "/" + images.first().attr("src"));
+                    {
+                        int imageSize = Utils.getPostImagePreviewIsPixelsSize();
+                        blog.setImageUrl(String.format("http://src.sencha.io/%d/%d/%s", imageSize, imageSize, images.first().attr("src")));
+                    }
                 }
 
                 Elements title = content.getElementsByTag("h5");

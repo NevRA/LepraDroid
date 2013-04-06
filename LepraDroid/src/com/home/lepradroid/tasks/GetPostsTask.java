@@ -243,7 +243,10 @@ public class GetPostsTask extends BaseTask
                     if(isImagesEnabled && !TextUtils.isEmpty(src))
                     {
                         if(TextUtils.isEmpty(post.getImageUrl()))
-                            post.setImageUrl("http://src.sencha.io/" + Utils.getPostImagePreviewIsPixelsSize() + "/"  + Utils.getPostImagePreviewIsPixelsSize() + "/" + image.attr("src"));
+                        {
+                            int imageSize = Utils.getPostImagePreviewIsPixelsSize();
+                            post.setImageUrl(String.format("http://src.sencha.io/%d/%d/%s", imageSize, imageSize, image.attr("src")));
+                        }
                         
                         String id = "img" + Integer.valueOf(imageNum).toString();
                         
@@ -327,9 +330,10 @@ public class GetPostsTask extends BaseTask
                     Integer voteWeight = ServerWorker.Instance().getBlogVoteWeight(groupId);
                     if(voteWeight == null)
                     {
-                         new SetVoteWeightTask(post.getId())
-                             .execute()
+                        Throwable t = new SetVoteWeightTask(post.getId())
+                                .execute()
                                 .get();
+                        Logger.e(t);
                     }
                     else
                         post.setVoteWeight(voteWeight);
