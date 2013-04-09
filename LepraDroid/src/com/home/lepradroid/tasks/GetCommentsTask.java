@@ -360,6 +360,12 @@ public class GetCommentsTask extends BaseTask
 
         Comment comment = new Comment();
 
+        if(root.attr("class").contains("hidden_comment"))
+            return;
+
+        if(root.attr("class").contains("new"))
+            comment.setNew(true);
+
         String commentId = root.id();
         comment.setLepraId(commentId);
 
@@ -369,10 +375,7 @@ public class GetCommentsTask extends BaseTask
         Matcher level = patternLevel.matcher(root.className());
         if(level.find())
             comment.setLevel(Short.valueOf(level.group(1)));
-        
-        if(root.attr("class").contains("new"))
-            comment.setNew(true);
-        
+
         Elements images = element.getElementsByTag("img");
         int imageNum = 0;
         List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
