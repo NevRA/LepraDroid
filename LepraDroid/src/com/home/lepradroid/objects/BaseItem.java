@@ -1,5 +1,7 @@
 package com.home.lepradroid.objects;
 
+import com.home.lepradroid.utils.Utils;
+
 import java.util.UUID;
 
 public class BaseItem extends RateItem
@@ -7,7 +9,6 @@ public class BaseItem extends RateItem
     private UUID     id                  = UUID.randomUUID();
     private UUID     groupId             = null;
     private byte[]   html                = null;
-    private byte[]   text                = null;
     private byte[]   url                 = null;
     private byte[]   imageUrl            = null;
     private byte[]   author              = null;
@@ -43,16 +44,10 @@ public class BaseItem extends RateItem
         if(html == null) return "";
         return new String(html);
     }
-    
-    public void setText(String text)
-    {
-        this.text = text.getBytes();
-    }
-    
+
     public String getText()
     {
-        if(html == null) return "";
-        return new String(text);
+        return Utils.html2text(getHtml());
     }
     
     public String getUrl()

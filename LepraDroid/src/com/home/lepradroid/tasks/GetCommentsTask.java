@@ -211,7 +211,7 @@ public class GetCommentsTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
-        final long startTime = System.nanoTime();
+        long startTime = System.currentTimeMillis();
         
         BufferedInputStream stream = null;
         FileInputStream fileStream = null;
@@ -346,7 +346,7 @@ public class GetCommentsTask extends BaseTask
             
             new UpdateBadgeCounterTask().execute();
             
-            Logger.d("GetCommentsTask time:" + Long.toString(System.nanoTime() - startTime));
+            Logger.d("GetCommentsTask time:" + Long.toString(System.currentTimeMillis() - startTime) + "ms");
         }
    
         return e;
@@ -354,7 +354,7 @@ public class GetCommentsTask extends BaseTask
     
     private void parseRecord(String html) throws ExecutionException, InterruptedException
     {
-        Element content = Jsoup.parse(Utils.replaceBadHtmlTags(html));
+        Element content = Jsoup.parse(html);
         Element element = content.getElementsByClass("dt").first();
         Element root = content.getElementsByTag("div").first();
 

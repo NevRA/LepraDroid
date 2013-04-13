@@ -127,23 +127,25 @@ public class GetPostsTask extends BaseTask
     @Override
     protected Throwable doInBackground(Void... params)
     {
-        long startTime = System.nanoTime();
+        long startTime = System.currentTimeMillis();
                
         try
         {
             int num = -1;
-            
-            if(refresh)
-                ServerWorker.Instance().clearPostsById(groupId);
-            
-            notifyAboutPostsUpdateBegin();
-            
-            String html = ServerWorker.Instance().getContent(url + getPageNum());
-            final String postOrd = "<div class=\"post ";
             int currentPos = 0;
+            int imageSize = Utils.getPostImagePreviewIsPixelsSize();
 
             boolean lastElement = false;
-            
+
+            String postOrd = "<div class=\"post ";
+            String senchaPrefix = String.format("http://src.sencha.io/%d/%d/", imageSize, imageSize);
+            String html = ServerWorker.Instance().getContent(url + getPageNum());
+
+            if(refresh)
+                ServerWorker.Instance().clearPostsById(groupId);
+
+            notifyAboutPostsUpdateBegin();
+
             do
             {
                 if(isCancelled()) break;
@@ -172,7 +174,7 @@ public class GetPostsTask extends BaseTask
                         Element content = Jsoup.parse(header);
                         
                         Element filter = content.getElementById("js-showonindex"); 
-                        SettingsWorker.Instance().saveMainThreshold(filter.attr("value")); 
+                        SettingsWorker.Instance().saveMainThreshold(filter.attr("value"));
                         
                         if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
                         {
@@ -233,10 +235,12 @@ public class GetPostsTask extends BaseTask
                 Post post = new Post(groupId);
                 
                 Element element = content.getElementsByClass("dt").first();
+                Element info = content.getElementsByClass("dd").first();
                 Elements images = element.getElementsByTag("img");
 
                 int imageNum = 0;
                 List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
+
                 for (Element image : images)
                 {
                     String src = image.attr("src");
@@ -244,8 +248,7 @@ public class GetPostsTask extends BaseTask
                     {
                         if(TextUtils.isEmpty(post.getImageUrl()))
                         {
-                            int imageSize = Utils.getPostImagePreviewIsPixelsSize();
-                            post.setImageUrl(String.format("http://src.sencha.io/%d/%d/%s", imageSize, imageSize, image.attr("src")));
+                            post.setImageUrl( senchaPrefix + image.attr("src"));
                         }
                         
                         String id = "img" + Integer.valueOf(imageNum).toString();
@@ -270,9 +273,8 @@ public class GetPostsTask extends BaseTask
                 }
                   
                 post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
-                post.setText(Utils.html2text(post.getHtml()));
 
-                Element vote = content.getElementsByClass("vote").first();
+                Element vote = info.getElementsByClass("vote").first();
                 if(vote != null)
                 {
                     Element rating = vote.getElementsByTag("em").first();
@@ -284,14 +286,12 @@ public class GetPostsTask extends BaseTask
                 post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
                 post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
                 
-                Element author = content.getElementsByClass("p").first();
+                Element author = info.getElementsByClass("p").first();
                 if(author != null)
                 {
-                    Element golden = author.getElementsByClass("stars").first();
-                    if(golden != null)
+                    if(author.getElementsByClass("stars").first() != null)
                         post.setGolden(true);
-                    Element silver = author.getElementsByClass("wasstars").first();
-                    if(silver != null)
+                    else if(author.getElementsByClass("wasstars").first() != null)
                         post.setSilver(true);
 
                     Elements span = author.getElementsByTag("span");
@@ -314,9 +314,10 @@ public class GetPostsTask extends BaseTask
                         if(!a.get(0).text().equals("комментировать"))
                             post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
                     }
-                    
-                    post.setAuthor(author.getElementsByTag("a").first().text());
-                    post.setSignature(author.text().split("\\|")[0].replace(post.getAuthor(), "<b>" + post.getAuthor() + "</b>"));
+
+                    String authorText = author.getElementsByTag("a").first().text();
+                    post.setAuthor(authorText);
+                    post.setSignature(author.text().split("\\|")[0].replace(authorText, "<b>" + authorText + "</b>"));
                 }
                 
                 if(isCancelled()) break;
@@ -356,7 +357,7 @@ public class GetPostsTask extends BaseTask
         }
         finally
         {
-            Logger.d("GetPostsTask time:" + Long.toString(System.nanoTime() - startTime));
+            Logger.d("GetPostsTask time:" + Long.toString(System.currentTimeMillis() - startTime) + "ms");
         }
         
         return e;
