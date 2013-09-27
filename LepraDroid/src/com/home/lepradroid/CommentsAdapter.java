@@ -44,7 +44,9 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
                                                     = 0;
     private final LayoutInflater      aInflater;
     private final Context context;
-    
+
+    private final int defaultPadding;
+
     private void OnLongClick()
     {
         final Comment item = (Comment)getItem(commentPos);
@@ -100,6 +102,7 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
         super();
         this.context = context;
         this.aInflater = LayoutInflater.from(context);
+        this.defaultPadding = (int) context.getResources().getDimension(R.dimen.standard_padding);
         this.comments = comments;
         this.post = post;
         
@@ -171,6 +174,16 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
         if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
             comments.remove(null);
     }
+
+    private static class CommentViewHolder{
+        FrameLayout root;
+        CommentRootLayout content;
+        FrameLayout webContainer;
+        TextView textOnly;
+        TextView author;
+        TextView rating;
+        WebView webView;
+    }
     
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) 
@@ -179,25 +192,58 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
         
         if(comment != null)
         {
-            convertView = aInflater.inflate(comment.isOnlyText()?R.layout.comments_row_text_view:R.layout.comments_row_web_view, parent, false);
+            CommentViewHolder holder;
+
+            if(convertView == null){
+                convertView = aInflater.inflate(comment.isOnlyText()?R.layout.comments_row_text_view:R.layout.comments_row_web_view, parent, false);
+                holder = new CommentViewHolder();
+                holder.root = (FrameLayout)convertView.findViewById(R.id.root);
+                holder.content = (CommentRootLayout)convertView.findViewById(R.id.content);
+                holder.webContainer = (FrameLayout) convertView.findViewById(R.id.web_container);
+                holder.textOnly = (TextView)convertView.findViewById(R.id.textOnly);
+                holder.author = (TextView)convertView.findViewById(R.id.author);
+                holder.rating = (TextView)convertView.findViewById(R.id.rating);
+                convertView.setTag(holder);
+
+                if(comment.isOnlyText()){
+                    holder.textOnly.setMovementMethod(LinkMovementMethod.getInstance());
+                    holder.textOnly.setOnLongClickListener(new View.OnLongClickListener()
+                    {
+                        @Override
+                        public boolean onLongClick(View v)
+                        {
+                            commentPos = position;
+                            OnLongClick();
+                            return false;
+                        }
+                    });
+
+                    Utils.setTextViewFontSize(holder.textOnly);
+                }
+
+            } else {
+                holder = (CommentViewHolder) convertView.getTag();
+            }
+
             
             short level = comment.getLevel();
-            
-            FrameLayout root = (FrameLayout)convertView.findViewById(R.id.root);
-            CommentRootLayout content = (CommentRootLayout)convertView.findViewById(R.id.content);
+
+            FrameLayout root = holder.root;
+            CommentRootLayout content = holder.content;
             
             content.setLevel(level);
             
             if(level > 0)
             {
-                root.setPadding(root.getPaddingLeft() + (level * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
-                content.setPadding(content.getPaddingLeft() * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
+                root.setPadding(defaultPadding + (level * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
+                content.setPadding(defaultPadding * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
             }
             
             if(!comment.isOnlyText())
             {
-                FrameLayout webContainer = (FrameLayout) convertView.findViewById(R.id.web_container);
+                FrameLayout webContainer = holder.webContainer;
                 WebView webView = new WebView(getContext());
+                webContainer.removeAllViews();
                 webContainer.addView(webView);
                 //webView.setVerticalFadingEdgeEnabled(true);
                 //webView.setFadingEdgeLength(Utils.getStandardPedding());
@@ -219,26 +265,12 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
                         return gestureDetector.onTouchEvent(event);
                     }
                 });
-                
+
                 Utils.setWebViewFontSize(webView);
             }
             else
             {
-                TextView textOnly = (TextView)convertView.findViewById(R.id.textOnly);
-                textOnly.setMovementMethod(LinkMovementMethod.getInstance());
-                textOnly.setText(Html.fromHtml(comment.getHtml()));
-                textOnly.setOnLongClickListener(new View.OnLongClickListener()
-                {
-                    @Override
-                    public boolean onLongClick(View v)
-                    {
-                        commentPos = position;
-                        OnLongClick();
-                        return false;
-                    }
-                });
-                
-                Utils.setTextViewFontSize(textOnly);
+                holder.textOnly.setText(Html.fromHtml(comment.getHtml()));
             }
 
             root.setOnLongClickListener(new View.OnLongClickListener()
@@ -252,11 +284,11 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
                 }
             });
             
-            TextView author = (TextView)convertView.findViewById(R.id.author);
+            TextView author = holder.author;
             author.setText(Html.fromHtml(comment.getSignature()));
             Utils.setTextViewFontSize(author);
             
-            TextView rating = (TextView)convertView.findViewById(R.id.rating);
+            TextView rating = holder.rating;
             if(!post.isInbox())
             {
                 rating.setText(Utils.getRatingStringFromBaseItem(comment, post.getVoteWeight()));
@@ -291,14 +323,15 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     //text -1, webview -0
     @Override
     public int getItemViewType(int position) {
+        if(getItem(position) == null) return 2;
         Comment comment = (Comment) getItem(position);
-        return super.getItemViewType(comment.isOnlyText()?1:0);
+        return comment.isOnlyText()?1:0;
     }
 
     public void clear() {
