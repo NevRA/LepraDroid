@@ -33,9 +33,12 @@ import com.home.lepradroid.utils.Utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 class CommentsAdapter extends BaseAdapter implements ExitListener
 {
+    private static final int MIN_POOL_SIZE = 5;
     private Post                post;
     private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());
     private GestureDetector     gestureDetector;
@@ -46,6 +49,7 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
     private final Context context;
 
     private final int defaultPadding;
+    private final ArrayBlockingQueue<WebView> pool = new ArrayBlockingQueue<WebView>(10);
 
     private void OnLongClick()
     {
@@ -207,22 +211,23 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
 
                 if(comment.isOnlyText()){
                     holder.textOnly.setMovementMethod(LinkMovementMethod.getInstance());
-                    holder.textOnly.setOnLongClickListener(new View.OnLongClickListener()
-                    {
-                        @Override
-                        public boolean onLongClick(View v)
-                        {
-                            commentPos = position;
-                            OnLongClick();
-                            return false;
-                        }
-                    });
 
                     Utils.setTextViewFontSize(holder.textOnly);
+                } else {
+                    holder.webView = createWebView();
+                    holder.webContainer.addView(holder.webView);
                 }
 
             } else {
                 holder = (CommentViewHolder) convertView.getTag();
+
+                if (!comment.isOnlyText()) {
+                    WebView old = holder.webView;
+                    holder.webContainer.removeAllViews();
+                    holder.webView = createWebView();
+                    holder.webContainer.addView(holder.webView);
+                    recicleWebView(old);
+                }
             }
 
             
@@ -241,22 +246,7 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
             
             if(!comment.isOnlyText())
             {
-                FrameLayout webContainer = holder.webContainer;
-                WebView webView = new WebView(getContext());
-                webContainer.removeAllViews();
-                webContainer.addView(webView);
-                //webView.setVerticalFadingEdgeEnabled(true);
-                //webView.setFadingEdgeLength(Utils.getStandardPedding());
-                webView.setBackgroundColor(0x00000000);
-                webView.setVisibility(View.VISIBLE);
-                webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-                webView.setWebViewClient(LinksCatcher.Instance());
-                WebSettings webSettings = webView.getSettings();
-                webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
-                webSettings.setJavaScriptEnabled(true);
-                webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\">" + comment.getHtml() + "</body>", "text/html", "UTF-8", null);
-                webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
-                webView.setOnTouchListener(new View.OnTouchListener()
+                holder.webView.setOnTouchListener(new View.OnTouchListener()
                 {
                     @Override
                     public boolean onTouch(View arg0, MotionEvent event)
@@ -265,11 +255,20 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
                         return gestureDetector.onTouchEvent(event);
                     }
                 });
-
-                Utils.setWebViewFontSize(webView);
+                holder.webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\">" + comment.getHtml() + "</body>", "text/html", "UTF-8", null);
             }
             else
             {
+                holder.textOnly.setOnLongClickListener(new View.OnLongClickListener()
+                {
+                    @Override
+                    public boolean onLongClick(View v)
+                    {
+                        commentPos = position;
+                        OnLongClick();
+                        return false;
+                    }
+                });
                 holder.textOnly.setText(Html.fromHtml(comment.getHtml()));
             }
 
@@ -309,6 +308,30 @@ class CommentsAdapter extends BaseAdapter implements ExitListener
         }
 
         return convertView;
+    }
+
+    private void recicleWebView(WebView view) {
+        view.loadUrl("about:blank");
+        pool.add(view);
+    }
+
+    private WebView createWebView() {
+        if(pool.size() > MIN_POOL_SIZE) return pool.poll();
+
+        WebView webView = new WebView(getContext());
+        //webView.setVerticalFadingEdgeEnabled(true);
+        //webView.setFadingEdgeLength(Utils.getStandardPedding());
+        webView.setBackgroundColor(0x00000000);
+        webView.setVisibility(View.VISIBLE);
+        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        webView.setWebViewClient(LinksCatcher.Instance());
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
+        webSettings.setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
+
+        Utils.setWebViewFontSize(webView);
+        return webView;
     }
 
     @Override
