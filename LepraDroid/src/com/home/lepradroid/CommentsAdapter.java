@@ -1,9 +1,5 @@
 package com.home.lepradroid;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -34,7 +30,11 @@ import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
-class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+class CommentsAdapter extends BaseAdapter implements ExitListener
 {
     private Post                post;
     private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());
@@ -42,7 +42,8 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     private int                 commentPos          = -1;
     private int                 commentLevelIndicatorLength
                                                     = 0;
-    private LayoutInflater      aInflater           = null;
+    private final LayoutInflater      aInflater;
+    private final Context context;
     
     private void OnLongClick()
     {
@@ -93,14 +94,14 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         builder.create().show();
     }
       
-    public CommentsAdapter(Context context, final Post post, int textViewResourceId,
-            ArrayList<BaseItem> comments)
+    public CommentsAdapter(Context context, final Post post,
+                           ArrayList<BaseItem> comments)
     {
-        super(context, textViewResourceId, comments);
+        super();
+        this.context = context;
+        this.aInflater = LayoutInflater.from(context);
         this.comments = comments;
         this.post = post;
-        
-        aInflater = LayoutInflater.from(getContext());
         
         commentLevelIndicatorLength = Utils.getCommentLevelIndicatorLength();
         
@@ -178,7 +179,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         
         if(comment != null)
         {
-            convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
+            convertView = aInflater.inflate(comment.isOnlyText()?R.layout.comments_row_text_view:R.layout.comments_row_web_view, parent, false);
             
             short level = comment.getLevel();
             
@@ -196,7 +197,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             if(!comment.isOnlyText())
             {
                 FrameLayout webContainer = (FrameLayout) convertView.findViewById(R.id.web_container);
-                webContainer.setVisibility(View.VISIBLE);
                 WebView webView = new WebView(getContext());
                 webContainer.addView(webView);
                 //webView.setVerticalFadingEdgeEnabled(true);
@@ -225,7 +225,6 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
             else
             {
                 TextView textOnly = (TextView)convertView.findViewById(R.id.textOnly);
-                textOnly.setVisibility(View.VISIBLE);
                 textOnly.setMovementMethod(LinkMovementMethod.getInstance());
                 textOnly.setText(Html.fromHtml(comment.getHtml()));
                 textOnly.setOnLongClickListener(new View.OnLongClickListener()
@@ -285,4 +284,26 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     {
         // TODO Auto-generated method stub
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 2;
+    }
+
+    //text -1, webview -0
+    @Override
+    public int getItemViewType(int position) {
+        Comment comment = (Comment) getItem(position);
+        return super.getItemViewType(comment.isOnlyText()?1:0);
+    }
+
+    public void clear() {
+        comments.clear();
+    }
+
+
 }
