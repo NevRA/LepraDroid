@@ -1,9 +1,5 @@
 package com.home.lepradroid;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -34,16 +30,27 @@ import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
 
-class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+
+class CommentsAdapter extends BaseAdapter implements ExitListener
 {
+    private static final int MIN_POOL_SIZE = 5;
     private Post                post;
     private List<BaseItem>      comments            = Collections.synchronizedList(new ArrayList<BaseItem>());
     private GestureDetector     gestureDetector;
     private int                 commentPos          = -1;
     private int                 commentLevelIndicatorLength
                                                     = 0;
-    private LayoutInflater      aInflater           = null;
-    
+    private final LayoutInflater      aInflater;
+    private final Context context;
+
+    private final int defaultPadding;
+    private final ArrayBlockingQueue<WebView> pool = new ArrayBlockingQueue<WebView>(10);
+
     private void OnLongClick()
     {
         final Comment item = (Comment)getItem(commentPos);
@@ -93,14 +100,15 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         builder.create().show();
     }
       
-    public CommentsAdapter(Context context, final Post post, int textViewResourceId,
-            ArrayList<BaseItem> comments)
+    public CommentsAdapter(Context context, final Post post,
+                           ArrayList<BaseItem> comments)
     {
-        super(context, textViewResourceId, comments);
+        super();
+        this.context = context;
+        this.aInflater = LayoutInflater.from(context);
+        this.defaultPadding = (int) context.getResources().getDimension(R.dimen.standard_padding);
         this.comments = comments;
         this.post = post;
-        
-        aInflater = LayoutInflater.from(getContext());
         
         commentLevelIndicatorLength = Utils.getCommentLevelIndicatorLength();
         
@@ -170,6 +178,16 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         if(!comments.isEmpty() && comments.get(comments.size() - 1) == null)
             comments.remove(null);
     }
+
+    private static class CommentViewHolder{
+        FrameLayout root;
+        CommentRootLayout content;
+        FrameLayout webContainer;
+        TextView textOnly;
+        TextView author;
+        TextView rating;
+        WebView webView;
+    }
     
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) 
@@ -178,39 +196,57 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         
         if(comment != null)
         {
-            convertView = aInflater.inflate(R.layout.comments_row_view, parent, false);
+            CommentViewHolder holder;
+
+            if(convertView == null){
+                convertView = aInflater.inflate(comment.isOnlyText()?R.layout.comments_row_text_view:R.layout.comments_row_web_view, parent, false);
+                holder = new CommentViewHolder();
+                holder.root = (FrameLayout)convertView.findViewById(R.id.root);
+                holder.content = (CommentRootLayout)convertView.findViewById(R.id.content);
+                holder.webContainer = (FrameLayout) convertView.findViewById(R.id.web_container);
+                holder.textOnly = (TextView)convertView.findViewById(R.id.textOnly);
+                holder.author = (TextView)convertView.findViewById(R.id.author);
+                holder.rating = (TextView)convertView.findViewById(R.id.rating);
+                convertView.setTag(holder);
+
+                if(comment.isOnlyText()){
+                    holder.textOnly.setMovementMethod(LinkMovementMethod.getInstance());
+
+                    Utils.setTextViewFontSize(holder.textOnly);
+                } else {
+                    holder.webView = createWebView();
+                    holder.webContainer.addView(holder.webView);
+                }
+
+            } else {
+                holder = (CommentViewHolder) convertView.getTag();
+
+                if (!comment.isOnlyText()) {
+                    WebView old = holder.webView;
+                    holder.webContainer.removeAllViews();
+                    holder.webView = createWebView();
+                    holder.webContainer.addView(holder.webView);
+                    recicleWebView(old);
+                }
+            }
+
             
             short level = comment.getLevel();
-            
-            FrameLayout root = (FrameLayout)convertView.findViewById(R.id.root);
-            CommentRootLayout content = (CommentRootLayout)convertView.findViewById(R.id.content);
+
+            FrameLayout root = holder.root;
+            CommentRootLayout content = holder.content;
             
             content.setLevel(level);
             
             if(level > 0)
             {
-                root.setPadding(root.getPaddingLeft() + (level * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
-                content.setPadding(content.getPaddingLeft() * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
+                root.setPadding(defaultPadding + (level * commentLevelIndicatorLength), root.getPaddingTop(), root.getPaddingRight(), root.getPaddingBottom());
+                content.setPadding(defaultPadding * 2, content.getPaddingTop(), content.getPaddingRight(), content.getPaddingBottom());
             }
             
             if(!comment.isOnlyText())
             {
-                FrameLayout webContainer = (FrameLayout) convertView.findViewById(R.id.web_container);
-                webContainer.setVisibility(View.VISIBLE);
-                WebView webView = new WebView(getContext());
-                webContainer.addView(webView);
-                //webView.setVerticalFadingEdgeEnabled(true);
-                //webView.setFadingEdgeLength(Utils.getStandardPedding());
-                webView.setBackgroundColor(0x00000000);
-                webView.setVisibility(View.VISIBLE);
-                webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-                webView.setWebViewClient(LinksCatcher.Instance());
-                WebSettings webSettings = webView.getSettings();
-                webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
-                webSettings.setJavaScriptEnabled(true);
-                webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\">" + comment.getHtml() + "</body>", "text/html", "UTF-8", null);
-                webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
-                webView.setOnTouchListener(new View.OnTouchListener()
+                holder.webView.setOnTouchListener(new View.OnTouchListener()
                 {
                     @Override
                     public boolean onTouch(View arg0, MotionEvent event)
@@ -219,16 +255,11 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                         return gestureDetector.onTouchEvent(event);
                     }
                 });
-                
-                Utils.setWebViewFontSize(webView);
+                holder.webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\">" + comment.getHtml() + "</body>", "text/html", "UTF-8", null);
             }
             else
             {
-                TextView textOnly = (TextView)convertView.findViewById(R.id.textOnly);
-                textOnly.setVisibility(View.VISIBLE);
-                textOnly.setMovementMethod(LinkMovementMethod.getInstance());
-                textOnly.setText(Html.fromHtml(comment.getHtml()));
-                textOnly.setOnLongClickListener(new View.OnLongClickListener()
+                holder.textOnly.setOnLongClickListener(new View.OnLongClickListener()
                 {
                     @Override
                     public boolean onLongClick(View v)
@@ -238,8 +269,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                         return false;
                     }
                 });
-                
-                Utils.setTextViewFontSize(textOnly);
+                holder.textOnly.setText(Html.fromHtml(comment.getHtml()));
             }
 
             root.setOnLongClickListener(new View.OnLongClickListener()
@@ -253,11 +283,11 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 }
             });
             
-            TextView author = (TextView)convertView.findViewById(R.id.author);
+            TextView author = holder.author;
             author.setText(Html.fromHtml(comment.getSignature()));
             Utils.setTextViewFontSize(author);
             
-            TextView rating = (TextView)convertView.findViewById(R.id.rating);
+            TextView rating = holder.rating;
             if(!post.isInbox())
             {
                 rating.setText(Utils.getRatingStringFromBaseItem(comment, post.getVoteWeight()));
@@ -280,9 +310,56 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
         return convertView;
     }
 
+    private void recicleWebView(WebView view) {
+        view.loadUrl("about:blank");
+        pool.add(view);
+    }
+
+    private WebView createWebView() {
+        if(pool.size() > MIN_POOL_SIZE) return pool.poll();
+
+        WebView webView = new WebView(getContext());
+        //webView.setVerticalFadingEdgeEnabled(true);
+        //webView.setFadingEdgeLength(Utils.getStandardPedding());
+        webView.setBackgroundColor(0x00000000);
+        webView.setVisibility(View.VISIBLE);
+        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        webView.setWebViewClient(LinksCatcher.Instance());
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
+        webSettings.setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
+
+        Utils.setWebViewFontSize(webView);
+        return webView;
+    }
+
     @Override
     public void OnExit()
     {
         // TODO Auto-generated method stub
     }
+
+    public Context getContext() {
+        return context;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 3;
+    }
+
+    //text -1, webview -0
+    @Override
+    public int getItemViewType(int position) {
+        if(getItem(position) == null) return 2;
+        Comment comment = (Comment) getItem(position);
+        return comment.isOnlyText()?1:0;
+    }
+
+    public void clear() {
+        comments.clear();
+    }
+
+
 }
