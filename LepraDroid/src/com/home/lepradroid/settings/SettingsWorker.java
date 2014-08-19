@@ -15,13 +15,11 @@ public class SettingsWorker
     private static final String UNREAD_COUNTER = "unread_counter_pref";
     private static final String COOKIES        = "cookies_pref";
     private static final String USER_NAME      = "username_pref";
-    private static final String COMMENT_WTF    = "commentwtf_pref";
-    private static final String STUFF_WTF      = "stuff_pref";
-    private static final String FAV_WTF        = "fav_pref";
-    private static final String VOTE_WTF       = "votewtf_pref";
-    private static final String INBOX_WTF      = "inboxwtf_pref";
+
+    private static final String CSRF_TOKE    = "csrf_token_pref";
+
     private static final String VOTE_WEIGHT    = "voteweight_pref";
-    private static final String VOTE_KARMA_WTF = "votekarmawtf_pref";
+
     private static final String VERSION        = "version_pref";
     private static final String MAIN_THRESHOLD = "threshold_pref";
 
@@ -65,74 +63,19 @@ public class SettingsWorker
         saveString(MAIN_THRESHOLD, "");
         saveString(VERSION, "");
         saveString(USER_NAME, "");
-        saveString(COMMENT_WTF, "");
-        saveString(INBOX_WTF, "");
-        saveString(VOTE_WTF, "");
-        saveString(STUFF_WTF, "");
-        saveString(FAV_WTF, "");
-        saveString(VOTE_KARMA_WTF, "");
+        saveString(CSRF_TOKE, "");
     }
 
-    public String loadInboxWtf()
+    public String loadCsrfToke()
     {
-        return loadString(INBOX_WTF);
+        return loadString(CSRF_TOKE);
     }
 
-    public void saveInboxWtf(String inbox_wtf)
+    public void saveCsrfToke(String token)
     {
-        saveString(INBOX_WTF, inbox_wtf);
-    }
-    
-    public String loadFavWtf()
-    {
-        return loadString(FAV_WTF);
-    }
-    
-    public void saveFavWtf(String fav_wtf)
-    {
-        saveString(FAV_WTF, fav_wtf);
-    }
-    
-    public String loadStuffWtf()
-    {
-        return loadString(STUFF_WTF);
-    }
-    
-    public void saveStuffWtf(String stuff_wtf)
-    {
-        saveString(STUFF_WTF, stuff_wtf);
-    }
-    
-    public String loadCommentWtf()
-    {
-        return loadString(COMMENT_WTF);
-    }
-    
-    public void saveCommentWtf(String comment_wtf)
-    {
-        saveString(COMMENT_WTF, comment_wtf);
-    }
-    
-    public String loadVoteWtf()
-    {
-        return loadString(VOTE_WTF);
-    }
-    
-    public void saveVoteWtf(String vote_wtf)
-    {
-        saveString(VOTE_WTF, vote_wtf);
+        saveString(CSRF_TOKE, token);
     }
 
-    public String loadVoteKarmaWtf()
-    {
-        return loadString(VOTE_KARMA_WTF);
-    }
-
-    public void saveVoteKarmaWtf(String vote_karma_wtf)
-    {
-        saveString(VOTE_KARMA_WTF, vote_karma_wtf);
-    }
-    
     public String loadMainThreshold()
     {
         return loadString(MAIN_THRESHOLD);

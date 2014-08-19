@@ -1,11 +1,10 @@
 package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -137,9 +136,21 @@ public class GetPostsTask extends BaseTask
 
             boolean lastElement = false;
 
+            String tokenPattern = "csrf_token : '";
             String postOrd = "<div class=\"post ";
             String senchaPrefix = String.format("http://src.sencha.io/%d/%d/", imageSize, imageSize);
-            String html = ServerWorker.Instance().getContent(url /*+ getPageNum()*/);
+
+            String html = "";
+
+            if(!url.contains("ajax"))
+            {
+                html = ServerWorker.Instance().getContent(url + getPageNum());
+            }
+            else
+            {
+                String body = String.format("sort=0&csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
+                html = ServerWorker.Instance().postRequest(url, body);
+            }
 
             if(refresh)
                 ServerWorker.Instance().clearPostsById(groupId);
@@ -149,11 +160,22 @@ public class GetPostsTask extends BaseTask
             do
             {
                 if(isCancelled()) break;
-                
-                num++;
+
+                if(TextUtils.isEmpty(SettingsWorker.Instance().loadCsrfToke()))
+                {
+                    int start = currentPos = html.indexOf(tokenPattern, currentPos);
+                    if(start > 0)
+                    {
+                        start += tokenPattern.length();
+                        String csrf_token = html.substring(start, html.indexOf("'", start + 1));
+                        SettingsWorker.Instance().saveCsrfToke(URLEncoder.encode(csrf_token));
+                    }
+                }
                 
                 int start = html.indexOf(postOrd, currentPos);
-                int end = html.indexOf(postOrd, start + 5000);
+                int end = html.indexOf(postOrd, start + 300);
+
+                num++;
 
                 if(start == -1)
                 {
@@ -164,29 +186,7 @@ public class GetPostsTask extends BaseTask
                     }
                     break;
                 }
-                
-                if(     num == 0 && 
-                        page == 0)
-                {
-                    if(groupId.equals(Commons.MAIN_POSTS_ID))
-                    {
-                        String header = html.substring(0, start);
-                        Element content = Jsoup.parse(header);
-                        
-                        //Element filter = content.getElementById("js-showonindex");
-                        //SettingsWorker.Instance().saveMainThreshold(filter.attr("value"));
-                        
-                        if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
-                        {
-                            String csrf_token = html.substring(start, html.indexOf("'", start));
-                            
-                            SettingsWorker.Instance().saveVoteWtf(csrf_token);
-                            SettingsWorker.Instance().saveStuffWtf(csrf_token);
-                            SettingsWorker.Instance().saveFavWtf(csrf_token);
-                        }
-                    }
-                }
-                
+
                 if(end == -1)
                 {
                     lastElement = true;
