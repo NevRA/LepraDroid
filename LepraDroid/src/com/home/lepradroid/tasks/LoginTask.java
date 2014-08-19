@@ -37,6 +37,8 @@ public class LoginTask extends BaseTask
         }        
     }
 
+    static String challenge = "";
+
     private String sid;
     private String uid;
 
@@ -68,7 +70,7 @@ public class LoginTask extends BaseTask
     {
         try
         {
-            final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.AUTH_PAGE_URL, login, password, "", captcha);
+            final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.AUTH_PAGE_URL, login, password, challenge, captcha);
             for(Header header : loginInfo.second)
             {
                 //lepro.sid=abadb37b85cd113156aea908ede94f77; lepro.uid=46808;
@@ -91,7 +93,7 @@ public class LoginTask extends BaseTask
             if(TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
             {
                 String publicKey = getCaptchaPublicKey();
-                String challenge = getChallenge(publicKey);
+                challenge = getChallenge(publicKey);
 
                 new GetCaptchaTask(String.format("https://www.google.com/recaptcha/api/image?c=%s", challenge)).execute(null);
 

@@ -153,7 +153,7 @@ public class ServerWorker
         String str;
         if(!TextUtils.isEmpty(recaptcha_challenge))
         {
-            str = String.format("username=%s&password=%s&forever=1&recaptcha_challenge_field=%s&recaptcha_response_field=%s", URLEncoder.encode(login), URLEncoder.encode(password), URLEncoder.encode(recaptcha_challenge), URLEncoder.encode(captcha));
+            str = String.format("username=%s&password=%s&forever=1&recaptcha_challenge_field=%s&recaptcha_response_field=%s", URLEncoder.encode(login), URLEncoder.encode(password), recaptcha_challenge, captcha);
         }
         else
         {
