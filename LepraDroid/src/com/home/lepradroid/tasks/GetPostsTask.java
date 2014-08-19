@@ -172,11 +172,12 @@ public class GetPostsTask extends BaseTask
                     {
                         String header = html.substring(0, start);
                         Element content = Jsoup.parse(header);
+
+                        // TODORA
+                        //Element filter = content.getElementById("js-showonindex");
+                        //SettingsWorker.Instance().saveMainThreshold(filter.attr("value"));
                         
-                        Element filter = content.getElementById("js-showonindex"); 
-                        SettingsWorker.Instance().saveMainThreshold(filter.attr("value"));
-                        
-                        if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
+                        /*if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
                         {
                             Element vote = content.getElementById("content_left_inner");
                             Element script = vote.getElementsByTag("script").first();
@@ -193,7 +194,7 @@ public class GetPostsTask extends BaseTask
                             Matcher matcher = pattern.matcher(content.html());
                             if(matcher.find())
                                 SettingsWorker.Instance().saveStuffWtf(matcher.group(1));
-                        }
+                        }*/
                     }
                     else if(groupId.equals(Commons.MYSTUFF_POSTS_ID))
                     {
@@ -274,19 +275,16 @@ public class GetPostsTask extends BaseTask
                   
                 post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
 
-                Element vote = info.getElementsByClass("vote").first();
+                Element vote = info.getElementsByClass("vote_result").first();
                 if(vote != null)
-                {
-                    Element rating = vote.getElementsByTag("em").first();
-                    post.setRating(Integer.valueOf(rating.text()));
-                }
+                    post.setRating(Integer.valueOf(vote.text()));
                 else
                     post.setVoteDisabled(true);
                 
                 post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
                 post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
                 
-                Element author = info.getElementsByClass("p").first();
+                Element author = info.getElementsByClass("ddi").first();
                 if(author != null)
                 {
                     if(author.getElementsByClass("stars").first() != null)
@@ -294,7 +292,7 @@ public class GetPostsTask extends BaseTask
                     else if(author.getElementsByClass("wasstars").first() != null)
                         post.setSilver(true);
 
-                    Elements span = author.getElementsByTag("span");
+                    Elements span = author.getElementsByClass("b-post_comments_links");
                     Elements a = span.first().getElementsByTag("a");
                     String url = a.first().attr("href");
                     if(url.contains("http"))
@@ -306,13 +304,13 @@ public class GetPostsTask extends BaseTask
                     
                     if(a.size() == 2)
                     {
-                        post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
-                        post.setNewComments(Short.valueOf(a.get(1).text().split(" ")[0]));
+                        post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
+                        post.setNewComments(Short.valueOf(a.get(1).text().split(" ")[0]));
                     }
                     else
                     {
                         if(!a.get(0).text().equals("комментировать"))
-                            post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
+                            post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
                     }
 
                     String authorText = author.getElementsByTag("a").first().text();

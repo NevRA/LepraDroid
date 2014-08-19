@@ -144,10 +144,10 @@ public class ServerWorker
     }
     
 
-    public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws IOException
+    public Pair<String, Header[]> login(String url, String login, String password) throws IOException
     {
         HttpPost httpGet = new HttpPost(url);
-        String str = String.format("user=%s&pass=%s&captcha=%s&logincode=%s&save=1", URLEncoder.encode(login), URLEncoder.encode(password), captcha, loginCode);
+        String str = String.format("username=%s&password=%s&forever=1", URLEncoder.encode(login), URLEncoder.encode(password));
 
         StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpGet.setHeader("Content-Type","application/x-www-form-urlencoded");
@@ -256,16 +256,6 @@ public class ServerWorker
         
         return count;
     }*/
-
-    public String getLoginCode()
-    {
-        return loginCode;
-    }
-
-    public void setLoginCode(String loginCode)
-    {
-        this.loginCode = loginCode;
-    }
 
     public BaseItem getPostById(UUID postId)
     {

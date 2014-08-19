@@ -39,15 +39,14 @@ public class LoginTask extends BaseTask
     }
     
     private String login; 
-    private String password; 
-    private String captcha;
-    private boolean logoned = false;
-    
-    public LoginTask(String login, String password, String captcha)
+    private String password;
+    private String sid;
+    private String uid;
+
+    public LoginTask(String login, String password)
     {
         this.login = login;
         this.password = password;
-        this.captcha = captcha;
     }
     
     @SuppressWarnings("unchecked")
@@ -56,16 +55,13 @@ public class LoginTask extends BaseTask
     {
         try
         {
-            String sid = null, uid = null;
-            final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.LOGON_PAGE_URL, login, password, captcha, ServerWorker.Instance().getLoginCode());
+            final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.AUTH_PAGE_URL, login, password);
             for(Header header : loginInfo.second)
             {
                 //lepro.sid=abadb37b85cd113156aea908ede94f77; lepro.uid=46808;
-                
+
                 String value = header.getValue();
-                if(value.contains("lepro.save=1"))
-                    logoned = true;
-                else if(value.contains(Commons.COOKIE_SID + "="))
+                if(value.contains(Commons.COOKIE_SID + "="))
                 {
                     String[] sidCookie = value.split(";")[0].split("=");
                     if(sidCookie.length > 1)
@@ -79,7 +75,7 @@ public class LoginTask extends BaseTask
                 }
             }
             
-            if(!logoned || TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
+            if(TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
             {
                 final Document document = Jsoup.parse(loginInfo.first);
                 final Elements errors = document.getElementsByClass("error");
@@ -100,7 +96,7 @@ public class LoginTask extends BaseTask
             final List<LoginListener> listeners = ListenersWorker.Instance().getListeners(LoginListener.class);
             final Object args[] = new Object[1];
                 
-            args[0] = logoned;
+            args[0] = sid!= null && uid != null;
             
             for(LoginListener listener : listeners)
             {

@@ -65,16 +65,7 @@
 		        android:password="true"
 		        android:layout_centerHorizontal="true" />
 
-		    <ImageView
-		        android:id="@+id/captcha_image"
-		        android:layout_width="240dip"
-		        android:layout_height="60dip"
-		        android:layout_below="@+id/password"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="10dip"
-		        android:src="@drawable/ic_captcha" />
-		    
-		    <ProgressBar
+            <ProgressBar
 		        android:id="@+id/progress"
 		        android:visibility="gone"
 		        android:layout_marginTop="10dip"
@@ -83,27 +74,12 @@
 		    	android:layout_below="@+id/password"
 		    	android:indeterminate="true" 
 		    	android:layout_centerInParent="true"/>
-		
-		    <TextView
-		        android:id="@+id/textView3"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/captcha_image"
-		        android:layout_marginTop="10dip"
-		        android:text="@string/captcha_label" />
-		
-		    <EditText
-		        android:id="@+id/captcha"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:inputType="textNoSuggestions|textVisiblePassword"
-		        android:layout_below="@+id/textView3" />
 
-		    <Button
+            <Button
 		        android:id="@+id/yarrr"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/captcha"
+		        android:layout_below="@+id/password"
 		        android:layout_centerHorizontal="true"
 		        android:layout_marginTop="10dip"
 		        android:background="@drawable/loginbutton_background"
