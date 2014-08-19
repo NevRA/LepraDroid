@@ -166,10 +166,9 @@ public class GetAuthorTask extends BaseTask
             }
             else
             {
-                data.setMinusVoted(!document.getElementsByClass("b-karma_button b-karma_button__minus b-karma_button__left_minus active").isEmpty());
-                data.setPlusVoted(!document.getElementsByClass("b-karma_button b-karma_button__plus b-karma_button__left_plus active").isEmpty());
+                data.setMinusVoted(html.contains("b-karma_button b-karma_button__minus b-karma_button__left_minus active"));
+                data.setPlusVoted(html.contains("b-karma_button b-karma_button__plus b-karma_button__left_plus active"));
             }
-            
 
             ServerWorker.Instance().addNewAuthor(data);
 
