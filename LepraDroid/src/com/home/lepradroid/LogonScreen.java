@@ -1,15 +1,5 @@
 package com.home.lepradroid;
 
-import com.home.lepradroid.base.BaseActivity;
-import com.home.lepradroid.commons.Commons;
-import com.home.lepradroid.interfaces.CaptchaUpdateListener;
-import com.home.lepradroid.interfaces.LoginListener;
-import com.home.lepradroid.settings.SettingsWorker;
-import com.home.lepradroid.tasks.GetCaptchaTask;
-import com.home.lepradroid.tasks.LoginTask;
-import com.home.lepradroid.tasks.TaskWrapper;
-import com.home.lepradroid.utils.Utils;
-
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -21,10 +11,15 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.*;
+import com.home.lepradroid.base.BaseActivity;
+import com.home.lepradroid.commons.Commons;
+import com.home.lepradroid.interfaces.CaptchaUpdateListener;
+import com.home.lepradroid.interfaces.LoginListener;
+import com.home.lepradroid.settings.SettingsWorker;
+import com.home.lepradroid.tasks.LoginTask;
+import com.home.lepradroid.tasks.TaskWrapper;
+import com.home.lepradroid.utils.Utils;
 
 
 public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, TextWatcher, LoginListener
@@ -35,6 +30,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
     private EditText        password;
     private ProgressBar     progress;
     private ImageView       captchaImage;
+    private RelativeLayout  captcha_layout;
     
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -42,7 +38,8 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         super.onCreate(savedInstanceState);
         
         setContentView(R.layout.logon_view);
-        
+
+        captcha_layout = (RelativeLayout)findViewById(R.id.captcha_layout);
         yarrr = (Button)findViewById(R.id.yarrr);
         captchaImage = (ImageView) findViewById(R.id.captcha_image);
         captcha = (EditText)findViewById(R.id.captcha);
@@ -81,15 +78,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         captcha.addTextChangedListener(this);
         login.addTextChangedListener(this);
         password.addTextChangedListener(this);
-        
-        captchaImage.setOnClickListener( new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                updateCaptcha();              
-            }
-        });
-        
+
         captcha.setOnKeyListener(new OnKeyListener() 
         {
             @Override
@@ -115,17 +104,8 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
                 pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), true, Utils.getString(R.string.Login_In_Progress)));              
             }
         });
-        
-        updateCaptcha();
     }
-    
-    private void updateCaptcha()
-    {
-        pushNewTask(new TaskWrapper(this, new GetCaptchaTask(), Utils.getString(R.string.Captcha_Loading_In_Progress)));
-        captchaImage.setVisibility(View.INVISIBLE);
-        progress.setVisibility(View.VISIBLE);
-    }
-    
+
     public void afterTextChanged(Editable s)
     {
         updateControls();
@@ -161,9 +141,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
 
     public void OnLogin(boolean successful)
     {
-       if(!successful)
-           updateCaptcha();
-       else
+       if(successful)
        {
     	   setResult(Commons.EXIT_FROM_LOGON_SCREEN_AFTER_LOGON_RESULTCODE);
            finish();

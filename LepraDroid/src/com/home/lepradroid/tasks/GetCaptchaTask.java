@@ -1,16 +1,7 @@
 package com.home.lepradroid.tasks;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.graphics.drawable.Drawable;
 import android.util.Pair;
-
 import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CaptchaUpdateListener;
@@ -19,6 +10,13 @@ import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class GetCaptchaTask extends BaseTask
 {   
@@ -57,7 +55,7 @@ public class GetCaptchaTask extends BaseTask
             if(elements.isEmpty())
                 throw new Exception(Utils.getString(R.string.Captcha_Not_Found));
             final String loginCode = elements.first().attr("value");
-            ServerWorker.Instance().setLoginCode(loginCode);
+            //ServerWorker.Instance().setLoginCode(loginCode);
               
             captcha = Utils.getImageFromByteArray(ServerWorker.Instance().getImage(Commons.CAPTCHA_URL + loginCode));
         }

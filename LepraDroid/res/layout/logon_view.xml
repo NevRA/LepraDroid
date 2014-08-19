@@ -83,32 +83,39 @@
 		    	android:layout_below="@+id/password"
 		    	android:indeterminate="true" 
 		    	android:layout_centerInParent="true"/>
-		
-		    <TextView
-		        android:id="@+id/textView3"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/captcha_image"
-		        android:layout_marginTop="10dip"
-		        android:text="@string/captcha_label" />
-		
-		    <EditText
-		        android:id="@+id/captcha"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:inputType="textNoSuggestions|textVisiblePassword"
-		        android:layout_below="@+id/textView3" />
 
-		    <Button
-		        android:id="@+id/yarrr"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/captcha"
-		        android:layout_centerHorizontal="true"
-		        android:layout_marginTop="10dip"
-		        android:background="@drawable/loginbutton_background"
-		        android:enabled="false" />
+            <RelativeLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/captcha_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_below="@+id/captcha_image">
 
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/captcha_image"
+                    android:layout_marginTop="10dip"
+                    android:text="@string/captcha_label" />
+
+                <EditText
+                    android:id="@+id/captcha"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView3"
+                    android:inputType="textNoSuggestions|textVisiblePassword" />
+            </RelativeLayout>
+
+            <Button
+                    android:id="@+id/yarrr"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/captcha_layout"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dip"
+                    android:background="@drawable/loginbutton_background" />
 		</RelativeLayout>
     </ScrollView>
 </LinearLayout>

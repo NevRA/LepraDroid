@@ -1,16 +1,7 @@
 package com.home.lepradroid.tasks;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import org.apache.http.Header;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import android.text.TextUtils;
 import android.util.Pair;
-
 import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.LoginListener;
@@ -20,6 +11,14 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
+import org.apache.http.Header;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class LoginTask extends BaseTask
 {
@@ -37,17 +36,30 @@ public class LoginTask extends BaseTask
             Logger.e(t);
         }        
     }
-    
+
+    private String sid;
+    private String uid;
+
     private String login; 
     private String password; 
     private String captcha;
-    private boolean logoned = false;
-    
+
     public LoginTask(String login, String password, String captcha)
     {
         this.login = login;
         this.password = password;
         this.captcha = captcha;
+    }
+
+    private String getCaptchaPublicKey() throws Exception
+    {
+        final String loginPage = ServerWorker.Instance().getContent(Commons.LOGON_PAGE_URL);
+        Document loginPageDocument = Jsoup.parse(loginPage);
+        Element captchaElement = loginPageDocument.getElementsByTag("script").get(2);
+
+        String publicKey = captchaElement.data().split(" = ")[1].replace("'","");
+        int index = publicKey.indexOf(";");
+        return publicKey.substring(0, index);
     }
     
     @SuppressWarnings("unchecked")
@@ -56,16 +68,15 @@ public class LoginTask extends BaseTask
     {
         try
         {
-            String sid = null, uid = null;
-            final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.LOGON_PAGE_URL, login, password, captcha, ServerWorker.Instance().getLoginCode());
+            String publicKey = getCaptchaPublicKey();
+
+            final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.AUTH_PAGE_URL, login, password, "", captcha);
             for(Header header : loginInfo.second)
             {
                 //lepro.sid=abadb37b85cd113156aea908ede94f77; lepro.uid=46808;
                 
                 String value = header.getValue();
-                if(value.contains("lepro.save=1"))
-                    logoned = true;
-                else if(value.contains(Commons.COOKIE_SID + "="))
+                if(value.contains(Commons.COOKIE_SID + "="))
                 {
                     String[] sidCookie = value.split(";")[0].split("=");
                     if(sidCookie.length > 1)
@@ -79,7 +90,7 @@ public class LoginTask extends BaseTask
                 }
             }
             
-            if(!logoned || TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
+            if(TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
             {
                 final Document document = Jsoup.parse(loginInfo.first);
                 final Elements errors = document.getElementsByClass("error");
@@ -100,7 +111,7 @@ public class LoginTask extends BaseTask
             final List<LoginListener> listeners = ListenersWorker.Instance().getListeners(LoginListener.class);
             final Object args[] = new Object[1];
                 
-            args[0] = logoned;
+            args[0] = sid!= null && uid != null;
             
             for(LoginListener listener : listeners)
             {

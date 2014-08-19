@@ -21,9 +21,9 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnManagerPNames;
 import org.apache.http.conn.params.ConnPerRouteBean;
-import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -33,6 +33,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.helper.StringUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +43,6 @@ import java.util.Map.Entry;
 
 public class ServerWorker
 {
-    private String                                  loginCode               = "";
     private static volatile ServerWorker            instance;
     private ClientConnectionManager                 connectionManager;
     private HttpParams                              connectionParameters;
@@ -85,7 +85,9 @@ public class ServerWorker
         HttpProtocolParams.setVersion(connectionParameters, HttpVersion.HTTP_1_1);
 
         SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+        SSLSocketFactory sslSocketFactory = SSLSocketFactory.getSocketFactory();
+        sslSocketFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        registry.register(new Scheme("https", sslSocketFactory, 443));
         connectionManager = new ThreadSafeClientConnManager(connectionParameters, registry);
     }
 
@@ -144,10 +146,11 @@ public class ServerWorker
     }
     
 
-    public Pair<String, Header[]> login(String url, String login, String password, String captcha, String loginCode) throws IOException
+    public Pair<String, Header[]> login(String url, String login, String password, String recaptcha_challenge, String captcha) throws IOException
     {
         HttpPost httpGet = new HttpPost(url);
-        String str = String.format("user=%s&pass=%s&captcha=%s&logincode=%s&save=1", URLEncoder.encode(login), URLEncoder.encode(password), captcha, loginCode);
+        if(TextUtils.isEmpty(recaptcha_challenge))
+        String str = String.format("username=%s&password=%s&forever=1&recaptcha_challenge_field=%s&recaptcha_response_field=%s", URLEncoder.encode(login), URLEncoder.encode(password), recaptcha_challenge, captcha);
 
         StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpGet.setHeader("Content-Type","application/x-www-form-urlencoded");
@@ -256,16 +259,6 @@ public class ServerWorker
         
         return count;
     }*/
-
-    public String getLoginCode()
-    {
-        return loginCode;
-    }
-
-    public void setLoginCode(String loginCode)
-    {
-        this.loginCode = loginCode;
-    }
 
     public BaseItem getPostById(UUID postId)
     {
