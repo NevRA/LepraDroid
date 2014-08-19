@@ -139,7 +139,7 @@ public class GetPostsTask extends BaseTask
 
             String postOrd = "<div class=\"post ";
             String senchaPrefix = String.format("http://src.sencha.io/%d/%d/", imageSize, imageSize);
-            String html = ServerWorker.Instance().getContent(url + getPageNum());
+            String html = ServerWorker.Instance().getContent(url /*+ getPageNum()*/);
 
             if(refresh)
                 ServerWorker.Instance().clearPostsById(groupId);
@@ -153,7 +153,7 @@ public class GetPostsTask extends BaseTask
                 num++;
                 
                 int start = html.indexOf(postOrd, currentPos);
-                int end = html.indexOf(postOrd, start + 300);
+                int end = html.indexOf(postOrd, start + 5000);
 
                 if(start == -1)
                 {
@@ -173,39 +173,16 @@ public class GetPostsTask extends BaseTask
                         String header = html.substring(0, start);
                         Element content = Jsoup.parse(header);
                         
-                        Element filter = content.getElementById("js-showonindex"); 
-                        SettingsWorker.Instance().saveMainThreshold(filter.attr("value"));
+                        //Element filter = content.getElementById("js-showonindex");
+                        //SettingsWorker.Instance().saveMainThreshold(filter.attr("value"));
                         
                         if(TextUtils.isEmpty(SettingsWorker.Instance().loadVoteWtf()))
                         {
-                            Element vote = content.getElementById("content_left_inner");
-                            Element script = vote.getElementsByTag("script").first();
+                            String csrf_token = html.substring(start, html.indexOf("'", start));
                             
-                            Pattern pattern = Pattern.compile("wtf_vote = '(.+)'");
-                            Matcher matcher = pattern.matcher(script.data());
-                            if(matcher.find())
-                                SettingsWorker.Instance().saveVoteWtf(matcher.group(1));
-                        }
-                        
-                        if(TextUtils.isEmpty(SettingsWorker.Instance().loadStuffWtf()))
-                        {
-                            Pattern pattern = Pattern.compile("mythingsHandler.wtf = '(.+)'");
-                            Matcher matcher = pattern.matcher(content.html());
-                            if(matcher.find())
-                                SettingsWorker.Instance().saveStuffWtf(matcher.group(1));
-                        }
-                    }
-                    else if(groupId.equals(Commons.MYSTUFF_POSTS_ID))
-                    {
-                        if(TextUtils.isEmpty(SettingsWorker.Instance().loadFavWtf()))
-                        {
-                            String header = html.substring(0, start);
-                            Element content = Jsoup.parse(header);
-                            
-                            Element fav = content.getElementsByAttributeValue("name", "fav").first();
-                            Element wtf = fav.getElementsByAttributeValue("name", "wtf").first();
-
-                            SettingsWorker.Instance().saveFavWtf(wtf.attr("value"));
+                            SettingsWorker.Instance().saveVoteWtf(csrf_token);
+                            SettingsWorker.Instance().saveStuffWtf(csrf_token);
+                            SettingsWorker.Instance().saveFavWtf(csrf_token);
                         }
                     }
                 }
@@ -274,11 +251,10 @@ public class GetPostsTask extends BaseTask
                   
                 post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
 
-                Element vote = info.getElementsByClass("vote").first();
+                Element vote = info.getElementsByClass("vote_result").first();
                 if(vote != null)
                 {
-                    Element rating = vote.getElementsByTag("em").first();
-                    post.setRating(Integer.valueOf(rating.text()));
+                    post.setRating(Integer.valueOf(vote.text()));
                 }
                 else
                     post.setVoteDisabled(true);
@@ -286,7 +262,7 @@ public class GetPostsTask extends BaseTask
                 post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
                 post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
                 
-                Element author = info.getElementsByClass("p").first();
+                Element author = info.getElementsByClass("ddi").first();
                 if(author != null)
                 {
                     if(author.getElementsByClass("stars").first() != null)
@@ -294,7 +270,7 @@ public class GetPostsTask extends BaseTask
                     else if(author.getElementsByClass("wasstars").first() != null)
                         post.setSilver(true);
 
-                    Elements span = author.getElementsByTag("span");
+                    Elements span = author.getElementsByClass("b-post_comments_links");
                     Elements a = span.first().getElementsByTag("a");
                     String url = a.first().attr("href");
                     if(url.contains("http"))
@@ -306,13 +282,13 @@ public class GetPostsTask extends BaseTask
                     
                     if(a.size() == 2)
                     {
-                        post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
-                        post.setNewComments(Short.valueOf(a.get(1).text().split(" ")[0]));
+                        post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
+                        post.setNewComments(Short.valueOf(a.get(1).text().split(" ")[0]));
                     }
                     else
                     {
                         if(!a.get(0).text().equals("комментировать"))
-                            post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
+                            post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
                     }
 
                     String authorText = author.getElementsByTag("a").first().text();

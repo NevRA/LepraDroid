@@ -8,9 +8,9 @@ public class Commons
     public static final String LOGON_PAGE_URL   = SITE_URL + "login/";
     public static final String CAPTCHA_URL      = SITE_URL + "captchaa/";
     public static final String AUTH_PAGE_URL    = SITE_URL + "ajax/auth/login/";
-    public static final String MY_STUFF_URL     = SITE_URL + "my/";
-    public static final String FAVORITES_URL    = MY_STUFF_URL + "favourites/";
-    public static final String INBOX_URL        = MY_STUFF_URL + "inbox/";
+    public static final String MY_STUFF_URL     = SITE_URL + "ajax/interest/moar/";
+    public static final String FAVORITES_URL    = SITE_URL + "ajax/favourites/list/";
+    public static final String INBOX_URL        = SITE_URL + "ajax/inbox/moar/";
     public static final String AUTHOR_POSTS_URL = SITE_URL + "users/%s/posts/";
     public static final String POST_COMMENT_URL        
                                                 = SITE_URL + "commctl/";    
