@@ -149,8 +149,16 @@ public class ServerWorker
     public Pair<String, Header[]> login(String url, String login, String password, String recaptcha_challenge, String captcha) throws IOException
     {
         HttpPost httpGet = new HttpPost(url);
-        if(TextUtils.isEmpty(recaptcha_challenge))
-        String str = String.format("username=%s&password=%s&forever=1&recaptcha_challenge_field=%s&recaptcha_response_field=%s", URLEncoder.encode(login), URLEncoder.encode(password), recaptcha_challenge, captcha);
+
+        String str;
+        if(!TextUtils.isEmpty(recaptcha_challenge))
+        {
+            str = String.format("username=%s&password=%s&forever=1&recaptcha_challenge_field=%s&recaptcha_response_field=%s", URLEncoder.encode(login), URLEncoder.encode(password), URLEncoder.encode(recaptcha_challenge), URLEncoder.encode(captcha));
+        }
+        else
+        {
+            str = String.format("username=%s&password=%s&forever=1", URLEncoder.encode(login), URLEncoder.encode(password));
+        }
 
         StringEntity se = new StringEntity(str, HTTP.UTF_8);
         httpGet.setHeader("Content-Type","application/x-www-form-urlencoded");

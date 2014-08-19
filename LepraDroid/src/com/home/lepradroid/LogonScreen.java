@@ -65,9 +65,12 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
     
     private void updateControls()
     {
-        if(     captcha.getText().length() != 6 || 
-                TextUtils.isEmpty(login.getText()) || 
-                TextUtils.isEmpty(password.getText()))
+        if(     captcha_layout.getVisibility() == View.VISIBLE &&
+                (
+                    TextUtils.isEmpty(captcha.getText()) ||
+                    TextUtils.isEmpty(login.getText()) ||
+                    TextUtils.isEmpty(password.getText()))
+                )
             yarrr.setEnabled(false);
         else
             yarrr.setEnabled(true);
@@ -123,7 +126,7 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
 
     public void OnCaptchaUpdateListener(Drawable dw)
     {
-        captchaImage.setVisibility(View.VISIBLE);
+        captcha_layout.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
         captcha.setText("");
         

@@ -68,8 +68,6 @@ public class LoginTask extends BaseTask
     {
         try
         {
-            String publicKey = getCaptchaPublicKey();
-
             final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.AUTH_PAGE_URL, login, password, "", captcha);
             for(Header header : loginInfo.second)
             {
@@ -92,6 +90,11 @@ public class LoginTask extends BaseTask
             
             if(TextUtils.isEmpty(sid) || TextUtils.isEmpty(uid))
             {
+                String publicKey = getCaptchaPublicKey();
+                String challenge = getChallenge(publicKey);
+
+                new GetCaptchaTask(String.format("https://www.google.com/recaptcha/api/image?c=%s", challenge)).execute(null);
+
                 final Document document = Jsoup.parse(loginInfo.first);
                 final Elements errors = document.getElementsByClass("error");
                 if(errors.size() > 1) // first error about java script
@@ -120,5 +123,14 @@ public class LoginTask extends BaseTask
         }
         
         return e;
+    }
+
+    private String getChallenge(String publicKey) throws Exception
+    {
+        String response = ServerWorker.Instance().getContent(String.format("https://www.google.com/recaptcha/api/challenge?k=%s&ajax=1", publicKey));
+        int first = response.indexOf("'") + 1;
+        int second = response.indexOf("'", first);
+
+        return response.substring(first, second);
     }
 }

@@ -34,9 +34,12 @@ public class GetCaptchaTask extends BaseTask
             Logger.e(t);
         }        
     }
-    
-    public GetCaptchaTask() 
+
+    private final String url;
+
+    public GetCaptchaTask(String url)
     {
+        this.url = url;
     }
     
     private Drawable captcha;
@@ -48,16 +51,8 @@ public class GetCaptchaTask extends BaseTask
         try 
         {  
             Logger.d("Started GetCaptchaTask");
-  
-            final Document document = Jsoup.parse(ServerWorker.Instance().getContent(Commons.LOGON_PAGE_URL), "UTF-8");
-            final Element root = document.body(); 
-            final Elements elements = root.getElementsByAttributeValue("name", "logincode");
-            if(elements.isEmpty())
-                throw new Exception(Utils.getString(R.string.Captcha_Not_Found));
-            final String loginCode = elements.first().attr("value");
-            //ServerWorker.Instance().setLoginCode(loginCode);
-              
-            captcha = Utils.getImageFromByteArray(ServerWorker.Instance().getImage(Commons.CAPTCHA_URL + loginCode));
+
+            captcha = Utils.getImageFromByteArray(ServerWorker.Instance().getImage(url));
         }
         catch (Throwable e) 
         {           

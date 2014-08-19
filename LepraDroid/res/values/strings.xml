@@ -5,7 +5,7 @@
     <string name="Author_Name">R</string>
     <string name="login_label">Логин:</string>
     <string name="password_label">Пароль:</string>
-    <string name="captcha_label">Шесть букв с картинки:</string>
+    <string name="captcha_label">Два слова с картинки:</string>
     <string name="yarrr_label">YARRR!</string>
     <string name="Error">Упс, ошибка!</string>
     <string name="Loading">Загружается&#8230;</string>
