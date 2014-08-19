@@ -3,8 +3,6 @@ package com.home.lepradroid.tasks;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import android.text.TextUtils;
 import com.home.lepradroid.utils.Utils;
@@ -107,22 +105,22 @@ public class GetAuthorTask extends BaseTask
             if (data == null)
                 data = new Author();
 
-
             data.setUserName(userName);
-            final Element userPic = document.getElementsByClass("userpic").first();
+            final Element userPic = document.getElementsByClass("b-userpic").first();
             final Element image = userPic.getElementsByTag("img").first();
             if(image != null)
             {
                 data.setImageUrl(image.attr("src"));
             }
             
-            final Element userInfo = document.getElementsByClass("userbasicinfo").first();
-            data.setId(userInfo.getElementsByClass("vote").first().attr("uid"));
-            data.setName(userInfo.getElementsByTag("h3").first().text());
+            data.setRating(Short.valueOf(document.getElementsByClass("b-karma_value_inner").text()));
+            int start = html.indexOf("\tid : ");
+            data.setId(html.substring(start, html.indexOf(",", start)));
 
-            data.setEgo(document.getElementsByClass("userego").first().text());
+            data.setName(document.getElementsByClass("b-user_full_name").first().text());
+            data.setEgo(document.getElementsByClass("b-user_residence").first().text());
 
-            Element userStory = document.getElementsByClass("userstory").first();
+            Element userStory = document.getElementsByClass("b-user_text").first();
             if(userStory != null)
             {
                 Elements images = userStory.getElementsByTag("img");
@@ -157,11 +155,9 @@ public class GetAuthorTask extends BaseTask
                 data.setUserStory(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(userStory));
             }
             
-            Element vote;
             if(SettingsWorker.Instance().loadUserName().equals(userName))
             {
-                vote = document.getElementById("uservote");
-                final Elements userStat = document.getElementsByClass("userstat");
+                final Elements userStat = document.getElementsByClass("b-user_stat");
                 if(userStat.size() > 1)
                 {
                     final String text = userStat.get(1).ownText();
@@ -170,25 +166,10 @@ public class GetAuthorTask extends BaseTask
             }
             else
             {
-                vote  = document.getElementById("js-user_karma");
-                
-                Element vote1 = userInfo.getElementsByClass("vote1").first();
-                Element vote2 = userInfo.getElementsByClass("vote2").first();
-
-                data.setMinusVoted(vote1.getElementsByTag("a").last().attr("class").equals("minus voted") && vote2.getElementsByTag("a").last().attr("class").equals("minus voted"));
-                data.setPlusVoted(vote1.getElementsByTag("a").first().attr("class").equals("plus voted") && vote2.getElementsByTag("a").first().attr("class").equals("plus voted"));
-                if (TextUtils.isEmpty(SettingsWorker.Instance().loadVoteKarmaWtf()))
-                {
-                    Element script = userInfo.getElementsByTag("script").first();
-                    Pattern pattern = Pattern.compile("VoteBlockUser.wtf = \"(.+)\"");
-                    Matcher matcher = pattern.matcher(script.data());
-                    if(matcher.find()){
-                        SettingsWorker.Instance().saveVoteKarmaWtf(matcher.group(1));
-                    }
-                }
+                data.setMinusVoted(!document.getElementsByClass("b-karma_button b-karma_button__minus b-karma_button__left_minus active").isEmpty());
+                data.setPlusVoted(!document.getElementsByClass("b-karma_button b-karma_button__plus b-karma_button__left_plus active").isEmpty());
             }
             
-            data.setRating(Short.valueOf(vote.getElementsByTag("em").text()));
 
             ServerWorker.Instance().addNewAuthor(data);
 

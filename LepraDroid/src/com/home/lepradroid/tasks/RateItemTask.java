@@ -25,7 +25,6 @@ public class RateItemTask extends BaseTask
     private Post post;
     private UUID commentId;
     private RateType type;
-    private String wtf;
     private String userId;
     private RateValueType valueType;
 
@@ -123,7 +122,6 @@ public class RateItemTask extends BaseTask
     {
         post = (Post)ServerWorker.Instance().getPostById(postId);
         this.type = RateType.POST;
-        this.wtf = SettingsWorker.Instance().loadVoteWtf();
         this.valueType = valueType;
     }
     
@@ -131,7 +129,6 @@ public class RateItemTask extends BaseTask
     {
         post = (Post)ServerWorker.Instance().getPostById(postId);
         this.type = RateType.COMMENT;
-        this.wtf = SettingsWorker.Instance().loadVoteWtf();
         this.valueType = valueType;
         this.commentId = commentId;
     }
@@ -139,7 +136,6 @@ public class RateItemTask extends BaseTask
     public RateItemTask(String userId, RateValueType valueType)
     {
         this.type = RateType.KARMA;
-        this.wtf = SettingsWorker.Instance().loadVoteKarmaWtf();
         this.userId = userId;
         this.valueType = valueType;
     }
@@ -154,7 +150,7 @@ public class RateItemTask extends BaseTask
             switch (type)
             {
             case POST:
-                response = ServerWorker.Instance().rateItemRequest(type, wtf, "", post.getLepraId(),
+                response = ServerWorker.Instance().rateItemRequest(type, "TODO", "", post.getLepraId(),
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 if(!post.isMain())
@@ -169,7 +165,7 @@ public class RateItemTask extends BaseTask
                 break;
             case COMMENT:
                 Comment comment = (Comment)ServerWorker.Instance().getComment(post.getId(), commentId);
-                response = ServerWorker.Instance().rateItemRequest(type, wtf, comment.getLepraId(), post.getLepraId(),
+                response = ServerWorker.Instance().rateItemRequest(type, "TODO", comment.getLepraId(), post.getLepraId(),
                         valueType,
                         valueType == RateValueType.MINUS ? "-1" : "1");
                 if(!post.isMain())
@@ -184,10 +180,10 @@ public class RateItemTask extends BaseTask
                 break;
             case KARMA:
                 /*response = */ServerWorker.Instance()
-                        .rateItemRequest(type, wtf, userId, "", valueType,
+                        .rateItemRequest(type, "TODO", userId, "", valueType,
                                 valueType == RateValueType.MINUS ? "3" : "1");
                 response = ServerWorker.Instance()
-                        .rateItemRequest(type, wtf, userId, "", valueType,
+                        .rateItemRequest(type, "TODO", userId, "", valueType,
                                 valueType == RateValueType.MINUS ? "4" : "2");
                 break;
             default:

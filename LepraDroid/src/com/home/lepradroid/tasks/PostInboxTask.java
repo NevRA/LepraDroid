@@ -61,14 +61,7 @@ public class PostInboxTask extends BaseTask
     {
         try
         {
-            if(TextUtils.isEmpty(SettingsWorker.Instance().loadInboxWtf()))
-            {
-                String html = ServerWorker.Instance().getContent(Commons.ADD_INBOX_URL);
-                Element element = Jsoup.parse(html).getElementsByAttributeValue("name", "wtf").get(1);
-                SettingsWorker.Instance().saveInboxWtf(element.attr("value"));
-            }
-
-            ServerWorker.Instance().postInboxRequest(SettingsWorker.Instance().loadInboxWtf(), userName, message);
+            //ServerWorker.Instance().postInboxRequest(SettingsWorker.Instance().loadInboxWtf(), userName, message);
             new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL, Commons.PostsType.MY).execute();
             notifyOnAddedInboxUpdate(true);
         }

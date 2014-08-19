@@ -44,7 +44,6 @@ public class GetCommentsTask extends BaseTask
     private String  postAuthor          = "";
     private String  userName            = "";
     private boolean isImagesEnabled     = true;
-    private boolean isCommentWtfLoaded  = false;
     private int     totalBytesReaded    = 0;
     private int     totalBytesParsed    = 0;
     
@@ -95,14 +94,12 @@ public class GetCommentsTask extends BaseTask
         post = (Post)ServerWorker.Instance().getPostById(postId);
         this.commentToSelectId = commentToSelectId;
         isImagesEnabled = Utils.isImagesEnabled();
-        isCommentWtfLoaded = !TextUtils.isEmpty(SettingsWorker.Instance().loadCommentWtf());
     }
     
     public GetCommentsTask(UUID postId)
     {
         post = (Post)ServerWorker.Instance().getPostById(postId);
         isImagesEnabled = Utils.isImagesEnabled();
-        isCommentWtfLoaded = !TextUtils.isEmpty(SettingsWorker.Instance().loadCommentWtf());
     }
     
     @SuppressWarnings("unchecked")
@@ -176,38 +173,7 @@ public class GetCommentsTask extends BaseTask
         
         return len;
     }
-    
-    private String getCommentWtfAndReturnFirstPageAfterIt(FileInputStream stream) throws Exception
-    {  
-        int len;
-        byte[] chars = new byte[BUFFER_SIZE];
-        String header = "";
-        while((len = readBytesToBuff_WithoutNonLatinCharsAtTheEnd(stream, chars)) > 0)
-        {
-            String str = new String(chars, 0, len, "UTF-8"); 
-            header += str;
-            int pos = header.indexOf("comments-form");
-            if(pos > 0)
-            {
-                header = header.substring(pos - 50);
-                Element commentsForm = Jsoup.parse(header).getElementById("comments-form");
-                if(commentsForm != null)
-                {
-                    Elements wtf = commentsForm.getElementsByAttributeValue("name", "wtf");
-                    if(!wtf.isEmpty())
-                        SettingsWorker.Instance().saveCommentWtf(wtf.attr("value"));
-                    else
-                        continue;
-                    
-                    isCommentWtfLoaded = true;
-                    return str;
-                }
-            }
-        }
-                        
-        throw new Exception("Не могу найти заголовок страницы"); // TODO from resources
-    }
-    
+
     @Override
     protected Throwable doInBackground(Void... arg0)
     {
@@ -256,10 +222,7 @@ public class GetCommentsTask extends BaseTask
                 int start = -1;
                 int end = -1;                
                 fileStream = new FileInputStream(file);
-                
-                if(!isCommentWtfLoaded)
-                    pageA = getCommentWtfAndReturnFirstPageAfterIt(fileStream);
-                                
+
                 while(true)
                 {
                     if(isCancelled()) break;

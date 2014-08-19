@@ -65,7 +65,7 @@ public class ChangeMyStuffTask extends BaseTask
     {
         try
         {
-            ServerWorker.Instance().postChangeMyStuff(SettingsWorker.Instance().loadStuffWtf(), post.getLepraId(), type);
+            //ServerWorker.Instance().postChangeMyStuff(SettingsWorker.Instance().loadStuffWtf(), post.getLepraId(), type);
             new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, Commons.PostsType.MY).execute();
             notifyAboutChangeMyStuff(true);
         }

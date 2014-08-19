@@ -266,7 +266,7 @@ public class Utils
             public void onClick(View view)
             {
                 String value = commentView.getText().toString();
-                new TaskWrapper(null, new PostCommentTask(post.getId(), SettingsWorker.Instance().loadCommentWtf(), comment != null ? comment.getLepraId() : "", post.getLepraId(), (short) (comment != null ? comment.getLevel() + 1 : 0), value), null);
+                new TaskWrapper(null, new PostCommentTask(post.getId(), "TODO", comment != null ? comment.getLepraId() : "", post.getLepraId(), (short) (comment != null ? comment.getLevel() + 1 : 0), value), null);
 
                 dialog.cancel();
             }
