@@ -47,7 +47,7 @@ public class GetCommentsTask extends BaseTask
     private int     totalBytesReaded    = 0;
     private int     totalBytesParsed    = 0;
     
-    static final Pattern patternLevel = Pattern.compile("post tree indent_(\\S*)");
+    static final Pattern patternLevel = Pattern.compile("comment indent_(\\S*)");
     static final Class<?>[] argsClassesOnCommentsUpdateFinished = new Class[2];
     static final Class<?>[] argsClassesOnCommentsUpdateFirstEtries = new Class[4];
     static final Class<?>[] argsClassesOnCommentsUpdateBegin = new Class[1];
@@ -192,7 +192,7 @@ public class GetCommentsTask extends BaseTask
             postAuthor = post.getAuthor();
             
             final String pref = "<div id=\"XXXXXXXX\" ";
-            final String postTree = "class=\"post tree";
+            final String postTree = "class=\"comment ";
             
             try 
             {
@@ -318,7 +318,7 @@ public class GetCommentsTask extends BaseTask
     private void parseRecord(String html) throws ExecutionException, InterruptedException
     {
         Element content = Jsoup.parse(html);
-        Element element = content.getElementsByClass("dt").first();
+        Element element = content.getElementsByClass("c_body").first();
         Element root = content.getElementsByTag("div").first();
 
         Comment comment = new Comment();
@@ -375,6 +375,7 @@ public class GetCommentsTask extends BaseTask
             comment.setOnlyText(true);
         }
 
+        // TODO
         Element authorElement = content.getElementsByClass("p").first();
         if(authorElement != null)
         {
@@ -414,8 +415,9 @@ public class GetCommentsTask extends BaseTask
                             .get();
                 }
 
-                Element rating = vote.getElementsByTag("em").first();
-                comment.setRating(Short.valueOf(rating.text()));
+                // TODO
+                //Element rating = vote.getElementsByTag("em").first();
+                //comment.setRating(Short.valueOf(rating.text()));
             }
         }
         
