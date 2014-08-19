@@ -375,10 +375,10 @@ public class GetCommentsTask extends BaseTask
             comment.setOnlyText(true);
         }
 
-        // TODO
-        Element authorElement = content.getElementsByClass("p").first();
+        Element authorElement = content.getElementsByClass("ddi").first();
         if(authorElement != null)
         {
+            // TODO
             Elements a = authorElement.getElementsByTag("a");
             comment.setUrl(Commons.SITE_URL + a.first().attr("href"));
             
