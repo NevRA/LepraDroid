@@ -1,25 +1,7 @@
 package com.home.lepradroid.tasks;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.text.TextUtils;
 import android.util.Pair;
-
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.CommentsUpdateListener;
@@ -32,6 +14,19 @@ import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.FileCache;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GetCommentsTask extends BaseTask
 {
@@ -393,7 +388,15 @@ public class GetCommentsTask extends BaseTask
                 color = "#3270FF";
             
             comment.setAuthor(author);
-            comment.setSignature(authorElement.text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>"));
+            String signature = authorElement.text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>");
+            signature = signature.substring(0, signature.indexOf(", ·"));
+
+            String epochDate = authorElement.getElementsByClass("js-date").first().attr("data-epoch_date");
+            Date date = new Date(Long.valueOf(epochDate) * 1000);
+
+            signature = signature + " " + date.toLocaleString(); // DateUtils.getRelativeTimeSpanString(date.getTime(), new Date().getTime(), DateUtils.FORMAT_ABBREV_RELATIVE);
+
+            comment.setSignature(signature);
         }
 
         if(!post.isInbox())

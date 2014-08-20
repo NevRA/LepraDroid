@@ -1,18 +1,7 @@
 package com.home.lepradroid.tasks;
 
-import java.lang.reflect.Method;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.text.TextUtils;
 import android.util.Pair;
-
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -22,6 +11,16 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 public class GetPostsTask extends BaseTask
 {
@@ -293,7 +292,16 @@ public class GetPostsTask extends BaseTask
 
                     String authorText = author.getElementsByTag("a").first().text();
                     post.setAuthor(authorText);
-                    post.setSignature(author.text().split("\\|")[0].replace(authorText, "<b>" + authorText + "</b>"));
+
+                    String signature = author.text().split("\\|")[0].replace(authorText, "<b>" + authorText + "</b>");
+                    signature = signature.substring(0, signature.indexOf(", ·"));
+
+                    String epochDate = author.getElementsByClass("js-date").first().attr("data-epoch_date");
+                    Date date = new Date(Long.valueOf(epochDate) * 1000);
+
+                    signature = signature + " " + date.toLocaleString(); // DateUtils.getRelativeTimeSpanString(date.getTime(), new Date().getTime(), DateUtils.FORMAT_ABBREV_RELATIVE);
+
+                    post.setSignature(signature);
                 }
                 
                 if(isCancelled()) break;
