@@ -373,7 +373,6 @@ public class GetCommentsTask extends BaseTask
         Element authorElement = content.getElementsByClass("ddi").first();
         if(authorElement != null)
         {
-            // TODO
             Elements a = authorElement.getElementsByTag("a");
             comment.setUrl(Commons.SITE_URL + a.first().attr("href"));
             
@@ -405,8 +404,8 @@ public class GetCommentsTask extends BaseTask
             if(vote != null)
             {
                 String voteBody = vote.html();
-                comment.setPlusVoted(voteBody.contains("class=\"plus voted\""));
-                comment.setMinusVoted(voteBody.contains("class=\"minus voted\""));
+                comment.setPlusVoted(voteBody.contains("vote_button_plus vote_voted\""));
+                comment.setMinusVoted(voteBody.contains("vote_button_minus vote_voted\""));
 
                 if(     !post.isMain() &&
                         post.getVoteWeight() == -1 &&
