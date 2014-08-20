@@ -349,10 +349,8 @@ public class GetPostsTask extends BaseTask
 
     private String getPageNum()
     {
-        if(type == Commons.PostsType.MAIN || type == Commons.PostsType.CUSTOM )
+        if(type == Commons.PostsType.MAIN || type == Commons.PostsType.CUSTOM || type == Commons.PostsType.USER )
             return "pages/" + Integer.toString(page + 1);
-        if(type == Commons.PostsType.USER)
-            return Integer.toString(page + 1);
 
         return "";
     }
