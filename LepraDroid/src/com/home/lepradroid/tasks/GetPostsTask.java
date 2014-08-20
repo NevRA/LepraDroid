@@ -11,12 +11,14 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -149,7 +151,7 @@ public class GetPostsTask extends BaseTask
             else
             {
                 String body = String.format("sort=0&csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
-                html = ServerWorker.Instance().postRequest(url, body);
+                html = StringEscapeUtils.unescapeJava(ServerWorker.Instance().postRequest(url, body));
             }
 
             if(refresh)
