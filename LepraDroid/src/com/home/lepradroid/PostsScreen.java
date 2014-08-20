@@ -1,8 +1,5 @@
 package com.home.lepradroid;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -12,7 +9,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
@@ -25,6 +21,9 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetPostsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class PostsScreen extends BaseView implements CommentsUpdateListener, PostsUpdateListener, ItemRateUpdateListener
 {

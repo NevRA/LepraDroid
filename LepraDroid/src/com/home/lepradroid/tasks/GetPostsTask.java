@@ -135,6 +135,7 @@ public class GetPostsTask extends BaseTask
 
             boolean lastElement = false;
 
+            String paginatorPattern = "'js-paginator', ";
             String tokenPattern = "csrf_token : '";
             String postOrd = "<div class=\"post ";
             String senchaPrefix = String.format("http://src.sencha.io/%d/%d/", imageSize, imageSize);
@@ -204,8 +205,13 @@ public class GetPostsTask extends BaseTask
                             type == Commons.PostsType.USER
                         ) )
                 {
-                    Element element = content.getElementById("total_pages");
-                    ServerWorker.Instance().addPostPagesCount(groupId, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
+                    int begin = html.indexOf(paginatorPattern);
+                    if(begin > 0)
+                    {
+                        begin += paginatorPattern.length();
+                        String pageCount = html.substring(begin,  html.indexOf(",", begin));
+                        ServerWorker.Instance().addPostPagesCount(groupId, Integer.valueOf(pageCount));
+                    }
                 }
                 
                 Post post = new Post(groupId);
