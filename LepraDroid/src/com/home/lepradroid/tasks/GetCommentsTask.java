@@ -417,9 +417,8 @@ public class GetCommentsTask extends BaseTask
                             .get();
                 }
 
-                // TODO
-                //Element rating = vote.getElementsByTag("em").first();
-                //comment.setRating(Short.valueOf(rating.text()));
+                Element rating = vote.getElementsByClass("vote_result").first();
+                comment.setRating(Short.valueOf(rating.text()));
             }
         }
         
