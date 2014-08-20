@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.home.lepradroid.settings.SettingsWorker;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -118,13 +120,17 @@ public class GetBlogsTask extends BaseTask
                 ServerWorker.Instance().clearPostsById(Commons.BLOGS_POSTS_ID);
             
             notifyAboutBlogsUpdateBegin();
-            
-            final String html = ServerWorker.Instance().getContent(Commons.BLOGS_URL + "subscribers/" + page + 1);
+
+            String body = String.format("sort=0&csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
+            final String html = StringEscapeUtils.unescapeJava(ServerWorker.Instance().postRequest(Commons.BLOGS_URL, body));
 
             if(refresh)
-                getSubBlogs(html, items);
+            {
+                // TODO
+                // getSubBlogs(html, items);
+            }
             
-            final String blogRow = "<tr class=\"jj_row";
+            final String blogRow = "<div class=\"b-list_item\"";
             int currentPos = 0;
             boolean lastElement = false;
             boolean receivedBlogs = false;
@@ -149,8 +155,9 @@ public class GetBlogsTask extends BaseTask
                 final Element content = Jsoup.parse(html.substring(start, end));
                 if(page == 0 && lastElement)
                 {
-                    Element element = content.getElementById("total_pages");
-                    ServerWorker.Instance().addPostPagesCount(Commons.BLOGS_POSTS_ID, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
+                    // TODO
+                    //Element element = content.getElementById("total_pages");
+                    //ServerWorker.Instance().addPostPagesCount(Commons.BLOGS_POSTS_ID, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
                 }
 
                 Blog blog = new Blog();
@@ -172,11 +179,11 @@ public class GetBlogsTask extends BaseTask
                     }
                 }
 
-                Elements title = content.getElementsByTag("h5");
+                Elements title = content.getElementsByTag("b-list_item_blog_description");
                 if (!title.isEmpty())
                     blog.setHtml(title.first().html());
 
-                Elements author = content.getElementsByClass("jj_creator");
+                Elements author = content.getElementsByClass("b-list_item_blog_creator");
                 if (!author.isEmpty())
                 {
                     blog.setAuthor(author.first().getElementsByTag("a").first().text());
