@@ -181,12 +181,9 @@ public class RateItemTask extends BaseTask
                 }
                 break;
             case KARMA:
-                /*response = */ServerWorker.Instance()
-                        .rateItemRequest(type, "TODO", userId, "", valueType,
-                                valueType == RateValueType.MINUS ? "3" : "1");
                 response = ServerWorker.Instance()
                         .rateItemRequest(type, "TODO", userId, "", valueType,
-                                valueType == RateValueType.MINUS ? "4" : "2");
+                                valueType == RateValueType.MINUS ? "-2" : "2");
                 break;
             default:
                 break;

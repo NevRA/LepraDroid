@@ -97,7 +97,8 @@ public class GetAuthorTask extends BaseTask
         {
             if(!withoutBeginNotify)
                 notifyAboutAuthorUpdateBegin();
-            
+
+            final String idPattern = "userProfileHandler.userNotes.init('";
             final String html = ServerWorker.Instance().getContent(Commons.SITE_URL + "users/" + userName);
             final Document document = Jsoup.parse(html);
             
@@ -114,8 +115,8 @@ public class GetAuthorTask extends BaseTask
             }
             
             data.setRating(Short.valueOf(document.getElementsByClass("b-karma_value_inner").text()));
-            int start = html.indexOf("\tid : ");
-            data.setId(html.substring(start, html.indexOf(",", start)));
+            int start = html.indexOf(idPattern);
+            data.setId(html.substring(start + idPattern.length(), html.indexOf("')", start)));
 
             data.setName(document.getElementsByClass("b-user_full_name").first().text());
             data.setEgo(document.getElementsByClass("b-user_residence").first().text());
