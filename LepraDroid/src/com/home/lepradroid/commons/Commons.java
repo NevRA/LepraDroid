@@ -4,7 +4,8 @@ import java.util.UUID;
 
 public class Commons
 {
-    public static final String SITE_URL         = "https://leprosorium.ru/";
+    public static final String PREFIX_URL       = "https:";
+    public static final String SITE_URL         = PREFIX_URL + "//leprosorium.ru/";
     public static final String LOGON_PAGE_URL   = SITE_URL + "login/";
     public static final String CAPTCHA_URL      = SITE_URL + "captchaa/";
     public static final String AUTH_PAGE_URL    = SITE_URL + "ajax/auth/login/";

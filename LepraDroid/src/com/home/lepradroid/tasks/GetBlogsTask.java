@@ -122,15 +122,17 @@ public class GetBlogsTask extends BaseTask
             notifyAboutBlogsUpdateBegin();
 
             String body = String.format("sort=0&csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
-            final String html = StringEscapeUtils.unescapeJava(ServerWorker.Instance().postRequest(Commons.BLOGS_URL, body));
+            String html = ServerWorker.Instance().postRequest(Commons.BLOGS_URL, body);
+            html = html.substring(html.indexOf("\"template\":"));
 
             if(refresh)
             {
                 // TODO
                 // getSubBlogs(html, items);
             }
-            
-            final String blogRow = "<div class=\"b-list_item\"";
+
+            final String logoPattern = "background-image:url(";
+            final String blogRow = "<div class=\\\"b-list_item\\\"";
             int currentPos = 0;
             boolean lastElement = false;
             boolean receivedBlogs = false;
@@ -152,34 +154,25 @@ public class GetBlogsTask extends BaseTask
 
                 currentPos = end;
 
-                final Element content = Jsoup.parse(html.substring(start, end));
+                final Element content = Jsoup.parse(StringEscapeUtils.unescapeJava(html.substring(start, end)));
                 if(page == 0 && lastElement)
                 {
-                    // TODO
-                    //Element element = content.getElementById("total_pages");
-                    //ServerWorker.Instance().addPostPagesCount(Commons.BLOGS_POSTS_ID, element == null ? 0 : Integer.valueOf(element.getElementsByTag("strong").first().text()));
+                    ServerWorker.Instance().addPostPagesCount(Commons.BLOGS_POSTS_ID, 1000);
                 }
 
                 Blog blog = new Blog();
 
-                Elements logos = content.getElementsByClass("jj_logo");
-                if (!logos.isEmpty())
-                {
-                    Element logo = logos.first();
+                String logo = content.getElementsByClass("b-list_item_logo").first().attr("style");
+                int begin = logo.indexOf(logoPattern);
+                logo = logo.substring(begin + logoPattern.length(), logo.indexOf(")", begin));
 
-                    Elements url = logo.getElementsByTag("a");
-                    if (!url.isEmpty())
-                        blog.setUrl(url.attr("href"));
+                String blogUrl = content.getElementsByClass("b-list_item_blog_url").first().attr("href");
+                blog.setUrl(Commons.PREFIX_URL + blogUrl + "/");
 
-                    Elements images = logo.getElementsByTag("img");
-                    if (!images.isEmpty())
-                    {
-                        int imageSize = Utils.getPostImagePreviewIsPixelsSize();
-                        blog.setImageUrl(String.format("http://src.sencha.io/%d/%d/%s", imageSize, imageSize, images.first().attr("src")));
-                    }
-                }
+                int imageSize = Utils.getPostImagePreviewIsPixelsSize();
+                blog.setImageUrl(String.format("http://src.sencha.io/%d/%d/%s", imageSize, imageSize, logo));
 
-                Elements title = content.getElementsByTag("b-list_item_blog_description");
+                Elements title = content.getElementsByTag("h5");
                 if (!title.isEmpty())
                     blog.setHtml(title.first().html());
 
@@ -190,13 +183,13 @@ public class GetBlogsTask extends BaseTask
                     blog.setSignature(author.first().text());
                 }
 
-                Elements stat = content.getElementsByClass("jj_stat_table");
+                Elements stat = content.getElementsByClass("b-list_item_blog_stats");
                 if (!stat.isEmpty())
                 {
                     Elements div = stat.first().getElementsByTag("div");
                     if (div.size() >= 3)
                     {
-                        blog.setStat("<b>" + div.get(0).text() + "</b>" + " постов / " + "<b>" + div.get(1).text() + "</b>" + " комментариев / " + "<b>" + div.get(2).text() + "</b>" + " подписчиков");
+                        blog.setStat("<b>" + div.get(1).text() + "</b>" + " постов / " + "<b>" + div.get(2).text() + "</b>" + " комментариев / " + "<b>" + div.get(3).text() + "</b>" + " подписчиков");
                     }
                 }
                 

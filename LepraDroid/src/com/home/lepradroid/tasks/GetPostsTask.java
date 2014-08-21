@@ -214,6 +214,10 @@ public class GetPostsTask extends BaseTask
                         String pageCount = html.substring(begin,  html.indexOf(",", begin));
                         ServerWorker.Instance().addPostPagesCount(groupId, Integer.valueOf(pageCount));
                     }
+                    else if(type == Commons.PostsType.USER)
+                        ServerWorker.Instance().addPostPagesCount(groupId,0);
+                    else
+                        ServerWorker.Instance().addPostPagesCount(groupId, Integer.valueOf(100));
                 }
                 
                 Post post = new Post(groupId);
