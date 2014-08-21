@@ -207,7 +207,7 @@ public class RateItemTask extends BaseTask
                     break;
                 case COMMENT:
                     item = ServerWorker.Instance().getComment(post.getId(), commentId);
-                    item.setRating(Short.valueOf(response));
+                    item.setRating(Short.valueOf(mainObject.getString("rating")));
                     break;
                 case KARMA:
                     item = ServerWorker.Instance().getAuthorById(userId);

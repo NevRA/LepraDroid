@@ -206,13 +206,13 @@ public class ServerWorker
         switch (type) 
         {
             case POST:
-                url = Commons.ITEM_VOTE_URL;
+                url = Commons.POST_VOTE_URL;
                 body = String.format("doc=%s&vote=%s&csrf_token=%s", postId, valueType == RateValueType.MINUS ? "-1" : "1", SettingsWorker.Instance().loadCsrfToke());
                 break;
 
             case COMMENT:
-                url = Commons.ITEM_VOTE_URL;
-                body = String.format("type=0&wtf=%s&id=p%s&post_id=%s&value=%s", wtf, id, postId, valueType == RateValueType.MINUS ? "-1" : "1");
+                url = Commons.COMMENT_VOTE_URL;
+                body = String.format("doc=%s&vote=%s&csrf_token=%s", id, valueType == RateValueType.MINUS ? "-1" : "1", SettingsWorker.Instance().loadCsrfToke());
                 break;
 
             case KARMA:
