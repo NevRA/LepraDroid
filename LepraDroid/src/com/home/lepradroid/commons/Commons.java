@@ -16,7 +16,7 @@ public class Commons
     public static final String POST_COMMENT_URL        
                                                 = SITE_URL + "commctl/";    
     public static final String BLOGS_URL        = SITE_URL + "ajax/blogs/top/";
-    public static final String ITEM_VOTE_URL    = SITE_URL + "rate/";
+    public static final String ITEM_VOTE_URL    = SITE_URL + "ajax/vote/post/";
     public static final String KARMA_VOTE_URL   = SITE_URL + "karma/";
     public static final String THRESHOLD_URL    = SITE_URL + "/threshold/";
     public static final String MYCTL_URL        = SITE_URL + "/myctl";

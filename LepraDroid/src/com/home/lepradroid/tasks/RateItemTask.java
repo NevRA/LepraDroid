@@ -19,6 +19,8 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class RateItemTask extends BaseTask
 {
@@ -190,9 +192,10 @@ public class RateItemTask extends BaseTask
                 break;
             }
 
-            if (    Utils.isIntNumber(response)
-                    || post.isFavorite()
-                    || post.isMyStuff())
+            JSONObject mainObject = new JSONObject(response);
+            String status = mainObject.getString("status");
+
+            if (status.equalsIgnoreCase("OK") )
             {
                 RateItem item = null;
 
@@ -200,11 +203,7 @@ public class RateItemTask extends BaseTask
                 {
                 case POST:
                     item = post;
-                    item.setRating((
-                            post.isFavorite() ||
-                            post.isMyStuff()) ?
-                                item.getRating() :
-                                Short.valueOf(response));
+                    item.setRating(Short.valueOf(mainObject.getString("rating")));
                     break;
                 case COMMENT:
                     item = ServerWorker.Instance().getComment(post.getId(), commentId);

@@ -207,7 +207,7 @@ public class ServerWorker
         {
             case POST:
                 url = Commons.ITEM_VOTE_URL;
-                body = String.format("type=1&wtf=%s&id=p%s&value=%s", wtf, postId, valueType == RateValueType.MINUS ? "-1" : "1");
+                body = String.format("doc=%s&vote=%s&csrf_token=%s", postId, valueType == RateValueType.MINUS ? "-1" : "1", SettingsWorker.Instance().loadCsrfToke());
                 break;
 
             case COMMENT:

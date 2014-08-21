@@ -284,12 +284,12 @@ public class GetPostsTask extends BaseTask
                     Elements span = author.getElementsByClass("b-post_comments_links");
                     Elements a = span.first().getElementsByTag("a");
                     String url = a.first().attr("href");
-                    if(url.contains("http"))
+                    if(url.contains("https"))
                         post.setUrl(url);
                     else
-                        post.setUrl(Commons.SITE_URL + url);
+                        post.setUrl(Commons.PREFIX_URL + url);
 
-                    post.setLepraId(post.getUrl().split(post.isInbox() ? "inbox/" : "comments/")[1]);
+                    post.setLepraId(post.getUrl().split(post.isInbox() ? "inbox/" : "comments/")[1].replace("/", ""));
                     
                     if(a.size() == 2)
                     {
