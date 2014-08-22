@@ -28,11 +28,11 @@ public class MainPreferences extends PreferenceActivity implements OnSharedPrefe
     
     private void updatePreferences()
     {
-        final ListPreference mainFilter = (ListPreference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_MainFilterId));
+        /*final ListPreference mainFilter = (ListPreference) getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_MainFilterId));
         String threshold = SettingsWorker.Instance().loadMainThreshold();
         if(!TextUtils.isEmpty(threshold))
             mainFilter.setValue(threshold);
-        mainFilter.setSummary(mainFilter.getEntry());
+        mainFilter.setSummary(mainFilter.getEntry());*/
         
         final Preference author = getPreferenceManager().findPreference(Utils.getString(R.string.MainSettings_AuthorId));
         author.setOnPreferenceClickListener(new OnPreferenceClickListener() 

@@ -10,13 +10,13 @@
 			android:title="@string/MainSettings_ImagesName"
 			android:summary="@string/MainSettings_ImagesSummary"
 			android:defaultValue="true"/>
-        <ListPreference 
+        <!--ListPreference
             android:key="@string/MainSettings_MainFilterId"
             android:title="@string/MainSettings_MainFilterName"
             android:summary="@string/MainSettings_MainFilterSummary"
             android:defaultValue="main" 
             android:entries="@array/mainFilter"
-            android:entryValues="@array/mainFilterValues"/>
+            android:entryValues="@array/mainFilterValues"/-->
         <ListPreference 
             android:key="@string/MainSettings_FontSizeId"
             android:title="@string/MainSettings_FontSizeName"
@@ -35,7 +35,7 @@
             android:summary="@string/MainSettings_CommentsIndicatorSummary"
             android:defaultValue="true"/>
     </PreferenceCategory>
-	<PreferenceCategory 
+	<!--PreferenceCategory
         android:title="@string/MainSettings_WidgetCategoryName"
         android:key="@string/MainSettings_WidgetCategoryId"> 
         <PreferenceScreen 
@@ -46,7 +46,7 @@
                 android:targetPackage="com.home.lepradroid"
                 android:targetClass="com.home.lepradroid.settings.WidgetPreferences"/>
 		</PreferenceScreen>
-	</PreferenceCategory>
+	</PreferenceCategory-->
     <PreferenceCategory
         android:title="@string/MainSettings_CacheCategoryName"
         android:key="@string/MainSettings_CacheCategoryId">
