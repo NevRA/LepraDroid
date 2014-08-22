@@ -240,9 +240,9 @@ public class ServerWorker
         postRequest(Commons.THRESHOLD_URL, String.format("showonindex=%s&selected_threshold=all", value));
     }
 
-    public String postInboxRequest(String wtf, String userName, String message) throws Exception
+    public String postInboxRequest(String userName, String message) throws Exception
     {
-        return postRequest(Commons.ADD_INBOX_URL, String.format("run=01&wtf=%s&whom=%s&comment=%s", wtf, userName, URLEncoder.encode(message)));
+        return postRequest(Commons.ADD_INBOX_URL, String.format("to=%s&body=%s&csrf_token=%s", userName, URLEncoder.encode(message), SettingsWorker.Instance().loadCsrfToke()));
     }
 
     public String postCommentRequest(String replyTo, String pid, String comment) throws Exception

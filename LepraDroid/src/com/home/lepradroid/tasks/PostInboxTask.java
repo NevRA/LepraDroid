@@ -61,7 +61,7 @@ public class PostInboxTask extends BaseTask
     {
         try
         {
-            //ServerWorker.Instance().postInboxRequest(SettingsWorker.Instance().loadInboxWtf(), userName, message);
+            ServerWorker.Instance().postInboxRequest(userName, message);
             new GetPostsTask(Commons.INBOX_POSTS_ID, Commons.INBOX_URL, Commons.PostsType.MY).execute();
             notifyOnAddedInboxUpdate(true);
         }

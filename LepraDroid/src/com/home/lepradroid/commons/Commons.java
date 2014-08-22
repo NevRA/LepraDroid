@@ -24,7 +24,7 @@ public class Commons
     public static final String MYCTL_OUT_URL    = SITE_URL + "/ajax/interest/out/";
     public static final String FAVSCTL_IN_URL   = SITE_URL + "/ajax/favourites/in/";
     public static final String FAVSCTL_OUT_URL  = SITE_URL + "/ajax/favourites/out/";
-    public static final String ADD_INBOX_URL    = SITE_URL + "my/inbox/write/";
+    public static final String ADD_INBOX_URL    = SITE_URL + "/ajax/inbox/post/yarrr/";
     public static final String COMMENT_RATING_URL
                                                 = SITE_URL + "votesctl/";
 
