@@ -164,11 +164,14 @@ public class GetBlogsTask extends BaseTask
 
                 String logo = content.getElementsByClass("b-list_item_logo").first().attr("style");
                 int begin = logo.indexOf(logoPattern);
-                logo = logo.substring(begin + logoPattern.length(), logo.indexOf(")", begin));
+                if(begin >= 0)
+                {
+                    logo = logo.substring(begin + logoPattern.length(), logo.indexOf(")", begin));
+                    blog.setImageUrl(logo);
+                }
 
                 String blogUrl = content.getElementsByClass("b-list_item_blog_url").first().attr("href");
                 blog.setUrl(Commons.PREFIX_URL + blogUrl + "/");
-                blog.setImageUrl(logo);
 
                 Elements title = content.getElementsByTag("h5");
                 if (!title.isEmpty())
@@ -177,7 +180,6 @@ public class GetBlogsTask extends BaseTask
                 Elements author = content.getElementsByClass("b-list_item_blog_creator");
                 if (!author.isEmpty())
                 {
-                    blog.setAuthor(author.first().getElementsByTag("a").first().text());
                     blog.setSignature(author.first().text());
                 }
 

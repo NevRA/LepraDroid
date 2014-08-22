@@ -114,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/captcha_layout"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dip"
+                    android:layout_marginTop="30dip"
                     android:background="@drawable/loginbutton_background" />
 		</RelativeLayout>
     </ScrollView>
