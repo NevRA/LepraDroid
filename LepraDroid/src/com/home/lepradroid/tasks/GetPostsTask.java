@@ -131,6 +131,8 @@ public class GetPostsTask extends BaseTask
                
         try
         {
+            notifyAboutPostsUpdateBegin();
+
             int num = -1;
             int currentPos = 0;
             int imageSize = Utils.getPostImagePreviewIsPixelsSize();
@@ -156,8 +158,6 @@ public class GetPostsTask extends BaseTask
 
             if(refresh)
                 ServerWorker.Instance().clearPostsById(groupId);
-
-            notifyAboutPostsUpdateBegin();
 
             do
             {
