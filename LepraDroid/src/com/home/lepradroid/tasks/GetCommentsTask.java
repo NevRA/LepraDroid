@@ -20,7 +20,6 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -335,37 +334,24 @@ public class GetCommentsTask extends BaseTask
             comment.setLevel(Short.valueOf(level.group(1)));
 
         Elements images = element.getElementsByTag("img");
-        int imageNum = 0;
-        List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
         for (Element image : images)
         {
             String src = image.attr("src");
             if(isImagesEnabled && !TextUtils.isEmpty(src))
             {
-                String id = "img" + Integer.valueOf(imageNum).toString();  
-                
                 if(!image.parent().tag().getName().equalsIgnoreCase("a"))
                     image.wrap("<a href=" + "\"" + src + "\"></a>");
                 
                 image.removeAttr("width");
                 image.removeAttr("height");
-                image.removeAttr("src");
-                image.removeAttr("id");
-                
-                image.attributes().put("id", id);
-                image.attributes().put("src", Commons.IMAGE_STUB);
-                image.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(comment.getLevel()).toString() + ");");
-                imgs.add(new Pair<String, String>(id, src));
-                
-                imageNum++;
+                image.attr("width", "100%");
             }
             else
                 image.remove();
         }
         
-        comment.setHtml(Utils.getImagesStub(imgs, comment.getLevel()) + Utils.wrapLepraTags(element));
-        if(     imgs.isEmpty() && 
-                !Utils.isContainExtraTagsForWebView(comment.getHtml()))
+        comment.setHtml(Utils.wrapLepraTags(element));
+        if(!Utils.isContainExtraTagsForWebView(comment.getHtml()))
         {
             comment.setOnlyText(true);
         }

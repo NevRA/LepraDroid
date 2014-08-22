@@ -22,11 +22,11 @@ public class LinksCatcher extends WebViewClient
     public static final int LINK_BLOG           = 4;
     public static final int LINK_INBOX          = 5;
 
-    private static final String PATTERN_BLOG    = "http://.*leprosorium.ru/?";
-    private static final String PATTERN_POST    = "http://.*leprosorium.ru/comments/\\d{5,8}(#new)?";
-    private static final String PATTERN_COMMENT = "(http://.*leprosorium.ru/comments/\\d{5,8})#(\\d{5,8})";
-    private static final String PATTERN_PROFILE = "http://.*leprosorium.ru/users/(.*)";
-    private static final String PATTERN_INBOX   = "http://.*leprosorium.ru/my/inbox/\\d{5,8}(#new)?";
+    private static final String PATTERN_BLOG    = ".*leprosorium.ru/?";
+    private static final String PATTERN_POST    = ".*leprosorium.ru/comments/\\d{5,8}(#new)?";
+    private static final String PATTERN_COMMENT = "(.*leprosorium.ru/comments/\\d{5,8})#(\\d{5,8})";
+    private static final String PATTERN_PROFILE = ".*leprosorium.ru/users/(.*)";
+    private static final String PATTERN_INBOX   = ".*leprosorium.ru/my/inbox/\\d{5,8}(#new)?";
     
     private static volatile LinksCatcher instance;
     
@@ -38,7 +38,7 @@ public class LinksCatcher extends WebViewClient
     {
         if(instance == null)
         {
-            synchronized (ImagesWorker.class)
+            synchronized (LinksCatcher.class)
             {
                 if(instance == null)
                 {
@@ -80,7 +80,7 @@ public class LinksCatcher extends WebViewClient
                     StubScreen.class);
             stubIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             stubIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            stubIntent.putExtra("url", url);
+            stubIntent.putExtra("url", url.replace("http", "https"));
             stubIntent.putExtra("type", linkType);
             LepraDroidApplication.getInstance().startActivity(stubIntent);
 
@@ -133,6 +133,7 @@ public class LinksCatcher extends WebViewClient
                 //TODO
             }
         }
+
         return true;
     }
 }

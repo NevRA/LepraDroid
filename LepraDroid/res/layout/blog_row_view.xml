@@ -18,7 +18,7 @@
 	        android:layout_height="60dip"
 	        android:adjustViewBounds="true"
 	        android:visibility="gone"
-	        android:scaleType="center"
+	        android:scaleType="fitXY"
 	        android:src="@drawable/ic_launcher" />
 	    
 	    <TextView

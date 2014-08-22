@@ -1,7 +1,6 @@
 package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +11,6 @@ import org.jsoup.select.Elements;
 import android.text.TextUtils;
 import android.util.Pair;
 
-import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.PostUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -77,71 +75,55 @@ public class GetPostTask extends BaseTask
             post.setId(postId);
 
             String html = ServerWorker.Instance().getContent(url);
-            String postOrd = "<div class=\"post ord";
-            String postOrdGolden = "<div class=\"post golden ord";
-            String endStr = post.isInbox() ? "<div id=\"inbox_comments\"" : "<div id=\"content\"";
+            String postOrd = "<div class=\"post ";
+            String endStr = "js-comments";
 
             int start = html.indexOf(postOrd, 0);
-            if (start == -1)
-                start = html.indexOf(postOrdGolden, 0);
             int end = html.indexOf(endStr, start);
 
             String postHtml = Utils.replaceBadHtmlTags(html.substring(start, end));
             Element content = Jsoup.parse(postHtml);
 
-            Element element = content.getElementsByClass("dt").first();
-
-
+            Element element = content.getElementsByClass("dti").first();
             
             Elements images = element.getElementsByTag("img");
-            int imageNum = 0;
-            List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
             for (Element image : images)
             {
                 String src = image.attr("src");
-                if(isImagesEnabled && !TextUtils.isEmpty(src))
+
+                if(isImagesEnabled)
                 {
                     if(TextUtils.isEmpty(post.getImageUrl()))
-                        post.setImageUrl("http://src.sencha.io/80/80/" + image.attr("src"));
-                    
-                    String id = "img" + Integer.valueOf(imageNum).toString();
-                    
+                        post.setImageUrl(image.attr("src"));
+
                     if(!image.parent().tag().getName().equalsIgnoreCase("a"))
                         image.wrap("<a href=" + "\"" + src + "\"></a>");
                    
                     image.removeAttr("width");
                     image.removeAttr("height");
-                    image.removeAttr("src");
-                    image.removeAttr("id");
-                    
-                    image.attributes().put("id", id);
-                    image.attributes().put("src", Commons.IMAGE_STUB);
-                    image.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(0).toString() + ");");
-                    imgs.add(new Pair<String, String>(id, src));
-                    
-                    imageNum++;
+                    image.attr("width", "100%");
                 }
                 else
                     image.remove();
             }
             
-            post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
+            post.setHtml(Utils.wrapLepraTags(element));
 
-            Elements rating = content.getElementsByTag("em");
+            Elements rating = content.getElementsByClass("vote_result");
             if(!rating.isEmpty())
                 post.setRating(Short.valueOf(rating.first().text()));
             else
                 post.setVoteDisabled(true);
             
-            post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
-            post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
+            post.setPlusVoted(postHtml.contains("vote_button vote_button_plus vote_voted"));
+            post.setMinusVoted(postHtml.contains("vote_button vote_button_minus vote_voted"));
 
             post.setUrl(url);
             post.setLepraId(url.split(post.isInbox() ? "inbox/" : "comments/")[1]);
 
-            Elements author = content.getElementsByClass("p");
-            post.setAuthor(author.first().getElementsByTag("a").get(1).text());
-            post.setSignature(author.first().text().split("\\|")[0].replace(post.getAuthor(), "<b>" + post.getAuthor() + "</b>"));
+            Elements author = content.getElementsByClass("c_user");
+            post.setAuthor(author.text());
+            post.setSignature(author.parents().first().text());
 
             ServerWorker.Instance().addNewPost(groupId, post);
             

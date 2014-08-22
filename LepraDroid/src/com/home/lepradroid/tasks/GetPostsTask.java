@@ -18,8 +18,6 @@ import org.jsoup.select.Elements;
 
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -135,16 +133,13 @@ public class GetPostsTask extends BaseTask
 
             int num = -1;
             int currentPos = 0;
-            int imageSize = Utils.getPostImagePreviewIsPixelsSize();
 
             boolean lastElement = false;
 
             String paginatorPattern = "'js-paginator', ";
             String tokenPattern = "csrf_token : '";
             String postOrd = "<div class=\"post ";
-            String senchaPrefix = String.format("http://src.sencha.io/%d/%d/", imageSize, imageSize);
-
-            String html = "";
+            String html;
 
             if(!url.contains("ajax"))
             {
@@ -217,7 +212,7 @@ public class GetPostsTask extends BaseTask
                     else if(type == Commons.PostsType.USER)
                         ServerWorker.Instance().addPostPagesCount(groupId,0);
                     else
-                        ServerWorker.Instance().addPostPagesCount(groupId, Integer.valueOf(100));
+                        ServerWorker.Instance().addPostPagesCount(groupId, 100);
                 }
                 
                 Post post = new Post(groupId);
@@ -226,9 +221,6 @@ public class GetPostsTask extends BaseTask
                 Element info = content.getElementsByClass("dd").first();
                 Elements images = element.getElementsByTag("img");
 
-                int imageNum = 0;
-                List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
-
                 for (Element image : images)
                 {
                     String src = image.attr("src");
@@ -236,31 +228,21 @@ public class GetPostsTask extends BaseTask
                     {
                         if(TextUtils.isEmpty(post.getImageUrl()))
                         {
-                            post.setImageUrl( senchaPrefix + image.attr("src"));
+                            post.setImageUrl(image.attr("src"));
                         }
-                        
-                        String id = "img" + Integer.valueOf(imageNum).toString();
-                        
+
                         if(!image.parent().tag().getName().equalsIgnoreCase("a"))
                             image.wrap("<a href=" + "\"" + src + "\"></a>");
                         
                         image.removeAttr("width");
                         image.removeAttr("height");
-                        image.removeAttr("src");
-                        image.removeAttr("id");
-                        
-                        image.attributes().put("id", id);
-                        image.attributes().put("src", Commons.IMAGE_STUB);
-                        image.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(0).toString() + ");");
-                        imgs.add(new Pair<String, String>(id, src));
-                        
-                        imageNum++;
+                        image.attr("width", "100%");
                     }
                     else
                         image.remove();
                 }
                   
-                post.setHtml(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(element));
+                post.setHtml(Utils.wrapLepraTags(element));
 
                 Element vote = info.getElementsByClass("vote_result").first();
                 if(vote != null)

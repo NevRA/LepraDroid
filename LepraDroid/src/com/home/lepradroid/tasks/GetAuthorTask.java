@@ -1,7 +1,6 @@
 package com.home.lepradroid.tasks;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 import android.text.TextUtils;
@@ -125,35 +124,23 @@ public class GetAuthorTask extends BaseTask
             if(userStory != null)
             {
                 Elements images = userStory.getElementsByTag("img");
-                int imageNum = 0;
-                List<Pair<String, String>> imgs = new ArrayList<Pair<String, String>>();
                 for (Element img : images)
                 {
                     String src = img.attr("src");
                     if(isImagesEnabled && !TextUtils.isEmpty(src))
                     {
-                        String id = "img" + Integer.valueOf(imageNum).toString();
-
                         if(!img.parent().tag().getName().equalsIgnoreCase("a"))
                             img.wrap("<a href=" + "\"" + src + "\"></a>");
 
                         img.removeAttr("width");
                         img.removeAttr("height");
-                        img.removeAttr("src");
-                        img.removeAttr("id");
-
-                        img.attributes().put("id", id);
-                        img.attributes().put("src", Commons.IMAGE_STUB);
-                        img.attributes().put("onLoad", "getSrcData(\"" + id + "\", \"" + src + "\", " + Integer.valueOf(0).toString() + ");");
-                        imgs.add(new Pair<String, String>(id, src));
-
-                        imageNum++;
+                        img.attr("width", "100%");
                     }
                     else
                         img.remove();
                 }
 
-                data.setUserStory(Utils.getImagesStub(imgs, 0) + Utils.wrapLepraTags(userStory));
+                data.setUserStory(Utils.wrapLepraTags(userStory));
             }
             
             if(SettingsWorker.Instance().loadUserName().equals(userName))

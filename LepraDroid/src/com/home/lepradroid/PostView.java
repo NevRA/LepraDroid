@@ -5,6 +5,7 @@ import java.util.UUID;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -57,8 +58,7 @@ public class PostView extends BaseView implements ItemRateUpdateListener
             Utils.setWebViewFontSize(webView);
         }
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
-        webView.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\">" + post.getHtml() + "</body>", "text/html", "UTF-8", null);
+        webView.loadDataWithBaseURL("", "<body style=\"margin: 0; padding: 0\">" + post.getHtml() + "</body>", "text/html", "UTF-8", null);
         
         plus = (Button) contentView.findViewById(R.id.plus);
         minus = (Button) contentView.findViewById(R.id.minus);

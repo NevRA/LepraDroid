@@ -126,8 +126,7 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
             webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
             webSettings.setJavaScriptEnabled(true);
             webSettings.setNeedInitialFocus(false);
-            userStory.loadDataWithBaseURL("", Commons.WEBVIEW_HEADER + "<body style=\"margin: 0; padding: 0\"><center>" + data.getUserStory() + "</center></body>", "text/html", "UTF-8", null);
-            userStory.addJavascriptInterface(ImagesWorker.Instance(), "ImagesWorker");
+            userStory.loadDataWithBaseURL("", "<body style=\"margin: 0; padding: 0\"><center>" + data.getUserStory() + "</center></body>", "text/html", "UTF-8", null);
             Utils.setWebViewFontSize(userStory);
         }
 

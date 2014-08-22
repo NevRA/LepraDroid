@@ -168,9 +168,7 @@ public class GetBlogsTask extends BaseTask
 
                 String blogUrl = content.getElementsByClass("b-list_item_blog_url").first().attr("href");
                 blog.setUrl(Commons.PREFIX_URL + blogUrl + "/");
-
-                int imageSize = Utils.getPostImagePreviewIsPixelsSize();
-                blog.setImageUrl(String.format("http://src.sencha.io/%d/%d/%s", imageSize, imageSize, logo));
+                blog.setImageUrl(logo);
 
                 Elements title = content.getElementsByTag("h5");
                 if (!title.isEmpty())
@@ -232,7 +230,6 @@ public class GetBlogsTask extends BaseTask
         return e;
     }
 
-
     private void getSubBlogs(final String html, List<BaseItem> items)
     {
         final String subBlogRowStart = "<div class=\"subs_loaded hidden\">";
@@ -252,8 +249,7 @@ public class GetBlogsTask extends BaseTask
 
             Elements images = div.getElementsByTag("img");
             if (!images.isEmpty())
-                blog.setImageUrl("http://src.sencha.io/80/80/"
-                        + images.first().attr("src"));
+                blog.setImageUrl(images.first().attr("src"));
 
             Elements title = div.getElementsByTag("h5");
             if (!title.isEmpty())

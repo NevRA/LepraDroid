@@ -529,33 +529,7 @@ public class Utils
             }
         }).show();
     }
-    
-    public static String getImagesStub(List<Pair<String, String>> imgs, int level)
-    {
-        String stub = "";
-        if(!imgs.isEmpty())
-        {
-            stub = "<script type='text/javascript'>";
-            stub += "window.addEventListener(\"resize\", updateOrientation, false);";
-            stub += "function updateOrientation()";
-            stub += "{";
-            for(Pair<String, String> img : imgs)
-            {
-                stub += "getSrcData(\"" + img.first + "\", \"" + img.second + "\", " + Integer.valueOf(level).toString() + ");";
-            }
-            stub += "};";
-            stub += "function getSrcData(id, origSrc, level)";
-            stub += "{";
-            stub += "   var img = document.getElementById(id);";
-            stub += "   var newSrc = getData(origSrc, level);";
-            stub += "   if(img.src.indexOf(newSrc) == -1) img.src = newSrc;";
-            stub += "};";
-            stub += "</script>";
-        }
-        
-        return stub;
-    }
-    
+
     public static void writeStringToFileCache(String fileName, String data) throws IOException
     {
         FileWriter fileWriter = null;
@@ -616,7 +590,7 @@ public class Utils
     
     public static boolean isContainExtraTagsForWebView(String text)
     {
-        return text.contains("leprosorium.ru");
+        return text.contains("<img");
     }
     
     public static boolean isAlreadyInStuff(UUID stuffId, String pid)
