@@ -17,11 +17,13 @@ public class Commons
                                                 = SITE_URL + "commctl/";    
     public static final String BLOGS_URL        = SITE_URL + "ajax/blogs/top/";
     public static final String POST_VOTE_URL    = SITE_URL + "ajax/vote/post/";
-    public static final String COMMENT_VOTE_URL    = SITE_URL + "ajax/vote/comment/";
+    public static final String COMMENT_VOTE_URL = SITE_URL + "ajax/vote/comment/";
     public static final String KARMA_VOTE_URL   = SITE_URL + "ajax/user/karma/vote/";
     public static final String THRESHOLD_URL    = SITE_URL + "/threshold/";
-    public static final String MYCTL_URL        = SITE_URL + "/myctl";
-    public static final String FAVSCTL_URL      = SITE_URL + "/favsctl";
+    public static final String MYCTL_IN_URL     = SITE_URL + "/ajax/interest/in/";
+    public static final String MYCTL_OUT_URL    = SITE_URL + "/ajax/interest/out/";
+    public static final String FAVSCTL_IN_URL   = SITE_URL + "/ajax/favourites/in/";
+    public static final String FAVSCTL_OUT_URL  = SITE_URL + "/ajax/favourites/out/";
     public static final String ADD_INBOX_URL    = SITE_URL + "my/inbox/write/";
     public static final String COMMENT_RATING_URL
                                                 = SITE_URL + "votesctl/";

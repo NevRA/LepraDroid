@@ -65,7 +65,7 @@ public class ChangeFavTask extends BaseTask
     {
         try
         {
-            //ServerWorker.Instance().postChangeFavs(SettingsWorker.Instance().loadFavWtf(), post.getLepraId(), type);
+            ServerWorker.Instance().postChangeFavs(post.getLepraId(), type);
             new GetPostsTask(Commons.FAVORITE_POSTS_ID, Commons.FAVORITES_URL, Commons.PostsType.MY).execute();
             notifyAboutChangeFav(true);
         }

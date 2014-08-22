@@ -225,14 +225,14 @@ public class ServerWorker
         return postRequest(url, body);
     }
     
-    public void postChangeFavs(String wtf, String lepraPostId, StuffOperationType type) throws Exception
+    public void postChangeFavs(String lepraPostId, StuffOperationType type) throws Exception
     {
-        postRequest(Commons.FAVSCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), lepraPostId, wtf));
+        postRequest(type == StuffOperationType.ADD ? Commons.FAVSCTL_IN_URL : Commons.FAVSCTL_OUT_URL, String.format("post=%s&csrf_token=%s", lepraPostId, SettingsWorker.Instance().loadCsrfToke()));
     }
     
-    public void postChangeMyStuff(String wtf, String lepraPostId, StuffOperationType type) throws Exception
+    public void postChangeMyStuff(String lepraPostId, StuffOperationType type) throws Exception
     {
-        postRequest(Commons.MYCTL_URL, String.format("%s=%s&wtf=%s", (type == StuffOperationType.ADD ? "add" : "del"), lepraPostId, wtf));
+        postRequest(type == StuffOperationType.ADD ? Commons.MYCTL_IN_URL : Commons.MYCTL_OUT_URL, String.format("post=%s&csrf_token=%s", lepraPostId, SettingsWorker.Instance().loadCsrfToke()));
     }
     
     public void postMainTresholdRequest(String value) throws Exception
