@@ -245,9 +245,9 @@ public class ServerWorker
         return postRequest(Commons.ADD_INBOX_URL, String.format("run=01&wtf=%s&whom=%s&comment=%s", wtf, userName, URLEncoder.encode(message)));
     }
 
-    public String postCommentRequest(String wtf, String replyTo, String pid, String comment) throws Exception
+    public String postCommentRequest(String replyTo, String pid, String comment) throws Exception
     {
-        return postRequest(Commons.POST_COMMENT_URL, String.format("wtf=%s&step=1&i=0&replyto=%s&pid=%s&iframe=0&file=&comment=%s", wtf, replyTo, pid, URLEncoder.encode(comment)));
+        return postRequest(Commons.POST_COMMENT_URL, String.format("parent=%s&post=%s&body=%s&csrf_token=%s", replyTo, pid, URLEncoder.encode(comment), SettingsWorker.Instance().loadCsrfToke()));
     }
 
     public String getCommentRating(String postId, String commentId) throws Exception

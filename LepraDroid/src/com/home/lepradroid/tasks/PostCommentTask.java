@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 
+import com.home.lepradroid.settings.SettingsWorker;
 import org.json.JSONObject;
 
 import android.util.Pair;
@@ -69,16 +70,17 @@ public class PostCommentTask extends BaseTask
     {
         try
         {
-            final JSONObject json = new JSONObject(ServerWorker.Instance().postCommentRequest(wtf, replyTo, pid, comment)).getJSONObject("new_comment");
+            final JSONObject json = new JSONObject(ServerWorker.Instance().postCommentRequest( replyTo, pid, comment)).getJSONObject("comment");
+            final JSONObject user = json.getJSONObject("user");
             final Comment comment = new Comment();
             comment.setLevel(level);
-            comment.setAuthor(json.getString("user_login"));
+            comment.setAuthor(SettingsWorker.Instance().loadUserName());
             comment.setParentLepraId(replyTo);
-            comment.setLepraId(json.getString("comment_id"));
+            comment.setLepraId(json.getString("id"));
             comment.setHtml(this.comment.replace("\n","<br/>"));
-            comment.setSignature((json.getString("gender").equals("m") ? "Написал" : "Написала") + " " +
-                    json.getString("rank") + " " + "<b>" + "<font color=\"#3270FF\">" + json.getString("user_login") + "</font>" + "</b>" + "</b>, " + 
-                    json.getString("date") + " в " + json.getString("time"));
+
+            comment.setSignature((user.getString("gender").equals("male") ? "Написал" : "Написала") + " " +
+                    "<b>" + "<font color=\"#3270FF\">" + SettingsWorker.Instance().loadUserName() + "</font>" + "</b>" + " сейчас");
             
             notifyOnAddedCommentUpdate(comment);
         }

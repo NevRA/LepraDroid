@@ -14,7 +14,7 @@ public class Commons
     public static final String INBOX_URL        = SITE_URL + "ajax/inbox/moar/";
     public static final String AUTHOR_POSTS_URL = SITE_URL + "users/%s/posts/";
     public static final String POST_COMMENT_URL        
-                                                = SITE_URL + "commctl/";    
+                                                = SITE_URL + "ajax/comment/yarrr/";
     public static final String BLOGS_URL        = SITE_URL + "ajax/blogs/top/";
     public static final String POST_VOTE_URL    = SITE_URL + "ajax/vote/post/";
     public static final String COMMENT_VOTE_URL = SITE_URL + "ajax/vote/comment/";
