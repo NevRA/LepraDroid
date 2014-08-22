@@ -217,7 +217,7 @@ public class ServerWorker
 
             case KARMA:
                 url = Commons.KARMA_VOTE_URL;
-                body = String.format("user=%s&vote=%s&csrf_token=%s", id, value, SettingsWorker.Instance().loadCsrfToke());
+                body = String.format("user=%s&karma_value=%s&csrf_token=%s", id, value, SettingsWorker.Instance().loadCsrfToke());
             default:
                 break;
         }
