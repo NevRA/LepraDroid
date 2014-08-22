@@ -150,7 +150,7 @@ public class GetPostsTask extends BaseTask
             }
             else
             {
-                String body = String.format("sort=0&csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
+                String body = String.format("csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
                 html = StringEscapeUtils.unescapeJava(ServerWorker.Instance().postRequest(url, body));
             }
 
