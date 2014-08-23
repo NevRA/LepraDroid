@@ -137,7 +137,6 @@ public class GetPostsTask extends BaseTask
             boolean lastElement = false;
 
             String paginatorPattern = "'js-paginator', ";
-            String tokenPattern = "csrf_token : '";
             String postOrd = "<div class=\"post ";
             String html;
 
@@ -151,6 +150,8 @@ public class GetPostsTask extends BaseTask
                 html = StringEscapeUtils.unescapeJava(ServerWorker.Instance().postRequest(url, body));
             }
 
+            if(isCancelled()) return null;
+
             if(refresh)
                 ServerWorker.Instance().clearPostsById(groupId);
 
@@ -158,17 +159,7 @@ public class GetPostsTask extends BaseTask
             {
                 if(isCancelled()) break;
 
-                if(TextUtils.isEmpty(SettingsWorker.Instance().loadCsrfToke()))
-                {
-                    int start = currentPos = html.indexOf(tokenPattern, currentPos);
-                    if(start > 0)
-                    {
-                        start += tokenPattern.length();
-                        String csrf_token = html.substring(start, html.indexOf("'", start + 1));
-                        SettingsWorker.Instance().saveCsrfToke(URLEncoder.encode(csrf_token));
-                    }
-                }
-                
+
                 int start = html.indexOf(postOrd, currentPos);
                 int end = html.indexOf(postOrd, start + 300);
 

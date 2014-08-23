@@ -18,6 +18,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.List;
 
 public class LoginTask extends BaseTask
@@ -73,7 +74,7 @@ public class LoginTask extends BaseTask
             final Pair<String, Header[]> loginInfo = ServerWorker.Instance().login(Commons.AUTH_PAGE_URL, login, password, challenge, captcha);
             for(Header header : loginInfo.second)
             {
-                //lepro.sid=abadb37b85cd113156aea908ede94f77; lepro.uid=46808;
+                //sid=abadb37b85cd113156aea908ede94f77; uid=46808;
                 
                 String value = header.getValue();
                 if(value.contains(Commons.COOKIE_SID + "="))
@@ -104,8 +105,23 @@ public class LoginTask extends BaseTask
                 
                 throw new Exception(Utils.getString(R.string.Login_Failed));
             }
-            
-            SettingsWorker.Instance().saveCookies(new Pair<String, String>(sid, uid));
+            else
+            {
+                SettingsWorker.Instance().saveCookies(new Pair<String, String>(sid, uid));
+
+                String html = ServerWorker.Instance().getContent(Commons.SITE_URL + "token");
+
+                String tokenPattern = "csrf_token : '";
+                int start = html.indexOf(tokenPattern);
+                if(start < 0)
+                {
+                    throw new Exception(Utils.getString(R.string.Invalid_Token));
+                }
+
+                start += tokenPattern.length();
+                String csrf_token = html.substring(start, html.indexOf("'", start + 1));
+                SettingsWorker.Instance().saveCsrfToke(URLEncoder.encode(csrf_token));
+            }
         }
         catch (Throwable t)
         {
