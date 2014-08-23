@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.home.lepradroid.settings.SettingsWorker;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -121,14 +123,13 @@ public class GetBlogsTask extends BaseTask
             
             notifyAboutBlogsUpdateBegin();
 
-            String body = String.format("sort=0&csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
+            String body = String.format("csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
             String html = ServerWorker.Instance().postRequest(Commons.BLOGS_URL, body);
             html = html.substring(html.indexOf("\"template\":"));
 
             if(refresh)
             {
-                // TODO
-                // getSubBlogs(html, items);
+                getSubBlogs(items);
             }
 
             final String logoPattern = "background-image:url(";
@@ -232,35 +233,27 @@ public class GetBlogsTask extends BaseTask
         return e;
     }
 
-    private void getSubBlogs(final String html, List<BaseItem> items)
+    private void getSubBlogs(List<BaseItem> items) throws Exception
     {
-        final String subBlogRowStart = "<div class=\"subs_loaded hidden\">";
-        final String subBlogRowEnd = "<div class=\"js-subs_container\">";
-        int start = html.indexOf(subBlogRowStart);
-        int end = html.indexOf(subBlogRowEnd);
-        Elements subDivs = Jsoup.parse(html.substring(start, end))
-                .getElementsByClass("sub");
+        String body = String.format("csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
+        String html = ServerWorker.Instance().postRequest(Commons.MY_BLOGS_URL, body);
 
-        for (Element div : subDivs)
+        JSONObject mainObject = new JSONObject(html);
+        JSONArray domains = mainObject.getJSONArray("domains");
+
+        for (int i = 0; i < domains.length(); ++i)
         {
             Blog blog = new Blog();
 
-            Elements url = div.getElementsByTag("a");
-            if (!url.isEmpty())
-                blog.setUrl(url.attr("href"));
+            JSONObject domain = domains.getJSONObject(i);
+            JSONObject attributes = domain.getJSONObject("attributes");
+            JSONObject owner = domain.getJSONObject("owner");
 
-            Elements images = div.getElementsByTag("img");
-            if (!images.isEmpty())
-                blog.setImageUrl(images.first().attr("src"));
-
-            Elements title = div.getElementsByTag("h5");
-            if (!title.isEmpty())
-                blog.setHtml(title.first().html());
-
-            Elements author = div.getElementsByClass("creator");
-            if (!author.isEmpty())
-                blog.setSignature("создатель - "
-                        + author.first().getElementsByTag("a").first().text());
+            blog.setUrl(Commons.PREFIX_URL + "//" + domain.getString("url") + "/");
+            if(attributes.has("logo"))
+                blog.setImageUrl(attributes.getString("logo"));
+            blog.setHtml(attributes.getString("name"));
+            blog.setSignature("создатель - " + owner.getString("login"));
 
             blog.setStat("<b>Лепро-Навигация</b>");
             

@@ -16,6 +16,7 @@ public class Commons
     public static final String POST_COMMENT_URL        
                                                 = SITE_URL + "ajax/comment/yarrr/";
     public static final String BLOGS_URL        = SITE_URL + "ajax/blogs/top/";
+    public static final String MY_BLOGS_URL     = SITE_URL + "ajax/bookmarks/domain/list/";
     public static final String POST_VOTE_URL    = SITE_URL + "ajax/vote/post/";
     public static final String COMMENT_VOTE_URL = SITE_URL + "ajax/vote/comment/";
     public static final String KARMA_VOTE_URL   = SITE_URL + "ajax/user/karma/vote/";
