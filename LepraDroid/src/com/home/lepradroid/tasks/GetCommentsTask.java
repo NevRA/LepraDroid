@@ -224,7 +224,9 @@ public class GetCommentsTask extends BaseTask
                     if((len = readBytesToBuff_WithoutNonLatinCharsAtTheEnd(fileStream, chars)) < 0)
                     {
                         if(start >= 0 && end < 0)
+                        {
                             parseRecord(pageA); // to read last record
+                        }
                         
                         break;
                     }
@@ -303,7 +305,7 @@ public class GetCommentsTask extends BaseTask
             
             new UpdateBadgeCounterTask().execute();
             
-            Logger.d("GetCommentsTask time:" + Long.toString(System.currentTimeMillis() - startTime) + "ms");
+            Logger.d("GetCommentsTask time:" + Long.toString((System.currentTimeMillis() - startTime) / 1000) + "s");
         }
    
         return e;
@@ -393,9 +395,10 @@ public class GetCommentsTask extends BaseTask
             Element vote = content.getElementsByClass("vote").first();
             if(vote != null)
             {
-                String voteBody = vote.html();
-                comment.setPlusVoted(voteBody.contains("vote_button_plus vote_voted\""));
-                comment.setMinusVoted(voteBody.contains("vote_button_minus vote_voted\""));
+                if(!vote.select(".vote_button.vote_button_plus.vote_voted").isEmpty())
+                    comment.setPlusVoted(true);
+                else if(!vote.select(".vote_button.vote_button_minus.vote_voted").isEmpty())
+                    comment.setMinusVoted(true);
 
                 Element rating = vote.getElementsByClass("vote_result").first();
                 comment.setRating(Short.valueOf(rating.text()));
