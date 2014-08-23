@@ -107,22 +107,30 @@ public class LoginTask extends BaseTask
             }
             else
             {
-                SettingsWorker.Instance().saveCookies(new Pair<String, String>(sid, uid));
-
-                String html = ServerWorker.Instance().getContent(Commons.SITE_URL + "token");
-
-                String tokenPattern = "csrf_token : '";
-                int start = html.indexOf(tokenPattern);
-                if(start < 0)
+                try
                 {
-                    throw new Exception(Utils.getString(R.string.Invalid_Token));
+                    SettingsWorker.Instance().saveCookies(new Pair<String, String>(sid, uid));
+
+                    String html = ServerWorker.Instance().getContent(Commons.SITE_URL + "token");
+
+                    String tokenPattern = "csrf_token : '";
+                    int start = html.indexOf(tokenPattern);
+                    if(start < 0)
+                    {
+                        throw new Exception(Utils.getString(R.string.Invalid_Token));
+                    }
+
+                    start += tokenPattern.length();
+                    String csrf_token = html.substring(start, html.indexOf("'", start + 1));
+                    SettingsWorker.Instance().saveCsrfToke(URLEncoder.encode(csrf_token));
+
+                    new GetAuthorTask(SettingsWorker.Instance().loadUserName()).execute().get();
                 }
-
-                start += tokenPattern.length();
-                String csrf_token = html.substring(start, html.indexOf("'", start + 1));
-                SettingsWorker.Instance().saveCsrfToke(URLEncoder.encode(csrf_token));
-
-                new GetAuthorTask(SettingsWorker.Instance().loadUserName()).execute().get();
+                catch (Exception e)
+                {
+                    SettingsWorker.Instance().clearCookies();
+                    throw e;
+                }
             }
         }
         catch (Throwable t)
