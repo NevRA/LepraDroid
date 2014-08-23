@@ -397,16 +397,6 @@ public class GetCommentsTask extends BaseTask
                 comment.setPlusVoted(voteBody.contains("vote_button_plus vote_voted\""));
                 comment.setMinusVoted(voteBody.contains("vote_button_minus vote_voted\""));
 
-                if(     !post.isMain() &&
-                        post.getVoteWeight() == -1 &&
-                            (comment.isPlusVoted() ||
-                             comment.isMinusVoted()))
-                {
-                    new SetVoteWeightTask(post.getId(), commentId)
-                        .execute()
-                            .get();
-                }
-
                 Element rating = vote.getElementsByClass("vote_result").first();
                 comment.setRating(Short.valueOf(rating.text()));
             }

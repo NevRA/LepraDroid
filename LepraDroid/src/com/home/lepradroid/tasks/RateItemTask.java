@@ -159,9 +159,7 @@ public class RateItemTask extends BaseTask
                 {
                     if(post.getVoteWeight() == -1)
                     {
-                        new SetVoteWeightTask(post.getId())
-                            .execute()
-                                .get();
+
                     }
                 }
                 break;
@@ -174,9 +172,7 @@ public class RateItemTask extends BaseTask
                 {
                     if(post.getVoteWeight() == -1)
                     {
-                        new SetVoteWeightTask(post.getId(), comment.getLepraId())
-                            .execute()
-                                .get();
+
                     }
                 }
                 break;

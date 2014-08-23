@@ -27,12 +27,6 @@ public class GetMainPagesTask extends BaseTask
         
         try
         {
-            if (SettingsWorker.Instance().loadVoteWeight() == 0)
-            {
-                tasks.add((BaseTask) new GetAuthorTask(SettingsWorker.Instance().loadUserName()).execute());
-                tasks.get(0).get();
-            }
-            
             tasks.add((BaseTask) new GetPostsTask(Commons.MAIN_POSTS_ID, Commons.SITE_URL, Commons.PostsType.MAIN).execute());
             tasks.add((BaseTask) new GetPostsTask(Commons.MYSTUFF_POSTS_ID, Commons.MY_STUFF_URL, Commons.PostsType.MY).execute());
             //tasks.add((BaseTask) new GetBlogsTask().execute());

@@ -121,6 +121,8 @@ public class LoginTask extends BaseTask
                 start += tokenPattern.length();
                 String csrf_token = html.substring(start, html.indexOf("'", start + 1));
                 SettingsWorker.Instance().saveCsrfToke(URLEncoder.encode(csrf_token));
+
+                new GetAuthorTask(SettingsWorker.Instance().loadUserName()).execute().get();
             }
         }
         catch (Throwable t)

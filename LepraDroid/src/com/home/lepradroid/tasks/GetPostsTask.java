@@ -295,22 +295,6 @@ public class GetPostsTask extends BaseTask
 
                 ServerWorker.Instance().addNewPost(groupId, post);
 
-                if(     !post.isMain() &&
-                        !post.isInbox() &&
-                        (post.isPlusVoted() || post.isMinusVoted()))
-                {
-                    Integer voteWeight = ServerWorker.Instance().getBlogVoteWeight(groupId);
-                    if(voteWeight == null)
-                    {
-                        Throwable t = new SetVoteWeightTask(post.getId())
-                                .execute()
-                                .get();
-                        Logger.e(t);
-                    }
-                    else
-                        post.setVoteWeight(voteWeight);
-                }
-
                 if(num % 5 == 0 || lastElement)
                 {
                     notifyAboutPostsUpdate();
