@@ -362,7 +362,7 @@ public class GetCommentsTask extends BaseTask
             Elements a = authorElement.getElementsByTag("a");
             comment.setUrl(Commons.SITE_URL + a.first().attr("href"));
             
-            String author = a.get(1).text();
+            String author = a.size() > 1 ? a.get(1).text() : a.get(0).text();
             if(postAuthor.equals(author))
                comment.setPostAuthor(true);
             
@@ -373,8 +373,12 @@ public class GetCommentsTask extends BaseTask
                 color = "#3270FF";
             
             comment.setAuthor(author);
+
             String signature = authorElement.text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>");
-            signature = signature.substring(0, signature.indexOf(", ·"));
+            if( a.size() > 1 )
+                signature = signature.substring(0, signature.indexOf(", ·"));
+            else
+                signature = signature.substring(0, signature.indexOf(", написанный"));
 
             String epochDate = authorElement.getElementsByClass("js-date").first().attr("data-epoch_date");
             Date date = new Date(Long.valueOf(epochDate) * 1000);

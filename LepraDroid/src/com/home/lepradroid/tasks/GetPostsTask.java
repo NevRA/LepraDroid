@@ -257,6 +257,8 @@ public class GetPostsTask extends BaseTask
                     Elements span = author.getElementsByClass("b-post_comments_links");
                     Elements a = span.first().getElementsByTag("a");
                     String url = a.first().attr("href");
+                    if(!url.contains("leprosorium.ru"))
+                        url = Commons.SITE_URL + url;
                     if(url.contains("https"))
                         post.setUrl(url);
                     else
