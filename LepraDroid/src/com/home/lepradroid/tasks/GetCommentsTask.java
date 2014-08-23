@@ -314,7 +314,6 @@ public class GetCommentsTask extends BaseTask
     private void parseRecord(String html) throws ExecutionException, InterruptedException
     {
         Element content = Jsoup.parse(html);
-        Element element = content.getElementsByClass("c_body").first();
         Element root = content.getElementsByTag("div").first();
 
         Comment comment = new Comment();
@@ -335,6 +334,7 @@ public class GetCommentsTask extends BaseTask
         if(level.find())
             comment.setLevel(Short.valueOf(level.group(1)));
 
+        Element element = content.getElementsByClass("c_body").first();
         Elements images = element.getElementsByTag("img");
         for (Element image : images)
         {
