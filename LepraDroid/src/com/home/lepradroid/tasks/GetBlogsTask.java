@@ -252,7 +252,16 @@ public class GetBlogsTask extends BaseTask
             blog.setUrl(Commons.PREFIX_URL + "//" + domain.getString("url") + "/");
             if(attributes.has("logo"))
                 blog.setImageUrl(attributes.getString("logo"));
-            blog.setHtml(attributes.getString("name"));
+
+            if(domain.has("name") && !domain.getString("name").equalsIgnoreCase("null"))
+                blog.setHtml(domain.getString("name"));
+            else if(domain.has("title") && !domain.getString("title").equalsIgnoreCase("null"))
+                blog.setHtml(domain.getString("title"));
+            else if(domain.has("description") && !domain.getString("description").equalsIgnoreCase("null"))
+                blog.setHtml(domain.getString("description"));
+            else
+                blog.setHtml(blog.getUrl());
+
             blog.setSignature("создатель - " + owner.getString("login"));
 
             blog.setStat("<b>Лепро-Навигация</b>");
