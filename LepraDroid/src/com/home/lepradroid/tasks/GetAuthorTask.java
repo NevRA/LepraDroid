@@ -1,17 +1,7 @@
 package com.home.lepradroid.tasks;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
 import android.text.TextUtils;
-import com.home.lepradroid.utils.Utils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.util.Pair;
-
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.AuthorUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -20,6 +10,14 @@ import com.home.lepradroid.objects.Author;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
+import com.home.lepradroid.utils.Utils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class GetAuthorTask extends BaseTask
 {
@@ -107,10 +105,10 @@ public class GetAuthorTask extends BaseTask
 
             data.setUserName(userName);
             final Element userPic = document.getElementsByClass("b-userpic").first();
-            final Element image = userPic.getElementsByTag("img").first();
-            if(image != null)
+            final Element avatar = userPic.getElementsByTag("img").first();
+            if(avatar != null)
             {
-                data.setImageUrl(image.attr("src"));
+                data.setImageUrl(avatar.attr("src"));
             }
             
             data.setRating(Short.valueOf(document.getElementsByClass("b-karma_value_inner").text()));
@@ -124,20 +122,19 @@ public class GetAuthorTask extends BaseTask
             if(userStory != null)
             {
                 Elements images = userStory.getElementsByTag("img");
-                for (Element img : images)
+                for (Element image : images)
                 {
-                    String src = img.attr("src");
+                    String src = image.attr("src");
                     if(isImagesEnabled && !TextUtils.isEmpty(src))
                     {
-                        if(!img.parent().tag().getName().equalsIgnoreCase("a"))
-                            img.wrap("<a href=" + "\"" + src + "\"></a>");
+                        if(!image.parent().tag().getName().equalsIgnoreCase("a"))
+                            image.wrap("<a href=" + "\"" + src + "\"></a>");
 
-                        img.removeAttr("width");
-                        img.removeAttr("height");
-                        img.attr("width", "100%");
+                        image.removeAttr("width");
+                        image.removeAttr("height");
                     }
                     else
-                        img.remove();
+                        image.remove();
                 }
 
                 data.setUserStory(Utils.wrapLepraTags(userStory));

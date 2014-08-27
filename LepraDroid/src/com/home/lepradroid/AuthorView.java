@@ -123,8 +123,8 @@ public class AuthorView extends BaseView implements AuthorUpdateListener,
             userStory.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
             userStory.setWebViewClient(LinksCatcher.Instance());
             WebSettings webSettings = userStory.getSettings();
+            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
             webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
-            webSettings.setJavaScriptEnabled(true);
             webSettings.setNeedInitialFocus(false);
             userStory.loadDataWithBaseURL("", "<body style=\"margin: 0; padding: 0\"><center>" + data.getUserStory() + "</center></body>", "text/html", "UTF-8", null);
             Utils.setWebViewFontSize(userStory);

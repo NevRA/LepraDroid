@@ -1,16 +1,7 @@
 package com.home.lepradroid.tasks;
 
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.UUID;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.text.TextUtils;
 import android.util.Pair;
-
 import com.home.lepradroid.interfaces.PostUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
 import com.home.lepradroid.listenersworker.ListenersWorker;
@@ -18,6 +9,13 @@ import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.utils.Logger;
 import com.home.lepradroid.utils.Utils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.UUID;
 
 public class GetPostTask extends BaseTask
 {
@@ -98,10 +96,9 @@ public class GetPostTask extends BaseTask
 
                     if(!image.parent().tag().getName().equalsIgnoreCase("a"))
                         image.wrap("<a href=" + "\"" + src + "\"></a>");
-                   
+
                     image.removeAttr("width");
                     image.removeAttr("height");
-                    image.attr("width", "100%");
                 }
                 else
                     image.remove();

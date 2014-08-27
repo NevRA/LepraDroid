@@ -17,7 +17,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.lang.reflect.Method;
-import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -224,10 +223,9 @@ public class GetPostsTask extends BaseTask
 
                         if(!image.parent().tag().getName().equalsIgnoreCase("a"))
                             image.wrap("<a href=" + "\"" + src + "\"></a>");
-                        
+
                         image.removeAttr("width");
                         image.removeAttr("height");
-                        image.attr("width", "100%");
                     }
                     else
                         image.remove();

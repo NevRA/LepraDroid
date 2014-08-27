@@ -96,7 +96,7 @@ public class LoginTask extends BaseTask
                 String publicKey = getCaptchaPublicKey();
                 challenge = getChallenge(publicKey);
 
-                new GetCaptchaTask(String.format("https://www.google.com/recaptcha/api/image?c=%s", challenge)).execute(null).get();
+                new GetCaptchaTask(String.format("https://www.google.com/recaptcha/api/image?c=%s", challenge)).execute().get();
 
                 final Document document = Jsoup.parse(loginInfo.first);
                 final Elements errors = document.getElementsByClass("error");

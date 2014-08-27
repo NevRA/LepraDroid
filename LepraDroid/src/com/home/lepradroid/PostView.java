@@ -1,7 +1,5 @@
 package com.home.lepradroid;
 
-import java.util.UUID;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +8,6 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.RateValueType;
@@ -22,6 +19,8 @@ import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
+
+import java.util.UUID;
 
 public class PostView extends BaseView implements ItemRateUpdateListener
 {
@@ -52,12 +51,15 @@ public class PostView extends BaseView implements ItemRateUpdateListener
         WebView webView = (WebView) contentView.findViewById(R.id.webview);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setWebViewClient(LinksCatcher.Instance());
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+
         if(!Utils.isNormalFontSize())
         {
-            webView.getSettings().setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
+            webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
             Utils.setWebViewFontSize(webView);
         }
-        webView.getSettings().setJavaScriptEnabled(true);
+
         webView.loadDataWithBaseURL("", "<body style=\"margin: 0; padding: 0\">" + post.getHtml() + "</body>", "text/html", "UTF-8", null);
         
         plus = (Button) contentView.findViewById(R.id.plus);

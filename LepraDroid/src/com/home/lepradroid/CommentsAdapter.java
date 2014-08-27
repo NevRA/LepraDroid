@@ -1,9 +1,5 @@
 package com.home.lepradroid;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,17 +7,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.view.GestureDetector;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.commons.Commons.RateValueType;
 import com.home.lepradroid.interfaces.ExitListener;
@@ -33,6 +24,10 @@ import com.home.lepradroid.tasks.RateItemTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.LinksCatcher;
 import com.home.lepradroid.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
 {
@@ -206,6 +201,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
                 webView.setWebViewClient(LinksCatcher.Instance());
                 WebSettings webSettings = webView.getSettings();
+                webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
                 webSettings.setDefaultFontSize(Commons.WEBVIEW_DEFAULT_FONT_SIZE);
                 webView.loadDataWithBaseURL("", "<body style=\"margin: 0; padding: 0\">" + comment.getHtml() + "</body>", "text/html", "UTF-8", null);
                 webView.setOnTouchListener(new View.OnTouchListener()

@@ -343,10 +343,9 @@ public class GetCommentsTask extends BaseTask
             {
                 if(!image.parent().tag().getName().equalsIgnoreCase("a"))
                     image.wrap("<a href=" + "\"" + src + "\"></a>");
-                
+
                 image.removeAttr("width");
                 image.removeAttr("height");
-                image.attr("width", "100%");
             }
             else
                 image.remove();
