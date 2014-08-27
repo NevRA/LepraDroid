@@ -226,6 +226,9 @@ public class GetPostsTask extends BaseTask
 
                         image.removeAttr("width");
                         image.removeAttr("height");
+                        image.removeAttr("style");
+
+                        image.attr("style", "max-width:100%");
                     }
                     else
                         image.remove();

@@ -335,6 +335,9 @@ public class GetCommentsTask extends BaseTask
             comment.setLevel(Short.valueOf(level.group(1)));
 
         Element element = content.getElementsByClass("c_body").first();
+        if(element.attr("class").contains("hidden"))
+            return;
+
         Elements images = element.getElementsByTag("img");
         for (Element image : images)
         {
@@ -346,6 +349,9 @@ public class GetCommentsTask extends BaseTask
 
                 image.removeAttr("width");
                 image.removeAttr("height");
+                image.removeAttr("style");
+
+                image.attr("style", "max-width:100%");
             }
             else
                 image.remove();
