@@ -1,27 +1,9 @@
 package com.home.lepradroid.utils;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.UUID;
-import java.util.zip.GZIPInputStream;
-
-import android.app.*;
-import android.widget.*;
-import com.home.lepradroid.Launcher;
-import com.home.lepradroid.tasks.PostInboxTask;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.HttpEntityWrapper;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,14 +16,14 @@ import android.text.Html;
 import android.text.Selection;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings.TextSize;
 import android.webkit.WebView;
-
+import android.widget.*;
+import com.home.lepradroid.Launcher;
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
 import com.home.lepradroid.commons.Commons;
@@ -51,7 +33,18 @@ import com.home.lepradroid.objects.Post;
 import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.tasks.PostCommentTask;
+import com.home.lepradroid.tasks.PostInboxTask;
 import com.home.lepradroid.tasks.TaskWrapper;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.HttpEntityWrapper;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.*;
+import java.util.List;
+import java.util.UUID;
+import java.util.zip.GZIPInputStream;
 
 public class Utils
 {
@@ -587,12 +580,7 @@ public class Utils
         
         return commentLevelIndicatorLength;
     }
-    
-    public static boolean isContainExtraTagsForWebView(String text)
-    {
-        return text.contains("<img");
-    }
-    
+
     public static boolean isAlreadyInStuff(UUID stuffId, String pid)
     {
         List<BaseItem> posts = ServerWorker.Instance().getPostsById(stuffId, false);

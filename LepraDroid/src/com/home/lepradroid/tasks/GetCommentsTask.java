@@ -289,7 +289,7 @@ public class GetCommentsTask extends BaseTask
                 if(file != null)
                     if(!file.delete())
                     {
-                        //TODO
+                        Logger.e("Can't remove tmp file");
                     }
             }
         }
@@ -313,15 +313,11 @@ public class GetCommentsTask extends BaseTask
     
     private void parseRecord(String html) throws ExecutionException, InterruptedException
     {
-        Element content = Jsoup.parse(html);
-        Element root = content.getElementsByTag("div").first();
+        Element root = Jsoup.parse(html).getElementsByTag("div").first();
 
         Comment comment = new Comment();
 
-        if(root.attr("class").contains("hidden_comment"))
-            return;
-
-        if(root.attr("class").contains("new"))
+        if(root.className().contains("new"))
             comment.setNew(true);
 
         String commentId = root.id();
@@ -334,10 +330,11 @@ public class GetCommentsTask extends BaseTask
         if(level.find())
             comment.setLevel(Short.valueOf(level.group(1)));
 
-        Element element = content.getElementsByClass("c_body").first();
-        if(element.attr("class").contains("hidden"))
+        Element element = root.getElementsByClass("c_body").first();
+        if(element.className().contains("hidden"))
             return;
 
+        boolean containsImages = false;
         Elements images = element.getElementsByTag("img");
         for (Element image : images)
         {
@@ -352,33 +349,32 @@ public class GetCommentsTask extends BaseTask
                 image.removeAttr("style");
 
                 image.attr("style", "max-width:100%");
+
+                containsImages = true;
             }
             else
                 image.remove();
         }
-        
-        comment.setHtml(Utils.wrapLepraTags(element));
-        if(!Utils.isContainExtraTagsForWebView(comment.getHtml()))
-        {
-            comment.setOnlyText(true);
-        }
 
-        Element authorElement = content.getElementsByClass("ddi").first();
+        comment.setHtml(Utils.wrapLepraTags(element));
+        comment.setOnlyText(!containsImages);
+
+        Element authorElement = root.getElementsByClass("ddi").first();
         if(authorElement != null)
         {
             Elements a = authorElement.getElementsByTag("a");
             comment.setUrl(Commons.SITE_URL + a.first().attr("href"));
-            
+
             String author = a.size() > 1 ? a.get(1).text() : a.get(0).text();
             if(postAuthor.equals(author))
-               comment.setPostAuthor(true);
-            
+                comment.setPostAuthor(true);
+
             String color = "black";
             if(comment.isPostAuthor())
                 color = "red";
             else if (author.equals(userName))
                 color = "#3270FF";
-            
+
             comment.setAuthor(author);
 
             String signature = authorElement.text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>");
@@ -394,7 +390,7 @@ public class GetCommentsTask extends BaseTask
 
         if(!post.isInbox())
         {
-            Element vote = content.getElementsByClass("vote").first();
+            Element vote = root.getElementsByClass("vote").first();
             if(vote != null)
             {
                 if(!vote.select(".vote_button.vote_button_plus.vote_voted").isEmpty())
