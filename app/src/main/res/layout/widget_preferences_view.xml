@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+	<PreferenceCategory 
+    	android:title="@string/WidgetSettings_NotifyCategoryName"
+    	android:key="@string/WidgetSettings_NotifyCategoryId"> 
+     	<CheckBoxPreference
+		  	android:key="@string/WidgetSettings_NotifyId"
+			android:title="@string/WidgetSettings_NotifyName"
+			android:summary="@string/WidgetSettings_NotifySummary"
+			android:defaultValue="true"/>
+     	<CheckBoxPreference
+			android:dependency="@string/WidgetSettings_NotifyId"
+			android:key="@string/WidgetSettings_NotifyOnlyOnFirstId"
+			android:title="@string/WidgetSettings_NotifyOnlyOnFirstName"
+			android:summary="@string/WidgetSettings_NotifyOnlyOnFirstSummary"
+			android:defaultValue="true"/>
+     	<RingtonePreference
+			android:key="@string/WidgetSettings_NotifySoundId"
+			android:dependency="@string/WidgetSettings_NotifyId"
+			android:title="@string/WidgetSettings_NotifySoundName"
+			android:ringtoneType="notification"
+			android:defaultValue="content://settings/system/notification_sound"
+			android:summary="@string/WidgetSettings_NotifySoundSummary"/>
+     	<CheckBoxPreference
+			android:dependency="@string/WidgetSettings_NotifyId"
+			android:key="@string/WidgetSettings_NotifyVibrateId"
+			android:title="@string/WidgetSettings_NotifyVibrateName"
+			android:defaultValue="true"/>
+	</PreferenceCategory>  
+</PreferenceScreen>

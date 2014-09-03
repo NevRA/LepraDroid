@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout android:orientation="vertical" android:id="@+id/widget"
+    android:background="@drawable/shortcut_selector" android:focusable="true"
+    android:clickable="true" android:layout_width="74.0dip"
+    android:layout_height="83.0dip"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout android:layout_width="fill_parent"
+        android:layout_height="0.0dip" android:layout_weight="1.0"
+        android:paddingTop="0dip">
+        <FrameLayout android:layout_gravity="center"
+            android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <ImageView android:id="@+id/icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_launcher"
+                android:scaleType="center" />
+            <TextView android:textSize="9dip" android:textStyle="bold"
+                android:textColor="#ffffffff" android:gravity="center"
+                android:layout_gravity="bottom|right|center"
+                android:id="@+id/widget_counter"
+                android:background="@drawable/counter_label"
+                android:layout_width="wrap_content" 
+                android:layout_height="22dip"
+                android:minWidth="22dip" 
+                android:visibility="invisible"
+                android:singleLine="true"
+                android:shadowColor="#ff000000" android:shadowRadius="1.0"/>
+        </FrameLayout>
+    </FrameLayout>
+    <TextView android:textSize="13.0dip" android:textColor="#ffffffff"
+        android:ellipsize="marquee" android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal" android:id="@android:id/text1"
+        android:background="@drawable/appwidget_text_background"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="1dip"
+        android:paddingBottom="1dip"  
+        android:singleLine="true" android:shadowColor="#ff000000"
+        android:shadowRadius="2.0" 
+        android:layout_weight="0.0"
+        android:text="@string/app_name" />
+</LinearLayout>
