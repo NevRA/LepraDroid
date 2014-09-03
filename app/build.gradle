@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'android'
 
 android {
     compileSdkVersion 20
@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.home.lepradroid"
         minSdkVersion 7
-        targetSdkVersion 7
+        targetSdkVersion 20
     }
 
     buildTypes {
@@ -19,6 +19,8 @@ android {
 }
 
 dependencies {
+    compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'org.roboguice:roboguice:2.0'
     compile 'com.android.support:support-v4:20.0.0'
     compile 'org.apache.commons:commons-lang3:3.3.2'
     compile 'org.jsoup:jsoup:1.7.3'

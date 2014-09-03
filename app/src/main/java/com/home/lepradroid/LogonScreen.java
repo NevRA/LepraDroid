@@ -21,8 +21,10 @@ import com.home.lepradroid.tasks.LoginTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
 
+import roboguice.activity.RoboFragmentActivity;
 
-public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, TextWatcher, LoginListener
+
+public class LogonScreen extends RoboFragmentActivity implements CaptchaUpdateListener, TextWatcher, LoginListener
 {
     private Button          yarrr;
     private EditText        captcha;
@@ -103,8 +105,8 @@ public class LogonScreen extends BaseActivity implements CaptchaUpdateListener, 
         {
             public void onClick(View v)
             {
-                SettingsWorker.Instance().saveUserName(login.getText().toString());
-                pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), true, Utils.getString(R.string.Login_In_Progress)));              
+                //SettingsWorker.Instance().saveUserName(login.getText().toString());
+                //pushNewTask(new TaskWrapper(LogonScreen.this, new LoginTask(login.getText().toString(), password.getText().toString(), captcha.getText().toString()), true, Utils.getString(R.string.Login_In_Progress)));
             }
         });
     }
