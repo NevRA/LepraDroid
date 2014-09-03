@@ -20,6 +20,6 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:20.0.0'
-    compile files('libs/commons-lang3-3.3.2.jar')
-    compile files('libs/jsoup-1.7.3.jar')
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile 'org.jsoup:jsoup:1.7.3'
 }

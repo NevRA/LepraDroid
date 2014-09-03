@@ -3,4 +3,6 @@
 /.gradle
 /classes
 /gen
+/app/build/
+/build
 *.iml
