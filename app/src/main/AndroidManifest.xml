@@ -27,18 +27,20 @@
         <activity 
             android:name=".Launcher"
             android:label="@string/app_name" 
-            android:launchMode="singleTop" 
-	        android:configChanges="orientation|keyboardHidden"
-	        android:theme="@style/StyledIndicators">
+            android:launchMode="singleTop"
+            android:noHistory="true"
+	        android:theme="@style/LightTheme.NoActionBar">
 	        <intent-filter>
 	            <action android:name="android.intent.action.MAIN" />
 	            <category android:name="android.intent.category.LAUNCHER" />
 	        </intent-filter>
 	    </activity>
-	    <activity android:name=".Main" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:noHistory="true" android:configChanges="keyboardHidden|orientation" />
+        <activity android:name=".ui.LogonFragmentActivity" android:theme="@style/LightTheme.NoActionBar"/>
+
+	    <activity android:name=".Main" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".settings.MainPreferences" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation" />
         <activity android:name=".settings.WidgetPreferences" android:theme="@android:style/Theme.Light" android:configChanges="keyboardHidden|orientation" />
-        <activity android:name=".LogonScreen" android:label="@string/app_name_by_r" android:theme="@style/Theme.Sherlock.Light.NoActionBar" android:configChanges="keyboardHidden|orientation"/>
+        <activity android:name=".LogonScreen" android:theme="@style/Theme.Sherlock.Light.NoActionBar" android:configChanges="keyboardHidden|orientation"/>
         <activity android:name=".AuthorScreen" android:theme="@style/StyledIndicators" android:configChanges="keyboardHidden|orientation"/>
         <activity android:name=".PostScreen" android:theme="@style/StyledIndicators" android:configChanges="keyboardHidden|orientation"/>
         <activity android:name=".BlogScreen" android:theme="@style/StyledIndicators" android:configChanges="keyboardHidden|orientation"/>

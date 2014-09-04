@@ -20,6 +20,7 @@ android {
 
 dependencies {
     compile 'com.actionbarsherlock:actionbarsherlock:4.4.0@aar'
+    compile 'com.github.rtyley:roboguice-sherlock:1.4'
     compile 'org.roboguice:roboguice:2.0'
     compile 'com.android.support:support-v4:20.0.0'
     compile 'org.apache.commons:commons-lang3:3.3.2'
