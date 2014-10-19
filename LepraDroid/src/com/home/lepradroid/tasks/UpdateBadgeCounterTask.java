@@ -1,16 +1,9 @@
 package com.home.lepradroid.tasks;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.util.Pair;
 import android.widget.RemoteViews;
-
 import com.home.lepradroid.LepraDroidApplication;
 import com.home.lepradroid.R;
 import com.home.lepradroid.Widget;
@@ -19,6 +12,11 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Badge;
 import com.home.lepradroid.utils.Utils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UpdateBadgeCounterTask extends BaseTask
 {
@@ -27,8 +25,8 @@ public class UpdateBadgeCounterTask extends BaseTask
         final String html = ServerWorker.Instance().getContent(Commons.SITE_URL + "users/" + SettingsWorker.Instance().loadUserName());
         final Document document = Jsoup.parse(html);
         
-        String things = document.getElementById("things").getElementsByTag("em").text();
-        String inbox = document.getElementById("inbox").getElementsByTag("em").text();
+        String things = document.getElementById("js-header_nav_my_things").getElementsByTag("i").text();
+        String inbox = document.getElementById("js-header_nav_inbox").getElementsByTag("i").text();
         
         return new Badge(getCountFromString(things), getCountFromString(inbox));
     }
