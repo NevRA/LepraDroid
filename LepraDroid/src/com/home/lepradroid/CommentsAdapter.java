@@ -42,7 +42,7 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
     private void OnLongClick()
     {
         final Comment item = (Comment)getItem(commentPos);
-        List<String> actions = new ArrayList<String>(0);
+        final List<String> actions = new ArrayList<String>(0);
         actions.add(Utils.getString(R.string.CommentAction_Author));
         actions.add(Utils.getString(R.string.CommentAction_Reply));
         if(     !item.getAuthor().equalsIgnoreCase(SettingsWorker.Instance().loadUserName()) &&
@@ -54,34 +54,39 @@ class CommentsAdapter extends ArrayAdapter<BaseItem> implements ExitListener
                 actions.add(Utils.getString(R.string.CommentAction_Dislike));
         }
 
+        actions.add(Utils.getString(R.string.CommentAction_Share));
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Выберите действие");
         builder.setItems(actions.toArray(new String[actions.size()]), new DialogInterface.OnClickListener() 
         {
             public void onClick(DialogInterface dialog, int pos) 
             {
-                switch (pos)
+                String action = actions.get(pos);
+
+                if(action.equals(Utils.getString(R.string.CommentAction_Author)))
                 {
-                case 0:
                     Intent intent = new Intent(getContext(), AuthorScreen.class);
                     intent.putExtra("username", item.getAuthor());
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    LepraDroidApplication.getInstance().startActivity(intent); 
-                    break;
-                case 1:
+                    LepraDroidApplication.getInstance().startActivity(intent);
+                }
+                else if(action.equals(Utils.getString(R.string.CommentAction_Reply)))
                     Utils.addComment(getContext(), post.getId(), item.getId());
-                    break;
-                case 2:
-                    if(!item.isPlusVoted())
-                        new TaskWrapper(null, new RateItemTask(post.getId(), item.getId(), RateValueType.PLUS), "");
-                    else 
-                        new TaskWrapper(null, new RateItemTask(post.getId(), item.getId(), RateValueType.MINUS), "");
-                    break;
-                case 3:
+                else if(action.equals(Utils.getString(R.string.CommentAction_Like)))
+                    new TaskWrapper(null, new RateItemTask(post.getId(), item.getId(), RateValueType.PLUS), "");
+                else if(action.equals(Utils.getString(R.string.CommentAction_Dislike)))
                     new TaskWrapper(null, new RateItemTask(post.getId(), item.getId(), RateValueType.MINUS), "");
-                    break;
-                default:
-                    break;
+                else if(action.equals(Utils.getString(R.string.CommentAction_Share)))
+                {
+                    String message = item.getUrl() + "\n\n" + item.getHtml();
+                    message = message.replace("<br />","\n");
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+                    sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    sendIntent.setType("text/plain");
+                    LepraDroidApplication.getInstance().startActivity(sendIntent);
                 }
             }
         });

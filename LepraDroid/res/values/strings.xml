@@ -122,4 +122,5 @@
 	<string name ="CommentAction_Reply">Ответить</string>
 	<string name ="CommentAction_Like">Нравится</string>
 	<string name ="CommentAction_Dislike">Не нравится</string>
+    <string name ="CommentAction_Share">Поделиться</string>
 </resources>

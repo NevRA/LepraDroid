@@ -364,7 +364,9 @@ public class GetCommentsTask extends BaseTask
         if(authorElement != null)
         {
             Elements a = authorElement.getElementsByTag("a");
-            comment.setUrl(Commons.SITE_URL + a.first().attr("href"));
+            String url = Commons.PREFIX_URL + a.first().attr("href");
+            url = url.replace("\n", "");
+            comment.setUrl(url);
 
             String author = a.size() > 1 ? a.get(1).text() : a.get(0).text();
             if(postAuthor.equals(author))
