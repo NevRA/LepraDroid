@@ -311,9 +311,9 @@ public class GetCommentsTask extends BaseTask
         return e;
     }
     
-    private void parseRecord(String html) throws ExecutionException, InterruptedException
+    private void parseRecord(String record) throws ExecutionException, InterruptedException
     {
-        Element root = Jsoup.parse(html).getElementsByTag("div").first();
+        Element root = Jsoup.parse(record).getElementsByTag("div").first();
 
         Comment comment = new Comment();
 
@@ -356,8 +356,9 @@ public class GetCommentsTask extends BaseTask
                 image.remove();
         }
 
-        comment.setHtml(Utils.wrapLepraTags(element));
-        comment.setOnlyText(!containsImages);
+        String html = Utils.wrapLepraTags(element);
+        comment.setHtml(html);
+        comment.setOnlyText(!containsImages && !html.contains("leprosorium.ru"));
 
         Element authorElement = root.getElementsByClass("ddi").first();
         if(authorElement != null)
