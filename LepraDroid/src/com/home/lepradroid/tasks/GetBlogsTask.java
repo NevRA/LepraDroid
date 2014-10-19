@@ -1,19 +1,6 @@
 package com.home.lepradroid.tasks;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.home.lepradroid.settings.SettingsWorker;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import android.util.Pair;
-
 import com.home.lepradroid.commons.Commons;
 import com.home.lepradroid.interfaces.BlogsUpdateListener;
 import com.home.lepradroid.interfaces.UpdateListener;
@@ -21,8 +8,18 @@ import com.home.lepradroid.listenersworker.ListenersWorker;
 import com.home.lepradroid.objects.BaseItem;
 import com.home.lepradroid.objects.Blog;
 import com.home.lepradroid.serverworker.ServerWorker;
+import com.home.lepradroid.settings.SettingsWorker;
 import com.home.lepradroid.utils.Logger;
-import com.home.lepradroid.utils.Utils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetBlogsTask extends BaseTask
 {
@@ -123,7 +120,7 @@ public class GetBlogsTask extends BaseTask
             
             notifyAboutBlogsUpdateBegin();
 
-            String body = String.format("csrf_token=%s", SettingsWorker.Instance().loadCsrfToke());
+            String body = String.format("offset=%d&csrf_token=%s", page * 42, SettingsWorker.Instance().loadCsrfToke());
             String html = ServerWorker.Instance().postRequest(Commons.BLOGS_URL, body);
             html = html.substring(html.indexOf("\"template\":"));
 

@@ -1,7 +1,5 @@
 package com.home.lepradroid;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -11,7 +9,6 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-
 import com.home.lepradroid.base.BaseActivity;
 import com.home.lepradroid.base.BaseView;
 import com.home.lepradroid.commons.Commons;
@@ -22,6 +19,8 @@ import com.home.lepradroid.serverworker.ServerWorker;
 import com.home.lepradroid.tasks.GetBlogsTask;
 import com.home.lepradroid.tasks.TaskWrapper;
 import com.home.lepradroid.utils.Utils;
+
+import java.util.ArrayList;
 
 public class BlogsScreen extends BaseView implements BlogsUpdateListener
 {
@@ -88,7 +87,7 @@ public class BlogsScreen extends BaseView implements BlogsUpdateListener
                         && firstVisibleItem != 0
                         && firstVisibleItem + visibleItemCount == totalItemCount)
                 {
-                    if (lastPageLoadedSuccessful && page < ServerWorker.Instance().getPostPagesCount(Commons.BLOGS_POSTS_ID) - 1)
+                    if (lastPageLoadedSuccessful /*&& page < ServerWorker.Instance().getPostPagesCount(Commons.BLOGS_POSTS_ID) - 1*/)
                     {
                         BaseActivity activity = (BaseActivity) context;
                         activity.popAllTasksLikeThis(GetBlogsTask.class);
