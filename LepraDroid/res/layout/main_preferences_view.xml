@@ -35,7 +35,7 @@
             android:summary="@string/MainSettings_CommentsIndicatorSummary"
             android:defaultValue="true"/>
     </PreferenceCategory>
-	<!--PreferenceCategory
+	<PreferenceCategory
         android:title="@string/MainSettings_WidgetCategoryName"
         android:key="@string/MainSettings_WidgetCategoryId"> 
         <PreferenceScreen 
@@ -46,7 +46,7 @@
                 android:targetPackage="com.home.lepradroid"
                 android:targetClass="com.home.lepradroid.settings.WidgetPreferences"/>
 		</PreferenceScreen>
-	</PreferenceCategory-->
+	</PreferenceCategory>
     <PreferenceCategory
         android:title="@string/MainSettings_CacheCategoryName"
         android:key="@string/MainSettings_CacheCategoryId">

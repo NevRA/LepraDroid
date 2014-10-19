@@ -27,15 +27,15 @@
                 android:shadowColor="#ff000000" android:shadowRadius="1.0"/>
         </FrameLayout>
     </FrameLayout>
-    <TextView android:textSize="13.0dip" android:textColor="#ffffffff"
+    <!--TextView android:textSize="13.0dip" android:textColor="#ffffffff"
         android:ellipsize="marquee" android:gravity="center_horizontal"
         android:layout_gravity="center_horizontal" android:id="@android:id/text1"
         android:background="@drawable/appwidget_text_background"
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_marginTop="1dip"
-        android:paddingBottom="1dip"  
+        android:paddingBottom="1dip"
         android:singleLine="true" android:shadowColor="#ff000000"
-        android:shadowRadius="2.0" 
+        android:shadowRadius="2.0"
         android:layout_weight="0.0"
-        android:text="@string/app_name" />
+        android:text="@string/app_name" /-->
 </LinearLayout>
