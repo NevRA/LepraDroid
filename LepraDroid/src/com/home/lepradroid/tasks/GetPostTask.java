@@ -73,7 +73,7 @@ public class GetPostTask extends BaseTask
             post.setId(postId);
 
             String html = ServerWorker.Instance().getContent(url);
-            String postOrd = "<div class=\"post ";
+            String postOrd = "<div class=\"post_comments_page\"";
             String endStr = "js-comments";
 
             int start = html.indexOf(postOrd, 0);
@@ -83,6 +83,8 @@ public class GetPostTask extends BaseTask
             Element content = Jsoup.parse(postHtml);
 
             Element element = content.getElementsByClass("dti").first();
+            if(element == null)
+                element = content.getElementsByClass("dt").first();
             
             Elements images = element.getElementsByTag("img");
             for (Element image : images)

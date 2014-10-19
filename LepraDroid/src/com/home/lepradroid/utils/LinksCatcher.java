@@ -80,7 +80,7 @@ public class LinksCatcher extends WebViewClient
                     StubScreen.class);
             stubIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             stubIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            stubIntent.putExtra("url", url.replace("http:", "https:"));
+            stubIntent.putExtra("url", url);
             stubIntent.putExtra("type", linkType);
             LepraDroidApplication.getInstance().startActivity(stubIntent);
 
@@ -115,7 +115,7 @@ public class LinksCatcher extends WebViewClient
             stubIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             stubIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             stubIntent.putExtra("url", matcher.group(1));
-            stubIntent.putExtra("commentId", matcher.group(2));
+            stubIntent.putExtra("commentId", matcher.group(3));
             stubIntent.putExtra("type", LINK_COMMENT);
             LepraDroidApplication.getInstance().startActivity(stubIntent);
         }
