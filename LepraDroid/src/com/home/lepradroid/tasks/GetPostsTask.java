@@ -244,8 +244,8 @@ public class GetPostsTask extends BaseTask
                 else
                     post.setVoteDisabled(true);
                 
-                post.setPlusVoted(postHtml.contains("class=\"plus voted\""));
-                post.setMinusVoted(postHtml.contains("class=\"minus voted\""));
+                post.setPlusVoted(postHtml.contains("vote_button_plus vote_voted"));
+                post.setMinusVoted(postHtml.contains("vote_button_minus vote_voted"));
                 
                 Element author = info.getElementsByClass("ddi").first();
                 if(author != null)
