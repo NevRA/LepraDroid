@@ -197,7 +197,12 @@ public class Utils
         if(post.getTotalComments() != -1 && post.getNewComments() != -1)
             return Html.fromHtml(post.getTotalComments() + " " + Utils.getString(R.string.Total_Comments) + " / " + "<b>" + post.getNewComments() + " " + Utils.getString(R.string.New_Comments) + "</b>");
         if(post.getTotalComments() != -1)
-            return Html.fromHtml(post.getTotalComments() + " " + Utils.getString(R.string.Total_Comments));
+        {
+            String res = post.getTotalComments() + " " + Utils.getString(R.string.Total_Comments);
+            if(post.isAllNew())
+                res = "<b>" + res + "</b>";
+            return Html.fromHtml(res);
+        }
         else
             return Html.fromHtml(Utils.getString(R.string.No_Comments));
     }

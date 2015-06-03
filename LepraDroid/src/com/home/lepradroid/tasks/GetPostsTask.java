@@ -275,14 +275,18 @@ public class GetPostsTask extends BaseTask
                     else
                     {
                         if(!a.get(0).text().equals("комментировать"))
-                            post.setTotalComments(Short.valueOf(a.get(0).text().split(" ")[0]));
+                        {
+                            String text = a.get(0).text();
+                            post.setTotalComments(Short.valueOf(text.split(" ")[0]));
+                            if(text.contains("новых"))
+                                post.setAllNew(true);
+                        }
                     }
 
-                    String authorText = author.getElementsByTag("a").first().text();
-                    post.setAuthor(authorText);
 
-                    String signature = author.text().split("\\|")[0].replace(authorText, "<b>" + authorText + "</b>");
-                    signature = signature.substring(0, signature.indexOf(", ·"));
+                    String authorText = author.select("a.c_user").first().text();
+                    post.setAuthor(authorText);
+                    String signature = author.text().split(authorText)[0] +  "<b>" + authorText + "</b>";
 
                     String epochDate = author.getElementsByClass("js-date").first().attr("data-epoch_date");
                     Date date = new Date(Long.valueOf(epochDate) * 1000);

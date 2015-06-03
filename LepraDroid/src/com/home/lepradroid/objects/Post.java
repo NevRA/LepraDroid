@@ -13,6 +13,7 @@ public class Post extends BaseItem
     private boolean  golden              = false;
     private boolean  silver              = false;
     private boolean  voteDisabled        = false;
+    private boolean  allNew              = false;
 
     public Post(UUID groupId)
     {
@@ -58,6 +59,16 @@ public class Post extends BaseItem
     public void setVoteDisabled(boolean voteDisabled)
     {
         this.voteDisabled = voteDisabled;
+    }
+
+    public boolean isAllNew()
+    {
+        return allNew;
+    }
+
+    public void setAllNew(boolean allNew)
+    {
+        this.allNew = allNew;
     }
 
     public boolean isGolden()

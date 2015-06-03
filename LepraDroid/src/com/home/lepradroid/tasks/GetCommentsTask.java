@@ -380,8 +380,7 @@ public class GetCommentsTask extends BaseTask
 
             comment.setAuthor(author);
 
-            String signature = authorElement.text().split("\\|")[0].replace(author, "<b>" + "<font color=\"" + color + "\">" + author + "</font>" + "</b>");
-            signature = signature.substring(0, signature.indexOf(a.size() > 1 ? ", ·" : ", написанный"));
+            String signature = authorElement.text().split(author)[0] +  "<b><font color=\"" + color + "\">" + author + "</font></b>";
 
             String epochDate = authorElement.getElementsByClass("js-date").first().attr("data-epoch_date");
             Date date = new Date(Long.valueOf(epochDate) * 1000);
